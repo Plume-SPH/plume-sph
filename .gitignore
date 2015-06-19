@@ -45,6 +45,16 @@ Makefile.in
 
 #configure generated file, for thouse who like to compile in source
 Makefile
+config.status
+config.log
+
+#Simulation generated files
+particler
+funky*.h5
+move_data*.log
+particler
+preprocess
+pvplot*.h5part
 
 #Others
 #/sh
@@ -54,6 +64,3 @@ Makefile
 ccr-debug.sh
 ccr-install.sh
 build.sh
-config.status
-config.log
-
