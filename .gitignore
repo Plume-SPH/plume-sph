@@ -4,7 +4,7 @@ ompiled Object files
 *.o
 *.obj
 *.Po
-bin/
+#bin/
 
 # Compiled Dynamic libraries
 *.so
