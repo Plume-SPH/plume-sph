@@ -1,0 +1,59 @@
+ompiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+*.Po
+bin/
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Eclipse
+.autotools
+.cproject
+.project
+.settings/
+/.pydevproject
+
+#autotols generated files
+autom4te.cache
+Makefile.in
+/compile
+/config.guess
+/config.sub
+/configure
+/depcomp
+/install-sh
+/missing
+/config.h.in~
+/config.h.in
+/aclocal.m4
+
+#configure generated file, for thouse who like to compile in source
+Makefile
+
+#Others
+#/sh
+/RemoteSystemsTempFiles
+/.metadata
+/READEME
+ccr-debug.sh
+ccr-install.sh
+build.sh
+config.status
+config.log
+

@@ -1,0 +1,47 @@
+#
+# automake template for map directory
+#
+# $Id:$
+#
+
+noinst_LIBRARIES = libgmfgsph.a libgmfghdf5.a
+
+libgmfgsph_a_SOURCES = sph_header.h sph_lib.cc
+
+libgmfghdf5_a_SOURCES = hdf5calls.cc hdf5calls.h
+libgmfghdf5_a_CPPFLAGS = -I$(top_srcdir)/preproc
+
+bin_PROGRAMS = particler funky2ascii
+
+particler_SOURCES = bcond.cc \
+                    calc_fcoef.cc \
+                    constant.h \
+                    dataread.cc \
+                    density.cc  \
+		    eigen.c \
+                    fluxsrc.cc \
+                    gradients.cc \
+                    h5part_writer.cc \
+                    init_piles.cc \
+                    matlab_writer.cc \
+                    mom_update.cc \
+                    neighs.cc \
+                    outforms.h \
+                    particler.h \
+                    riemann_solve.h riemann_solve.cc \
+                    timestep.cc \
+                    update_pos.cc \
+                    write_output.cc \
+                    main.cc
+
+INCLUDES = -I$(top_srcdir)/datstr \
+           -I$(top_srcdir)/preproc \
+           -I$(top_srcdir)/multiproc
+
+particler_LDADD = $(top_builddir)/datstr/libbgmesh.a \
+                  $(top_builddir)/multiproc/libmultiproc.a \
+                  libgmfghdf5.a libgmfgsph.a
+
+funky2ascii_SOURCES = funky2txt.cc hdf5calls.h
+funky2ascii_LDADD = libgmfghdf5.a
+
