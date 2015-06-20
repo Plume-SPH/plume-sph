@@ -89,6 +89,11 @@ void check_particle_bykey (
 		THashTable *
         );
 
+//find the particle with non-physical density
+void find_large_density_particle (
+		THashTable *
+        );
+
 //function that call output sub_functions
 void
 write_particles_debug(

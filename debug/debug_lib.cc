@@ -185,6 +185,35 @@ void check_particle_bypos (THashTable * P_table)
 
 }
 
+//find the particle with non-physical density
+void find_large_density_particle (THashTable * P_table)
+{
+
+    bool do_search = true;
+    double threshold = 20.;
+    double density;
+
+    int i;
+	THTIterator *itr = new THTIterator(P_table);
+	Particle *p_curr = NULL;
+
+	while ((p_curr = (Particle *) itr->next()))
+	{
+		if (do_search)
+		{
+		  	density=p_curr->get_density();
+
+		  	if (density >=threshold)
+		  	{
+		  		cout << "The particle found!" << endl;
+
+		  	}
+		 }
+	 }//end of go through all particles
+
+}
+
+
 //output certain type of particle
 void
 write_h5part_bctp(int myid, int numproc, THashTable * P_table, TimeProps * timepros, int bctp, char *pre)

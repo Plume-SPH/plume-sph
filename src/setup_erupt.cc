@@ -276,7 +276,7 @@ return 0;
 //function for adding new ghost erupt particles at the bottom of the duck
 void
 add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
-        TimeProps * timeprops,  double dt)
+        TimeProps * timeprops, MatProps* matprops, double dt)
 {
     double t_add, t_each;
     int n;
@@ -284,7 +284,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double crd_p[DIMENSION];
     double range_x[2];
     double range_y[2];
-//	double range_z[2];
+	double range_z[2];
     double normc[3];
     double dist;
     double rvsq=rv_P*rv_P;
@@ -408,8 +408,8 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 		    	TKey tmpkey(key);
 		    	Curr_buck->add_erupt_ghost_particle(tmpkey);
-                        P_table->add(key, Curr_part);
-                        num_particle++; //will be used to update THASHTAB
+                P_table->add(key, Curr_part);
+                num_particle++; //will be used to update THASHTAB
 		    	}
 
 		     }

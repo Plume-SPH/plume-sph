@@ -38,11 +38,11 @@ smooth_density(THashTable * P_table)
   Particle * pi = NULL;
 
 #ifdef DEBUG
-   bool check_den = true;
+   bool check_den = false;
    bool do_search = false;
-   bool check_mssfrac = true;
+   bool check_mssfrac = false;
    bool find;
-   unsigned keycheck[TKEYLENGTH] =  {214589933, 1538453516, 0};
+   unsigned keycheck[TKEYLENGTH] =  {69674717, 3383906357, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
 
@@ -101,6 +101,7 @@ smooth_density(THashTable * P_table)
       		    {
       		        for (i = 0; i < DIMENSION; i++)
       		            ds[i] = xi[i] - *(pj->get_coords() + i);
+
       		        if (in_support(ds, supp))
       		        {
       		            for (k = 0; k < DIMENSION; k++)
@@ -116,14 +117,17 @@ smooth_density(THashTable * P_table)
 
       }//end of go through all neighbors
 
+      for (phs_i = 2; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
+      {
+    	  wnorm[0] += wnorm [phs_i-1];
+      }
+
       density=0.0;
       for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
       {
-    	  if (wnorm[phs_i-1] != 0)
-    	  {
-    	      phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
-    	      density +=phaserho[phs_i-1];
-    	  }
+           assert (wnorm[0] > 0);
+    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
+    	   density +=phaserho[phs_i-1];
       }
 
 #ifdef DEBUG

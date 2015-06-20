@@ -101,7 +101,8 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
           }
         pi->put_neighs(pneighs);
       }
-    }
+
+    }// end of if :bucket is not guest and has particles
   }
 
   // delete iterator
