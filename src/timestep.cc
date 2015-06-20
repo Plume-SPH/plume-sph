@@ -55,7 +55,7 @@ timestep(THashTable * P_table, TimeProps* timeprops)
 #ifdef DEBUG
       bool check_sndspd = true;
       if (check_sndspd)
-    	  if (c<0)
+    	  if (!(c>0))
     		  cout << "sound speed = " << c << endl;
 #endif
       assert (c>0);

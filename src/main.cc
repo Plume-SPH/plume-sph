@@ -101,6 +101,12 @@ main(int argc, char **argv)
   //add air particles and put particles into bucket, bc_type is determined in this process
   add_air (P_table, BG_mesh, matprops, numprocs, myid);
 
+#ifdef DEBUG
+  if (check_part)
+	  // find certain particle and check its values
+      check_particle_bykey (P_table);
+#endif
+
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -124,14 +130,11 @@ main(int argc, char **argv)
   // search and update neighbors
   search_neighs (myid, P_table, BG_mesh);
 
-
-//#ifdef DEBUG
-//  // Write inital configuration
-//  prefix = 'b';
-//  if (output_part)
-//      write_particles_debug (myid, numprocs, P_table, BG_mesh,
-//                             partition_table, timeprops, format, &prefix);
-//#endif
+#ifdef DEBUG
+  if (check_part)
+	  // find certain particle and check its values
+      check_particle_bykey (P_table);
+#endif
 
   //initialized the mass of all particles
   setup_ini(myid,  P_table,  BG_mesh, timeprops, numprocs, my_comm);
@@ -268,12 +271,6 @@ main(int argc, char **argv)
       ierr += err2;
     }
 
-#ifdef DEBUG
-  if (check_part)
-	  // find certain particle and check its values
-      check_particle_bykey (P_table);
-#endif
-
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
@@ -281,13 +278,6 @@ main(int argc, char **argv)
 
     // smooth out density oscillations (if any)
     smooth_density(P_table);
-
-#ifdef DEBUG
-  if (check_part)
-	  // find certain particle and check its values
-      check_particle_bykey (P_table);
-#endif
-
 
 #ifdef MULTI_PROC
     // update guests on all procs

@@ -18,7 +18,7 @@
 #endif
 
 #include <cmath>
-#include <petsc.h>
+//#include <petsc.h>
 using namespace std;
 
 #include <particler.h>
@@ -411,6 +411,7 @@ void air_prop (double *coord, double *range, double * energy, double *pressure, 
 	double d2 = p2/(Ra_P*T2);
 	double d = *density;
 
+	//The following code is based in numerical integration, coefficient are 1/6, 4/6 1/6
 	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*(0.1666667*d1+0.6666666*d+0.1666667*d2);
 
 #ifdef DEBUG
@@ -420,102 +421,102 @@ void air_prop (double *coord, double *range, double * energy, double *pressure, 
 #endif
 }
 
-//Function that used Petsc GESRM to solve system of equations to return mass of each particles
-PETSC_EXTERN PetscErrorCode PCCreate_Jacobi(PC);
-void solve_mass(double **A, double *b, double * x, int N, int NP, int id)
-/*note:
- *  *     dimension of A is nx * ny;
- *   *     dimension of b is ny * 1
- *    *     */
-//The solver has already been tested. it works very well! I can directly use it in my code
-{
-  int argc=0;
-  char **argv=NULL;
-  int i, j;
-  PetscInitialize(&argc,&argv,PETSC_NULL,PETSC_NULL);
-
-  //PetscErrorCode ierr;
-  Mat A_petsc;
-  Vec b_petsc, x_petsc;//, u;
-
-  VecCreate(PETSC_COMM_WORLD,&b_petsc);
-  VecSetSizes(b_petsc,N,PETSC_DECIDE);
-  VecSetFromOptions(b_petsc);
-
-  MatCreate(PETSC_COMM_WORLD,&A_petsc);
-  MatSetSizes(A_petsc,N,N,PETSC_DECIDE,PETSC_DECIDE);
-  MatSetFromOptions(A_petsc);
-  MatSetUp(A_petsc);
-
-  PetscInt Low, Up;
-  VecGetOwnershipRange(b_petsc, &Low, &Up);
-  for (i=Low; i<Up; i++)
-     VecSetValues(b_petsc,1,&i, &(b[i-Low]),INSERT_VALUES);
-
-  VecAssemblyBegin(b_petsc);
-  VecAssemblyEnd (b_petsc);
-
-  for (i=Low; i<Up; i++)
-     for (j=0; j<NP; j++)
-         MatSetValues(A_petsc, 1, &i, 1, &j, &(A[i-Low][j]), INSERT_VALUES);
-
-  MatAssemblyBegin(A_petsc, MAT_FINAL_ASSEMBLY);
-  MatAssemblyEnd (A_petsc, MAT_FINAL_ASSEMBLY);
-/*
-   PetscViewer viewer;
-   VecView(b_petsc, PETSC_VIEWER_STDOUT_WORLD);
-   MatView(A_petsc, PETSC_VIEWER_STDOUT_WORLD);
-*/
- //solve_try( argc, argv, A_petsc, x_petsc, u, N, N, id, &its);
- // /*
- //  *  *      Create linear solver context
- //   *   *        */
-
-  KSP ksp;
-  PC  pc;
-  //PetscScalar one = 1.0, neg_one = -1.0;
-  //PetscReal      norm;
-
-  //MatMult(A_petsc,b_petsc,x_petsc);
-
-  KSPCreate(PETSC_COMM_WORLD,&ksp);
-  //KSPSetOperators(ksp, A_petsc, A_petsc, DIFFERENT_NONZERO_PATTERN);
-  KSPSetOperators(ksp, A_petsc, A_petsc); 
- 
-  PCRegister("ourjacobi",PCCreate_Jacobi);
-  KSPGetPC(ksp,&pc);
-  PCSetType(pc,"ourjacobi");
-  KSPSetFromOptions(ksp);
-
-  VecDuplicate(b_petsc,&x_petsc);
-  KSPSolve(ksp,b_petsc,x_petsc);
-
-  //VecAXPY(b_petsc,neg_one,u);
-  //VecNorm(b_petsc,NORM_2,&norm);
-  PetscInt its;
-  KSPGetIterationNumber(ksp,&its);
-
-//  PetscPrintf(PETSC_COMM_WORLD,"number of iterations %D\n",*its);
-  //VecView(x_petsc, PETSC_VIEWER_STDOUT_WORLD);
-  //VecView(b_petsc, PETSC_VIEWER_STDOUT_WORLD);
-  //VecView(u, PETSC_VIEWER_STDOUT_WORLD);
-
-  PetscScalar hh;
-  VecGetOwnershipRange(b_petsc, &Low, &Up);
-  for (i=Low; i<Up; i++)
-  {
-      VecGetValues(x_petsc, 1, &i, &hh);
-     x[i-Low]=hh;
-  }
-  KSPDestroy(&ksp);
-
-  MatDestroy (&A_petsc);
-  VecDestroy (&b_petsc);
-  VecDestroy (&x_petsc);
-  //VecDestroy (&u);
-
-  PetscFinalize();
-}
+////Function that used Petsc GESRM to solve system of equations to return mass of each particles
+//PETSC_EXTERN PetscErrorCode PCCreate_Jacobi(PC);
+//void solve_mass(double **A, double *b, double * x, int N, int NP, int id)
+///*note:
+// *  *     dimension of A is nx * ny;
+// *   *     dimension of b is ny * 1
+// *    *     */
+////The solver has already been tested. it works very well! I can directly use it in my code
+//{
+//  int argc=0;
+//  char **argv=NULL;
+//  int i, j;
+//  PetscInitialize(&argc,&argv,PETSC_NULL,PETSC_NULL);
+//
+//  //PetscErrorCode ierr;
+//  Mat A_petsc;
+//  Vec b_petsc, x_petsc;//, u;
+//
+//  VecCreate(PETSC_COMM_WORLD,&b_petsc);
+//  VecSetSizes(b_petsc,N,PETSC_DECIDE);
+//  VecSetFromOptions(b_petsc);
+//
+//  MatCreate(PETSC_COMM_WORLD,&A_petsc);
+//  MatSetSizes(A_petsc,N,N,PETSC_DECIDE,PETSC_DECIDE);
+//  MatSetFromOptions(A_petsc);
+//  MatSetUp(A_petsc);
+//
+//  PetscInt Low, Up;
+//  VecGetOwnershipRange(b_petsc, &Low, &Up);
+//  for (i=Low; i<Up; i++)
+//     VecSetValues(b_petsc,1,&i, &(b[i-Low]),INSERT_VALUES);
+//
+//  VecAssemblyBegin(b_petsc);
+//  VecAssemblyEnd (b_petsc);
+//
+//  for (i=Low; i<Up; i++)
+//     for (j=0; j<NP; j++)
+//         MatSetValues(A_petsc, 1, &i, 1, &j, &(A[i-Low][j]), INSERT_VALUES);
+//
+//  MatAssemblyBegin(A_petsc, MAT_FINAL_ASSEMBLY);
+//  MatAssemblyEnd (A_petsc, MAT_FINAL_ASSEMBLY);
+///*
+//   PetscViewer viewer;
+//   VecView(b_petsc, PETSC_VIEWER_STDOUT_WORLD);
+//   MatView(A_petsc, PETSC_VIEWER_STDOUT_WORLD);
+//*/
+// //solve_try( argc, argv, A_petsc, x_petsc, u, N, N, id, &its);
+// // /*
+// //  *  *      Create linear solver context
+// //   *   *        */
+//
+//  KSP ksp;
+//  PC  pc;
+//  //PetscScalar one = 1.0, neg_one = -1.0;
+//  //PetscReal      norm;
+//
+//  //MatMult(A_petsc,b_petsc,x_petsc);
+//
+//  KSPCreate(PETSC_COMM_WORLD,&ksp);
+//  //KSPSetOperators(ksp, A_petsc, A_petsc, DIFFERENT_NONZERO_PATTERN);
+//  KSPSetOperators(ksp, A_petsc, A_petsc);
+//
+//  PCRegister("ourjacobi",PCCreate_Jacobi);
+//  KSPGetPC(ksp,&pc);
+//  PCSetType(pc,"ourjacobi");
+//  KSPSetFromOptions(ksp);
+//
+//  VecDuplicate(b_petsc,&x_petsc);
+//  KSPSolve(ksp,b_petsc,x_petsc);
+//
+//  //VecAXPY(b_petsc,neg_one,u);
+//  //VecNorm(b_petsc,NORM_2,&norm);
+//  PetscInt its;
+//  KSPGetIterationNumber(ksp,&its);
+//
+////  PetscPrintf(PETSC_COMM_WORLD,"number of iterations %D\n",*its);
+//  //VecView(x_petsc, PETSC_VIEWER_STDOUT_WORLD);
+//  //VecView(b_petsc, PETSC_VIEWER_STDOUT_WORLD);
+//  //VecView(u, PETSC_VIEWER_STDOUT_WORLD);
+//
+//  PetscScalar hh;
+//  VecGetOwnershipRange(b_petsc, &Low, &Up);
+//  for (i=Low; i<Up; i++)
+//  {
+//      VecGetValues(x_petsc, 1, &i, &hh);
+//     x[i-Low]=hh;
+//  }
+//  KSPDestroy(&ksp);
+//
+//  MatDestroy (&A_petsc);
+//  VecDestroy (&b_petsc);
+//  VecDestroy (&x_petsc);
+//  //VecDestroy (&u);
+//
+//  PetscFinalize();
+//}
 
 /*function that get mass of and smooth length
  * it is suitable for space where density is uniform

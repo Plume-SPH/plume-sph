@@ -22,7 +22,6 @@
 #endif
 
 #include <cmath>
-#include <petsc.h>
 
 using namespace std;
 

@@ -317,10 +317,24 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     t_add = t_add + dt;
     n = floor (t_add/t_each);
 	t_add =t_add - n*t_each;
+	timeprops->t_add = t_add;
 
 	unsigned add_step;
     //add time step
     add_step = (unsigned) floor(t_total/t_each);
+
+    //We do not need range_z actually, for simple model with flat ground,
+    //the max for z is zero and the min for z is determined by number of ghost particle layers.
+    //double range_z[2];
+
+    //determine the rough range of eruption duck
+    range_x[0] = -rv_P;
+    range_x[1] = rv_P;
+    range_y[0] = -rv_P;
+    range_y[1] = rv_P;
+    range_z[1] = 0.; // not exact, should use ground height
+    range_z[0] = range_z[1]-(matprops->smoothing_length)*1.5*PARTICLE_DENSITY;
+
 
 	//create new particles: coordinate -> key -> new particle
 

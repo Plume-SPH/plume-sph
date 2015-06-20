@@ -102,7 +102,7 @@ void check_particle_bykey (THashTable * P_table)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[TKEYLENGTH] = {92878763, 2157710878, 0};
+    unsigned keycheck[TKEYLENGTH] = {81794040, 83755327, 0};
 //    unsigned keycheck[TKEYLENGTH] = {85791530, 5815487, 0};
     unsigned keytemp[TKEYLENGTH] ;
 
