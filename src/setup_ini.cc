@@ -19,9 +19,13 @@ using namespace std;
 
 #include "particler.h"
 #include "constant.h"
+#include "parameters.h"
 #include "sph_header.h"
 #include "IndMap.h"
 
+#ifdef DEBUG
+#  include <debug_header.h>
+#endif
 
 bool whether_most_out(double *mincrd, double *maxcrd,  double *mindom, double *maxdom)
 {
@@ -96,6 +100,13 @@ setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
   Particle *pi=NULL;
   Bucket   *bi=NULL;
 
+#ifdef DEBUG
+   bool do_search = false;
+   bool find;
+   unsigned keycheck[TKEYLENGTH] = {81794040, 83755327, 0};
+   unsigned keytemp[TKEYLENGTH] ;
+#endif
+
   vector <IndMap> idset;
   std::vector<IndMap>::iterator vit;
   vit = idset.begin();
@@ -107,6 +118,18 @@ setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
   while ((pi = (Particle *) itr->next ()))
    if (!pi->is_guest())//count number of non-guest particles.
    {
+
+#ifdef DEBUG
+	   if (do_search)
+	   {
+		   for (i = 0; i < TKEYLENGTH; i++)
+			    keytemp[i] = pi->getKey ().key[i];
+
+		    if (find_particle (keytemp, keycheck))
+			    cout << "The particle found!" << endl;
+	   }
+#endif
+
 	  for (i = 0; i < DIMENSION; i++)
 		  xi[i] = *(pi->get_coords() + i);
 
@@ -127,10 +150,10 @@ setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
       pi->put_velocity(vel);
       pi->put_mass(mss);
 
+      //the second variable need to be updated.
+      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
       j++;
-
    }//end of go through all particles
-
 
 //  int nrp=j; //number of non-guest particles
 //  int nrp_all; //Total number of non-guest particles
@@ -359,57 +382,58 @@ setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
    * as the same action will be taken in guest's home process,
    * this will automatically synchronize all process.
    * */
-  double mincrd[DIMENSION], maxcrd[DIMENSION];
-  double mindom[DIMENSION], maxdom[DIMENSION];
-  bool del;
-  for (i = 0; i < DIMENSION; i++)
-  {
-    mindom[i] = *(P_table->get_minDom() + i);
-    maxdom[i] = *(P_table->get_maxDom() + i);
-  }
-
-  HTIterator * itr2 = new HTIterator (BG_mesh);
-  Bucket * Bnd_buck;
-
-  vector < TKey > plist;
-  vector < TKey >::iterator p_itr;
-  unsigned tempkey[TKEYLENGTH];
-
-  while ((Bnd_buck = (Bucket *) itr2->next ()))
-  {
-	   /*It is OK to clear up guest buckets
-	   *---> in that way, synchronization is not necessary!
-	   *---> it is certain kind of trade off between computing and communication.
-	  */
-	   for (i=0; i<DIMENSION; i++)
-                {
-                    mincrd[i] = *(Bnd_buck->get_mincrd () + i);
-		    maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
-                }
-
-		del = whether_most_out(mincrd, maxcrd, mindom, maxdom);
-
-		if (del)
-		{
-			plist = Bnd_buck->get_particle_list ();
-			for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
-			{
-	    		    pi = (Particle *) P_table->lookup(*p_itr);
-	    		    assert (pi);
-
-	    		for (i = 0; i<TKEYLENGTH; i++)
-	    		   tempkey[i] = pi->getKey().key[i];
-
-	    	           P_table->remove(tempkey);
-			}
-
-			Bnd_buck->empty_plist ();
-//			Bnd_buck->mark_inactive ();
-		}
-  }//end of go through all buckets
+//  double mincrd[DIMENSION], maxcrd[DIMENSION];
+//  double mindom[DIMENSION], maxdom[DIMENSION];
+//  bool del;
+//  for (i = 0; i < DIMENSION; i++)
+//  {
+//    mindom[i] = *(P_table->get_minDom() + i);
+//    maxdom[i] = *(P_table->get_maxDom() + i);
+//  }
+//
+//  HTIterator * itr2 = new HTIterator (BG_mesh);
+//  Bucket * Bnd_buck;
+//
+//  vector < TKey > plist;
+//  vector < TKey >::iterator p_itr;
+//  unsigned tempkey[TKEYLENGTH];
+//
+//  while ((Bnd_buck = (Bucket *) itr2->next ()))
+//  {
+//	   /*It is OK to clear up guest buckets
+//	   *---> in that way, synchronization is not necessary!
+//	   *---> it is certain kind of trade off between computing and communication.
+//	  */
+//	   for (i=0; i<DIMENSION; i++)
+//                {
+//                    mincrd[i] = *(Bnd_buck->get_mincrd () + i);
+//		    maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
+//                }
+//
+//		del = whether_most_out(mincrd, maxcrd, mindom, maxdom);
+//
+//		if (del)
+//		{
+//			plist = Bnd_buck->get_particle_list ();
+//			for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+//			{
+//	    		    pi = (Particle *) P_table->lookup(*p_itr);
+//	    		    assert (pi);
+//
+//	    		for (i = 0; i<TKEYLENGTH; i++)
+//	    		   tempkey[i] = pi->getKey().key[i];
+//
+//	    	           P_table->remove(tempkey);
+//			}
+//
+//			Bnd_buck->empty_plist ();
+////			Bnd_buck->mark_inactive ();
+//		}
+//  }//end of go through all buckets
 
 //  // clean up
-  delete itr, itr2;
+//  delete itr2;
+  delete itr;
 //  delete it2;
 //  // need clear up more variables.
 //  delete[] array_local;

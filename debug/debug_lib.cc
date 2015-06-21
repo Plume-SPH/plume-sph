@@ -82,6 +82,20 @@ bool find_particle (double* in, double* check)
     return true;
 }
 
+/*find particle by the range of particle position
+ *
+ */
+bool find_particle_pos_range  (double *in, double* check)
+{
+	int i;
+	for (i=0; i<DIMENSION; i++)
+		if (!((in[i] >= check[2*i]) && (in[i]<= check[2*i+1])))
+			return false;
+
+    return true;
+}
+
+
 /*find bucket by the key
  * keyin is input particle key
  * keycheck is the key that is given and all keyin will be compared with keycheck
@@ -102,7 +116,7 @@ void check_particle_bykey (THashTable * P_table)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[TKEYLENGTH] = {92878763, 2157710878, 0};
+    unsigned keycheck[TKEYLENGTH] = {81794040, 83755327, 0};
 //    unsigned keycheck[TKEYLENGTH] = {85791530, 5815487, 0};
     unsigned keytemp[TKEYLENGTH] ;
 
@@ -184,6 +198,35 @@ void check_particle_bypos (THashTable * P_table)
 	 }
 
 }
+
+//find the particle with non-physical density
+void find_large_density_particle (THashTable * P_table)
+{
+
+    bool do_search = true;
+    double threshold = 20.;
+    double density;
+
+    int i;
+	THTIterator *itr = new THTIterator(P_table);
+	Particle *p_curr = NULL;
+
+	while ((p_curr = (Particle *) itr->next()))
+	{
+		if (do_search)
+		{
+		  	density=p_curr->get_density();
+
+		  	if (density >=threshold)
+		  	{
+		  		cout << "The particle found!" << endl;
+
+		  	}
+		 }
+	 }//end of go through all particles
+
+}
+
 
 //output certain type of particle
 void

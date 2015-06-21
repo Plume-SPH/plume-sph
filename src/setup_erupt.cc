@@ -276,7 +276,7 @@ return 0;
 //function for adding new ghost erupt particles at the bottom of the duck
 void
 add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
-        TimeProps * timeprops,  double dt)
+        TimeProps * timeprops, MatProps* matprops, double dt)
 {
     double t_add, t_each;
     int n;
@@ -284,7 +284,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double crd_p[DIMENSION];
     double range_x[2];
     double range_y[2];
-//	double range_z[2];
+	double range_z[2];
     double normc[3];
     double dist;
     double rvsq=rv_P*rv_P;
@@ -317,10 +317,24 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     t_add = t_add + dt;
     n = floor (t_add/t_each);
 	t_add =t_add - n*t_each;
+	timeprops->t_add = t_add;
 
 	unsigned add_step;
     //add time step
     add_step = (unsigned) floor(t_total/t_each);
+
+    //We do not need range_z actually, for simple model with flat ground,
+    //the max for z is zero and the min for z is determined by number of ghost particle layers.
+    //double range_z[2];
+
+    //determine the rough range of eruption duck
+    range_x[0] = -rv_P;
+    range_x[1] = rv_P;
+    range_y[0] = -rv_P;
+    range_y[1] = rv_P;
+    range_z[1] = 0.; // not exact, should use ground height
+    range_z[0] = range_z[1]-(matprops->smoothing_length)*1.5*PARTICLE_DENSITY;
+
 
 	//create new particles: coordinate -> key -> new particle
 
@@ -394,8 +408,8 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 		    	TKey tmpkey(key);
 		    	Curr_buck->add_erupt_ghost_particle(tmpkey);
-                        P_table->add(key, Curr_part);
-                        num_particle++; //will be used to update THASHTAB
+                P_table->add(key, Curr_part);
+                num_particle++; //will be used to update THASHTAB
 		    	}
 
 		     }

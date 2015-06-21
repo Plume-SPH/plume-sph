@@ -55,6 +55,9 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
    bool find;
    unsigned keycheck[TKEYLENGTH] = {92878763, 2157710878, 0};
    unsigned keytemp[TKEYLENGTH] ;
+
+   bool search_bypos = false;
+   double range[2*DIMENSION] = {-5500., -5000., -5500., -5000, 6000, 6500};
 #endif
 //
 //  //before moment and energy update, update secondary variables for guest particles
@@ -73,6 +76,8 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
   {
 	  if (pi->need_neigh ())
 	  {
+		  for (i = 0; i < DIMENSION; i++)
+			  xi[i] = *(pi->get_coords() + i);
 
 #ifdef DEBUG
 		  if (do_search)
@@ -83,9 +88,13 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		      if (find_particle (keytemp, keycheck))
 			      cout << "The particle found!" << endl;
 		  }
+
+		  if (search_bypos)
+		  {
+			  if (find_particle_pos_range(xi, range))
+				  cout << "The particle found!" << endl;
+		  }
 #endif
-		  for (i = 0; i < DIMENSION; i++)
-			  xi[i] = *(pi->get_coords() + i);
 
 		  // expanded smoothing length for Momentum equation
 		  double hi = pi->get_smlen();

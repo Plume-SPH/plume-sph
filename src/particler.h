@@ -132,6 +132,7 @@ void add_new_erupt(
 		          THashTable *,  //particle hash table
 		          HashTable *,   //background mesh table
                   TimeProps *,   //Time propos
+				  MatProps *,    //matprops
                   double         //Time steps
                   );
 //set up initial air

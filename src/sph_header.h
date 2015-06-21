@@ -230,15 +230,15 @@ void air_prop (
 		double *  //particle mass
 		);
 
-//Function that used Petsc GESRM to solve system of equations to return mass of each particles
-void solve_mass(
-		double **, //matrix A      |
-		double *,  //vector b      | the function is get x by solving Ax=b;
-		double * , //solution x    |
-		int ,      //number of rows, matrices are decomposed by rows
-		int ,     //number of columns, each matrix has the same number of columns
-		int       //process id
-		);
+////Function that used Petsc GESRM to solve system of equations to return mass of each particles
+//void solve_mass(
+//		double **, //matrix A      |
+//		double *,  //vector b      | the function is get x by solving Ax=b;
+//		double * , //solution x    |
+//		int ,      //number of rows, matrices are decomposed by rows
+//		int ,     //number of columns, each matrix has the same number of columns
+//		int       //process id
+//		);
 
 //function determine mass for uniform density field discretized by uniformally distributed particles of only one layer.
 void Compute_mass (

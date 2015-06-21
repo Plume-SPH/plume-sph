@@ -74,6 +74,7 @@ main(int argc, char **argv)
   char prefix;
   bool check_part_tp =false;
   bool check_bypos = false;
+  bool find_large_density = false;
 #endif
 
   // allocate communcation array
@@ -94,12 +95,14 @@ main(int argc, char **argv)
     exit(1);
   }
 
-#ifdef DEBUG
-  particle_deb (myid);
-#endif
-
   //add air particles and put particles into bucket, bc_type is determined in this process
   add_air (P_table, BG_mesh, matprops, numprocs, myid);
+
+#ifdef DEBUG
+  if (check_part)
+	  // find certain particle and check its values
+      check_particle_bykey (P_table);
+#endif
 
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
@@ -123,15 +126,6 @@ main(int argc, char **argv)
 
   // search and update neighbors
   search_neighs (myid, P_table, BG_mesh);
-
-
-//#ifdef DEBUG
-//  // Write inital configuration
-//  prefix = 'b';
-//  if (output_part)
-//      write_particles_debug (myid, numprocs, P_table, BG_mesh,
-//                             partition_table, timeprops, format, &prefix);
-//#endif
 
   //initialized the mass of all particles
   setup_ini(myid,  P_table,  BG_mesh, timeprops, numprocs, my_comm);
@@ -268,12 +262,6 @@ main(int argc, char **argv)
       ierr += err2;
     }
 
-#ifdef DEBUG
-  if (check_part)
-	  // find certain particle and check its values
-      check_particle_bykey (P_table);
-#endif
-
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
@@ -283,11 +271,10 @@ main(int argc, char **argv)
     smooth_density(P_table);
 
 #ifdef DEBUG
-  if (check_part)
+  if (find_large_density)
 	  // find certain particle and check its values
-      check_particle_bykey (P_table);
+	  find_large_density_particle (P_table);
 #endif
-
 
 #ifdef MULTI_PROC
     // update guests on all procs
@@ -299,7 +286,7 @@ main(int argc, char **argv)
     adapt = update_pos (myid, P_table, BG_mesh, timeprops, &lost);
 
     // add new layers of particle in the duct
-    add_new_erupt(myid, P_table, BG_mesh, timeprops,  dt);
+    add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, dt);
 
 #ifdef MULTI_PROC
     // update guests as density has changed since last update

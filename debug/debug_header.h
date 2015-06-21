@@ -22,7 +22,6 @@
 #endif
 
 #include <cmath>
-#include <petsc.h>
 
 using namespace std;
 
@@ -76,7 +75,13 @@ bool find_particle (
 		double* //check
 		);
 
-/*find particle by the key
+/*find particle by the range of particle position
+ *
+ */
+bool find_particle_pos_range  (double* in, double* check);
+
+
+/*find bucket by the key
  * keyin is input key
  * keycheck is the key that is given and all keyin will be compared with keycheck
   */
@@ -87,6 +92,11 @@ bool find_bucket (
 
 //function to find particle with given key, will be useful in debugging.
 void check_particle_bykey (
+		THashTable *
+        );
+
+//find the particle with non-physical density
+void find_large_density_particle (
 		THashTable *
         );
 
