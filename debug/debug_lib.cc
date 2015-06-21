@@ -82,6 +82,20 @@ bool find_particle (double* in, double* check)
     return true;
 }
 
+/*find particle by the range of particle position
+ *
+ */
+bool find_particle_pos_range  (double *in, double* check)
+{
+	int i;
+	for (i=0; i<DIMENSION; i++)
+		if (!((in[i] >= check[2*i]) && (in[i]<= check[2*i+1])))
+			return false;
+
+    return true;
+}
+
+
 /*find bucket by the key
  * keyin is input particle key
  * keycheck is the key that is given and all keyin will be compared with keycheck

@@ -75,7 +75,13 @@ bool find_particle (
 		double* //check
 		);
 
-/*find particle by the key
+/*find particle by the range of particle position
+ *
+ */
+bool find_particle_pos_range  (double* in, double* check);
+
+
+/*find bucket by the key
  * keyin is input key
  * keycheck is the key that is given and all keyin will be compared with keycheck
   */

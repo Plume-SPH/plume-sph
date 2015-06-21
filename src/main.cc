@@ -74,7 +74,7 @@ main(int argc, char **argv)
   char prefix;
   bool check_part_tp =false;
   bool check_bypos = false;
-  bool find_large_density = true;
+  bool find_large_density = false;
 #endif
 
   // allocate communcation array

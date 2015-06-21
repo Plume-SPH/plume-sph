@@ -349,15 +349,10 @@ double art_vis ( double rhoab, double sndspdab, double rab[3], double vab[3], do
 
 	miuab = h * vrab / (rsqab + ata_P * h * h);
 
-	switch ( vrab >= 0 )
-	{
-	case 1:
+    if (vrab > 0)
 		vis = 0.;
-	    break;
-	case 0:
+    else if (vrab < 0)
 		vis = (beta_P * miuab - alf_P*sndspdab) * miuab / rhoab;
-	    break;
-	}
 
 	return vis;
 }
