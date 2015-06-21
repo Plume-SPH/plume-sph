@@ -67,11 +67,7 @@ main(int argc, char **argv)
 #endif
 
 #ifdef DEBUG
-  bool ng_sndspd = false;
-  bool check_sndspd = false;
   bool check_part = false;
-  bool output_part = false;
-  char prefix;
   bool check_part_tp =false;
   bool check_bypos = false;
   bool find_large_density = false;
@@ -143,14 +139,6 @@ main(int argc, char **argv)
 	  check_particle_bypos (P_table);
 #endif
 
-#ifdef DEBUG
-  // Write inital configuration
-  prefix = 'a';
-  if (output_part)
-      write_particles_debug (myid, numprocs, P_table, BG_mesh,
-                             partition_table, timeprops, format, &prefix);
-#endif
-
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -166,15 +154,6 @@ main(int argc, char **argv)
 
   // Initial repartition
   repartition (partition_table, P_table, BG_mesh, my_comm);
-
-#ifdef DEBUG
-    if (check_sndspd)
-    {
-        ng_sndspd = check_particles_sndspd (P_table);
-        if (ng_sndspd)
-  	      cout << "negative sound speed shows up before this point!" << endl;
-    }
-#endif
 
   // move data
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
