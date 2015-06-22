@@ -67,7 +67,7 @@ main(int argc, char **argv)
 #endif
 
 #ifdef DEBUG
-  bool check_part = true;
+  bool check_part = false;
   bool check_part_tp =false;
   bool check_bypos = false;
   bool find_large_density = false;
