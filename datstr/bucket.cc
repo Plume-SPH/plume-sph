@@ -135,7 +135,7 @@ Bucket::Bucket ()
   }
 
   for (i = 0; i < 4; i++)
-    poly[i] = 0.;
+    poly[i] = 0.2; //0.2 for poly means useless for this kind of buckets.
 
 
   for (i = 0; i < NEIGH_SIZE; i++)
@@ -280,7 +280,7 @@ Bucket::calc_intersection_ground (double * point, double * xnew) const
    * pl is only useful for the situation when bucket is "ground MIXED"
    * for any other situations, the default value for ploy is 0.2 (an useless value)
    * When the bucket is "ground MIXED", value of poly will depend on the ground
-   * If ground is flat, ploy[0-2]=0, poly[3]= bnd[4];
+   * If ground is flat, ploy[0-2]=0, poly[3]= bnd[4] ---that is incorrect! poly[3] = bnd[4] - mincrd[2], it is based on local coordinates;
    * If ground is not flat, at least one of poly[0-2] != 0;
    * */
   // hopefully it will stay in registers

@@ -181,7 +181,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     	crd_p[2] -= sml;
     }//end of while z
 
-    //mark bucket as erupt_source and put particles into the buckets
+    //mark bucket as erupt_source
     HTIterator * itr = new HTIterator (BG_mesh);
     Bucket * Curr_buck;
     double coordtmp[DIMENSION];
@@ -213,14 +213,17 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
      * 2) add newly generated erupt particles into hash table of particles.
      * 3) put newly generated particles into bucket
     */
+    vector < TKey > pnew;//particle key
     vector < TKey > plist;
     vector < TKey >::iterator p_itr;
     Particle *pj;
     itr->reset();
+    //go through all buckets
     while ((Curr_buck = (Bucket *) itr->next ()))
       if (Curr_buck->is_erupt ())
       {
     	  //check all particle in the erupt bucket and remove them when necessary!
+    	  pnew.clear();
     	  plist = Curr_buck->get_particle_list ();
     	  for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
     	  {
@@ -238,10 +241,30 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     			  for (k = 0; k<TKEYLENGTH; k++)
     			      tempkey[k] = pj->getKey().key[k];
 
-    			  P_table->remove(tempkey);
+    			  /*
+    			   * Here what I did is only remove them from P_table and bucket particle list!
+    			   * But the particle in other particles neighbour list is not deleted!
+    			   * And the particle as guest on other processes is not removed!
+    			   * And the particle, if it has image, the image should also be removed!
+    			   */
+    			  P_table->remove(tempkey); //remove from the hashtable
+
     		  }
+    		  else
+    			  pnew.push_back(*p_itr);//remove from the from particle list!
     	  }
 
+    	  //update particle list
+    	  Curr_buck->put_new_plist (pnew);
+    	  Curr_buck->update_particles();
+
+    	  //go through all temporarily added particles and added it into
+
+    	  /*
+    	  * Here what I did is only remove them from P_table and bucket particle list!
+    	  * But the particle in other particles neighbour list is not deleted!
+    	  * And the particle as guest on other processes is not removed!
+    	  */
   	      for (i = 0; i < DIMENSION; i++)
   	      {
   	          mincrd[i] = *(Curr_buck->get_mincrd () + i);
@@ -260,7 +283,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
     	 	       TKey tmpkey(key);
     	 	       Curr_buck->add_erupt_ghost_particle(tmpkey);
-    	    	       P_table->add(key, Curr_part);
+    	    	   P_table->add(key, Curr_part);
     	 	   }
     	  }
 

@@ -67,7 +67,7 @@ main(int argc, char **argv)
 #endif
 
 #ifdef DEBUG
-  bool check_part = false;
+  bool check_part = true;
   bool check_part_tp =false;
   bool check_bypos = false;
   bool find_large_density = false;
@@ -103,7 +103,7 @@ main(int argc, char **argv)
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
-  // sync data
+  // sync data ---> actually, move data should not appear twice---> need new design here!
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
 #ifdef MULTI_PROC
@@ -126,6 +126,12 @@ main(int argc, char **argv)
   //initialized the mass of all particles
   setup_ini(myid,  P_table,  BG_mesh, timeprops, numprocs, my_comm);
 
+#ifdef DEBUG
+  if (check_part)
+	  // find certain particle and check its values
+      check_particle_bykey (P_table);
+#endif
+
   //Adding eruption boundary condition
   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, numprocs);
 
@@ -142,7 +148,7 @@ main(int argc, char **argv)
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
-  // sync data again
+  // sync data
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
 #ifdef MULTI_PROC
@@ -157,6 +163,15 @@ main(int argc, char **argv)
 
   // move data
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+#endif
+
+  // search and update neighbors ---> can I use a send neighbor here? --> not, I do not think it is necessary!
+  search_neighs (myid, P_table, BG_mesh);
+
+#ifdef DEBUG
+  if (check_part)
+	  // find certain particle and check its values
+      check_particle_bykey (P_table);
 #endif
 
   // search mirror imgaes of ghost particles into boundary

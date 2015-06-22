@@ -30,7 +30,7 @@ const int DIRCHLET=1;
 const int NEUMANN =2;
 
 // Ghost particles
-const int NUM_GHOST_ROWS=12;//Was increased from 6 to 12 so that a reliable static pressure BC can be imposed.
+//const int NUM_GHOST_ROWS=12;//Was increased from 6 to 12 so that a reliable static pressure BC can be imposed.
 const double EXT_DOM_COF = 1.5;//Coefficient that used to extend the domain to have some buckets for ghost particles.
 // Number of particles per cell per dimension
 const int PARTICLE_DENSITY=6;
