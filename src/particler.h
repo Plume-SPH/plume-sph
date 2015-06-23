@@ -99,9 +99,10 @@ double timestep(
 //! Update particle positions and their relationship with background Mesh
 int update_pos(
                int ,         //! my proc id
-               THashTable *,  //! HashTable of SPH particles
+               THashTable *, //! HashTable of SPH particles
                HashTable *,  //! HashTable of cells of background mesh
                TimeProps *,  //! Time properties struct
+               MatProps * ,  //! Mat properties struct
                int *         //! Pointer to number of particles removed
               );
 

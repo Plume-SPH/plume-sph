@@ -138,4 +138,35 @@ void find_highest_z (
 		);
 
 
+//overloading file for artificial viscosity
+double art_vis_2d (
+		// rhoab
+		double ,
+		// sndspdab
+		double ,
+		// rab
+		double [3],
+		//vab
+		double [3],
+		//rsqab
+		double ,
+		//h
+		double
+		);
+
+
+/*
+ * function to debug the artificial viscosity code:
+ */
+void debug_vis ();
+
+
+/*
+ * function that used to check neighors of certain particles
+ */
+void check_neigh_part(
+		THashTable *// P_table
+		);
+
+
 #endif /* DEBUG_HEADER_H */

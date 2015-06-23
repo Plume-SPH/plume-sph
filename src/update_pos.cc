@@ -26,7 +26,7 @@ using namespace std;
 
 int
 update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
-            TimeProps * timeprops, int *lost)
+            TimeProps * timeprops, MatProps * matprops, int *lost)
 {
 
   int dir[DIMENSION];
@@ -34,6 +34,8 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   double mincrd[DIMENSION], maxcrd[DIMENSION];
   double smooth_vel[DIMENSION], vj[DIMENSION], wnorm;
   double dx[DIMENSION], s[DIMENSION], junk[DIMENSION];
+
+  double sml_of_phase2 = matprops->smoothing_length;
 
   int i, j;
   int adapt = 0;
@@ -89,9 +91,10 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
       p->put_coords(pos);
 
       //Change ghost to real; change erupt to false
-      if ( (p->is_erupt_ghost()) && (pos[2]>=0) )//need to make it more general!
+      if ( (p->is_erupt_ghost()) && (pos[2]>=Lz_P[0]) )//need to make it more general!
       {
     	  p->erupt_turn_real();
+    	  p->put_smlen(sml_of_phase2);
       }
     }//end of go through all particles
 

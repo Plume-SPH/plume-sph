@@ -53,11 +53,15 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 #ifdef DEBUG
    bool do_search = false;
    bool find;
-   unsigned keycheck[TKEYLENGTH] = {92878763, 2157710878, 0};
+   unsigned keycheck[TKEYLENGTH] = {69562537, 292385725, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
    bool search_bypos = false;
    double range[2*DIMENSION] = {-5500., -5000., -5500., -5000, 6000, 6500};
+
+   bool check_vis = false;
+   double vis_2d;
+   int phasej;
 #endif
 //
 //  //before moment and energy update, update secondary variables for guest particles
@@ -165,6 +169,14 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          double sndspdab = 0.5 * ((pi->get_sound_speed()) + (pj->get_sound_speed()));
 		          vis= art_vis (rhoab, sndspdab, dx, velij, dist_sq, hi);
 
+#ifdef DEBUG
+		          if (check_vis)
+		          {
+		        	  vis_2d = art_vis_2d (rhoab, sndspdab, &(dx[1]), &(velij[1]), dist_sq, hi);
+		        	  phasej = pj->which_phase();
+		          }
+#endif
+
 		          //pre-computing
 		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
 		          // pre-compute weight function derivatives
@@ -178,7 +190,6 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          for (k = 0; k < DIMENSION; k++)
 		              deltae += 0.5* (mpvsqij* dwdx[k])* velij[k];
 		          rhs_e += deltae;
-
 		      }
 		  } // end loop over neighs
 

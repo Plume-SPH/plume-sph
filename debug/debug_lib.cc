@@ -191,7 +191,7 @@ void check_particle_bypos (THashTable * P_table)
 		  	{
 		  		bctp = p_curr->get_bc_type();
 		  		cout << "The particle found!" << endl;
-
+		  		cout << "done!" << endl;
 		  	}
 		 }
 	 }
@@ -469,3 +469,148 @@ write_particles_debug(int myid, int numprocs,
   return;
 }
 
+/*
+ * function to debug the artificial viscosity code:
+ */
+void debug_vis ()
+{
+	const int DIMENSION2 = 2;
+	const int nneigh=2;
+	double rhoa = 5.83839246693786;
+	double rhob[nneigh] = {4.6913, 8.7833};
+	double Xa = 100.548573323395;
+	double Xb[nneigh]= {69.3988, 69.3988};
+	double Ya = 100.309592291433;
+	double Yb[nneigh]= {146.056669986189, 7.25897673849247};
+	double Ua = 11.3988024296422;
+	double Ub[nneigh]= {8.40225864033622, 12.4756819006781};
+	double Va = 23.9486170594628;
+	double Vb[nneigh]= {164.466807083100, 140.394739074049};
+	double CSa = 257.577586032606;
+	double CSb[nneigh]= {732.888508148973, 715.288482521613};
+
+	double rhoab;
+	double sndspdab;
+	double rab [DIMENSION2];
+	double vab [DIMENSION2];
+	double dist_sq;
+	double h=107.675357293927;
+    double vis;
+
+	int i, j;
+
+	for (i = 0; i < nneigh; i++)
+	{
+       rhoab =0.5*(rhoa + rhob[i]);
+       sndspdab = 0.5 * (CSa + CSb[i]);
+
+	   rab[0] = Xa-Xb[i];
+	   rab[1] = Ya-Yb[i];
+
+	   vab[0] = Ua-Ub[i];
+	   vab[1] = Va-Vb[i];
+
+	   dist_sq = 0;
+       for (j = 0; j<DIMENSION2; j++)
+    	   dist_sq += (rab[j]*rab[j]);
+
+       vis= art_vis_2d (rhoab, sndspdab, rab, vab, dist_sq, h);
+       cout << "artificial viscosity is :" << vis << endl;
+	}
+}
+
+//overloading file for artificial viscosity
+double art_vis_2d ( double rhoab, double sndspdab, double rab[2], double vab[2], double rsqab, double h)
+{
+	const int DIMENSION2 = 2;
+	int    k;
+	double miuab;
+	double vrab = 0.;
+	double vis = 0.;
+
+	for (k = 0; k < DIMENSION2; k++)
+	     vrab += (rab[k] * vab[k]);
+
+	miuab = h * vrab / (rsqab + ata_P * h * h);
+
+    if (vrab > 0)
+		vis = 0.;
+    else if (vrab < 0)
+		vis = (beta_P * miuab - alf_P*sndspdab) * miuab / rhoab;
+
+	return vis;
+}
+
+/*
+ * function that used to check neighors of certain particles
+ */
+void check_neigh_part(THashTable * P_table)
+{
+
+    bool do_search = true;
+    bool find;
+    unsigned keycheck1[TKEYLENGTH] = {69674717, 3383906357, 0};
+    unsigned keycheck2[TKEYLENGTH] = {69562537, 292385725, 0};
+    unsigned keytemp[TKEYLENGTH] ;
+
+    int i;
+	THTIterator *itr = new THTIterator(P_table);
+	Particle *p_curr = NULL;
+    int phase;
+    int num_diff_phase, num_same_phase;
+	while ((p_curr = (Particle *) itr->next()))
+	{
+		if (do_search)
+		{
+		  	for (i = 0; i < TKEYLENGTH; i++)
+		  		keytemp[i] = p_curr->getKey ().key[i];
+
+		  	if (find_particle (keytemp, keycheck2))
+		  	{
+		  		 // list of neighbors
+		  		vector < TKey > pneighs = p_curr->get_neighs();
+		  		vector < TKey >::iterator p_itr;
+		  		phase = p_curr->which_phase();
+		  		num_diff_phase = 0;
+		  		num_same_phase = 0;
+		  		for (p_itr = pneighs.begin(); p_itr != pneighs.end(); p_itr++)
+		  		{
+
+		  			Particle *pj = (Particle *) P_table->lookup(*p_itr);
+		  			assert (pj);
+
+		  			if (phase == pj->which_phase())
+		  				num_same_phase ++;
+		  			else
+		  				num_diff_phase ++;
+		  		}
+		  		cout << "----------particle of phase2-----:" << endl;
+		  		cout << "number of same phase: " << num_same_phase << "number of different phase: " << num_diff_phase<< endl;
+		  	}
+
+		  	if (find_particle (keytemp, keycheck1))
+		  	{
+		  		 // list of neighbors
+		  		vector < TKey > pneighs = p_curr->get_neighs();
+		  		vector < TKey >::iterator p_itr;
+		  		phase = p_curr->which_phase();
+		  		num_diff_phase = 0;
+		  		num_same_phase = 0;
+		  		for (p_itr = pneighs.begin(); p_itr != pneighs.end(); p_itr++)
+		  		{
+
+		  			Particle *pj = (Particle *) P_table->lookup(*p_itr);
+		  			assert (pj);
+
+		  			if (phase == pj->which_phase())
+		  				num_same_phase ++;
+		  			else
+		  				num_diff_phase ++;
+		  		}
+		  		cout << "----------particle of phase1-----:" << endl;
+		  		cout << "number of same phase: " << num_same_phase << "number of different phase: " << num_diff_phase<< endl;
+		  	}
+		 }
+	 }//end of go through all particles
+
+}

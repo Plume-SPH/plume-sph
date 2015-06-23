@@ -72,7 +72,9 @@ main(int argc, char **argv)
   bool check_bypos = false;
   bool find_large_density = false;
   bool search_byphase = false;
-  bool find_maxz = true;
+  bool find_maxz = false;
+  bool vis_flag = false;
+  bool check_neigh =false;
 #endif
 
   // allocate communcation array
@@ -100,6 +102,10 @@ main(int argc, char **argv)
   if (check_part)
 	  // find certain particle and check its values
       check_particle_bykey (P_table);
+
+  if (vis_flag)
+	  // debug artificial vis
+	  debug_vis ();
 #endif
 
   // scan mesh and mark buckets active/inactive
@@ -169,6 +175,12 @@ main(int argc, char **argv)
 
   // search and update neighbors ---> can I use a send neighbor here? --> not, I do not think it is necessary!
   search_neighs (myid, P_table, BG_mesh);
+
+#ifdef DEBUG
+  if (check_neigh)
+	  // check neighbors of particle for different phases
+	  check_neigh_part (P_table);
+#endif
 
 #ifdef DEBUG
   if (check_part)
@@ -242,6 +254,11 @@ main(int argc, char **argv)
 
     // search and update neighbors
     search_neighs (myid, P_table, BG_mesh);
+#ifdef DEBUG
+  if (check_neigh)
+	  // check neighbors of particle for different phases
+	  check_neigh_part (P_table);
+#endif
 
 #ifdef MULTI_PROC
     // ghost need to be updated only before updating momentum
@@ -279,7 +296,7 @@ main(int argc, char **argv)
 
 
     // update particle positions
-    adapt = update_pos (myid, P_table, BG_mesh, timeprops, &lost);
+    adapt = update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);
 
 #ifdef DEBUG
   if (search_byphase)
