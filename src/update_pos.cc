@@ -47,8 +47,8 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 #ifdef DEBUG
    bool do_search = false;
    bool find;
-   bool check_contain = true;
-   unsigned keycheck[TKEYLENGTH] =  {214589933, 1538453516, 0};
+   bool check_contain = false;
+   unsigned keycheck[TKEYLENGTH] = {69562537, 292385725, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
 
@@ -63,17 +63,6 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
     * will move to different partitions */
     if (p->is_real () || p->is_erupt_ghost())
     {
-      // velocity and coordinates
-      for (i = 0; i < DIMENSION; i++)
-      {
-        vel[i] = *(p->get_vel() + i);
-        coord[i] = *(p->get_coords() + i);
-      }
-
-      // update particle positions
-      for (i = 0; i < DIMENSION; i++)
-        pos[i] = coord[i] + dt * vel[i];
-      p->put_coords(pos);
 
 #ifdef DEBUG
 		if (do_search)
@@ -85,6 +74,19 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 			    cout << "The particle found!" << endl;
 		}
 #endif
+
+      // velocity and coordinates
+      for (i = 0; i < DIMENSION; i++)
+      {
+         vel[i] = *(p->get_vel() + i);
+         coord[i] = *(p->get_coords() + i);
+      }
+
+      // update particle positions
+      for (i = 0; i < DIMENSION; i++)
+          pos[i] = coord[i] + dt*vel[i];
+
+      p->put_coords(pos);
 
       //Change ghost to real; change erupt to false
       if ( (p->is_erupt_ghost()) && (pos[2]>=0) )//need to make it more general!

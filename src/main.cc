@@ -71,6 +71,8 @@ main(int argc, char **argv)
   bool check_part_tp =false;
   bool check_bypos = false;
   bool find_large_density = false;
+  bool search_byphase = false;
+  bool find_maxz = true;
 #endif
 
   // allocate communcation array
@@ -278,6 +280,18 @@ main(int argc, char **argv)
 
     // update particle positions
     adapt = update_pos (myid, P_table, BG_mesh, timeprops, &lost);
+
+#ifdef DEBUG
+  if (search_byphase)
+	  // find certain particle and check its values
+	  find_particle_by_phase (P_table);
+#endif
+
+#ifdef DEBUG
+  if (find_maxz)
+	  // find certain particle and check its values
+	  find_highest_z (P_table);
+#endif
 
     // add new layers of particle in the duct
     add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, dt);

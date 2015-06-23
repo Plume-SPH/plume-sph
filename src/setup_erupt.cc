@@ -261,7 +261,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     	  //go through all temporarily added particles and added it into
 
     	  /*
-    	  * Here what I did is only remove them from P_table and bucket particle list!
+    	  * Here what I did is only add them to P_table and bucket particle list!
     	  * But the particle in other particles neighbour list is not deleted!
     	  * And the particle as guest on other processes is not removed!
     	  */

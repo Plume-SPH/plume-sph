@@ -46,17 +46,6 @@ particle_deb (
 		//myid
 		int
 		);
-//
-///*find particle by the key
-// * keyin is input particle key
-// * keycheck is the key that is given and all keyin will be compared with keycheck
-// * pi is the pointer points to the particle corresponding to keyin
-// */
-//Particle* find_particle (
-//		unsigned*, //keyin
-//		unsigned *, //keycheck
-//		Particle*  //pi
-//		);
 
 /*find particle by the key
  * keyin is input particle key
@@ -133,5 +122,20 @@ void check_particle_all_type (
 void check_particle_bypos (
 		THashTable * //P_table
 		);
+
+/*find all particle of given pahse
+ * This will be used to find particle of phase 2 --> get its key and then track the movement of that particle
+ */
+void find_particle_by_phase (
+		THashTable *  //P_table
+        );
+
+/*
+ * Find the highest position of all phase2 particles
+ */
+void find_highest_z (
+		THashTable * //P_table
+		);
+
 
 #endif /* DEBUG_HEADER_H */

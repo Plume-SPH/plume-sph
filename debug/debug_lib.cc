@@ -226,6 +226,65 @@ void find_large_density_particle (THashTable * P_table)
 
 }
 
+/*find all particle of given pahse
+ * This will be used to find particle of phase 2 ----> get its key and then track the movement of that particle
+ */
+void find_particle_by_phase (THashTable * P_table)
+{
+
+    bool do_search = true;
+    int phase_need = 2;
+    int phase;
+
+    int i;
+	THTIterator *itr = new THTIterator(P_table);
+	Particle *p_curr = NULL;
+
+	while ((p_curr = (Particle *) itr->next()))
+	{
+		if (do_search && p_curr->is_real()) //only look for real particles
+		{
+		  	phase=p_curr->which_phase();
+
+		  	if (phase ==phase_need)
+		  	{
+		  		cout << "The particle found!" << endl;
+		  	}
+		 }
+	 }//end of go through all particles
+}
+
+/*
+ * Find the highest position of all phase2 particles
+ */
+void find_highest_z (THashTable * P_table)
+{
+
+    bool do_search = true;
+    int phase_need = 2;
+    double zmax=0., z;
+
+    int i;
+	THTIterator *itr = new THTIterator(P_table);
+	Particle *p_curr = NULL;
+	Particle *p_max = NULL;
+
+	if (do_search )
+	   while ((p_curr = (Particle *) itr->next()))
+		   if ((p_curr->is_real()) && (p_curr->which_phase()==phase_need))
+	       {
+		      z = *(p_curr->get_coords()+2);
+
+		  	  if (z > zmax)
+		  	  {
+		  		 zmax = z;
+		  		 p_max = p_curr;
+		  	  }
+	        }//end of go through all particles
+
+	cout << "maximum height of phase2 particle is: " << zmax << endl;
+	cout << "Up speed of that particle is: " <<  *(p_max->get_vel()+2) <<endl;
+}
 
 //output certain type of particle
 void
