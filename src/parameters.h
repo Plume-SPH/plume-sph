@@ -71,7 +71,7 @@ const double Pos_v_P[DIMENSION]={0., 0., 0. };  /*position of vent at the origin
 const int num_erupt = 2; /*this parameter should be used to determine total number */
 
 const int num_erupt_perlayer = 10;
-const int num_erupt_particles = 2000; //number of particle in the initial erupt duct
+const int num_erupt_particles = 1400; //number of particle in the initial erupt duct
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity

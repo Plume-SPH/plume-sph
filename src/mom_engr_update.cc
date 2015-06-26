@@ -42,7 +42,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
   Particle *pi=NULL;
 
   // three point gauss-quadrature points
-  double gravity[3] = { 0., 0., -9.81};
+  double gravity[3] = { 0., 0., -g_P};
 
   // time-step
   double dt = timeprops->dtime;
