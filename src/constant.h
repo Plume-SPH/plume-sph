@@ -16,7 +16,7 @@ const int TKEYLENGTH=KEYLENGTH+1;
 const int NO_OF_EQNS=DIMENSION+2;/*For my current model which assumed immediate thermal and dynamic equilibrium!*/
 const int DIMSQRD=9;
 const int NEIGH_SIZE=27;
-const int MAX_PARTICLES_PER_BUCKET=3000;
+const int MAX_PARTICLES_PER_BUCKET=3500;
 const int MAX_ADD_STEPS = 1000; //maximum number of steps for eruption material adding
 
 // Directions

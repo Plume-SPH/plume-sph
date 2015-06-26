@@ -727,6 +727,12 @@ exchange_indmap (int nump, int myid, int * my_comm,
     return;
 }
 
+// function that used to determine the velocity based on a parabolic velocity profile
+
+double parabolic_vel(double R, double rsq, double umax)
+{
+	return umax*(1-(rsq/(R*R)));
+}
 
 #ifdef DEBUG
       //function to check where does the negative sound speed comes from

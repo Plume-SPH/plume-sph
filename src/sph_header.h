@@ -309,6 +309,14 @@ exchange_indmap (
 		int *
 		);
 
+// function that used to determine the velocity based on a parabolic velocity profile
+
+double parabolic_vel(
+		double , //R radius of the pipe
+		double , //rsq square of distance from given point to center
+		double   //umax maximum velocity
+		);
+
 #ifdef DEBUG
       //function to check where does the negative sound speed comes from
       bool check_particles_sndspd (

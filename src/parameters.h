@@ -66,12 +66,12 @@ const double Mv_P=3.9811e+07;  /*mass flow rate, it is not directly used in simu
 
 const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
 
-const double Pos_v_P={0};  /*position of vent at the origin*/
+const double Pos_v_P[DIMENSION]={0., 0., 0. };  /*position of vent at the origin*/
 
 const int num_erupt = 2; /*this parameter should be used to determine total number */
 
 const int num_erupt_perlayer = 10;
-const int num_erupt_particles = 1400; //number of particle in the initial erupt duct
+const int num_erupt_particles = 2000; //number of particle in the initial erupt duct
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
