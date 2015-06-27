@@ -69,12 +69,24 @@ int Read_Grid (
                int *           //! array of flags, for cummnication with other procs
               );
 
-//! Search neighbors for their proximity
+/*
+ * First: update smooth length;
+ * Second: search for neighbors;
+ * This will be called in the main loop of SPH update in time;
+ */
 int  search_neighs(
                    int myid   , //! My processor ID
                    THashTable *, //! HashTable of SPH partilces
                    HashTable *  //! HashTable of cells of background mesh
                   );
+
+// update neighbor information without updating smooth length --> Will be called at the time of particle set up;
+int  search_neighs_consth(
+                         int myid   , //! My processor ID
+                         THashTable *, //! HashTable of SPH partilces
+                         HashTable *  //! HashTable of cells of background mesh
+                         );
+
 //function that used to set up initial atmosphere and determine the mass of air particles
 int setup_ini(
 		int ,          //myid

@@ -129,7 +129,7 @@ main(int argc, char **argv)
 #endif
 
   // search and update neighbors
-  search_neighs (myid, P_table, BG_mesh);
+  search_neighs_consth (myid, P_table, BG_mesh);
 
   //initialized the mass of all particles
   setup_ini(myid,  P_table,  BG_mesh, timeprops, numprocs, my_comm);
@@ -174,7 +174,7 @@ main(int argc, char **argv)
 #endif
 
   // search and update neighbors ---> can I use a send neighbor here? --> not, I do not think it is necessary!
-  search_neighs (myid, P_table, BG_mesh);
+  search_neighs_consth (myid, P_table, BG_mesh);
 
 #ifdef DEBUG
   if (check_neigh)
