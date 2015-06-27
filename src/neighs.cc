@@ -23,8 +23,9 @@ using namespace std;
 #include "parameters.h"
 
 /*
- * First: update smooth length;
- * Second: search for neighbors;
+ * First: search for neighbors --->to guarantee that smooth_update is using the most recent information;
+ * Second: update smooth length;
+ * Third: search for neighbors;
  * This will be called in the main loop of SPH update in time;
  */
 int
@@ -42,8 +43,82 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
   double wght;
   THTIterator *itr2 = new THTIterator(P_table);
 
-//  vector < TKey > pneighs;//particle key
-//  vector < TKey >::iterator p_itr = NULL;
+  double hi;
+  Key *neighbors;//bucket key
+  // create a Hash Table iterators instance
+  HTIterator *igrd = new HTIterator(BG_mesh);
+  // iterate over the bucket table
+  Bucket *curr_bucket = NULL;
+
+  while ((curr_bucket = (Bucket *) igrd->next()))
+  {
+    assert(curr_bucket);
+    if (!curr_bucket->is_guest() && (curr_bucket->get_plist().size() > 0))
+    {
+      vector < TKey > plist = curr_bucket->get_plist();
+      vector < TKey >::iterator itr;
+      for (itr = plist.begin(); itr != plist.end(); itr++)
+      {
+        pi = (Particle *) P_table->lookup(*itr);
+        assert(pi);
+
+        // 3*sqrt(2) < 4.25
+        hi = 4.25 * pi->get_smlen();
+        for (int k = 0; k < DIMENSION; k++)
+          xi[k] = *(pi->get_coords() + k);
+
+        // all particles in current bucket are neighbors
+		vector < TKey > pneighs = pi->get_neighs();
+		vector < TKey >::iterator p_itr;
+        pneighs.clear();
+        pneighs.insert(pneighs.begin(), plist.begin(), plist.end());
+
+        // search the neighboring buckets for neighbors
+        neighbors = curr_bucket->get_neighbors();
+        const int *neigh_proc = curr_bucket->get_neigh_proc();
+
+        for (i = 0; i < NEIGH_SIZE; i++)
+          if (neigh_proc[i] > -1)
+          {
+            Bucket * neigh_buck = (Bucket *) BG_mesh->lookup (neighbors[i]);
+
+            // if neighbor is not found and it belongs to
+            // different process, it is not needed as it
+            // doesn't have any particles.
+            if ((! neigh_buck) && (neigh_proc[i] != myid))
+              continue;
+            else
+              assert(neigh_buck);
+
+            vector < TKey > plist2 = neigh_buck->get_plist();
+            vector < TKey >::iterator it2;
+            for (it2 = plist2.begin(); it2 != plist2.end(); it2++)
+            {
+              pj = (Particle *) P_table->lookup(*it2);
+              if ( ! pj )
+              {
+                fprintf (stderr, "Particle: {%u, %u, %u} missing on %d.\n",
+                  it2->key[0], it2->key[1], it2->key[2],myid);
+                fflush (stderr);
+              }
+              assert(pj);
+
+              // get difference of position vectors between i,j
+              double ds[DIMENSION];
+              for (j = 0; j < DIMENSION; j++)
+                ds[j] = xi[j] - *(pj->get_coords() + j);
+
+              // if within support, add to neigh list
+              if (in_support(ds, hi))
+                pneighs.push_back(*it2);
+            }
+          }
+        pi->put_neighs(pneighs);
+      }
+
+    }// end of if :bucket is not guest and has particles
+  } //end of while
+
 
   /*
    * before searching for neighbors, adjust smooth length
@@ -105,20 +180,7 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
  	  }
    }
 
-//  vector < TKey > plist;
-//  vector < TKey >::iterator itr = NULL;
-
-//  vector < TKey > plist2;
-//  vector < TKey >::iterator it2 = NULL;
-
-  double hi;
-  Key *neighbors;//bucket key
-  // create a Hash Table iterators instance
-  HTIterator *igrd = new HTIterator(BG_mesh);
-
-  // iterate over the bucket table
-  Bucket *curr_bucket = NULL;
-
+  igrd->reset();
   while ((curr_bucket = (Bucket *) igrd->next()))
   {
     assert(curr_bucket);
@@ -208,15 +270,6 @@ search_neighs_consth (int myid, THashTable * P_table, HashTable * BG_mesh)
   Particle * pj = NULL ;
   double dx[DIMENSION], xi[DIMENSION], si[DIMENSION];
   double wght;
-
-//  vector < TKey > pneighs;//particle key
-//  vector < TKey >::iterator p_itr = NULL;
-//
-//  vector < TKey > plist;
-//  vector < TKey >::iterator itr = NULL;
-//
-//  vector < TKey > plist2;
-//  vector < TKey >::iterator it2 = NULL;
 
   double hi;
   Key *neighbors;//bucket key

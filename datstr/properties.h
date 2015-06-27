@@ -47,7 +47,7 @@ struct TimeProps
   //! It is essentially the time from previous adding of new layers
   double t_add;
 
-  //! non-dimensional t_each, the time that one erupt ghost particle need to move through a length of h (smooth length)
+  //! non-dimensional t_each, the time that one erupt ghost particle need to move through a length of h (smooth length)--->computed based on average velocity
   double t_each;
 
   //! the z coordinate of the lowest layer of erupt ghost particles.
@@ -139,6 +139,14 @@ struct TimeProps
   {
 	  return t_add;
   }
+
+//  //get dimensional dt
+//  double get_dt()
+//  {
+//	  return (dtime * TIME_SCALE);
+//  }
+
+
 //time for adding a new layer, t_each = dist/vel;
   //where dist is the distance between eahch layer
   //and vel is the eruption velocity

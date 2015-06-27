@@ -89,15 +89,15 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
        * all particles move with the average upward velocity
        * but the velocity of each particle as a primitive variable is obtained from a parabolic profile
        */
-      if (p->is_real ())
+//      if (p->is_real ())
          for (i = 0; i < DIMENSION; i++)
              pos[i] = coord[i] + dt*vel[i];
-      else
-      {
-    	  pos[0] = coord[0];
-    	  pos[1] = coord[1];
-    	  pos[2] = coord[2] + dt*Vv0_P;
-      }
+//      else
+//      {
+//    	  pos[0] = coord[0];
+//    	  pos[1] = coord[1];
+//    	  pos[2] = coord[2] + dt*Vv0_P;
+//      }
 
       p->put_coords(pos);
 

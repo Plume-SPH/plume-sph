@@ -401,6 +401,10 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double mss = timeprops->mass;
     double cof = timeprops->cof;
 
+    /*
+     * t_add, t_each is based on average velocity
+     * If I wanna to use parabolic profile, something need to be changed!
+     */
     t_add = timeprops-> get_tadd();
     t_each = timeprops-> get_teach();
 
@@ -411,11 +415,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 	unsigned add_step;
     //add time step
-    add_step = (unsigned) floor(t_total/t_each);
-
-    //We do not need range_z actually, for simple model with flat ground,
-    //the max for z is zero and the min for z is determined by number of ghost particle layers.
-    //double range_z[2];
+    add_step = (unsigned) floor(2*t_total/t_each); //t_each is based on average velocity, in my code, the parabolic profile is assumed, umax = 2* uavg;
 
     //determine the rough range of eruption duck
     range_x[0] = -rv_P;
@@ -425,25 +425,30 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     range_z[1] = 0.; // not exact, should use ground height
     range_z[0] = range_z[1]-(matprops->smoothing_length)*1.5*PARTICLE_DENSITY;
 
+//    double dt = timeprops-> get_dt();
+    t_total -= dt; //get t_total of the previous time step
 
 	//create new particles: coordinate -> key -> new particle
-
-    //crd_p[2]= bot + t_add * Vv0_P;
-	for (i=0; i<n; i++)
-	{
-		crd_p[2] = bot + (t_add + i * t_each) * Vv0_P;
-    	crd_p[0]=Pos_v_P[0]+sml2;
-    	while ( crd_p[0] <= range_x[1] )
+    //x + direction
+    crd_p[0]=Pos_v_P[0]+sml2;
+    while ( crd_p[0] <= range_x[1] )
+    {
+    	//y+ direction
+    	crd_p[1]=Pos_v_P[1]+sml2;
+    	while ( crd_p[1] <= range_y[1])
     	{
-    		//y+ direction
-    		crd_p[1]=Pos_v_P[1]+sml2;
-    		while ( crd_p[1] <= range_y[1])
+    		dist = 0;
+    		for (j=0; j<2; j++)
+    		    dist += (crd_p[j]*crd_p[j]);
+    		if (dist <= rvsq) // if particle is in the duct
     		{
-    			dist = 0;
-    			for (j=0; j<2; j++)
-    				dist += (crd_p[j]*crd_p[j]);
-    			if (dist <= rvsq) // if particle is in the duct
-    			{
+    		   vel = parabolic_vel (rv_P, dist, umax);
+    		   t_each = sml/vel;
+    		   t_add = fmod (t_total, t_each) + dt;
+    		   n = floor(t_add/t_each);
+    		   for (i=0; i<n; i++)
+    		   {
+    			    crd_p[2] = bot + (t_add + i * t_each) * vel;
     			    for (int ii = 0; ii < DIMENSION; ii++)
     				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
@@ -454,61 +459,32 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 		    				    	 	"twice on same location.\n");
 		    			exit(1);
 		    		}
-    			    vel = parabolic_vel (rv_P, dist, umax);
     			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
     			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
     			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
     			    // add to hash-table
     			    P_temp->add(key, pnew);
-    			}//end of if
-    			crd_p[1] += sml;
-    		}//end of while y+
+    		    }//end of for
+    		}
+    		crd_p[1] += sml;
+    	}//end of while y+
 
-    		//y- direction
-    		crd_p[1]=Pos_v_P[1]-sml2;
-    		while ( crd_p[1] >= range_y[0])
-    		{
-    			dist = 0;
-    			for (j=0; j<2; j++)
-    				dist += (crd_p[j]*crd_p[j]);
-    			if (dist <= rvsq) // if particle is in the duct
-    			{
-    			    for (int ii = 0; ii < DIMENSION; ii++)
-    				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
-
-    			    THSFC3d (normc, add_step, &tkeylen, key);
-		    		if (P_table->lookup(key))
-		    		{
-		    			fprintf(stderr, "ERROR: Trying to add particle "
-		    				    	 	"twice on same location.\n");
-		    			exit(1);
-		    		}
-    			    vel = parabolic_vel (rv_P, dist, umax);
-    			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
-    			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
-    			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
-    			    // add to hash-table
-    			    P_temp->add(key, pnew);
-    			}//end of if
-    			crd_p[1] -= sml;
-    		}//end of while y-
-
-    		crd_p[0] += sml;
-    	}//end of while x+
-
-    	//x- direction
-    	crd_p[0]=Pos_v_P[0]-sml2;
-    	while ( crd_p[0] >= range_x[0] )
+    	//y- direction
+    	crd_p[1]=Pos_v_P[1]-sml2;
+    	while ( crd_p[1] >= range_y[0])
     	{
-    		//y+ direction
-    		crd_p[1]=Pos_v_P[1]+sml2;
-    		while ( crd_p[1] <= range_y[1])
+    		dist = 0;
+    		for (j=0; j<2; j++)
+    		    dist += (crd_p[j]*crd_p[j]);
+    		if (dist <= rvsq) // if particle is in the duct
     		{
-    			dist = 0;
-    			for (j=0; j<2; j++)
-    				dist += (crd_p[j]*crd_p[j]);
-    			if (dist <= rvsq) // if particle is in the duct
-    			{
+    		   vel = parabolic_vel (rv_P, dist, umax);
+    		   t_each = sml/vel;
+    		   t_add = fmod (t_total, t_each) + dt;
+    		   n = floor(t_add/t_each);
+    		   for (i=0; i<n; i++)
+    		   {
+    			    crd_p[2] = bot + (t_add + i * t_each) * vel;
     			    for (int ii = 0; ii < DIMENSION; ii++)
     				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
@@ -519,25 +495,39 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 		    				    	 	"twice on same location.\n");
 		    			exit(1);
 		    		}
-    			    vel = parabolic_vel (rv_P, dist, umax);
     			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
     			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
     			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
     			    // add to hash-table
     			    P_temp->add(key, pnew);
-    			}//end of if
-    			crd_p[1] += sml;
-    		}//end of while y+
+    		    }//end of for
+    		}
+    		crd_p[1] -= sml;
+    	}//end of while y-
 
-    		//y- direction
-    		crd_p[1]=Pos_v_P[1]-sml2;
-    		while ( crd_p[1] >= range_y[0])
+    	crd_p[0] += sml;
+    }//end of while x+
+
+    //x + direction
+    crd_p[0]=Pos_v_P[0]-sml2;
+    while ( crd_p[0] >= range_x[0] )
+    {
+    	//y+ direction
+    	crd_p[1]=Pos_v_P[1]+sml2;
+    	while ( crd_p[1] <= range_y[1])
+    	{
+    		dist = 0;
+    		for (j=0; j<2; j++)
+    		    dist += (crd_p[j]*crd_p[j]);
+    		if (dist <= rvsq) // if particle is in the duct
     		{
-    			dist = 0;
-    			for (j=0; j<2; j++)
-    				dist += (crd_p[j]*crd_p[j]);
-    			if (dist <= rvsq) // if particle is in the duct
-    			{
+    		   vel = parabolic_vel (rv_P, dist, umax);
+    		   t_each = sml/vel;
+    		   t_add = fmod (t_total, t_each) + dt;
+    		   n = floor(t_add/t_each);
+    		   for (i=0; i<n; i++)
+    		   {
+    			    crd_p[2] = bot + (t_add + i * t_each) * vel;
     			    for (int ii = 0; ii < DIMENSION; ii++)
     				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
@@ -548,20 +538,54 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 		    				    	 	"twice on same location.\n");
 		    			exit(1);
 		    		}
-    			    vel = parabolic_vel (rv_P, dist, umax);
     			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
     			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
     			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
     			    // add to hash-table
     			    P_temp->add(key, pnew);
-    			}//end of if
-    			crd_p[1] -= sml;
-    		}//end of while y-
+    		    }//end of for
+    		}
+    		crd_p[1] += sml;
+    	}//end of while y+
 
-    		crd_p[0] -= sml;
-    	}//end of while x-
+    	//y- direction
+    	crd_p[1]=Pos_v_P[1]-sml2;
+    	while ( crd_p[1] >= range_y[0])
+    	{
+    		dist = 0;
+    		for (j=0; j<2; j++)
+    		    dist += (crd_p[j]*crd_p[j]);
+    		if (dist <= rvsq) // if particle is in the duct
+    		{
+    		   vel = parabolic_vel (rv_P, dist, umax);
+    		   t_each = sml/vel;
+    		   t_add = fmod (t_total, t_each) + dt;
+    		   n = floor(t_add/t_each);
+    		   for (i=0; i<n; i++)
+    		   {
+    			    crd_p[2] = bot + (t_add + i * t_each) * vel;
+    			    for (int ii = 0; ii < DIMENSION; ii++)
+    				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
-	}
+    			    THSFC3d (normc, add_step, &tkeylen, key);
+		    		if (P_table->lookup(key))
+		    		{
+		    			fprintf(stderr, "ERROR: Trying to add particle "
+		    				    	 	"twice on same location.\n");
+		    			exit(1);
+		    		}
+    			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
+    			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
+    			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
+    			    // add to hash-table
+    			    P_temp->add(key, pnew);
+    		    }//end of for
+    		}
+    		crd_p[1] -= sml;
+    	}//end of while y-
+
+    	crd_p[0] -= sml;
+    }//end of while x-
 
 	// put newly generated particles into the bucket, particles has already been added into hashtable
 	    HTIterator * itr = new HTIterator (BG_mesh);
