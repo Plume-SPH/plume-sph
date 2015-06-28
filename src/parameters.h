@@ -80,10 +80,10 @@ const double beta_P=2.;
 const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length
-const int num_loop_P=5;
+const int num_loop_P=2;
 const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
-const double eta_smooth_P = 1.;
+const double eta_smooth_P = 1.2;
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
