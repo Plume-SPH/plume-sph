@@ -155,9 +155,9 @@ int main(int argc, char *argv[])
   mindom[2] = mindom_o[2] - 1.5*del;
 
   // max number of buckets along each directions
-  int nx = (int) ((maxdom[0]-mindom[0])/(del)) + 1;
-  int ny = (int) ((maxdom[1]-mindom[1])/(del)) + 1;
-  int nz = (int) ((maxdom[2]-mindom[2])/(del)) + 1;
+  int nx = (int) ceil((maxdom[0]-mindom[0])/(del));
+  int ny = (int) ceil((maxdom[1]-mindom[1])/(del));
+  int nz = (int) ceil((maxdom[2]-mindom[2])/(del));
 
   maxdom[0] = mindom[0] + nx*del;
   maxdom[1] = mindom[1] + ny*del;

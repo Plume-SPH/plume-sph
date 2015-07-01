@@ -64,7 +64,7 @@ struct TimeProps
     TimeProps ()
   {
     max_time = 180.0;
-    timeoutput = 2.0;
+    timeoutput = 1.0;
     TIME_SCALE = 1.0;
     ndmax_time = max_time = 180.;
     ndtimeoutput = 0.0;

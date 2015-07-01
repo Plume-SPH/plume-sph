@@ -25,7 +25,7 @@ using namespace std;
 #include "sph_header.h"
 #include "hdf5calls.h"
 
-//#define WRITE_GHOSTS
+#define WRITE_GHOSTS
 
 void
 write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
