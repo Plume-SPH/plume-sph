@@ -446,6 +446,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		   t_each = sml/vel;
     		   t_add = fmod (t_total, t_each) + dt;
     		   n = floor(t_add/t_each);
+    		   t_add = t_add - n*t_each;
     		   for (i=0; i<n; i++)
     		   {
     			    crd_p[2] = bot + (t_add + i * t_each) * vel;
@@ -482,6 +483,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		   t_each = sml/vel;
     		   t_add = fmod (t_total, t_each) + dt;
     		   n = floor(t_add/t_each);
+    		   t_add = t_add - n*t_each;
     		   for (i=0; i<n; i++)
     		   {
     			    crd_p[2] = bot + (t_add + i * t_each) * vel;
@@ -525,6 +527,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		   t_each = sml/vel;
     		   t_add = fmod (t_total, t_each) + dt;
     		   n = floor(t_add/t_each);
+    		   t_add = t_add - n*t_each;
     		   for (i=0; i<n; i++)
     		   {
     			    crd_p[2] = bot + (t_add + i * t_each) * vel;
@@ -561,6 +564,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		   t_each = sml/vel;
     		   t_add = fmod (t_total, t_each) + dt;
     		   n = floor(t_add/t_each);
+    		   t_add = t_add - n*t_each;
     		   for (i=0; i<n; i++)
     		   {
     			    crd_p[2] = bot + (t_add + i * t_each) * vel;
