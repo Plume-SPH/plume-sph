@@ -510,7 +510,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     	crd_p[0] += sml;
     }//end of while x+
 
-    //x + direction
+    //x - direction
     crd_p[0]=Pos_v_P[0]-sml2;
     while ( crd_p[0] >= range_x[0] )
     {
