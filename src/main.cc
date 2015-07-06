@@ -353,7 +353,6 @@ main(int argc, char **argv)
     if (timeprops->ifoutput())
       write_output (myid, numprocs, P_table, BG_mesh,
                     partition_table, timeprops, format);
-
   }
 
 #ifdef MULTI_PROC
