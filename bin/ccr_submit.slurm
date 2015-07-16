@@ -12,6 +12,7 @@
 #SBATCH --requeue 
 #SBATCH --job-name="sml130" 
 #SBATCH --output=sml130.out
+#SBATCH --error=sml130.err
 #
 echo "SLURM_JOBID="$SLURM_JOBID 
 echo "SLURM_JOB_NODELIST"=$SLURM_JOB_NODELIST 
