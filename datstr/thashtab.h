@@ -156,13 +156,13 @@ protected:
 //  int ENTRIES;
   int SIZE01;
   int SIZE02;
-  int MAX_ADD;
+//  int MAX_ADD;
   THashEntryPtr addElement (int entry, unsigned *key);
   THashEntryPtr searchBucket (THashEntryPtr p, unsigned *key);
 
 public:
   THashTable (int,  int, double *, double *); //constructor that I will use.
-  THashTable (int,  int, double *, double *, int); //overloading constructor with maximum number of material adding included.
+//  THashTable (int,  int, double *, double *, int); //overloading constructor with maximum number of material adding included.
   ~THashTable ();
 
   void add (unsigned * key, void * value);

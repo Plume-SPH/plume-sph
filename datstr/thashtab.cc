@@ -31,7 +31,7 @@ THashTable::THashTable (int size, int prime, double minR[], double maxR[])
   SIZE02 = NBUCKETS / 10;
   SIZE01 = NBUCKETS - SIZE02;
   umax = (double) IScale;
-  MAX_ADD = 1000;
+//  MAX_ADD = 1000;
 
   // allocate table-size
   bucket = new THashEntryPtr [NBUCKETS];
@@ -45,28 +45,28 @@ THashTable::THashTable (int size, int prime, double minR[], double maxR[])
   }
 }
 
-//overloading of constructor
-THashTable::THashTable (int size, int prime, double minR[], double maxR[], int maxn)
-{
-  int i;
-  NBUCKETS = size;
-  PRIME = prime;
-  SIZE02 = NBUCKETS / 10;
-  SIZE01 = NBUCKETS - SIZE02;
-  umax = (double) IScale;
-  MAX_ADD = maxn;
-
-  // allocate table-size
-  bucket = new THashEntryPtr [NBUCKETS];
-  for (i = 0; i < NBUCKETS; i++)
-    bucket[i] = NULL;
-
-  for (i = 0; i < DIMENSION; i++)
-  {
-    minDom[i] = minR[i];
-    maxDom[i] = maxR[i];
-  }
-}
+////overloading of constructor
+//THashTable::THashTable (int size, int prime, double minR[], double maxR[], int maxn)
+//{
+//  int i;
+//  NBUCKETS = size;
+//  PRIME = prime;
+//  SIZE02 = NBUCKETS / 10;
+//  SIZE01 = NBUCKETS - SIZE02;
+//  umax = (double) IScale;
+////  MAX_ADD = maxn;
+//
+//  // allocate table-size
+//  bucket = new THashEntryPtr [NBUCKETS];
+//  for (i = 0; i < NBUCKETS; i++)
+//    bucket[i] = NULL;
+//
+//  for (i = 0; i < DIMENSION; i++)
+//  {
+//    minDom[i] = minR[i];
+//    maxDom[i] = maxR[i];
+//  }
+//}
 
 THashTable::~THashTable ()        //evacuate the table
 {
@@ -225,14 +225,17 @@ THashTable::remove (unsigned *key)
 
 int THashTable::hash (unsigned * key)
 {
-  int S03 = MAX_ADD;
-  int S02 = (NBUCKETS-S03)/10;
-  int S01 = NBUCKETS-S03-S02;
+//  int S03 = MAX_ADD;
+//  int S02 = (NBUCKETS-S03)/10;
+//  int S01 = NBUCKETS-S03-S02;
+  int S02 = NBUCKETS/10;
+  int S01 = NBUCKETS-S02;
   int i1 = (int) ((double) key[0] / umax * S01);
   int i2 = (int) ((double) key[1] / umax * S02);
-  int i3 = key[2];
+//  int i3 = key[2];
 
-  return (i1 + i2 +i3);
+//  return (i1 + i2 +i3);
+  return (i1 + i2);
 }
 
 

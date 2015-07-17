@@ -313,6 +313,7 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   }
 
   // Create hash-table for particles
-  *P_table = new THashTable(P_TABLE_SIZE, 2017, mindom, maxdom, MAX_ADD_STEPS );
+//  *P_table = new THashTable(P_TABLE_SIZE, 2017, mindom, maxdom, MAX_ADD_STEPS );
+  *P_table = new THashTable(P_TABLE_SIZE, 2017, mindom, maxdom);
   return 0;
 }

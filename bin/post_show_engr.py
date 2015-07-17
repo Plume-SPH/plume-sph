@@ -3,7 +3,7 @@ from paraview.simple import *
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
 
-total_proc=16
+total_proc=4
 #Render={}
 #Disp={}
 #get active source.
