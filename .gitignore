@@ -21,6 +21,7 @@ ompiled Object files
 *.exe
 *.out
 *.app
+*.err
 
 # Eclipse
 .autotools
