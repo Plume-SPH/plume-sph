@@ -734,6 +734,21 @@ double parabolic_vel(double R, double rsq, double umax)
 	return umax*(1-(rsq/(R*R)));
 }
 
+//function that used to determine the value of face by the face's index;
+int determine_face_type (double crd, double max, double min)
+{
+	int flag;
+
+	if (crd<min)
+		flag = -1;
+	else if (crd > max)
+		flag =1;
+	else
+		flag =0;
+
+	return flag;
+}
+
 #ifdef DEBUG
       //function to check where does the negative sound speed comes from
       bool check_particles_sndspd (THashTable * P_table)

@@ -47,6 +47,12 @@ private:
                    * if erupt_flag = true, it is eruption bucket
                    * if erupt_flag = false, it is not eruption bucket
                    * */
+  int has_involved; /*flag that used to determine what kind of particles does the bucekt contain
+                     * 0 : no involved particles
+                     * 1 : has potential involved particles
+                     * 2 : only has involved particles
+                     * 3 : has both involved particles and potential involved particles
+                    */
 //  int newold;
   int myprocess;
   int particles_type; // used to determine whether bucket has ghost or not.
@@ -206,6 +212,24 @@ public:
     else
       particles_type &= EXPT_FOURTH_BIT_UP;
   }
+
+  // set has_potential involved
+  void set_has_potential_involved (bool flag)
+  {
+    if (flag)
+      has_involved |= FIRST_BIT_UP;
+    else
+      has_involved &= SECND_BIT_UP;
+  }
+  // set has_involved
+  void set_has_involved (bool flag)
+  {
+    if (flag)
+        has_involved |= SECND_BIT_UP;
+    else
+    	has_involved &= FIRST_BIT_UP;
+  }
+
 //  //! put newold information
 //  void put_new_old (int info)
 //  {
@@ -238,13 +262,19 @@ public:
   }
 
   //! Access bucket-type
-  int get_bucket_type ()
+  int get_bucket_type () const
   {
     return bucket_type;
   }
 
+  //! Access has_involved flag
+  int get_has_involved () const
+  {
+    return has_involved;
+  }
+
   //! check if bucket belongs to different proc
-  int is_guest ()
+  int is_guest () const
   {
     return guest_flag;
   }
@@ -359,6 +389,19 @@ public:
   bool has_erupt_ghost_particles () const
   {
     return (particles_type & FOURTH_BIT_UP);
+  }
+
+
+  //! check if bucket has potential involved particle
+  bool is_has_potential_involved () const
+  {
+    return (has_involved & FIRST_BIT_UP);
+  }
+
+  //! check if bucket has potential involved particle
+  bool is_has_involved () const
+  {
+    return (has_involved & SECND_BIT_UP);
   }
 
   //! get list of particles in the current bucket

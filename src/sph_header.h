@@ -317,6 +317,13 @@ double parabolic_vel(
 		double   //umax maximum velocity
 		);
 
+//function that used to determine the value of face by the face's index;
+int determine_face_type (
+		double, // coordinate (x, y, z)
+		double, // max, max domain
+		double // min, min domain
+		);
+
 #ifdef DEBUG
       //function to check where does the negative sound speed comes from
       bool check_particles_sndspd (

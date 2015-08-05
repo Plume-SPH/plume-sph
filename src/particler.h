@@ -55,6 +55,7 @@ int mom_engr_update(
 int Read_Data (
                MatProps *,     //! Structure containg material mroperties
                TimeProps *,    //! Structure containg time mroperties
+               SimProps *,     //simulation properties
                int *           //! output file format
               );
 
@@ -64,6 +65,7 @@ int Read_Grid (
                HashTable **,   //! Pointer to HashTable for partilces
                vector<BucketHead> &,  //! Vector of sorted partition table keys
                MatProps  *,    //! Structure containing material properties
+               SimProps *,     //simulation properties
                int ,           //! my process id
                int ,           //! number of total processes
                int *           //! array of flags, for cummnication with other procs

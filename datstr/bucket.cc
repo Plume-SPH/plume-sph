@@ -40,6 +40,7 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
   guest_flag = 0;
   active = false;
   particles_type = 0;
+  has_involved = 0;
 
   for (i = 0; i < KEYLENGTH; i++)
     key.key[i] = keyi[i];
@@ -127,6 +128,7 @@ Bucket::Bucket ()
   guest_flag = 0;
   bucket_type = 0;
   particles_type = 0;
+  has_involved = 0;
 
   for (i = 0; i < DIMENSION; i++)
   {

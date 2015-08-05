@@ -41,6 +41,7 @@ main(int argc, char **argv)
   double dt;
   MatProps *matprops = new MatProps();
   TimeProps *timeprops = new TimeProps();
+  SimProps *simprops = new SimProps();
   THashTable *P_table;
   HashTable *BG_mesh;
 
@@ -81,7 +82,7 @@ main(int argc, char **argv)
   int * my_comm = new int [numprocs];
 
   //Read input data
-  if (Read_Data(matprops, timeprops, &format) != 0)
+  if (Read_Data(matprops, timeprops, simprops, &format) != 0)
   {
     cerr << "ERROR: Can't read input data\n";
     exit(1);
@@ -89,7 +90,7 @@ main(int argc, char **argv)
 
   //read initial particle distribution
   if (Read_Grid (&P_table, &BG_mesh, partition_table, matprops,
-		  myid, numprocs, my_comm) != 0)
+		  simprops, myid, numprocs, my_comm) != 0)
   {
     cerr << "ERROR: Can't read Initial grid\n";
     exit(1);

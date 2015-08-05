@@ -214,4 +214,23 @@ struct MatProps
   }
 };
 
+struct SimProps
+{
+   double Idom_x_min;
+   double Idom_x_max;
+   double Idom_y_min;
+   double Idom_y_max;
+   double Idom_z_min;
+   double Idom_z_max;
+
+   SimProps()
+   {
+	   Idom_x_min = -2000;
+	   Idom_x_max = 2000;
+	   Idom_y_min = -2000;
+	   Idom_y_max = 2000;
+	   Idom_z_min = 0;
+	   Idom_z_max = 7000;
+   }
+};
 #endif /* PROPERTIES_H_ */

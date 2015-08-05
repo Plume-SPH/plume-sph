@@ -46,8 +46,35 @@ using namespace std;
 #  include <debug_header.h>
 #endif
 
+
+//function that used to determine the involved flag
+int determine_bucket_involved_flag (double *mincrd, double *maxcrd, double *left, double *right)
+{
+	int flag[DIMENSION];
+	int bt[2*DIMENSION];
+	int k,sum;
+
+    bt[0]=determine_face_type(left[0],maxcrd[0],mincrd[0]);
+    bt[1]=determine_face_type(right[0],maxcrd[0],mincrd[0]);
+    bt[2]=determine_face_type(left[1],maxcrd[1],mincrd[1]);
+    bt[3]=determine_face_type(right[1],maxcrd[1],mincrd[1]);
+    bt[4]=determine_face_type(left[2],maxcrd[2],mincrd[2]);
+    bt[5]=determine_face_type(right[2],maxcrd[2],mincrd[2]);
+
+    for (k=0; k<DIMENSION; k++)
+    	flag[k]=abs(bt[2*k]+bt[2*k+1]);
+
+    for (k=0; k<DIMENSION; k++)
+    	sum += flag[k];
+
+    if ( (flag[0]==2) || (flag[1]==2) || (flag[2]==2))
+        return 0; //has no involved
+    else
+    	return 1; //has potential involved
+}
+
 int
-Read_Data(MatProps * matprops, TimeProps * timeprops, int *format)
+Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int *format)
 {
 
   ifstream inD1 ("scale.data", ios::in);
@@ -89,6 +116,17 @@ Read_Data(MatProps * matprops, TimeProps * timeprops, int *format)
   inD2 >> temp;
   matprops->smoothing_length = temp / len_scale;
   matprops->particle_mass = rhoa0_P*pow(matprops->smoothing_length, DIMENSION);//This is incorrect
+
+  //simulation properties
+
+  inD2 >>simprops->Idom_x_min;
+  inD2 >>simprops->Idom_x_max;
+  inD2 >>simprops->Idom_y_min;
+  inD2 >>simprops->Idom_y_max;
+  inD2 >>simprops->Idom_z_min;
+  inD2 >>simprops->Idom_z_max;
+
+
   inD2.close();
  
   return 0;
@@ -97,12 +135,13 @@ Read_Data(MatProps * matprops, TimeProps * timeprops, int *format)
 int
 Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
           vector < BucketHead > & partition_tab, MatProps * matprops,
-          int myid, int numprocs, int * my_comm)
+          SimProps* simprops, int myid, int numprocs, int * my_comm)
 {
   int No_of_Buckets;
   int BG_TABLE_SIZE = 100000;
   int P_TABLE_SIZE = 1000000;
   double mindom[DIMENSION], maxdom[DIMENSION];
+  double mindom_i[DIMENSION], maxdom_i[DIMENSION];
   unsigned btkey[KEYLENGTH];
   Key tempbtkey;
   double hvars[6], min_crd[DIMENSION], max_crd[DIMENSION];
@@ -114,7 +153,7 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   int neigh_proc[NEIGH_SIZE];
   double elev[4];
   int i, j, k;
-  int btflag, btype;
+  int btflag, btype, has_involved;
   double len_scale = matprops->LENGTH_SCALE;
 
 #ifdef DEBUG
@@ -170,6 +209,15 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
     maxdom[i] /= matprops->LENGTH_SCALE;
   }
 
+  //initial domain info
+  mindom_i[0]=simprops->Idom_x_min;
+  mindom_i[1]=simprops->Idom_y_min;
+  mindom_i[2]=simprops->Idom_z_min;
+
+  maxdom_i[0]=simprops->Idom_x_max;
+  maxdom_i[1]=simprops->Idom_y_max;
+  maxdom_i[2]=simprops->Idom_z_max;
+
   // create hash-table for back-ground mesh
   *BG_mesh = new HashTable (BG_TABLE_SIZE, 2017, mindom, maxdom);
 
@@ -194,7 +242,7 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   flat[5]=Lz_P[1];
   for (i = 0; i < No_of_Buckets; i++)
   {
-    // hash-table keys
+	// hash-table keys
     for (j = 0; j < KEYLENGTH; j++)
     	btkey[j] = bucket[i].key[j];
 
@@ -274,6 +322,12 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
     // create a new bucket
     Bucket * buck = new Bucket(btkey, min_crd, max_crd, btflag, elev,
                                myid, neigh_proc, neigh_btkeys, bt_index, flat);
+
+    //determine has_involved flag for the bucket
+	has_involved=0;
+    has_involved=determine_bucket_involved_flag(mindom_i, maxdom_i, min_crd, max_crd);
+    // set has_potential involved
+    buck->set_has_potential_involved ((bool) has_involved); //Initially, all buckets "contains" the initial domain should be has_potential_involved.
 
     (*BG_mesh)->add(btkey, buck);
   } //end of go through all buckets, loop index: i

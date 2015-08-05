@@ -32,6 +32,7 @@ struct ParticlePack
   int bc_type; //100: real, 0:erupt bc, 1: pressure_bc, 2: wall bc
   int phase_num;
   int update_delayed;
+  int involved;
 
   //unsigned
   unsigned key[TKEYLENGTH];

@@ -26,21 +26,6 @@ using namespace std;
 #include "sph_header.h"
 #include "parameters.h"
 
-//function that used to determine the value of face by the face's index;
-int determine_face_type (double crd, double max, double min)
-{
-	int flag;
-
-	if (crd<min)
-		flag = -1;
-	else if (crd > max)
-		flag =1;
-	else
-		flag =0;
-
-	return flag;
-}
-
 //function that used to determine the type of bucket
 bool determine_erupt_buket (double *mincrd, double *maxcrd, double *xcrd, double *ycrd, double *zcrd)
 {
