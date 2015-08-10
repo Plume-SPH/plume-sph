@@ -24,7 +24,7 @@ using namespace std;
 #  include <iostream>
 #endif
 
-int
+void
 update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
             TimeProps * timeprops, MatProps * matprops, int *lost)
 {
@@ -38,7 +38,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   double sml_of_phase2 = matprops->smoothing_length;
 
   int i, j;
-  int adapt = 0;
+//  int adapt = 0;
   double bndnorm;
   const double v_coef = 0.5;
   double dt = timeprops->dtime;
@@ -106,6 +106,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
       {
     	  p->erupt_turn_real();
     	  p->put_smlen(sml_of_phase2);
+    	  p->set_involved_flag(INVOLVED); //equivalent to set involved to be true
       }
     }//end of go through all particles
 
@@ -142,6 +143,10 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
     		for (i = 0; i < DIMENSION; i++)
     		     pos[i] = *(p_curr->get_coords() + i);
 
+    		/*
+    		 * need to re-think about this part. --->MIXED bucket should be only on ground.
+    		 * For the bucket over ground, the boundary is not fixed and not necessary to be MIXED
+    		 */
     		los = false;
     		//only real particle will lost
     		if (p_curr->is_real ())
@@ -149,7 +154,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
         		/* there is potential problem that the particles cross the boundary and goes to other other buckets which is next to the MIXED buckets.
         		 * ---> Hopefully this will not happen!
         		 */
-        		if (curr_bucket->get_bucket_type() == MIXED)
+        		if (curr_bucket->get_bucket_type() == MIXED && (curr_bucket->get_bucket_index())[4] == -1) // only happens for underground MIXED bucket
         		    los = curr_bucket->determine_escape(pos);
              }// end of if particles is real ---> to delete particles which crossed the boundary!
 
@@ -193,6 +198,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
           {
             if (!p_curr->is_guest())    // should always have neighbors
             {
+              // 1) a native particle enters a guest bucket
               Key neigh_key = curr_bucket->which_neigh(dir); //bucket key
               Bucket *neigh = (Bucket *) BG_mesh->lookup(neigh_key);
 
@@ -204,6 +210,16 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
               assert(neigh->contains(pos));
 
+              //if real particle moves into a pressure guest bucket,
+              //remove the particle and los++;
+              if (!neigh->get_has_involved())//if has_involved = 0
+              {
+            	  P_table->remove(*p_itr);
+            	  delete p_curr;
+
+            	  lost++;// real particle lost on local proc
+            	  continue;
+              }
               // if real particle moves into guest bucket
               // delete it
               if (neigh->is_guest())
@@ -221,13 +237,13 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
                 if ((! neigh->has_real_particles()) && (p_curr->is_real()))
                 {
                   neigh->set_real_particles(true);
-                  adapt = 1;
+//                  adapt = 1;
                 }
 
                 if ((! neigh->has_erupt_ghost_particles()) && (p_curr->is_erupt_ghost ()))
                 {
                      neigh->set_erupt_ghost_particles(true);
-                     adapt = 1;
+//                     adapt = 1;
                 }
                 neigh->add_particle(*p_itr);
               }
@@ -246,20 +262,31 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 #endif
               assert(neigh->contains(pos));
 
+              //if real particle moves into a pressure guest bucket,
+              //remove the particle and los++;
+              if (!neigh->get_has_involved())//if has_involved = 0
+              {
+            	  P_table->remove(*p_itr);
+            	  delete p_curr;
+
+//            	  lost++;// guest particle lost on local proc
+            	  continue;
+              }
+
               // the particle is coming from partition not
               // on current proc
-              p_curr->put_guest_flag(false);
+              p_curr->put_guest_flag(false); //turn the particle to be no-guest particle --->but need update neigh info
               neigh->add_particle(*p_itr);
               if ((! neigh->has_real_particles()) && (p_curr->is_real()))
               {
                    neigh->set_real_particles(true);
-                   adapt = 1;
+//                   adapt = 1;
               }
 
               if ((! neigh->has_erupt_ghost_particles()) && (p_curr->is_erupt_ghost ()))
               {
                    neigh->set_erupt_ghost_particles(true);
-                   adapt = 1;
+//                   adapt = 1;
               }
             }
             else                // a guest particles leaves curent domain
@@ -329,7 +356,8 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
         fprintf(stderr, " Max coords: %e, %e, %e\n", *(curr_bucket->get_maxcrd()),
                 *(curr_bucket->get_maxcrd() + 1), *(curr_bucket->get_maxcrd() + 2));
         fprintf(stderr, " ... at %s: %d\n\n", __FILE__, __LINE__);
-        return 13;
+//        return 13;
+        return;
       }//end of if (if number of particles in the bucket excess the maximum number that allowed
     }//end if bucket is not pressure_bc, for the underground bucket, I should consider them here because the erupted particles is from underground.
   }
@@ -337,5 +365,6 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   // clean up
   delete itr, it2;
 
-  return adapt;
+//  return adapt;
+  return;
 }

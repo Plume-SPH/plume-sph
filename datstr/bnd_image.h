@@ -57,6 +57,18 @@ struct BndImage
   }
 };
 
+struct OutSideBucket
+{
+	unsigned key[KEYLENGTH];
+	bool checked;
 
+	OutSideBucket()
+	{
+		int i;
+		for (i=0; i<KEYLENGTH; i++)
+			key[i]=0;
+		checked = false;
+	}
+};
 
 #endif /* BND_IMAGE_H_ */

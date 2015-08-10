@@ -400,7 +400,9 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 	unsigned add_step;
     //add time step
-    add_step = (unsigned) floor(2*t_total/t_each); //t_each is based on average velocity, in my code, the parabolic profile is assumed, umax = 2* uavg;
+//    add_step = (unsigned) floor(2*t_total/t_each); //t_each is based on average velocity, in my code, the parabolic profile is assumed, umax = 2* uavg;
+    //the more robust way: use time step as add_step
+	add_step = timeprops->step;
 
     //determine the rough range of eruption duck
     range_x[0] = -rv_P;

@@ -324,6 +324,11 @@ int determine_face_type (
 		double // min, min domain
 		);
 
+//function that determines parameters of certain particle
+void initial_air (
+		Particle * //pi
+		);
+
 #ifdef DEBUG
       //function to check where does the negative sound speed comes from
       bool check_particles_sndspd (

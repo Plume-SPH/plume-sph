@@ -87,6 +87,15 @@ private:
   //! aleardy searched reflection, if flag is up
   bool reflection; //is true if the ghost particle has already been reflected-->its imaged has already be found
 
+  /*
+   * involved flag: based on velocity and mass fraction
+   * only for bctp = 100 or bctp = 2
+   * involve = 0 if not involved
+   * involve = 1 if potential involved
+   * involve = 2 if involved
+   */
+ int involved;
+
   //! indicate which phase does the particles belong to
   int phase_num; //1 for air, 2 for erupt material
 
@@ -278,6 +287,12 @@ public:
     return bc_type;
   }
 
+  //! get involved
+  const int get_involved () const
+  {
+    return involved;
+  }
+
   //! get table of keys of all neighbors
   vector < TKey > get_neighs () const
   {
@@ -371,6 +386,18 @@ public:
 #endif
       return reflection;
   }
+
+  //check whether certain particle is involved or not
+   bool is_involved() const
+   {
+       return involved == 2;
+   }
+
+   //check whether certain particle is potential involved or not
+   bool is_potential_involved() const
+   {
+       return involved == 1;
+   }
 
   //!check phase number
   int which_phase()
@@ -513,10 +540,16 @@ public:
       new_old = info;
   }
 
+  //put bc type
+  void put_bc_type (int in)
+  {
+	  bc_type = in;
+  }
+
   //! change erupt to real particle as the erupted particle come out from duct
   void erupt_turn_real ()
   {
-    bc_type = 100;
+      bc_type = 100;
   }
 
   //! set reflection flag
@@ -527,6 +560,11 @@ public:
 		  cout << "You are trying to get reflection for particle which is not a wall-bc-ghost! \n" <<endl;
 #endif
       reflection = val;
+  }
+
+  void set_involved_flag( int inv)
+  {
+      involved = inv;
   }
 
   //! set phase number

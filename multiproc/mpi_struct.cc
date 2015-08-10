@@ -28,6 +28,7 @@
 #include <mpi.h>
 #include <constant.h>
 #include <bnd_image.h>
+#include <Involved_header.h>
 
 #include "pack_data.h"
 #include "repartition_BSFC.h"
@@ -36,6 +37,7 @@ MPI_Datatype BUCKET_TYPE;
 MPI_Datatype PARTICLE_TYPE;
 MPI_Datatype BND_IMAGE_TYPE;
 MPI_Datatype LB_VERT_TYPE;
+MPI_Datatype INVOLVED_HEADER_TYPE;
 
 void
 GMFG_new_MPI_Datatype ()
@@ -47,7 +49,7 @@ GMFG_new_MPI_Datatype ()
   int d;
   BucketPack * buck = new BucketPack;
 
-  blockcounts[0] = 5 + NEIGH_SIZE + 2*DIMENSION;
+  blockcounts[0] = 6 + NEIGH_SIZE + 2*DIMENSION;
   blockcounts[1] = KEYLENGTH * (1 + NEIGH_SIZE) + MAX_PARTICLES_PER_BUCKET * TKEYLENGTH ;
   blockcounts[2] = (4 * DIMENSION) + 4;
   MPI_Address (&(buck->myprocess), &displs[0]);
@@ -72,7 +74,7 @@ GMFG_new_MPI_Datatype ()
   ParticlePack * particlePack = new ParticlePack;
 
   // 1 int , 2 unsigned, bunch of doubles
-  blockcounts2[0] = 3;
+  blockcounts2[0] = 4;
   blockcounts2[1] = TKEYLENGTH;
   blockcounts2[2] = 3 + DIMENSION + NO_OF_EQNS;
 
@@ -127,4 +129,21 @@ GMFG_new_MPI_Datatype ()
   MPI_Type_struct(3, blockcounts6, displs6, types6, &LB_VERT_TYPE);
   MPI_Type_commit(&LB_VERT_TYPE);
   
+  // create 5th datatype for Boundary Images
+  int blockcounts5[2] = { 1, KEYLENGTH };
+  MPI_Datatype type5[2] = { MPI_INT, MPI_UNSIGNED};
+  MPI_Aint displs5[2];
+
+  // get adresses
+  InvolvedHead * involvedhead = new InvolvedHead();
+
+  MPI_Address (&(involvedhead->has_involved), &(displs5[0]));
+  MPI_Address (&(involvedhead->bucket_key), &(displs5[1]));
+
+  for (d = 1; d >= 0; d--)
+    displs5[d] -= displs5[0];
+
+  MPI_Type_struct (2, blockcounts5, displs5, type5, &INVOLVED_HEADER_TYPE);
+  MPI_Type_commit (&INVOLVED_HEADER_TYPE);
+
 }//New data types are created at this point

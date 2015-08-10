@@ -64,14 +64,8 @@ bool find_particle (
 		double* //check
 		);
 
-/*find particle by the range of particle position
- *
- */
-bool find_particle_pos_range  (double* in, double* check);
-
-
 /*find bucket by the key
- * keyin is input key
+ * keyin is input particle key
  * keycheck is the key that is given and all keyin will be compared with keycheck
   */
 bool find_bucket (
@@ -79,9 +73,29 @@ bool find_bucket (
 		unsigned* //keycheck
 		);
 
+/*find bucket by the pos
+ *
+ */
+bool find_bucket (
+		double*, // kin
+		double* //check
+		);
+
+
+/*find particle by the range of particle position
+ *
+ */
+bool find_particle_pos_range  (double* in, double* check);
+
+
 //function to find particle with given key, will be useful in debugging.
 void check_particle_bykey (
 		THashTable *
+        );
+
+//function to find bucket with given key, will be useful in debugging.
+void check_bucket_bykey (
+		HashTable *
         );
 
 //find the particle with non-physical density
@@ -169,4 +183,8 @@ void check_neigh_part(
 		);
 
 
+//function to find particle with given key, will be useful in debugging.
+void check_bucket_guest (
+		HashTable * //BG_mesh
+		);
 #endif /* DEBUG_HEADER_H */

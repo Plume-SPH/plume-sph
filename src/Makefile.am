@@ -15,6 +15,9 @@ libgmfghdf5_a_CPPFLAGS = -I$(top_srcdir)/preproc \
 bin_PROGRAMS = particler
 
 particler_SOURCES = add_air.cc \
+                    add_pressure_ghost.cc \
+                    add_wall_ghost.cc \
+                    adapt_domain.cc \
                     bcond.cc \
                     constant.h \
                     dataread.cc \
@@ -27,9 +30,11 @@ particler_SOURCES = add_air.cc \
                     outforms.h \
                     particler.h \
                     parameters.h \
+                    scan_outside_layer.cc \
                     setup_erupt.cc\
                     setup_ini.cc\
                     timestep.cc \
+                    update_out_layer.cc \
                     update_pos.cc \
                     write_output.cc \
                     main.cc

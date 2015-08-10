@@ -286,14 +286,14 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
         // mark it inactive to start with
         curr_bucket->mark_inactive ();
 
-        // if any neighbor as any particle, mark current bucket active
+        // if any neighbor has any particle, mark current bucket active
         const int * neigh_proc = curr_bucket->get_neigh_proc ();
         Key * neighbors = curr_bucket->get_neighbors ();
 
         for (i = 0; i < NEIGH_SIZE; i++)
             if (neigh_proc[i] > -1)
             {
-                // some neighs may not of available on current process
+                // some neighs may not of available on current process--> if that happens, what should I do?
                 neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
                 if ( neigh && (neigh->get_plist ().size () > 0))
                 {
@@ -312,7 +312,8 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
             }
     }
 
-    /* To switch buckets on foreign procs,
+    /*
+     * To switch buckets on foreign procs,
      * do some communications
      */
     int * recv_info = new int [numproc];

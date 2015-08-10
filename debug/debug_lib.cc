@@ -95,21 +95,6 @@ bool find_particle_pos_range  (double *in, double* check)
     return true;
 }
 
-
-/*find bucket by the key
- * keyin is input particle key
- * keycheck is the key that is given and all keyin will be compared with keycheck
-  */
-bool find_bucket (unsigned* keyin, unsigned* keycheck)
-{
-	int i;
-	for (i=0; i<KEYLENGTH; i++)
-		if (keyin[i] != keycheck[i])
-			return false;
-
-    return true;
-}
-
 //function to find particle with given key, will be useful in debugging.
 void check_particle_bykey (THashTable * P_table)
 {

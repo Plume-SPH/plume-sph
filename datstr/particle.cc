@@ -26,6 +26,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   new_old = 0; //default new_old for non-guest particles is 0.
                //for guest particles: -1: old, 1: new
   bc_type = bc;
+  involved = 0;
+
   for (i = 0; i < TKEYLENGTH; i++)
     key.key[i] = *(keyin + i);
 
@@ -67,6 +69,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
                  //for guest particles: -1: old, 1: new
 
   bc_type = 0;
+  involved = 0;
+
   for (i = 0; i < TKEYLENGTH; i++)
     key.key[i] = *(keyin + i);
 
@@ -114,6 +118,8 @@ Particle::Particle ()
   guest = false;
   reflection = false;
   bc_type = 100;
+  involved = 0;
+
   for (i = 0; i < DIMENSION; i++)
   {
     coord[i] = 0.;

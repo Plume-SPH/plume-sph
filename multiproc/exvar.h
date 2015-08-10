@@ -25,5 +25,6 @@ extern MPI_Datatype BUCKET_TYPE;
 extern MPI_Datatype PARTICLE_TYPE;
 extern MPI_Datatype BND_IMAGE_TYPE;
 extern MPI_Datatype LB_VERT_TYPE;
+extern MPI_Datatype INVOLVED_HEADER_TYPE;
 
 #endif // EXVAR__H

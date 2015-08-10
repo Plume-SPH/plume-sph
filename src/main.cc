@@ -46,6 +46,7 @@ main(int argc, char **argv)
   HashTable *BG_mesh;
 
   vector < BucketHead > partition_table;
+//  vector < OutSideBucket > outside_table;
   list < BndImage > Image_table;
   int format = 0;
   int adapt = 0;
@@ -76,6 +77,7 @@ main(int argc, char **argv)
   bool find_maxz = false;
   bool vis_flag = false;
   bool check_neigh =false;
+  bool check_bucket = false;
 #endif
 
   // allocate communcation array
@@ -100,58 +102,8 @@ main(int argc, char **argv)
   add_air (P_table, BG_mesh, matprops, numprocs, myid);
 
 #ifdef DEBUG
-  if (check_part)
-	  // find certain particle and check its values
-      check_particle_bykey (P_table);
-
-  if (vis_flag)
-	  // debug artificial vis
-	  debug_vis ();
-#endif
-
-  // scan mesh and mark buckets active/inactive
-  update_bgmesh (BG_mesh, myid, numprocs, my_comm);
-
-  // sync data ---> actually, move data should not appear twice---> need new design here!
-  move_data (numprocs, myid, my_comm, P_table, BG_mesh);
-
-#ifdef MULTI_PROC
-  // wait till initialization has finished
-  MPI_Barrier (MPI_COMM_WORLD);
-
-  // remove guest buckets and particles
-  delete_guest_buckets (BG_mesh, P_table);
-
-  // Initial repartition
-  repartition (partition_table, P_table, BG_mesh, my_comm);
-
-  // move data
-  move_data (numprocs, myid, my_comm, P_table, BG_mesh);
-#endif
-
-  // search and update neighbors
-  search_neighs_consth (myid, P_table, BG_mesh);
-
-  //initialized the mass of all particles
-  setup_ini(myid,  P_table,  BG_mesh, timeprops, numprocs, my_comm);
-
-#ifdef DEBUG
-  if (check_part)
-	  // find certain particle and check its values
-      check_particle_bykey (P_table);
-#endif
-
-  //Adding eruption boundary condition
-  setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, numprocs);
-
-#ifdef DEBUG
-  if (check_part_tp)
-	  check_particle_all_type (P_table);
-#endif
-
-#ifdef DEBUG
-  if (check_bypos)
-	  check_particle_bypos (P_table);
+  if (check_bucket)
+	  check_bucket_guest (BG_mesh);
 #endif
 
   // scan mesh and mark buckets active/inactive
@@ -159,6 +111,25 @@ main(int argc, char **argv)
 
   // sync data
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+#ifdef DEBUG
+  if (check_bucket)
+	  check_bucket_guest (BG_mesh);
+#endif
+
+//The reason why I put the following functions late is that adding of pressure_ghost and adding of wall ghost need neighbor info.
+  //add pressure ghost
+   add_pressure_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+
+   //add wall ghost
+   add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+
+   //initialized the mass of all particles---> actually, only initial air need to set up initial! wall ghost and pressure ghost will set up parameter while adding particles
+//   setup_ini(myid,  P_table,  BG_mesh, timeprops, numprocs, my_comm);
+
+   //Adding eruption boundary condition
+   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, numprocs);
+
 
 #ifdef MULTI_PROC
   // wait till initialization has finished
@@ -177,20 +148,17 @@ main(int argc, char **argv)
   // search and update neighbors ---> can I use a send neighbor here? --> not, I do not think it is necessary!
   search_neighs_consth (myid, P_table, BG_mesh);
 
-#ifdef DEBUG
-  if (check_neigh)
-	  // check neighbors of particle for different phases
-	  check_neigh_part (P_table);
-#endif
-
-#ifdef DEBUG
-  if (check_part)
-	  // find certain particle and check its values
-      check_particle_bykey (P_table);
-#endif
-
   // search mirror imgaes of ghost particles into boundary
   search_bnd_images(myid, P_table, BG_mesh, Image_table, 1);
+
+//  //set up initial outside bucket layer list
+//  update_out_layer (P_table,BG_mesh, outside_table, numproc, myid);
+
+#ifdef DEBUG
+  if (check_bucket)
+	  check_bucket_guest (BG_mesh);
+#endif
+
 
 #ifdef MULTI_PROC
   // send reflections that belong to other procs
@@ -236,6 +204,18 @@ main(int argc, char **argv)
     adapt = (int) round (global_data[2]);
     if (adapt)
     {
+      //sync data, in outside layer scanning, guest bucket is not able to updated!
+      move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+      // adapt_domain -> What did here is make the domain larger--->because the involved particle enter the most outside bucket layer (has_potential_involved = 1;)
+      adapt_domain (P_table, BG_mesh, numprocs, myid);
+
+      //sync data, as some ghost_pressure bucket becomes has_potential_involved (also for the particles inside)-->these information is needed when adding pressure ghost and as well as wall ghost.
+      move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+      //add pressure ghost --> will not delete the old pressure ghost, just add pressure ghost where computational domain is "exposed"
+      add_pressure_ghost (P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+
       // scan buckets and make them active / inactive
       update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -243,11 +223,16 @@ main(int argc, char **argv)
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
       // search reflections for new ghost particles
-
-      search_bnd_images(myid, P_table, BG_mesh, Image_table, 0);
+      search_bnd_images (myid, P_table, BG_mesh, Image_table, 0);
 
       // send the images that belong on other subdomains
       send_foreign_images (myid, numprocs, BG_mesh, Image_table, my_comm);
+
+      // apply boundary conditions--> as some new wall ghost added, the boundary condition need to be updated!
+      ierr += apply_bcond (myid, P_table, BG_mesh, matprops, Image_table);
+
+//      //set up initial outside bucket layer list
+//      update_out_layer (P_table,BG_mesh, outside_table, numproc, myid);
     }
 #endif
     ierr = 0;  // reset error code
@@ -255,11 +240,6 @@ main(int argc, char **argv)
 
     // search and update neighbors
     search_neighs_consth (myid, P_table, BG_mesh);
-#ifdef DEBUG
-  if (check_neigh)
-	  // check neighbors of particle for different phases
-	  check_neigh_part (P_table);
-#endif
 
 #ifdef MULTI_PROC
     // ghost need to be updated only before updating momentum
@@ -284,12 +264,6 @@ main(int argc, char **argv)
     // smooth out density oscillations (if any)
     smooth_density(P_table);
 
-#ifdef DEBUG
-  if (find_large_density)
-	  // find certain particle and check its values
-	  find_large_density_particle (P_table);
-#endif
-
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
@@ -297,19 +271,7 @@ main(int argc, char **argv)
 
 
     // update particle positions
-    adapt = update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);
-
-#ifdef DEBUG
-  if (search_byphase)
-	  // find certain particle and check its values
-	  find_particle_by_phase (P_table);
-#endif
-
-#ifdef DEBUG
-  if (find_maxz)
-	  // find certain particle and check its values
-	  find_highest_z (P_table);
-#endif
+    update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);
 
     // add new layers of particle in the duct
     add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, dt);
@@ -317,6 +279,9 @@ main(int argc, char **argv)
 #ifdef MULTI_PROC
     // update guests as density has changed since last update
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
+
+    //scan most outside layer of has_potential_involved buckets
+    adapt = scan_outside_layer (P_table, BG_mesh, numprocs, myid);
 
     /* DYNAMIC LOAD BALANCING */
     if ((numprocs > 1) && (timeprops->step % 2500 == 0))

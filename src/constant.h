@@ -40,9 +40,16 @@ const int UNDERGROUND = 0xA;  //10
 const int MIXED       = 0xB;  //11
 const int OVERGROUND  = 0xC;  //12
 const int PRESS_BC    = 0xD;  //13
+
+const int INVOLVED = 2; //involved for particle
+const int POTENTIAL_INVOLVED = 1; //potential involved for particle
+const int NON_INVOLVED = 0; //not involved for particle
+
 const float  LOAD_BALANCE_TOLERANCE = 1.001;
 const double PI = 3.14159265358979;
 const double TINY = 1.0E-08;
+
+const double MSFRC_THRESH = 1.0E-06; //Threshold for determine whether air particle is involved in or not.
 
 //For adding newly erupted particles, that hash table is a temporiry hash table
 const int ERUPT_TABLE_SIZE = 40000;

@@ -749,6 +749,49 @@ int determine_face_type (double crd, double max, double min)
 	return flag;
 }
 
+//function that determines parameters of certain particle
+void initial_air (Particle * pi)
+{
+	  int i;
+
+	  double xi[DIMENSION];
+	  double vel[DIMENSION] = {0., 0., 0.};  //initial velocity need to be set to zero
+	  double prss, erg, dens, mss;
+	  double range[6];
+	  double sml2;
+
+	  // go through particle table
+//	  if (!pi->is_guest())//count number of non-guest particles.
+//	     {
+
+	  	  for (i = 0; i < DIMENSION; i++)
+	  		  xi[i] = *(pi->get_coords() + i);
+
+	  	  sml2 = 0.5*(pi->get_smlen ());
+	  	  range[0]=xi[0]-sml2;
+	  	  range[1]=xi[0]+sml2;
+	  	  range[2]=xi[1]-sml2;
+	  	  range[3]=xi[1]+sml2;
+	  	  range[4]=xi[2]-sml2;
+	  	  range[5]=xi[2]+sml2;
+
+	  	  air_prop (xi, range, &erg, &prss, &dens, &mss);
+
+	      //put data back into particle:
+	      pi->put_density(dens);
+	      pi->put_energy(erg);
+	      pi->put_pressure(prss);
+	      pi->put_velocity(vel);
+	      pi->put_mass(mss);
+
+	      //the second variable need to be updated.
+	      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+
+//	     }//end of go through all particles
+
+	return;
+}
+
 #ifdef DEBUG
       //function to check where does the negative sound speed comes from
       bool check_particles_sndspd (THashTable * P_table)

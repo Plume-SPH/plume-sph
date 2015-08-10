@@ -40,6 +40,7 @@ void pack_bucket (BucketPack *buckpack, Bucket *sendbuck, int process)
   buckpack->bucket_type = sendbuck->bucket_type;
   buckpack->particles_type = sendbuck->particles_type;
   buckpack->activeflag = (int) sendbuck->active;
+  buckpack->has_involved = sendbuck->has_involved;
   for (j=0; j<KEYLENGTH; j++)
     buckpack->key[j] = sendbuck->key.key[j];
 
@@ -90,6 +91,7 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
 {
   int j;
   pack_array->update_delayed = (int) psend->update_delayed;
+  pack_array->involved = psend->involved;
   pack_array->bc_type  = psend->bc_type;
   pack_array->phase_num  = psend->phase_num;
 
@@ -120,6 +122,7 @@ void unpack_bucket (BucketPack *recvdBuck, Bucket *buck, int myid)
   buck->bucket_type = recvdBuck->bucket_type;
   buck->particles_type = recvdBuck->particles_type;
   buck->active = (bool) recvdBuck->activeflag;
+  buck->has_involved = recvdBuck->has_involved;
 
   for ( i=0; i < KEYLENGTH; i++ )
     buck->key.key[i] = recvdBuck->key[i];
@@ -166,6 +169,7 @@ void unpack_particle (ParticlePack *packet, Particle *part)
 {
   int i;
   part->update_delayed = (bool) packet->update_delayed;
+  part->involved = packet->involved;
   part->bc_type = packet->bc_type;
   part->phase_num = packet->phase_num;
 

@@ -34,6 +34,52 @@ add_air (
         int
        );
 
+//add pressure ghost particles
+void
+add_pressure_ghost(
+		//P_table
+		THashTable *,
+		//BG_table
+		HashTable * ,
+        //Mat property
+        MatProps *,
+        //TimeProps
+        TimeProps *,
+        //number of processor
+        int ,
+        //my ID
+        int
+       );
+
+//add wall ghost particles
+void
+add_wall_ghost(
+		//P_table
+		THashTable *,
+		//BG_table
+		HashTable * ,
+        //Mat property
+        MatProps *,
+        //TimeProps
+        TimeProps *,
+        //number of processor
+        int ,
+        //my ID
+        int
+       );
+
+/*
+ * What happened before this function calling is: scan the most outside potential involved bucket, if any of particles becomes involved (two ways), turn the bucket to be has_involved.
+ * function which scans these buckets which were originally pressure ghost buckets, if any of its neighbor buckets is has_involved, turn it to be a potential_involved_bucket.
+ * What will happen after this function calling is: add a new layer of pressure ghost bucket as the old pressure ghost bucket become potential_involved.
+ */
+void adapt_domain(
+		THashTable * , // P_table
+		HashTable * ,  // BG_mesh
+		int ,          // numproc
+		int            // myid
+		);
+
 //! Apply boundary conditions
 int apply_bcond (
                  int        ,  //! Process ID
@@ -111,7 +157,7 @@ double timestep(
                );
 
 //! Update particle positions and their relationship with background Mesh
-int update_pos(
+void update_pos(
                int ,         //! my proc id
                THashTable *, //! HashTable of SPH particles
                HashTable *,  //! HashTable of cells of background mesh
@@ -166,6 +212,18 @@ timestep (
 		  THashTable *, //particle table
 		  TimeProps *    //timeprops
          );
+
+//scan the most outside layer of buckets satisfy has_involved>0,
+//if they have any involved particles (involved = 2), then make the most_out_side layer to be has_involved.
+//What will happen next is the domain will be adjust such that at least one layer of potential involved bucket is added outside the domain.
+int
+scan_outside_layer
+        (
+		THashTable * , // P_table,
+		HashTable *,   // BG_mesh,
+		int ,          //numproc,
+		int            //myid
+		);
 
 ////This function is useless should be removed.
 //int

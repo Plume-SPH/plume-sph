@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
     j = partition_table[i].xind;
     k = partition_table[i].yind;
     for (l = 0; l < nz; l++)
-      if ( bgmesh[j][k][l].buckettype )
+      if ( bgmesh[j][k][l].buckettype )//if buckettype is valid!
         bgmesh[j][k][l].myproc = myid;
       else
         bgmesh[j][k][l].myproc = -1;

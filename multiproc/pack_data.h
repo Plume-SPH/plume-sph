@@ -52,6 +52,7 @@ struct BucketPack
   int activeflag; //1 means active, 0 means not active
   int bucket_type;//0, 1, 2, 3: Mixed, ect
   int particles_type; //have real particle or not? have ghost particles or not...
+  int has_involved;//1 means have involved particles, 0 means does not
   int NumParticles;
   int neigh_proc[NEIGH_SIZE];
   int bucket_index[2*DIMENSION];

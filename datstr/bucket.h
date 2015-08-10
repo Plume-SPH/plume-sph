@@ -63,6 +63,17 @@ private:
   vector < TKey > particles;
   vector < TKey > new_plist;
 
+  /*
+   * In my opinion, it is not a good idea to add this flag as a member of bucket
+   * Because
+   * 1) add_wall_ghost will only be useful for on ground MIXED bucket, kind of waste for other bucket!
+   * 2) add_wall_ghost is neither a primitive variable nor a secondary variable (Bucket class should only about bucket itself, should not have something to do with computational affairs)
+   *
+   * true: means the wall ghost particle has already beed add for the bucket, as well as for the UNDERGROUND bucket that just below this bucket
+   *
+   */
+//  bool add_wall_ghost; //--> haha, not necessary at all, we have particles_type to do this, I was so stupid!
+
 public:
   //! Contructors
   //! base constructor

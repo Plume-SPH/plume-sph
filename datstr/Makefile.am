@@ -14,7 +14,8 @@ libbgmesh_a_SOURCES = bgmesh.h \
                       hilbert.h hilbert.c \
                       mesh_update.cc \
                       particle.h particle.cc \
-                      properties.h
+                      properties.h \
+                      Involved_header.h
 
 libbgmesh_a_CPPFLAGS = -I$(top_srcdir)/src \
                        -I$(top_srcdir)/multiproc \
