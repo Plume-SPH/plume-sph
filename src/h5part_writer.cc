@@ -25,13 +25,22 @@ using namespace std;
 #include "sph_header.h"
 #include "hdf5calls.h"
 
-//#define WRITE_GHOSTS
+#ifdef DEBUG
+#  include <debug_header.h>
+#endif
+
+#define WRITE_GHOSTS
 
 void
 write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 {
   int i, j;
   vector < double >x, y, z, Vx, Vy, Vz, rho, engr, mssfrc, phase, bctp, guest ;
+
+#ifdef DEBUG
+  vector < double > involved;
+#endif
+
   char filename[18];
   static int step = 0;
   hid_t fp;
@@ -71,6 +80,11 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
       phase.push_back(pi->which_phase());
       bctp.push_back(pi->get_bc_type ());
       guest.push_back(pi->get_guest());
+
+#ifdef DEBUG
+      involved.push_back(pi->get_involved ());
+#endif
+
 #ifndef WRITE_GHOSTS
     }
 #endif
@@ -122,7 +136,7 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   int *ibuf = new int[my_count];
 
   j = 0;
-  for (i = id_lims[myid]; i < id_lims[myid + 1]; i++)
+  for (i = id_lims[myid]; i < id_lims[myid + 1]; i++) //for ID
   {
     ibuf[j] = i;
     j++;
@@ -130,6 +144,12 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 
   // particle ids
   ierr = GH5_Write(gid, "ID", dims, (void *) ibuf, start, my_count, INTTYPE);
+
+  //involved
+#ifdef DEBUG
+  copy(involved.begin(), involved.end(), ibuf);
+  ierr = GH5_Write(gid, "Involved", dims, (void *) ibuf, start, my_count, INTTYPE);
+#endif
 
   // x-coordinates
   copy(x.begin(), x.end(), buf);
@@ -167,15 +187,15 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   copy(mssfrc.begin(), mssfrc.end(), buf);
   ierr = GH5_Write(gid, "mssfrc", dims, (void *) buf, start, my_count, DOUBLETYPE);
 
-  // mass fraction
+  // phase
   copy(phase.begin(), phase.end(), buf);
   ierr = GH5_Write(gid, "phase", dims, (void *) buf, start, my_count, DOUBLETYPE);
 
-  // mass fraction
+  // bctp
   copy(bctp.begin(), bctp.end(), buf);
   ierr = GH5_Write(gid, "bctp", dims, (void *) buf, start, my_count, DOUBLETYPE);
 
-  // mass fraction
+  // guest flag
   copy(guest.begin(), guest.end(), buf);
   ierr = GH5_Write(gid, "guest", dims, (void *) buf, start, my_count, DOUBLETYPE);
 
