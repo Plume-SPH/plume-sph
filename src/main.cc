@@ -216,6 +216,9 @@ main(int argc, char **argv)
       //add pressure ghost --> will not delete the old pressure ghost, just add pressure ghost where computational domain is "exposed"
       add_pressure_ghost (P_table, BG_mesh, matprops, timeprops, numprocs, myid);
 
+      //add wall ghost
+      add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+
       // scan buckets and make them active / inactive
       update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
