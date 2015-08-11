@@ -268,10 +268,14 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     vector < TKey >::iterator p_itr;
     Particle *pj;
     itr->reset();
+    int bctp ;
     //go through all buckets
     while ((Curr_buck = (Bucket *) itr->next ()))
       if (Curr_buck->is_erupt ())
       {
+    	  //set particles type to be 0
+    	  Curr_buck->put_particles_type (0);
+
     	  //check all particle in the erupt bucket and remove them when necessary!
     	  pnew.clear();
     	  plist = Curr_buck->get_particle_list ();
@@ -286,7 +290,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		  for (j=0; j<2; j++)
     		      dist += (crd_p[j]*crd_p[j]);
 
-    		  if ((dist <= rvsq) && crd_p[2]<=range_z[1] && crd_p[2]>=range_z[0]) // if particle is in the duct
+    		  if ((dist <= rvsq) && crd_p[2]<=range_z[1] && crd_p[2]>=range_z[0] &&  (!pj->is_erupt_ghost())) // if particle is in the duct
     		  {
     			  for (k = 0; k<TKEYLENGTH; k++)
     			      tempkey[k] = pj->getKey().key[k];
@@ -301,7 +305,27 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
     		  }
     		  else
+    		  {
     			  pnew.push_back(*p_itr);//remove from the from particle list!
+    			  bctp = pj->get_bc_type ();
+				  switch (bctp)
+				  {
+				      case 0 :
+					      Curr_buck->set_erupt_ghost_particles(true);
+					      break;
+				      case 2 :
+					      Curr_buck->set_wall_ghost_particles(true);
+					      break;
+				      case 100 :
+					      Curr_buck->set_real_particles(true);
+					      break;
+				      case 1 :
+					      Curr_buck->set_pressure_ghost_particles(true);
+					      break;
+				      default:
+					      cout << "bctp incorrect in function set_up_erupt!\n" << endl;
+				   }
+    		  }
     	  }
 
     	  //update particle list
@@ -429,11 +453,11 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		    dist += (crd_p[j]*crd_p[j]);
     		if (dist <= rvsq) // if particle is in the duct
     		{
-    		   vel = parabolic_vel (rv_P, dist, umax);
+    		   vel = parabolic_vel (rv_P, dist, umax); //Velocity depends on dist
     		   t_each = sml/vel;
-    		   t_add = fmod (t_total, t_each) + dt;
+    		   t_add = fmod (t_total, t_each) + dt; // fmod (t_total, t_each) is the balance from previous time_step, the balance should be smaller than t_each
     		   n = floor(t_add/t_each);
-    		   t_add = t_add - n*t_each;
+    		   t_add = t_add - n*t_each;  //t_add here is balance that will have after adding new particles
     		   for (i=0; i<n; i++)
     		   {
     			    crd_p[2] = bot + (t_add + i * t_each) * vel;
@@ -578,7 +602,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     	crd_p[0] -= sml;
     }//end of while x-
 
-	// put newly generated particles into the bucket, particles has already been added into hashtable
+	// put newly generated particles into the bucket, particles has already been added into P_table
 	    HTIterator * itr = new HTIterator (BG_mesh);
 	    Bucket * Curr_buck;
 	    double coordtmp[DIMENSION];

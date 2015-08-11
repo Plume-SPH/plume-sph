@@ -130,6 +130,9 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		  {
 
 		      Particle *pj = (Particle *) P_table->lookup(*p_itr);
+
+		      if (!pj)
+		    	  cout << "here it is, the missed particles" << endl;
 		      assert (pj);
 
 		      // self contribution is zero as dw(0)=0

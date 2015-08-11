@@ -96,7 +96,7 @@ void check_bucket_bykey (HashTable * BG_mesh)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[KEYLENGTH] = {125131437, 1454069162};
+    unsigned keycheck[KEYLENGTH] = {125131437, 1454069162}; //the bucket contain the missing particle
     //The above bucket is the neighbor of  {202798183, 343262493}
     unsigned keytemp[KEYLENGTH] ;
 

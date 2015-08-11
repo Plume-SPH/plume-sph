@@ -241,6 +241,12 @@ public:
     	has_involved &= FIRST_BIT_UP;
   }
 
+  //put particles_type
+  void put_particles_type (int in)
+   {
+	  particles_type = in;
+   }
+
 //  //! put newold information
 //  void put_new_old (int info)
 //  {

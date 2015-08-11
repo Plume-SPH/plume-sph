@@ -219,6 +219,29 @@ main(int argc, char **argv)
       //add wall ghost
       add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
 
+#ifdef DEBUG
+  if (check_part)
+	  check_bucket_bykey  (BG_mesh);
+#endif
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
+      // sync data again
+      move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+#ifdef DEBUG
+  if (check_part)
+	  check_bucket_bykey  (BG_mesh);
+#endif
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
       // scan buckets and make them active / inactive
       update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 

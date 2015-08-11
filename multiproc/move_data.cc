@@ -1,4 +1,3 @@
-
 /*******************************************************************
  * Copyright (C) 2003 University at Buffalo
  *
@@ -38,6 +37,10 @@ using namespace std;
 #include "pack_data.h"
 #include "repartition_BSFC.h"
 
+#ifdef DEBUG
+#  include <debug_header.h>
+#endif
+
 void
 move_data (int nump, int myid, int * my_comm, 
            THashTable * P_table, HashTable * BG_mesh)
@@ -45,6 +48,12 @@ move_data (int nump, int myid, int * my_comm,
     // if number of procs == 1 , don't waste time here
     if (nump < 2)
         return;
+
+#ifdef DEBUG
+   bool do_search = false;
+   unsigned keycheck[TKEYLENGTH] = {419430820, 302954358, 0}; //key of its neighbor which is missing
+   unsigned keytemp[TKEYLENGTH] ;
+#endif
 
 
     int i, j, ierr;
@@ -233,6 +242,17 @@ move_data (int nump, int myid, int * my_comm,
                             {
                                 printf ("attach debugger here\n");
                             }
+#endif
+
+#ifdef DEBUG
+		                    if (do_search)
+		                    {
+		                      for (j = 0; j < TKEYLENGTH; j++)
+			                      keytemp[j] = psend->getKey().key[j];
+
+		                      if (find_particle (keytemp, keycheck))
+			                      cout << "The particle found, will be send out!" << endl;
+		                    }
 #endif
                             assert (psend);
                             pack_particles (psend,

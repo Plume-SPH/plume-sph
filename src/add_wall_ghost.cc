@@ -108,10 +108,10 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
        bnd[5]=Lz_P[1];
 
 	  while ((Bnd_buck = (Bucket *) itr->next ()))
-	 //--->The reason why need to make sure the bucket is active is that for MIXED bucket that need to add wall ghost, it should already have either real particles or pressure ghost particle on the above boundary portion of the bucket.
-	 //But I need to make sure that wall ghost particles will not be added repeatedly
-     //Why do I need to make sure that bucket is active? ---->because MIXED in which wall ghost needed should be active, as some pressure ghost has already been added and the bucket was marked as active.
-	  if ((Bnd_buck->get_bucket_index())[4] == -1 && Bnd_buck->get_bucket_type () == MIXED && Bnd_buck->is_active() && !Bnd_buck->has_wall_ghost_particles ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
+	 //--->The reason why need to make sure the bucket is not empty is that for MIXED bucket that need to add wall ghost, it should already have either real particles or pressure ghost particle on up part of buckets which above boundary
+	 //But I need to make sure that wall ghost particles will not be added repeatedly ---> !Bnd_buck->has_wall_ghost_particles ()
+     //Why do I need to make sure that bucket is non_empty? ---->because MIXED in which wall ghost needed should be active, as some pressure ghost has already been added and the bucket was marked as active.
+	  if ((Bnd_buck->get_bucket_index())[4] == -1 && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
 	  {
 //      	    Bnd_buck->mark_active ();
 
@@ -227,7 +227,10 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	  }//finish go though all buckets
 
 
-	  //delete wall ghost in erupt vent
+	  //delete wall ghost in erupt vent -------> To be honest, I do not think this is necessary!
+	  //because
+	  //1) wall ghost will be deleted while set up eruption condition
+	  //2) all of the erupted bucket should be within initial domian, otherwise, the initial domain is too small.
 
 	  //determine the rough range of eruption duck
 		double range_x[2];
@@ -252,6 +255,8 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	    while ((Bnd_buck = (Bucket *) itr->next ()))
 	      if (Bnd_buck->is_erupt () && Bnd_buck->has_wall_ghost_particles ())
 	      {
+	    	  //set particles type to be 0
+	    	  Bnd_buck->put_particles_type (0);
 	    	  //check all particle in the erupt bucket and remove them when necessary!
 	    	  pnew.clear();
 	    	  plist = Bnd_buck->get_particle_list ();
@@ -259,8 +264,8 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	    	  {
 	    		pj = (Particle *) P_table->lookup(*p_itr);
 	    		assert (pj);
-	    		if (!pj->is_erupt_ghost())
-	    		{
+//	    		if (!pj->is_erupt_ghost()) // if particle is not erupted ghost
+//	    		{
 	    		  for (k=0; k<DIMENSION; k++)
 	    			  pcrd[k] = *(pj->get_coords() + k);
 
@@ -268,7 +273,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	    		  for (j=0; j<2; j++)
 	    		      dist += (pcrd[j]*pcrd[j]);
 
-	    		  if ((dist <= rvsq) && pcrd[2]<=range_z[1] && pcrd[2]>=range_z[0] && pj->is_wall_ghost() ) // if particle is in the duct and particle is wall ghost
+	    		  if ((dist <= rvsq) && pcrd[2]<=range_z[1] && pcrd[2]>=range_z[0] && (!pj->is_erupt_ghost())) // if particle is in the duct and particle is wall ghost
 	    		  {
 	    			  for (k = 0; k<TKEYLENGTH; k++)
 	    			      tempkey[k] = pj->getKey().key[k];
@@ -280,9 +285,29 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	    			   */
 	    			  P_table->remove(tempkey); //remove from the hashtable
 	    		  }
-	    		  else
+	    		  else  // particles_type also need to be updated on current bucket---> Maybe it is not necessary.
+	    		  {
 	    			  pnew.push_back(*p_itr);//remove from the from particle list!
-	    		}//end of only check non_erupted particles
+	    			  bctp = pj->get_bc_type ();
+   				      switch (bctp)
+   				      {
+   				      case 0 :
+   				    	Bnd_buck->set_erupt_ghost_particles(true);
+   					      break;
+   				      case 2 :
+   				    	Bnd_buck->set_wall_ghost_particles(true);
+   					      break;
+   				      case 100 :
+   				    	Bnd_buck->set_real_particles(true);
+   					      break;
+   				      case 1 :
+   				    	Bnd_buck->set_pressure_ghost_particles(true);
+   					      break;
+   				      default:
+   					      cout << "bctp incorrect in function add_wall_ghost!\n" << endl;
+   				      }
+	    		  }
+//	    		}//end of only check non_erupted particles
 	    	  }
 
 	    	  //update particle list
