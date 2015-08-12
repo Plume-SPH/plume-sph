@@ -29,7 +29,7 @@ using namespace std;
 #  include <debug_header.h>
 #endif
 
-#define WRITE_GHOSTS
+//#define WRITE_GHOSTS
 
 void
 write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
