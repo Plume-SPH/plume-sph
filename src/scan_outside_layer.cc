@@ -38,7 +38,6 @@ int scan_outside_layer (THashTable * P_table, HashTable * BG_mesh, int numproc, 
 {
 	int adapt = 0;
 	int i;
-	int PRESSURE_GHOST = 1;
 	int REAL = 100;
 	HTIterator * itr = new HTIterator (BG_mesh);
 	Bucket * Bnd_buck = NULL;
@@ -81,14 +80,15 @@ int scan_outside_layer (THashTable * P_table, HashTable * BG_mesh, int numproc, 
     					assert(p_curr);
     					if (p_curr->is_involved())
     					{
-    						Bnd_buck->set_has_involved (INVOLVED );
+    						Bnd_buck->set_has_involved (HAS_BOTH);
     						adapt++;
-    						goto next_bucket;
+    						goto next_bucket; // if found involved particle in current bucket --> then mark the current bucket as has_involved (actually, has both involved and potential involved) and go and check next bucket
     					}
     				}// loop: go through all particles in the bucket
 
-    				break; //jump out from the loop of going through all neighbor --> have already confirmed that Bnd_buck is the most out layer of the
+    				break; //jump out from the for loop of going through all neighbor --> have already confirmed that Bnd_buck is the most out layer of the
     			}//end of if one neighbor is
+
     		}// end of go through all neighbor of bucket Bnd_buck
 
     	next_bucket:

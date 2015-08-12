@@ -45,6 +45,11 @@ const int INVOLVED = 2; //involved for particle
 const int POTENTIAL_INVOLVED = 1; //potential involved for particle
 const int NON_INVOLVED = 0; //not involved for particle
 
+const int HAS_INVOLVED = 2; //has only involved for bucket
+const int HAS_BOTH = 3; //has both involved and potential involved particles for bucket
+const int HAS_POTENTIAL_INVOLVED = 1; // has only potential involved for bucket
+const int HAS_NON_INVOLVED = 0; //has not involved for bucket
+
 const float  LOAD_BALANCE_TOLERANCE = 1.001;
 const double PI = 3.14159265358979;
 const double TINY = 1.0E-08;
