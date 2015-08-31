@@ -67,6 +67,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	//unsigned num_particle = 0;
     int i, j, k;
     int ii;
+    int tempid;
     unsigned tkeylen = TKEYLENGTH;
    
     double dist;
@@ -239,7 +240,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     THTIterator * itr2 = new THTIterator (P_temp);
     Particle * Curr_part;
     while ((Curr_buck = (Bucket *) itr->next ()))
-      if (!Curr_buck->is_guest())
+//      if (!Curr_buck->is_guest()) //Well, this is not necessary! ---> Maybe can also be updated in move data.
       {
     	/* Again --->even guest bucket need to be checked,
     	 * ---> so that the synchronization is not needed
@@ -297,9 +298,9 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
     			  /*
     			   * Here what I did is only remove them from P_table and bucket particle list!
-    			   * But the particle in other particles neighbour list is not deleted!
-    			   * And the particle as guest on other processes is not removed!
-    			   * And the particle, if it has image, the image should also be removed!
+    			   * But the particle in other particles neighbour list is not deleted!---> will be done in search neighbor (please double check)
+    			   * And the particle as guest on other processes is not removed!--->well, all particle on other processes will be removed as other processes will execute the same command. ----> you should have already been aware of the fact that no "non_guest" constrain is imposed here.
+    			   * And the particle, if it has image, the image should also be removed! ---> will be done in search_image and imposing BC (please double check)
     			   */
     			  P_table->remove(tempkey); //remove from the hashtable
 
@@ -355,6 +356,15 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     	           for (k=0; k<TKEYLENGTH; k++)
     	                key[k]=Curr_part->getKey().key[k];
 
+    	           //
+                   //default involved is zero---> need to double check what involved should be allocated here
+                   if (Curr_buck->is_guest())
+                   {
+                	      Curr_part->put_guest_flag(true);
+                          tempid = Curr_buck->get_myprocess ();
+                          Curr_part->put_my_processor(tempid);
+                   }
+
     	 	       TKey tmpkey(key);
     	 	       Curr_buck->add_erupt_ghost_particle(tmpkey);
     	    	   P_table->add(key, Curr_part);
@@ -377,6 +387,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 {
     double t_add, t_each;
     int n;
+    int tempid;
     double bot;
     double crd_p[DIMENSION];
     double range_x[2];
@@ -628,7 +639,14 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 		    	{
 	                for (k=0; k<TKEYLENGTH; k++)
 	                    key[k]=Curr_part->getKey().key[k];
-
+	    	           //
+	             //default involved is zero---> need to double check what involved should be allocated here
+	             if (Curr_buck->is_guest())
+	             {
+	                Curr_part->put_guest_flag(true);
+	                tempid = Curr_buck->get_myprocess ();
+	                Curr_part->put_my_processor(tempid);
+	            }
 		    	TKey tmpkey(key);
 		    	Curr_buck->add_erupt_ghost_particle(tmpkey);
                 P_table->add(key, Curr_part);
