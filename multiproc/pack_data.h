@@ -50,6 +50,10 @@ struct BucketPack
   // Integers
   int myprocess;
   int activeflag; //1 means active, 0 means not active
+  int erupt_flag;/*flag that used to indicate the bucket is source bucket or not
+                     * if erupt_flag = true, it is eruption bucket
+                     * if erupt_flag = false, it is not eruption bucket
+                     * */
   int bucket_type;//0, 1, 2, 3: Mixed, ect
   int particles_type; //have real particle or not? have ghost particles or not...
   int has_involved;//1 means have involved particles, 0 means does not

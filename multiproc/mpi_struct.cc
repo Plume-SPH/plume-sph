@@ -49,7 +49,7 @@ GMFG_new_MPI_Datatype ()
   int d;
   BucketPack * buck = new BucketPack;
 
-  blockcounts[0] = 6 + NEIGH_SIZE + 2*DIMENSION;
+  blockcounts[0] = 7 + NEIGH_SIZE + 2*DIMENSION;
   blockcounts[1] = KEYLENGTH * (1 + NEIGH_SIZE) + MAX_PARTICLES_PER_BUCKET * TKEYLENGTH ;
   blockcounts[2] = (4 * DIMENSION) + 4;
   MPI_Address (&(buck->myprocess), &displs[0]);

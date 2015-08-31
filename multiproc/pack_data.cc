@@ -40,6 +40,7 @@ void pack_bucket (BucketPack *buckpack, Bucket *sendbuck, int process)
   buckpack->bucket_type = sendbuck->bucket_type;
   buckpack->particles_type = sendbuck->particles_type;
   buckpack->activeflag = (int) sendbuck->active;
+  buckpack->erupt_flag = (int) sendbuck->erupt_flag;
   buckpack->has_involved = sendbuck->has_involved;
   for (j=0; j<KEYLENGTH; j++)
     buckpack->key[j] = sendbuck->key.key[j];
@@ -122,6 +123,7 @@ void unpack_bucket (BucketPack *recvdBuck, Bucket *buck, int myid)
   buck->bucket_type = recvdBuck->bucket_type;
   buck->particles_type = recvdBuck->particles_type;
   buck->active = (bool) recvdBuck->activeflag;
+  buck->erupt_flag = (bool) recvdBuck->erupt_flag;
   buck->has_involved = recvdBuck->has_involved;
 
   for ( i=0; i < KEYLENGTH; i++ )

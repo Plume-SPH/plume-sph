@@ -611,7 +611,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	    Particle * Curr_part;
 
 	    while ((Curr_buck = (Bucket *) itr->next ()))
-	      if (Curr_buck->is_erupt ())
+	      if (Curr_buck->is_erupt())
 	      {
 		    for (i = 0; i < DIMENSION; i++)
 		    {
