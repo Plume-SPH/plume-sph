@@ -1,6 +1,5 @@
 #load module
-module load hdf
-
+module load hdf5/1.8.15p1
 #clean up
 make clean
 make distclean

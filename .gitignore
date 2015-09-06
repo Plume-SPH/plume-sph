@@ -54,7 +54,9 @@ particler
 funky*.h5
 move_data*.log
 particler
+src/particler
 preprocess
+preproc/preprocess
 pvplot*.h5part
 
 #Others
@@ -65,3 +67,5 @@ pvplot*.h5part
 ccr-debug.sh
 ccr-install.sh
 build.sh
+bin/err
+bin/out

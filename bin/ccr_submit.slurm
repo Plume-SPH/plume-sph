@@ -1,18 +1,19 @@
 #!/bin/sh  
 #SBATCH --partition=general-compute
 #SBATCH --time=71:30:00 
-#SBATCH --nodes=32
-#SBATCH --ntasks-per-node=1
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=8
 ##SBATCH --mem=12000 
 ##SBATCH --account=mae610s15
 ##Memory per node specification is in MB. It is optional. # The default limit is 3GB per core. 
 #SBATCH --mail-user=zhixuanc@buffalo.edu 
 #SBATCH --mail-type=ALL 
 ##SBATCH --constraint=CPU-E5645
+#SBATCH --constraint=IB
 #SBATCH --requeue 
-#SBATCH --job-name="sml130" 
-#SBATCH --output=sml130.out
-#SBATCH --error=sml130.err
+#SBATCH --job-name="sml100" 
+#SBATCH --output=sml100.out
+#SBATCH --error=sml100.err
 #
 echo "SLURM_JOBID="$SLURM_JOBID 
 echo "SLURM_JOB_NODELIST"=$SLURM_JOB_NODELIST 
@@ -25,21 +26,15 @@ module load mkl/11.2
 module load hdf
 module list
 
-#echo "Run with 32 threads."
-#mpirun -n 32 ./my_4000 > only_mpi_slurm.txt
-#
+#whether the following is still necessary or not need double check.
+export HDF5_DISABLE_VERSION_CHECK=1
 
-#echo "Run with 64 threads."
-#mpirun -n 64 ./my_4000 >> only_mpi_slurm.txt
-#
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
 
-#echo "N,	t,	flops,	   w"
-#./try 10 >try.txt
-#for ((np=30; np<=10000000000; np *= 2)) do
-#    ./try $np >>try.txt
-#done
+#for MPI debug, the larger the value, the more details will given
+export I_MPI_DEBUG=99
 
-echo "run with 32 processes"
-mpirun -n 32 ./particler >out
+echo "srun with $SLURM_NNODES nodes, each node has 8 processors"
+srun ./particler 1>out 2>err
 echo "All Done!"
 
