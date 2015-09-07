@@ -137,7 +137,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
     	    				pcrd[2] = mincrd[2] + dx2 + k * dx;
 
     	    				//I need to figure out one way to make sure that particles will not be added repeatedly in MIXED bucket. ---> should keep in mind that efficiency is very important!
-    	    				if (pcrd[2]<bnd[4])
+    	    				if (pcrd[2]<bnd[4]) // make sure newly added particle is underground
     	    				{
     	    					for (ii = 0; ii < DIMENSION; ii++)
     	    					    normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);

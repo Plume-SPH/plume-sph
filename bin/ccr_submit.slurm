@@ -23,7 +23,7 @@ cd $SLURM_SUBMIT_DIR echo "working directory = "$SLURM_SUBMIT_DIR
 #
 module load intel-mpi/5.0.2
 module load mkl/11.2
-module load hdf
+module load hdf5/1.8.15p1
 module list
 
 #whether the following is still necessary or not need double check.

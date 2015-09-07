@@ -52,7 +52,7 @@ int scan_outside_layer (THashTable * P_table, HashTable * BG_mesh, int numproc, 
 	while ((Bnd_buck = (Bucket *) itr->next ()))
 		/*
 		 * 1) has_involved = 1
-		 * 2) is not guest --> not necessary to do extra repeated work
+		 * 2) is not guest --> not necessary to do extra repeated work ---> communication will be executed after scan of the most outer layer
 		 * --> more important, we need neighbor info to the following work,
 		 * --> But some neighbors of guest buckets might be on other procs
 		 */
@@ -68,7 +68,7 @@ int scan_outside_layer (THashTable * P_table, HashTable * BG_mesh, int numproc, 
     			neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
     			/*
     			 * 1) is not empty
-    			 * 2) has_involved = 0 --> up to now, what only left is pressure ghost buckets and underground buckets
+    			 * 2) has_involved = 0 --> up to now, The only possible are pressure ghost buckets and underground buckets
     			 * 3) so, need to make sure that bucket is not UNDERGROUND bucket
     			 */
     			if (((neigh->get_plist ()).size()) && !neigh->get_has_involved() && neigh->get_bucket_type () != UNDERGROUND)

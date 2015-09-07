@@ -177,7 +177,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
               		    				   Curr_buck->add_pressure_ghost_particle(tmpkey);
               	    				   }// make sure it is above ground.
               	    				 }// end of if bucket is on ground MIXED
-              	    				 else //over ground MIXED
+              	    				 else //over ground MIXED ---> MIXED on the side of the domain and on the top of the domain
               	    				 {
             	    					for (ii = 0; ii < DIMENSION; ii++)
             	    					    normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
@@ -192,7 +192,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
             		    				}
             		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
 
-            		    				//default involved is zero
+            		    				//default involved is zero ---> in the constructor
           					           if (Bnd_buck->is_guest())
           					           {
           					               pnew->put_guest_flag(true);
