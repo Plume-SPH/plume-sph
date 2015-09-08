@@ -138,8 +138,8 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
           SimProps* simprops, int myid, int numprocs, int * my_comm)
 {
   int No_of_Buckets;
-  int BG_TABLE_SIZE = 100000;
-  int P_TABLE_SIZE = 1000000;
+  int BG_TABLE_SIZE = 400000;
+  int P_TABLE_SIZE = 4000000;
   double mindom[DIMENSION], maxdom[DIMENSION];
   double mindom_i[DIMENSION], maxdom_i[DIMENSION];
   unsigned btkey[KEYLENGTH];
