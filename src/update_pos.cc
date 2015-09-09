@@ -154,8 +154,9 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
         		/* there is potential problem that the particles cross the boundary and goes to other other buckets which is next to the MIXED buckets.
         		 * ---> Hopefully this will not happen!
         		 */
-        		if (curr_bucket->get_bucket_type() == MIXED && (curr_bucket->get_bucket_index())[4] == -1) // only happens for underground MIXED bucket---> The old code, should also happens at the top and side of the domain.
-        		    los = curr_bucket->determine_escape(pos);
+//        		if (curr_bucket->get_bucket_type() == MIXED && (curr_bucket->get_bucket_index())[4] == -1) // only happens for underground MIXED bucket---> The old code, should also happens at the top and side of the domain.
+    			if (curr_bucket->get_bucket_type() == MIXED)
+    			   los = curr_bucket->determine_escape(pos);
              }// end of if particles is real ---> to delete particles which crossed the boundary!
 
     		// if particle crosses boundary -- remove it
@@ -210,16 +211,6 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
               assert(neigh->contains(pos));
 
-              //if real particle moves into a pressure guest bucket,
-              //remove the particle and los++;
-              if (!neigh->get_has_involved())//if has_involved = 0
-              {
-            	  P_table->remove(*p_itr);
-            	  delete p_curr;
-
-            	  lost++;// real particle lost on local proc
-            	  continue;
-              }
               // if real particle moves into guest bucket
               // delete it
               if (neigh->is_guest())
@@ -229,23 +220,37 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
                 continue;
               }
-              else  // if neighbor is a native ...
+              else  // if neighbor bucket is a native ...
               {
-                // if an empty bucket got particle ...
-                //   1 -> turn on have_realp flag
-                //   2 -> turn on adapt flag
-                if ((! neigh->has_real_particles()) && (p_curr->is_real()))
+                //if real particle moves into a pressure bucket,
+                //remove the particle and los++;
+                if (!neigh->get_has_involved())//if has_involved = 0
                 {
-                  neigh->set_real_particles(true);
-//                  adapt = 1;
-                }
+                	  P_table->remove(*p_itr);
+                	  delete p_curr;
 
-                if ((! neigh->has_erupt_ghost_particles()) && (p_curr->is_erupt_ghost ()))
-                {
-                     neigh->set_erupt_ghost_particles(true);
-//                     adapt = 1;
+                	  lost++;// real particle lost on local proc
+                	  continue;
                 }
-                neigh->add_particle(*p_itr);
+                else //if the neigh is not pressure bucket
+                {
+                   // if an empty bucket got particle ...
+                   //   1 -> turn on have_realp flag
+                   //   2 -> turn on adapt flag
+                   if ((! neigh->has_real_particles()) && (p_curr->is_real()))
+                   {
+                     neigh->set_real_particles(true);
+//                   adapt = 1;
+                   }
+
+                   if ((! neigh->has_erupt_ghost_particles()) && (p_curr->is_erupt_ghost ()))
+                   {
+                        neigh->set_erupt_ghost_particles(true);
+//                        adapt = 1;
+                   }
+                   neigh->add_particle(*p_itr); // 1) If the particle list in neigh has not been updated, after while, when update the particle list in that bucket, the particle that was added here will just been kept.
+                                                // 2) If the particle list in neigh has already been updated, it does not hurt to add a new particle into it.
+                 }
               }
             }//end of if  (!p_curr->is_guest())
 

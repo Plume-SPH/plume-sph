@@ -69,3 +69,5 @@ ccr-install.sh
 build.sh
 bin/err
 bin/out
+preproc/preprocess
+src/particler
