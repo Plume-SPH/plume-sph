@@ -148,13 +148,13 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
     		 * For the bucket over ground, the boundary is not fixed and not necessary to be MIXED
     		 */
     		los = false;
-    		//only real particle will lost
+    		//only real particle will lost, erupt ghost will not lost.
     		if (p_curr->is_real ())
         	{
         		/* there is potential problem that the particles cross the boundary and goes to other other buckets which is next to the MIXED buckets.
         		 * ---> Hopefully this will not happen!
         		 */
-        		if (curr_bucket->get_bucket_type() == MIXED && (curr_bucket->get_bucket_index())[4] == -1) // only happens for underground MIXED bucket
+        		if (curr_bucket->get_bucket_type() == MIXED && (curr_bucket->get_bucket_index())[4] == -1) // only happens for underground MIXED bucket---> The old code, should also happens at the top and side of the domain.
         		    los = curr_bucket->determine_escape(pos);
              }// end of if particles is real ---> to delete particles which crossed the boundary!
 
@@ -229,7 +229,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
                 continue;
               }
-              else              // if neighbor is a native ...
+              else  // if neighbor is a native ...
               {
                 // if an empty bucket got particle ...
                 //   1 -> turn on have_realp flag
@@ -300,7 +300,9 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
           }// end of if left_curr_bucket is true.
           else
             my_realp.push_back(*p_itr);
+
         }//end of if (if particle is either real or erupted ghost)
+
         else //keep these ghost particles in the bucket as they did not move
           my_particles.push_back(*p_itr);
       }//end of go through all particles in the bucket

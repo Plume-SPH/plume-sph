@@ -59,7 +59,7 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
   for (i=0; i<2*DIMENSION; i++)
 	  bucket_index[i]=bt[i];
 
-  if (bucket_type == MIXED)// only mixed bucket has boundary information
+  if (bucket_type == MIXED)// only mixed bucket has all boundary information
   {
 	 for (i=0; i<2*DIMENSION; i++)
 	 {
@@ -378,7 +378,7 @@ Bucket::calc_intersection_ground (double * point, double * xnew) const
 }
 
 /*function that used to determine whether the real particle will escape the domain and lost
- * Only consider Mixed Bucket,
+ * Only consider Mixed Bucket ---> This function should only be called by MIXED bucket which has correct bnd info.
  * The input pos should be coordinates of an real particle
  * */
 bool
@@ -387,12 +387,12 @@ Bucket::determine_escape (double * pos)
 	int i;
 	for (i = 0; i < DIMENSION; i++)
 	{
-		if (bucket_index[i*2] == -1)
+		if (bucket_index[i*2] == -1) //If the Mixed bucket is at "left side" of the domain
 		{
 			if ((pos[i] - bnd[i*2]) < -TINY)
 				return true;
 		}
-		else if (bucket_index[i*2+1] == 1)
+		else if (bucket_index[i*2+1] == 1) //If the Mixed bucket is at "right side" of the domain
 		{
 			if ((pos[i] - bnd[i*2+1]) > TINY)
 				return true;
