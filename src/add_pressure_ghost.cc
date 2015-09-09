@@ -101,7 +101,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
        bnd[5]=Lz_P[1];
       // will not add pressure ghost on UNDERGROUND bucket
 	  while ((Bnd_buck = (Bucket *) itr->next ()))
-      if (!(Bnd_buck->get_has_involved()) && !Bnd_buck->has_pressure_ghost_particles() && !Bnd_buck->is_erupt ())  // make sure bucket is has_involved >0 and is not added yet, is not erupted bucket
+      if (!(Bnd_buck->get_has_involved()) && !Bnd_buck->has_pressure_ghost_particles() && !Bnd_buck->is_erupt ())  // make sure bucket is has_involved >0 and is not added yet (Bnd_buck->has_pressure_ghost_particles() is false), is not erupted bucket
 	  {
         // if any neighbor has_potential_involved or has_involved
         const int * neigh_proc = Bnd_buck->get_neigh_proc ();

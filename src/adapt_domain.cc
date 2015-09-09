@@ -42,6 +42,7 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, int numproc, int my
 	  int i;
 	  int PRESSURE_GHOST = 1;
 	  int REAL = 100;
+	  double pos[DIMENSION];
 	  HTIterator * itr = new HTIterator (BG_mesh);
 	  Bucket * Bnd_buck = NULL;
 	  Bucket * Curr_buck = NULL;
@@ -54,8 +55,9 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, int numproc, int my
 
 	 while ((Bnd_buck = (Bucket *) itr->next ()))
 	 {
-		 //make sure that 1)the bucket is not empty, 2)has_involved = 0, 3) is not underground bucket
-	      if (!(Bnd_buck->get_has_involved()) && ((Bnd_buck->get_plist ()).size()) && (Bnd_buck->get_bucket_index())[5] > -1)
+		 //make sure that 1)the bucket is not empty, 2)has_involved = 0, 3) is not underground buckets 4) is not PRESS_BC.
+		 //Note: in the old version of the code, the PRESS_BC is not excluded, actually, it should be, because "extension of the domain should stop when it reached to the largest domain" ---> This should not influence adding of pressure ghost because when adding pressure ghost, we do not care about whether one of our neigh has_involved or has_potential_involved, we only care about whether has_inolved==0
+	      if (!(Bnd_buck->get_has_involved()) && ((Bnd_buck->get_plist ()).size()) && Bnd_buck->get_bucket_type()!=UNDERGROUND && Bnd_buck->get_bucket_type()!=PRESS_BC)
 		  {
 	    	  const int * neigh_proc = Bnd_buck->get_neigh_proc ();
 	    	  Key * neighbors = Bnd_buck->get_neighbors ();
@@ -70,23 +72,12 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, int numproc, int my
 	                {
 	                  Bnd_buck->set_has_involved (false);
 	                  Bnd_buck->set_has_potential_involved (true);
-	                  Bnd_buck->set_pressure_ghost_particles (false);
 	                  plist = Bnd_buck->get_plist();
 
-	                  if ((Bnd_buck->get_bucket_index())[4] > -1) //if not MIXED --> is OVERGROUND
+	                  if (Bnd_buck->get_bucket_type()==MIXED && (Bnd_buck->get_bucket_index())[4] ==-1) //bucket is on ground mixed
 	                  {
-	                	for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
-	                	{
-	                	    Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
-	                	    assert(p_curr);
-
-	                	    p_curr->put_bc_type (REAL); //turn pressure ghost into real
-	                	    p_curr->set_involved_flag (POTENTIAL_INVOLVED); //involved to be 1 (from non-involved to potential involved!)
-	                	}
-	                  }// end of if bucket is not MIXED
-	                  else
-	                  {
-		                	for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+	                	    Bnd_buck->set_pressure_ghost_particles (false); //But if Bnd_buck is MIXED on top or side, it should still have some pressure ghost particles
+	                	    for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
 		                	{
 		                	    Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
 		                	    assert(p_curr);
@@ -97,8 +88,37 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, int numproc, int my
 		                	       p_curr->set_involved_flag (POTENTIAL_INVOLVED); //involved to be 1 (from non-involved to potential involved!)
 		                	    }
 		                	}
-	                  }// end of bucket is MIXED
+	                  }// end of bucket is on ground MIXED
 
+	                  else if(Bnd_buck->get_bucket_type()==MIXED && (Bnd_buck->get_bucket_index())[4] >-1) //bucket is mixed except for on ground
+	                  {
+	                	    for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+		                	{
+		                	    Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
+		                	    assert(p_curr);
+		                	    //get pos of particle
+		                	    for (i = 0; i < DIMENSION; i++)
+		                	        pos[i] = *(p_curr->get_coords() + i);
+		                	    // turn involved = 0 to be involved = 1;
+		                	    if (!Bnd_buck->determine_escape(pos)) //If particle is not locate at outside of the domain. ---> These particles which locate outside of the domain will never be transfered into real
+		                	    {
+		                	       p_curr->put_bc_type (REAL); //turn pressure ghost into real
+		                	       p_curr->set_involved_flag (POTENTIAL_INVOLVED); //involved to be 1 (from non-involved to potential involved!)
+		                	    }
+		                	}
+	                  }// end of bucket is MIXED except for on ground
+	                  else
+	                  {
+	                  	  Bnd_buck->set_pressure_ghost_particles (false); //But if Bnd_buck is MIXED on top or side, it should still have some pressure ghost particles
+	                  	  for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+	                  	  {
+	                  	      Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
+	                  	      assert(p_curr);
+
+	                  	      p_curr->put_bc_type (REAL); //turn pressure ghost into real
+	                  	      p_curr->set_involved_flag (POTENTIAL_INVOLVED); //involved to be 1 (from non-involved to potential involved!)
+	                  	   }
+	                  	}// end of if bucket is not MIXED
 	                	goto next_bnd_buck;
 	                }// if any neigh is has_involved (has_involved = 2)
 	    	     }
