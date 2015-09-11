@@ -11,8 +11,8 @@ automake --add-missing
 
 
 #configure and generate Makefile --->options are flexible
-./configure --without-gdal --with-hdf5 --enable-debug --enable-parallel CC=mpicc CXX=mpicxx FC=mpif90
+./configure --without-gdal --with-hdf5 --enable-debug --enable-parallel CC=mpicc CXX=mpicxx FC=mpifort 2>&1 | tee myconfig.out
 
-#build and install
-make
-make install
+make 2>&1 | tee mymake.out
+make install 2>&1| tee mymakeinstall.out
+

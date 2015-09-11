@@ -48,7 +48,9 @@ Makefile.in
 Makefile
 config.status
 config.log
-
+myconfig*
+mymake*
+mymakeinstall*
 #Simulation generated files
 particler
 funky*.h5
