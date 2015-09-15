@@ -79,6 +79,9 @@ double d_weight(
                  //! { 0, 1, 2 }: direction of differentiation
                  int dir);
 
+//These basic algebra code is not used in SPH code, but will be used in GSPH code
+//The recommended option is to use libraries for such basic things, such as blas, Lapack, Petsc
+
 /*!
  * rotates the vector \f$\mathbf{u}\f$ along unit vector \em cosines.
  * It involves rotation of velocity vector and rotation of stress-tensor.
@@ -125,46 +128,46 @@ void matrix_vec_mult(
                       //! c = A*b
                       double *c);
 
-/*!
- *  For very small dimensional matericies
- *  For any higher order multiplication BLAS etc is preferred
- */
-void matrix_matrix_mult(
-                         //! Matix A ( N x P )
-                         double *A,
-                         //! Matix A leading dim, i.e. N
-                         int N,
-                         //! Matrix A lagging dim i.e. P
-                         int P,
-                         //! Matrix B ( P x M )
-                         double *B,
-                         //! Matrix B lagging dim, i.e. M
-                         int M,
-                         //! C = A*B
-                         double *C);
-
-/*!
- *  Solve Liner equations
- *  Used to compute velocity gradients
- */
-void linsolve(
-               //! Matix A (3,3)
-               double * A,
-               //! RHS ( set of vectors, in columns )
-               double * b,
-               //! No of vectors in the set, (N x M)
-               int M,
-               //! solution (N x M)
-               double *d);
-
-
-void linsolve31 (
-                 //! 3 x 3 Matrix as row-major format (LHS)
-                 double * A,
-                 //! 3 x 1 column vector (RHS)
-                 double * d,
-                 //! 3 x 1 solution vector
-                 double * sol);
+///*!
+// *  For very small dimensional matericies
+// *  For any higher order multiplication BLAS etc is preferred
+// */
+//void matrix_matrix_mult(
+//                         //! Matix A ( N x P )
+//                         double *A,
+//                         //! Matix A leading dim, i.e. N
+//                         int N,
+//                         //! Matrix A lagging dim i.e. P
+//                         int P,
+//                         //! Matrix B ( P x M )
+//                         double *B,
+//                         //! Matrix B lagging dim, i.e. M
+//                         int M,
+//                         //! C = A*B
+//                         double *C);
+//
+///*!
+// *  Solve Liner equations
+// *  Used to compute velocity gradients
+// */
+//void linsolve(
+//               //! Matix A (3,3)
+//               double * A,
+//               //! RHS ( set of vectors, in columns )
+//               double * b,
+//               //! No of vectors in the set, (N x M)
+//               int M,
+//               //! solution (N x M)
+//               double *d);
+//
+//
+//void linsolve31 (
+//                 //! 3 x 3 Matrix as row-major format (LHS)
+//                 double * A,
+//                 //! 3 x 1 column vector (RHS)
+//                 double * d,
+//                 //! 3 x 1 solution vector
+//                 double * sol);
 
 
 void lsq_surf3 (

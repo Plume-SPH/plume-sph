@@ -1,4 +1,4 @@
-ompiled Object files
+compiled Object files
 *.slo
 *.lo
 *.o
@@ -22,6 +22,7 @@ ompiled Object files
 *.out
 *.app
 *.err
+*.log
 
 # Eclipse
 .autotools
@@ -43,6 +44,7 @@ Makefile.in
 /config.h.in~
 #config.h.in
 /aclocal.m4
+/stamp-h1
 
 #configure generated file, for thouse who like to compile in source
 Makefile
@@ -55,9 +57,9 @@ mymakeinstall*
 particler
 funky*.h5
 move_data*.log
-particler
+bin/particler
 src/particler
-preprocess
+bin/preprocess
 preproc/preprocess
 pvplot*.h5part
 
@@ -71,5 +73,3 @@ ccr-install.sh
 build.sh
 bin/err
 bin/out
-preproc/preprocess
-src/particler
