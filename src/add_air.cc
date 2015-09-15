@@ -46,7 +46,7 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 	  double normc[DIMENSION];
 	  double pcrd[DIMENSION];
 	  double poly[DIMENSION + 1];
-	  double bnd[2*DIMENSION], flag[DIMENSION],index[2*DIMENSION];
+	  double bnd[2*DIMENSION], flag[DIMENSION], index[2*DIMENSION];
 
 	  Bucket *Curr_buck = NULL;
 
