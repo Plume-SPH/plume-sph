@@ -601,3 +601,27 @@ void check_neigh_part(THashTable * P_table)
 	 }//end of go through all particles
 
 }
+
+//function to check where does the negative sound speed comes from
+      bool check_particles_sndspd (THashTable * P_table)
+      {
+    	  bool ng_sndspd = false;
+
+    	  THTIterator *itr = new THTIterator(P_table);
+    	  Particle *p_curr = NULL;
+
+    	  while ((p_curr = (Particle *) itr->next()))
+    	      if (p_curr->need_neigh())
+    	      {
+    	        // calc speed of sound through the medium
+    	        double c = p_curr->get_sound_speed();
+    	        if (c < 0)
+    	        {
+    	        	ng_sndspd =true;
+    	        	cout << "c = " << c << endl;
+//    	        	return ng_sndspd;
+    	        }
+    	      }
+
+    	  return ng_sndspd;
+      }

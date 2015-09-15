@@ -406,7 +406,7 @@ void air_prop (double *coord, double *range, double * energy, double *pressure, 
 	double d2 = p2/(Ra_P*T2);
 	double d = *density;
 
-	//The following code is based in numerical integration, coefficient are 1/6, 4/6 1/6
+	//The following code is based on numerical integration, coefficient are 1/6, 4/6 1/6
 	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*(0.1666667*d1+0.6666666*d+0.1666667*d2);
 
 #ifdef DEBUG
@@ -792,31 +792,31 @@ void initial_air (Particle * pi)
 	return;
 }
 
-#ifdef DEBUG
-      //function to check where does the negative sound speed comes from
-      bool check_particles_sndspd (THashTable * P_table)
-      {
-    	  bool ng_sndspd = false;
-
-    	  THTIterator *itr = new THTIterator(P_table);
-    	  Particle *p_curr = NULL;
-
-    	  while ((p_curr = (Particle *) itr->next()))
-    	      if (p_curr->need_neigh())
-    	      {
-    	        // calc speed of sound through the medium
-    	        double c = p_curr->get_sound_speed();
-    	        if (c < 0)
-    	        {
-    	        	ng_sndspd =true;
-    	        	cout << "c = " << c << endl;
-//    	        	return ng_sndspd;
-    	        }
-    	      }
-
-    	  return ng_sndspd;
-      }
-
-#endif
+//#ifdef DEBUG
+//      //function to check where does the negative sound speed comes from
+//      bool check_particles_sndspd (THashTable * P_table)
+//      {
+//    	  bool ng_sndspd = false;
+//
+//    	  THTIterator *itr = new THTIterator(P_table);
+//    	  Particle *p_curr = NULL;
+//
+//    	  while ((p_curr = (Particle *) itr->next()))
+//    	      if (p_curr->need_neigh())
+//    	      {
+//    	        // calc speed of sound through the medium
+//    	        double c = p_curr->get_sound_speed();
+//    	        if (c < 0)
+//    	        {
+//    	        	ng_sndspd =true;
+//    	        	cout << "c = " << c << endl;
+////    	        	return ng_sndspd;
+//    	        }
+//    	      }
+//
+//    	  return ng_sndspd;
+//      }
+//
+//#endif
 
 

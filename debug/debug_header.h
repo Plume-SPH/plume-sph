@@ -187,4 +187,10 @@ void check_neigh_part(
 void check_bucket_guest (
 		HashTable * //BG_mesh
 		);
+
+//function to check where does the negative sound speed comes from
+bool check_particles_sndspd (
+    	       THashTable * /*particle hash table*/
+               );
+
 #endif /* DEBUG_HEADER_H */

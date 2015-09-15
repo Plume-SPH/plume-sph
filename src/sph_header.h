@@ -329,12 +329,12 @@ void initial_air (
 		Particle * //pi
 		);
 
-#ifdef DEBUG
-      //function to check where does the negative sound speed comes from
-      bool check_particles_sndspd (
-    		  THashTable * /*particle hash table*/
-           );
-
-#endif
+//#ifdef DEBUG
+//      //function to check where does the negative sound speed comes from
+//      bool check_particles_sndspd (
+//    		  THashTable * /*particle hash table*/
+//           );
+//
+//#endif
 
 #endif  //SPH_HEADER_H_
