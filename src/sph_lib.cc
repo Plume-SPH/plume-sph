@@ -295,7 +295,7 @@ lsq_surf3 (double * x, double * y, double * z, double * poly)
 }
 
 
-//general file for artificial viscosity
+//general function for artificial viscosity
 double art_vis ( Particle * pi, Particle * pj)
 {
 	int    k;
@@ -336,7 +336,7 @@ double art_vis ( Particle * pi, Particle * pj)
 	return vis;
 }
 
-//overloading file for artificial viscosity
+//overloading function for artificial viscosity
 double art_vis ( double rhoab, double sndspdab, double rab[3], double vab[3], double rsqab, double h)
 {
 	int    k;
@@ -403,6 +403,67 @@ void air_prop (double *coord, double *range, double * energy, double *pressure, 
 	double p1 = pa0_P*exp(C0*h1/T1)*(h1>=0) +  pa0_P*(h1<0);
 	double d1 = p1/(Ra_P*T1);
 	double p2 = pa0_P*exp(C0*h2/T2)*(h2>=0) +  pa0_P*(h2<0);
+	double d2 = p2/(Ra_P*T2);
+	double d = *density;
+
+	//The following code is based on numerical integration, coefficient are 1/6, 4/6 1/6
+	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*(0.1666667*d1+0.6666666*d+0.1666667*d2);
+
+#ifdef DEBUG
+	bool print = false;
+	if (print)
+        cout << "h=" << h<< "\t T=" << T << "\t p="  << *pressure << "\t rho=" << *density << "\t e=" << *energy << "\n" << endl;
+#endif
+}
+
+//function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
+//Based on hydro-static equation dp/dz=-rho*g ---> This will give a less realistic initial atmosphere, but more consistent with current model.
+void air_prop_hydro (double *coord, double * energy, double *pressure, double * density)
+{
+	double h=coord[2];
+
+	if (h>H3_P)
+		cout << "height of domain exceeds the maximum height of atmosphere, in air_prop! \n" <<endl;
+
+	double T;
+	T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
+	double C0 = -0.034193145144839; //coefficient in expression of pressure: C0=-28.97*g/(6.02*1000*1.3806448)
+	*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
+	*density = (*pressure) /(Ra_P*T) ;
+	*energy = (*pressure) /(*density * (gamma_P-1));
+
+#ifdef DEBUG
+	bool print = false;
+	if (print)
+        cout << "h=" << h<< "\t T=" << T << "\t p="  << *pressure << "\t rho=" << *density << "\t e=" << *energy << "\n" << endl;
+#endif
+}
+
+//overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
+//Based on hydro-static equation dp/dz=-rho*g ---> This will give a less realistic initial atmosphere, but more consistent with current model.
+void air_prop_hydro (double *coord, double *range, double * energy, double *pressure, double * density, double * mass)
+{
+	double h=coord[2];
+
+	if (h>H3_P)
+		cout << "height of domain exceeds the maximum height of atmosphere, in air_prop! \n" <<endl;
+
+	double T;
+	T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
+	double C0 = -0.034193145144839; //coefficient in expression of pressure: C0=-28.97*g/(6.02*1000*1.3806448)
+	*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
+	*density = (*pressure) /(Ra_P*T) ;
+	*energy = (*pressure) /(*density * (gamma_P-1));
+
+	//integration is based on interpolation of order 2 (three points)
+	double h1=range[4];
+	double h2=range[5];
+	double T1, T2;
+	T1 = Ta0_P *(h1 < 0) + (Ta0_P-miu1_P*h1)*((h1>=0)&&(h1<H1_P))+(Ta0_P-miu1_P*H1_P)*((h1>=H1_P)&&(h1<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h1-H2_P))*((h1>=H2_P)&&(h1<H3_P));
+	T2 = Ta0_P *(h2 < 0) + (Ta0_P-miu1_P*h2)*((h2>=0)&&(h2<H1_P))+(Ta0_P-miu1_P*H1_P)*((h2>=H1_P)&&(h2<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h2-H2_P))*((h2>=H2_P)&&(h2<H3_P));
+	double p1 = pa0_P *(h1 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h1, Ate1_p))*((h1>=0)&&(h1<H1_P))+(Ata2_p*exp(Atb2_p*h1))*((h1>=H1_P)&&(h1<H2_P))+(AtC3_p*pow(Atb3_p*h1+Ata3_p,Ate3_p))*((h1>=H2_P)&&(h1<H3_P));
+	double d1 = p1/(Ra_P*T1);
+	double p2 = pa0_P *(h1 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h1, Ate1_p))*((h1>=0)&&(h1<H1_P))+(Ata2_p*exp(Atb2_p*h1))*((h1>=H1_P)&&(h1<H2_P))+(AtC3_p*pow(Atb3_p*h1+Ata3_p,Ate3_p))*((h1>=H2_P)&&(h1<H3_P));
 	double d2 = p2/(Ra_P*T2);
 	double d = *density;
 
@@ -775,7 +836,7 @@ void initial_air (Particle * pi)
 	  	  range[4]=xi[2]-sml2;
 	  	  range[5]=xi[2]+sml2;
 
-	  	  air_prop (xi, range, &erg, &prss, &dens, &mss);
+	  	  air_prop_hydro (xi, range, &erg, &prss, &dens, &mss);
 
 	      //put data back into particle:
 	      pi->put_density(dens);

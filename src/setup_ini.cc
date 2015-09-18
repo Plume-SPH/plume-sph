@@ -130,28 +130,30 @@ setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
 	   }
 #endif
 
-	  for (i = 0; i < DIMENSION; i++)
-		  xi[i] = *(pi->get_coords() + i);
-
-	  sml2 = 0.5*(pi->get_smlen ());
-	  range[0]=xi[0]-sml2;
-	  range[1]=xi[0]+sml2;
-	  range[2]=xi[1]-sml2;
-	  range[3]=xi[1]+sml2;
-	  range[4]=xi[2]-sml2;
-	  range[5]=xi[2]+sml2;
-
-	  air_prop (xi, range, &erg, &prss, &dens, &mss);
-
-      //put data back into particle:
-      pi->put_density(dens);
-      pi->put_energy(erg);
-      pi->put_pressure(prss);
-      pi->put_velocity(vel);
-      pi->put_mass(mss);
-
-      //the second variable need to be updated.
-      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+//	  for (i = 0; i < DIMENSION; i++)
+//		  xi[i] = *(pi->get_coords() + i);
+//
+//	  sml2 = 0.5*(pi->get_smlen ());
+//	  range[0]=xi[0]-sml2;
+//	  range[1]=xi[0]+sml2;
+//	  range[2]=xi[1]-sml2;
+//	  range[3]=xi[1]+sml2;
+//	  range[4]=xi[2]-sml2;
+//	  range[5]=xi[2]+sml2;
+//
+//	  air_prop_hydro (xi, range, &erg, &prss, &dens, &mss);
+//
+//      //put data back into particle:
+//      pi->put_density(dens);
+//      pi->put_energy(erg);
+//      pi->put_pressure(prss);
+//      pi->put_velocity(vel);
+//      pi->put_mass(mss);
+//
+//      //the second variable need to be updated.
+//      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+      //Replace the old data with an lib function
+	  initial_air(pi);
       j++;
    }//end of go through all particles
 

@@ -232,7 +232,25 @@ void air_prop (
 		double *, //density
 		double *  //particle mass
 		);
+//function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
+//Based on hydro-static equation dp/dz=-rho*g ---> This will give a less realistic initial atmosphere, but more consistent with current model.
+void air_prop_hydro (
+		double *, //coordinate of particle
+		double *, //internal energy of particle
+		double *, //pressure
+		double *  //density
+        );
 
+//overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
+//Based on hydro-static equation dp/dz=-rho*g ---> This will give a less realistic initial atmosphere, but more consistent with current model.
+void air_prop_hydro (
+		double *, //coordinate of particle
+		double *, //range of the space which is occupied by the particle [xmin, xmax, ymin, ymax, zmin, zmax]
+		double *, //internal energy of particle
+		double *, //pressure
+		double *, //density
+		double *  //particle mass
+		);
 ////Function that used Petsc GESRM to solve system of equations to return mass of each particles
 //void solve_mass(
 //		double **, //matrix A      |

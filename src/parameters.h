@@ -43,6 +43,15 @@ const double miu1_P=6.5/1000;/* per meter, in original paper, it is per kilomete
 const double miu2_P= 2./1000;
 const double m_ratio_P=1.3;/*ratio between particles mass of phase2 to that of phase1*/
 
+//parameter for pressure approximation--->these parameters are obtained by solving hydro static equation togehter with EOS and atmosphere temperature
+const double Ata1_p =1.561024741e-8;
+const double Ate1_p =5.258643795;
+const double Ata2_p = 1.321758528e+5;
+const double Atb2_p = -0.16963e-3;
+const double Ata3_p = 4.7248e+03;
+const double Atb3_p = 58.5117;
+const double AtC3_p = 5642.519912;
+const double Ate3_p = -0.1709059897e-1;
 //----------------------------------------------------------------------------------------
 // %parameter at vent, used to impose eruption condition
 // %v: vent

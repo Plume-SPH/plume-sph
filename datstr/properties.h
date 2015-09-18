@@ -191,10 +191,10 @@ struct MatProps
   //! slope limiting stuff
   double GAMMA;
 
-  //! SPH smoothing length
+  //! SPH smoothing length---> for phase1, sml in TimeProps is for phase2
   double smoothing_length;
 
-  //! mass of individual particle
+  //! mass of individual particle ---> for phase1, sml in TimeProps is for phase2
   double particle_mass;
 
   //! length scaling factor
