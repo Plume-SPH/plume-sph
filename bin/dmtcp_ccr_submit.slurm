@@ -1,14 +1,17 @@
-#!/bin/bash
-#SBATCH --time=71:20:00
-#SBATCH --nodes=16
-#SBATCH --cpus-per-task=1
-#SBATCH --tasks-per-node=1
+#!/bin/sh
+#SBATCH --time=00:18:00
+#SBATCH --nodes=4
+##SBATCH --cpus-per-task=1
+#SBATCH --tasks-per-node=8
+#SBATCH --mem=24000
+#SBATCH --exclusive
 #SBATCH --mail-user=zhixuanc@buffalo.edu
 #SBATCH --mail-type=ALL
-#SBATCH --job-name=fine_resolution
+#SBATCH --job-name=large_again_7
 #SBATCH --output=output.out
 #SBATCH --error=output.err
 #SBATCH --partition=general-compute
+##SBATCH --requeue
 
 # spit out some basic SLURM information
 echo "SLURM_JOBID         = "$SLURM_JOB_ID
@@ -22,12 +25,13 @@ echo "SLURMTMPDIR         = "$SLURMTMPDIR
 #because CCR is not finish updating yet, I need the following line to make the excutable file works properly.
 export HDF5_DISABLE_VERSION_CHECK=1
 
-module load dmtcp
+module use /projects/abani/modules
+module load dmtcp/2.4.1
+#module load dmtcp
 #module load openmpi/gcc-4.4.7/1.8.0
-#module load openmpi/gcc-4.4.6/1.6.5
 module load intel-mpi/5.0.2
-#module load openmpi/gcc-4.4.6/1.6.5
-module load hdf
+module load hdf5/1.8.15p1
+
 module list
 ulimit -s unlimited
 
@@ -37,7 +41,7 @@ ulimit -s unlimited
 # Users will typically want to set this to occur a bit before 
 # the job's walltime expires.
 #
-CHECKPOINT_TIME=71h
+CHECKPOINT_TIME=5m
 
 # EXE is the name of the application/executable
 # ARGS is any command-line args
@@ -45,7 +49,7 @@ CHECKPOINT_TIME=71h
 # ERRFILE if the file where stderr will be redirected
 EXE=$SLURM_SUBMIT_DIR/particler
 #ARGS="1200000000 0 8"
-ARGS="-n 4"
+#ARGS="-n 4"
 OUTFILE=sml100.out
 ERRFILE=sml100.err
 
@@ -85,8 +89,11 @@ start_coordinator()
     fname=dmtcp_command.$SLURM_JOBID
     h=`hostname`
     echo "dmtcp_coordinator --daemon --exit-on-last -p 0 --port-file $fname $@ 1>/dev/null 2>&1"
-    dmtcp_coordinator --daemon --exit-on-last -p 0 --port-file $fname $@ 1>/dev/null 2>&1
-    
+#The following works well for dmtcp/2.4.0, but will cause trouble for 2.4.1
+#    dmtcp_coordinator --daemon --exit-on-last -p 0 --port-file $fname $@ 1>/dev/null 2>&1
+#The following works well for dmtcp/2.4.1
+    dmtcp_coordinator --daemon -p 0 --port-file $fname $@ 1>/dev/null 2>&1   
+
     while true; do 
         if [ -f "$fname" ]; then
             p=`cat $fname`
@@ -109,16 +116,16 @@ start_coordinator()
     echo "dmtcp_command \$@" >> $fname
 
     # Setup local environment for DMTCP
-   # export DMTCP_COORD_HOST=$h
-   # export DMTCP_COORD_PORT=$p
+    export DMTCP_COORD_HOST=$h
+    export DMTCP_COORD_PORT=$p
    
-    export DMTCP_HOST=$h
-    export DMTCP_PORT=$p
+    #export DMTCP_HOST=$h
+    #export DMTCP_PORT=$p
 }
 
 echo "Launching dmtcp coordintor daemon"
 echo "start_coordinator --exit-after-ckpt"
-start_coordinator #--exit-after-ckpt
+start_coordinator --exit-after-ckpt
 
 # convert checkpoint time to seconds
 nTics=`echo $CHECKPOINT_TIME | \
@@ -135,7 +142,8 @@ if [[ -f ./dmtcp_restart_script.sh ]] && [[ "${FORCE_CHECKPOINT}" == "No" ]]; th
   echo "Restarting application under dmtcp control"
   echo "./dmtcp_restart_script.sh -h $DMTCP_COORD_HOST -p $DMTCP_COORD_PORT -i $nTics 1>>$OUTFILE 2>>$ERRFILE"
  # ./dmtcp_restart_script.sh -h $DMTCP_COORD_HOST -p $DMTCP_COORD_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}
-./dmtcp_restart_script.sh -h $DMTCP_HOST -p $DMTCP_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}
+#./dmtcp_restart_script.sh -h $DMTCP_HOST -p $DMTCP_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}
+./dmtcp_restart_script.sh -h $DMTCP_COORD_HOST -p $DMTCP_COORD_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}
   cat ${OUTFILE}.${SLURM_JOB_ID} >> ${OUTFILE}
   rm -f ${OUTFILE}.${SLURM_JOB_ID}
   cat ${ERRFILE}.${SLURM_JOB_ID} >> ${ERRFILE}
