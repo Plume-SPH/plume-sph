@@ -297,7 +297,7 @@ Bucket::calc_intersection_ground (double * point, double * xnew) const
   {
 	  if (ground_type == 0)//ground_type == 0 means that the ground BC is a flat ground.
 	    {
-
+            //I am assuming that the z direction is the elevation direction
 		    xnew[0] = *point;
 	        xnew[1] = *(point+1);
 	        xnew[2] = bnd[4];

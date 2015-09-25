@@ -30,8 +30,9 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
   double refc[DIMENSION];
   double normal[DIMENSION], velrot[DIMENSION];
   double uvec[NO_OF_EQNS], state_vars[NO_OF_EQNS];
-  double dx[DIMENSION], s[DIMENSION];
+  double dx[DIMENSION], s[DIMENSION], pcoord[DIMENSION];
   double supp, bnddist, wnorm, smlen;
+  double engr;
 
   Key * neighbors;//bucket key
   Particle * p_ghost = NULL;
@@ -59,7 +60,8 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
         double d = 0.;
         for (i = 0; i < DIMENSION; i++)
         {
-          normal[i] = refc[i] - * (p_ghost->get_coords() + i);
+          pcoord[i]= *(p_ghost->get_coords() + i);
+          normal[i] = refc[i] - pcoord[i];
           d += normal[i] * normal[i];
         }
 
@@ -170,23 +172,34 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
       if ( wnorm > 0. )
         for (i = 0; i < NO_OF_EQNS; i++)
           uvec[i] /= wnorm;
-      else
+      else //wnorm might equal to zero only when there is no other particles within kernel support.
       {
         uvec[0] = 1.;
         for (i = 1; i < NO_OF_EQNS; i++)
           uvec[i] = 0.;
       }
 
+//      /*In old code, the following part is inside if statement, actually, they should be at outside of if*/
+      reflect (&uvec[1], velrot, normal);//change the direction of image velocity according to norm of wall.
+      for (i = 0; i < DIMENSION; i++)
+           uvec[i+1] = velrot[i];
+
+      /*In old code, internal energy is not given at the wall, internal energy given---> to force a essentially boundary condition
+       *But actually, the way that I am adopting here to imposing essential boundary is not proper---> to imposing proper essential boundary condition requires solving of system of equations implicitly.
+       */
+//      engr=air_engr_hydro(pcoord);
+//      uvec[NO_OF_EQNS-1]=engr;
       // if ghost belongs to my proc, update it
       if (i_img->partproc == myid)
       {
-        reflect (&uvec[1], velrot, normal);//change the direction of image velocity according to norm of wall.
-        for (i = 0; i < DIMENSION; i++)
-          uvec[i+1] = velrot[i];
+    	  /*In old code, the following part is inside if, actually, they should be at outside of if*/
+//        reflect (&uvec[1], velrot, normal);//change the direction of image velocity according to norm of wall.
+//        for (i = 0; i < DIMENSION; i++)
+//          uvec[i+1] = velrot[i];
         p_ghost->put_state_vars(uvec);
         p_ghost->put_update_delayed(false);
       }
-      // else store the values to snyc at appropriate time
+      // else store the values to snyc at appropriate time--> The late snyc will be done in move_bnd_img.cc
       else
       {
         for (i = 0; i < NO_OF_EQNS; i++)

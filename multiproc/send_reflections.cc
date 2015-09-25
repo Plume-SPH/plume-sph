@@ -26,6 +26,11 @@ using namespace std;
 
 
 // send reflctions that belong to neighboring partitions
+/*
+ * It happens that the bucket which contains the images is a guest bucket, in this case, the image need to be send out to the process where the guest bucket "originally" belong to
+ * At the time of "apply bc", these image will not be able to find their corresponding wall ghost particle and imposing of wall bc will be "delayed"
+ *
+ * */
 void
 send_foreign_images (int myid, int numprocs, HashTable * BG_mesh, 
                      list < BndImage > & Image_table, int * my_comm)

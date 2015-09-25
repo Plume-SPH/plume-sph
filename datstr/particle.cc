@@ -22,7 +22,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 
   update_delayed = false;
   guest = false;
-  reflection = false;
+  reflection = false; //The newly added wall ghost will not have image untill search, so need to be false.
   new_old = 0; //default new_old for non-guest particles is 0.
                //for guest particles: -1: old, 1: new
   bc_type = bc;

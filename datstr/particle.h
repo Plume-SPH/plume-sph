@@ -320,7 +320,7 @@ public:
   // The contribution of pressure ghost particles is also considered.
   bool contr_image() const
   {
-	  return ((bc_type == 100) || (bc_type == 1));
+	  return ((bc_type == 100) || (bc_type == 1));//real and pressure ghost will contribute to image
   }
 
   //! check if particle will contribute to the density estimation?

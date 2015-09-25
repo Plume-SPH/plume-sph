@@ -44,9 +44,35 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
   unsigned ghst_key[TKEYLENGTH], buck_key[KEYLENGTH];
 
   // get a domain length
-  double len_domain = *(BG_mesh->get_maxDom()) - *(BG_mesh->get_minDom());
+  /*
+   * There is some problem with the following way to determine the domain length, as now the domain is adaptive
+   * There should be another way to determine the domain_length --->go through all bucket -->found the most left non-empty bucket and most right bucket-->determine the domain length in that direction
+   * However, as the shape of the domain is not regular cube, the most reliable way is go through all bucket and then determine whether the image is belong to certain bucket or not.
+   *
+   * Another problem that the following method has is: the domain size is different in different direction
+   *
+   * **Based on assumption that the domain is flat, we only need to check the z direction.
+   * */
 
-  // always reset after repatition
+
+  //This is the old code:
+//  double len_domain = *(BG_mesh->get_maxDom()) - *(BG_mesh->get_minDom());
+
+  //The new code only check the whether image go out of the domain from the top.
+  //even if image is in a bucket which is not actved yet, it does not hurt-->that wall ghost corresponding to that image should be far away from the wall boundary ---> so it does not matter.
+  double len_domain = *(BG_mesh->get_maxDom()+2) - *(BG_mesh->get_minDom()+2);
+
+  // always reset after repatition. If there is no repartitioning, there is no necessary to reset Image_table
+  /*
+   * Both wall ghost particles and their images keep unchanged.
+   * There are two cases that need pay attention to:
+   * 1) new wall ghost particles is added while domain expanding--> In this case, the old wall ghosts and their images keep unchanged
+   * what need to do is search for wall ghost for the newly added wall ghost, of course, the image of newly generated wall ghost need to be found and added in the Image_table
+   * --->But the old Image_table is not necessary to be changed.---> the has_reflection will indicate whether the reflection is been searched or not.
+   * 2) repartitioning  --> In this case, the image_table need to be reset-->The reason is:
+   * after repartition, some wall ghost originally belong to "this process" might go to other processes and some other particles originally from other processes might now belong this process
+   * ---> As a result, the old table might have some images that belongs to wall ghost particles that in other processes
+   * */
   if (reset)
   {
     Image_table.clear ();
@@ -55,7 +81,7 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
 
     while ((p_temp = (Particle *) p_itr->next ()))
     	if (p_temp->is_wall_ghost())
-            p_temp->set_reflection (false);//set reflection to false.
+            p_temp->set_reflection(false);//set reflection to false.
     delete p_itr;
   }
 
@@ -77,7 +103,7 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
         {
           Particle *p_ghost = (Particle *) P_table->lookup (*p_itr);
           if (p_ghost->is_wall_ghost())//wall_bc_ghost
-        	  if (! p_ghost->has_reflection ())//do not have reflection yet.
+        	  if (! p_ghost->has_reflection ())//do not have reflection yet ---> because of this, it is not necessary to reset Image_table if new wall ghost is added.
         	  {
                   {
                     // coordinate of ghost particle
@@ -116,16 +142,16 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
                           {
                             bnddist = tmpdist;
                             buck2 = buck_neigh;
-                            img_proc = neigh_proc[i];
+                            img_proc = neigh_proc[i]; //I have question here: how could you make sure that the image is in the neighbor bucket? It is also possible that the image is not in the MIXED bucket.
                             for (j = 0; j < DIMENSION; j++)
                               intsct[j] = tmpc[j];
                           }
                         }
                       }//finish check all neighbor buckets, if the process id of neighbor bucket is valid
 
-                    // if bnd-distace is too much, then we were unable to
+                    // if bnd-distace is too large, then we were unable to
                     // find the reflection, hopefully we'll be fine
-                    if (bnddist > len_domain)
+                    if (bnddist > len_domain) //check whether the particle is inside the domain or not.
                     {
                       fprintf(stderr, "image of wall_ghost particle with coordinate: %f, %f, %f is out of the domain! \n", coord[0], coord[1], coord[2]);
                       continue;
@@ -141,6 +167,18 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
                       refc[j] = 2 * intsct[j] - coord[j];
 
                     // find the bucket containing reflection
+                    /*
+                     * The problem here is that:
+                     * if the image is not contained by any bucket on current processor, what should I do?
+                     *
+                     * There are three possible situations:
+                     * 1) image is in a local bucket
+                     * 2) image is in a guest bucket
+                     * 3) image is not in neith a local bucket nor a guest bucket on current processors.
+                     * The third situation will cause some trouble for me, the only thing that I can is to pray that this will happen.
+                     * If this happens, what should I do? ---> there are some ways to overcome this issue, but up to now, I did not encountered any situation likes this---> it is not necessary to worry about this.
+                     *
+                     * */
                     do
                     {
                       found_bucket = true;
@@ -162,13 +200,13 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
                         }
                       }
                       // if can't find the bucket, search in "dir" direction
-                      if (!found_bucket)
+                      if (!found_bucket)//if bucket is not found
                       {
-                        buck1 = buck2;
+                        buck1 = buck2; //buck1
                         img_proc = buck2->which_neigh_proc (dir);//process id of the bucket which locates in the correct search direction
                         buck2 = (Bucket *) BG_mesh->lookup (buck2->which_neigh (dir));//find pointer to the bucket that the image belongs to.
-                        if ((! buck2) &&
-                            (buck1->which_neigh_proc (dir) != myid))
+                        if ((! buck2) && //if the buck can not been found--> the bucket is not on current process or the bucket does not exist at all (exceed the domain).
+                            (buck1->which_neigh_proc (dir) != myid)) // Not sure why he need this?
                         {
                           fprintf (stderr, "leaving bucket  behind myid = %d, neigh_proc = %d\n",
                                    myid, img_proc);
@@ -182,7 +220,7 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
                           fflush (stderr);
                           break;
                         }
-                      }
+                      }//end of if statement
                     }
                     while (!found_bucket);//found the bucket to which the image belongs.
 
@@ -199,6 +237,7 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
                       Image_table.push_back (bnd_img);
                       p_ghost->set_reflection (true);
                     }
+
                   }//end if: if particle reflection is not found yet.
         	  }//end if: if particle is wall ghost
 

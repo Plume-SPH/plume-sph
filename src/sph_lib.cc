@@ -427,7 +427,6 @@ void air_prop_hydro (double *coord, double * energy, double *pressure, double * 
 
 	double T;
 	T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
-	double C0 = -0.034193145144839; //coefficient in expression of pressure: C0=-28.97*g/(6.02*1000*1.3806448)
 	*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
 	*density = (*pressure) /(Ra_P*T) ;
 	*energy = (*pressure) /(*density * (gamma_P-1));
@@ -450,7 +449,6 @@ void air_prop_hydro (double *coord, double *range, double * energy, double *pres
 
 	double T;
 	T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
-	double C0 = -0.034193145144839; //coefficient in expression of pressure: C0=-28.97*g/(6.02*1000*1.3806448)
 	*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
 	*density = (*pressure) /(Ra_P*T) ;
 	*energy = (*pressure) /(*density * (gamma_P-1));
@@ -476,6 +474,29 @@ void air_prop_hydro (double *coord, double *range, double * energy, double *pres
         cout << "h=" << h<< "\t T=" << T << "\t p="  << *pressure << "\t rho=" << *density << "\t e=" << *energy << "\n" << endl;
 #endif
 }
+
+//function that used to determine only internal energy based on altitude.
+//This function is based on a less realistic model: hydrostatic model
+//This function will be used while imposing wall boundary condition
+//actually, the way to imposing essential boundary condition for internal energy is not a proper way in bcond,cc
+//But temporarily, I just use this not proper way to impose boundary condition.---> need to read more papers on how to imposing essential boundary condition in SPH method.
+double air_engr_hydro (double *coord)
+{
+	double h=coord[2];
+	double density, pressure, energy;
+	double T;
+
+	if (h>H3_P)
+		cout << "height of domain exceeds the maximum height of atmosphere, in air_prop! \n" <<endl;
+
+	T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
+	pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
+	density = (pressure) /(Ra_P*T) ;
+	energy = (pressure) /(density * (gamma_P-1));
+
+	return energy;
+}
+
 
 ////Function that used Petsc GESRM to solve system of equations to return mass of each particles
 //PETSC_EXTERN PetscErrorCode PCCreate_Jacobi(PC);

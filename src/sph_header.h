@@ -251,6 +251,16 @@ void air_prop_hydro (
 		double *, //density
 		double *  //particle mass
 		);
+
+//function that used to determine only internal energy based on altitude.
+//This function is based on a less realistic model: hydrostatic model
+//This function will be used while imposing wall boundary condition
+//actually, the way to imposing essential boundary condition for internal energy is not a proper way in bcond,cc
+//But temporarily, I just use this not proper way to impose boundary condition.---> need to read more papers on how to imposing essential boundary condition in SPH method.
+double air_engr_hydro (
+		double * //coordinate
+		);
+
 ////Function that used Petsc GESRM to solve system of equations to return mass of each particles
 //void solve_mass(
 //		double **, //matrix A      |
