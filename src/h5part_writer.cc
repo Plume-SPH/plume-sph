@@ -35,7 +35,7 @@ void
 write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 {
   int i, j;
-  vector < double >x, y, z, Vx, Vy, Vz, rho, engr, mssfrc, phase, bctp, guest ;
+  vector < double >x, y, z, Vx, Vy, Vz, rho, engr, mssfrc, prss, phase, bctp, guest ;
 
 #ifdef DEBUG
   vector < double > involved;
@@ -77,6 +77,7 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
       Vz.push_back(*(pi->get_vel() + 2));
       engr.push_back(pi->get_energy ());
       mssfrc.push_back(pi->get_mass_frac());
+      prss.push_back(pi->get_pressure());
       phase.push_back(pi->which_phase());
       bctp.push_back(pi->get_bc_type ());
       guest.push_back(pi->get_guest());
@@ -186,6 +187,10 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   // mass fraction
   copy(mssfrc.begin(), mssfrc.end(), buf);
   ierr = GH5_Write(gid, "mssfrc", dims, (void *) buf, start, my_count, DOUBLETYPE);
+
+  //pressure
+  copy(prss.begin(), prss.end(), buf);
+  ierr = GH5_Write(gid, "prss", dims, (void *) buf, start, my_count, DOUBLETYPE);
 
   // phase
   copy(phase.begin(), phase.end(), buf);

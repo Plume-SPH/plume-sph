@@ -67,7 +67,16 @@ const double Rv_P=ng0_P*Rg_P;  /*as constant for erupted material*/
 const double Cvv_P=ng0_P*Cvg_P+(1-ng0_P)*Cvs_P; /*specific heat of erupted material*/
 const double gamma_v_P=1+Rv_P/Cvv_P; /*gamma of the mixture, using equation (6) in main reference paper*/
 
-const double rhov_P=pv0_P/(Rv_P*Tv0_P);
+//const double rhov_P=pv0_P/(Rv_P*Tv0_P); //This is incorrect, I am using EOS of idea gas for mixture of solid and gas with gas mass fraction is only 0.05
+//The correct way
+//const double Rv_g_P=Rg_P;
+//const double pv0_g_P=pv0_P; //I am assuming that solid did not influence the pressure of gas, to check whether this is reasonable: Vs=0.95/1000=0.00095, Vg=0.05/1=0.05, Vg/Vs=0.05/0.001=50, so even for ng0=0.05, this kind of assumption is still not bad
+//const double rhov_g_P=pv0_g_P/(Rv_g_P*Tv0_P);
+
+//The numerically efficient way of computing
+const double rhov_g_P=pv0_P/(Rg_P*Tv0_P);
+const double rhov_P = rhov_g_P/ng0_P; //just notice that this equation is exactly the same as the "incorrect equation"
+
 const double lamda_v_P=rhov_P*Rv_P/Cvv_P; /*A new defined parameter which lamda_P=rho_m*Rm/Cm, where, rho_m: is the density of the mixture, while Rm is gas constant for the mixture, Cm specific heat of at constatnt volume.*/
 const double ev0_P=ng0_P*Cvg_P*Tv0_P+(1-ng0_P)*Cvs_P*Tv0_P; /*energy of erupted material*/
 

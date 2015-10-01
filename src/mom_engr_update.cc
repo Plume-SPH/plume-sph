@@ -62,6 +62,9 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
    bool check_vis = false;
    double vis_2d;
    int phasej;
+
+   bool check_engr = false;
+   double engr_thresh = 140000;
 #endif
 //
 //  //before moment and energy update, update secondary variables for guest particles
@@ -212,6 +215,16 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		   // energy
 //		   unew[4] = uvec[4] + dt * (rhs_e + veli[2] * gravity[2]); //the variable is only internal energy, it has nnothing to do with mechanical energy, so gravity should not appear here!
 		   unew[4] = uvec[4] + dt * rhs_e;
+
+#ifdef DEBUG
+		  if (check_engr)
+		  {
+		      if (unew[4]>= engr_thresh) //find the particle that has large energy
+			      cout << "The particle found!" << endl;
+		  }
+
+#endif
+
 
 		   pi->put_new_state_vars(unew);
 	  }

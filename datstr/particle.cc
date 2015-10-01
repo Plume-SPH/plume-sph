@@ -144,34 +144,46 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 	//desm should be density of mixture of erupt material and air
 	double desm = state_vars[0];
 	double engr = state_vars[NO_OF_EQNS-1];
-	double mass_frac_in =  mass_frac;
 
-	double gmm, press, sndspd;
-
-	double ng=ng0_P*mass_frac_in;
-	double ns=mass_frac_in-ng;
-	double na=1-mass_frac_in;
+	double ng=ng0_P*mass_frac;
+	double ns=mass_frac-ng;
+	double na=1-mass_frac;
 
 	double Cvm=ns*Cvs_P+ng*Cvg_P+na*Cva_P;
+	//In the old code, I am using EOS for idea gas for mixture of gas and solid
+	//Now, I am using EOS for gas mixture
 	double Rm=ng*Rg_P+na*Ra_P;
+	double Rmg=Rm/(ng+na); //gas constant for gas mixture
 
-	gmm=1+Rm/Cvm;
+	gamma=1+Rm/Cvm; // gamma for mixture
 
-	double lmd=desm*Rm/Cvm;
-	press=lmd*engr;
-
+//	double lmd=desm*Rm/Cvm; not necessary
 	// for gas mixture
-	double des1=(1-mass_frac_in)*desm;//density of phase1 : air
-	double des2=mass_frac_in*desm;    //density of phase2 : erupted material
-	double desmg=des1*na+des2*ng;     //density of mixture of erupted gas and air
-	double Cvmg=ng*Cvg_P+na*Cva_P;
-	double engrg=engr*Cvmg/Cvm;
+//	//The following way of density computing is not correct -->The reason is na and ng is density with respect to mixture of solid and gas, In third equation, I was assuming that na is mass fraction with respect to phase1 and ng is with respect to pahse2
+//	double des1=(1-mass_frac)*desm;//density of phase1 : air
+//	double des2=mass_frac*desm;    //density of phase2 : erupted material
+//	double desmg=des1*na+des2*ng;     //density of mixture of erupted gas and air
+	//The correct way:
+	// double desmg=des1+des2*ng/mass_frac;
+   //The computational efficient way is:
+	double desmg=desm*(na+ng);
 
-	sndspd=pow((Rm*(press/desmg+engrg)/Cvmg),0.5);  //sound speed is assumed to be only depends on gas phase.
+	//implement EOS for idea gas on gas phase (mixture of air and gas)
+	pressure = Rmg*desmg*engr/Cvm; //attention: engr/Cvm is temperature of mixture, also temperature of gas mixture
 
-	pressure = press ;
-	sound_speed = sndspd ;
-	gamma = gmm ;
+	//This is the old way of computing Cvmg --> The mistake that I made here is again using mass fraction with respect to mixture of gas and solid to compute property for gas mixture.
+//	double Cvmg=ng*Cvg_P+na*Cva_P;
+
+	//The correct way of computing Cvmg
+	double Cvmg=(ng*Cvg_P+na*Cva_P)/(ng+na);
+
+//	//This is the old way
+//	double engrg=engr*Cvmg/Cvm; //specific internal energy for air+gas from erupted material
+//	sound_speed=pow((Rm*(press/desmg+engrg)/Cvmg),0.5);  //sound speed is assumed to only depends on gas phase---> definitely not exact, but in SPH, sound speed is only useful when determine the time steps.
+//	sound_speed=pow((Rmg*(pressure/desmg+engrg)/Cvmg),0.5);  //sound speed is assumed to only depends on gas phase---> definitely not exact, but in SPH, sound speed is only useful when determine the time steps.
+
+//	//The new way
+	sound_speed=pow((1+Rmg/Cvmg)*pressure/desmg, 0.5); //use sound speed of only gas phase, that will make sound speed larger than the real value, but safe in determine time steps.
 }
 
 
