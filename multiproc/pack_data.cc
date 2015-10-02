@@ -99,6 +99,7 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   pack_array->mass  = psend->mass;
   pack_array->smlen = psend->smlen;
   pack_array->mass_frac = psend->mass_frac;
+  pack_array->myprocess = psend->myprocess;
    
   for (j=0; j < TKEYLENGTH; j++)
     pack_array->key[j] = psend->key.key[j];
@@ -180,6 +181,7 @@ void unpack_particle (ParticlePack *packet, Particle *part)
   
   part->mass  = packet->mass;
   part->smlen = packet->smlen;
+  part->myprocess = packet->myprocess;
   
   for ( i=0; i < DIMENSION; i++ )
     part->coord[i] = packet->coords[i];

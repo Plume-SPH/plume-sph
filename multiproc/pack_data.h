@@ -33,6 +33,7 @@ struct ParticlePack
   int phase_num;
   int update_delayed;
   int involved;
+  int myprocess; //originally, myprocess is not updated correctly add this into ParticlePack to make sure that process id for guest particles is correct.
 
   //unsigned
   unsigned key[TKEYLENGTH];

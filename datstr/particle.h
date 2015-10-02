@@ -100,7 +100,7 @@ private:
   int phase_num; //1 for air, 2 for erupt material
 
   //indicate which processor does the particles belong to
-  int myprocess;
+  int myprocess; //For guest particles, myprocess should be the "home" process id, not the current process on which the guest particle locate on
 
   //!  neighbors
   vector < TKey > neighs;

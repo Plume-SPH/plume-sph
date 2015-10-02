@@ -69,7 +69,10 @@ main(int argc, char **argv)
 #endif
 
 #ifdef DEBUG
-  bool check_part = false;
+  bool check_part = true;
+  int  id;
+  bool find = false;
+  bool check_buck = false;
   bool check_part_tp =false;
   bool check_bypos = false;
   bool find_large_density = false;
@@ -109,12 +112,26 @@ main(int argc, char **argv)
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
+#ifdef DEBUG
+  if (check_part)
+  {
+	  find = false;
+	  find = check_particle_bykey (P_table, &id);
+	  if (find)
+	     cout <<"its myid is : " << id << endl;
+  }
+#endif
   // sync data
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
 #ifdef DEBUG
-  if (check_bucket)
-	  check_bucket_guest (BG_mesh);
+  if (check_part)
+  {
+	  find = false;
+	  find = check_particle_bykey (P_table, &id);
+	  if (find)
+	     cout <<"its myid is : " << id << endl;
+  }
 #endif
 
 //The reason why I put the following functions late is that adding of pressure_ghost and adding of wall ghost need neighbor info.
@@ -153,6 +170,16 @@ main(int argc, char **argv)
 
 //  //set up initial outside bucket layer list
 //  update_out_layer (P_table,BG_mesh, outside_table, numproc, myid);
+
+#ifdef DEBUG
+  if (check_part)
+  {
+	  find = false;
+	  find = check_particle_bykey (P_table, &id);
+	  if (find)
+	     cout <<"its myid is : " << id << endl;
+  }
+#endif
 
 #ifdef DEBUG
   if (check_bucket)
@@ -219,21 +246,11 @@ main(int argc, char **argv)
       //add wall ghost
       add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
 
-#ifdef DEBUG
-  if (check_part)
-	  check_bucket_bykey  (BG_mesh);
-#endif
-
-#ifdef DEBUG
-  if (check_part)
-	  check_particle_bykey (P_table);
-#endif
-
       // sync data again
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
 #ifdef DEBUG
-  if (check_part)
+  if (check_buck)
 	  check_bucket_bykey  (BG_mesh);
 #endif
 
@@ -295,6 +312,15 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
+#ifdef DEBUG
+  if (check_part)
+  {
+	  find = false;
+	  find = check_particle_bykey (P_table, &id);
+	  if (find)
+	     cout <<"its myid is : " << id << endl;
+  }
+#endif
 
     // update particle positions
     update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);

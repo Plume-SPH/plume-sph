@@ -54,7 +54,7 @@ private:
                      * 3 : has both involved particles and potential involved particles
                     */
 //  int newold;
-  int myprocess;
+  int myprocess;   //the myprocess is the id of process where the bucket originally belong to--> that is to say, for guest buckets, myprocess should be the id of its own home.
   int particles_type; // used to determine whether bucket has ghost or not.
   int bucket_type; //mixed, pressure_bc, underground, overground... 0: invalid bucket
   int bucket_index[2*DIMENSION];//used to determine bucket type.

@@ -101,7 +101,7 @@ void check_particle_bykey (THashTable * P_table)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[TKEYLENGTH] = {419430820, 302954358, 0}; //key of its neighbor which is missing
+    unsigned keycheck[TKEYLENGTH] = {270698385, 16226344, 0}; //key of its neighbor which is missing
     //{93400792, 2478187757, 0}; //key of the particle itself is:
     //
     unsigned keytemp[TKEYLENGTH] ;
@@ -124,6 +124,40 @@ void check_particle_bykey (THashTable * P_table)
 
 }
 
+//overload function to find particle with given key, will be useful in debugging. --> output my process
+bool check_particle_bykey (THashTable * P_table, int* id)
+{
+
+    bool do_search = true;
+    bool find;
+    unsigned keycheck[TKEYLENGTH] = {270983364, 16481501, 0}; //key of its neighbor which is missing
+    //{93400792, 2478187757, 0}; //key of the particle itself is:
+    //
+    unsigned keytemp[TKEYLENGTH] ;
+
+    int i;
+	THTIterator *itr = new THTIterator(P_table);
+	Particle *p_curr = NULL;
+
+	while ((p_curr = (Particle *) itr->next()))
+	{
+		if (do_search)
+		{
+		  	for (i = 0; i < TKEYLENGTH; i++)
+		  		keytemp[i] = p_curr->getKey ().key[i];
+
+		  	if (find_particle (keytemp, keycheck))
+		  	{
+		  		cout << "The particle found!" << endl;
+		  		*id = p_curr->get_my_processor ();
+		  		return true;
+		  	}
+
+		 }
+	 }
+	*id = 100000;
+	return false;
+}
 //go through all particle and check their type!
 void check_particle_all_type (THashTable * P_table)
 {

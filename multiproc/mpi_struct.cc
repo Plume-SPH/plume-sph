@@ -74,7 +74,7 @@ GMFG_new_MPI_Datatype ()
   ParticlePack * particlePack = new ParticlePack;
 
   // 1 int , 2 unsigned, bunch of doubles
-  blockcounts2[0] = 4;
+  blockcounts2[0] = 5;
   blockcounts2[1] = TKEYLENGTH;
   blockcounts2[2] = 3 + DIMENSION + NO_OF_EQNS;
 

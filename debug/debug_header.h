@@ -93,6 +93,13 @@ void check_particle_bykey (
 		THashTable *
         );
 
+//overload function to find particle with given key, will be useful in debugging. --> output my process
+bool check_particle_bykey (
+		THashTable *,// P_table
+		int* //id
+		);
+
+
 //function to find bucket with given key, will be useful in debugging.
 void check_bucket_bykey (
 		HashTable *

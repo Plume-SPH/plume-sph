@@ -12,6 +12,30 @@ using namespace std;
 #include "particle.h"
 #include "constant.h"
 
+//constructor from no input parameter--> the basic constructor
+Particle::Particle ()
+{
+  int i;
+
+  for (i = 0; i < TKEYLENGTH; i++)
+    key.key[i] = 0;
+
+  mass = 0.;
+  smlen = 0.;
+  guest = false;
+  reflection = false;
+  bc_type = 100;
+  involved = 0;
+
+  for (i = 0; i < DIMENSION; i++)
+  {
+    coord[i] = 0.;
+  }
+
+  for (i = 0; i < NO_OF_EQNS; i++)
+    state_vars[i] = 0.;
+}
+
 // constructor for initial air
 Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prss, double masfrc, double gmm, double sndspd, int phs_num, int id, int bc)
 {
@@ -105,31 +129,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
   return;
 
 }
-//constructor from no input parameter
-Particle::Particle ()
-{
-  int i;
 
-  for (i = 0; i < TKEYLENGTH; i++)
-    key.key[i] = 0;
-
-  mass = 0.;
-  smlen = 0.;
-  guest = false;
-  reflection = false;
-  bc_type = 100;
-  involved = 0;
-
-  for (i = 0; i < DIMENSION; i++)
-  {
-    coord[i] = 0.;
-  }
-
-  for (i = 0; i < NO_OF_EQNS; i++)
-    state_vars[i] = 0.;
-
-}
-
+//overload the operator ==
 bool Particle::operator== (const Particle & rhs) const
 {
   for (int i = 0; i < TKEYLENGTH; i++)

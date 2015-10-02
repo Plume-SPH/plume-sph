@@ -51,7 +51,7 @@ move_data (int nump, int myid, int * my_comm,
 
 #ifdef DEBUG
    bool do_search = false;
-   unsigned keycheck[TKEYLENGTH] = {419430820, 302954358, 0}; //key of its neighbor which is missing
+   unsigned keycheck[TKEYLENGTH] = {270983364, 16481501, 0}; //key of its neighbor which is missing
    unsigned keytemp[TKEYLENGTH] ;
 #endif
 
