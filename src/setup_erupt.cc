@@ -52,6 +52,16 @@ bool determine_erupt_buket (double *mincrd, double *maxcrd, double *xcrd, double
     return erpt_flag;
 }
 
+/*
+ * The strategy for setting up eruption boundary condition and adding new erupted particles is
+ * 1) adding guest particle in guest buckets ---> well, actually, not really sure whether this is a good idea or not,
+ *  The good thing is synchronization is not needed, In pressure ghost adding and wall ghost adding, this strategy is adopted
+ *  Another good thing is that this might help to improve efficiency --> does not require additional communication
+ *  The bad thing is that this will make the code difficult to maintain, as in one function, I am trying to do too many things.
+ *
+ *  2) The second strategy is about how to make sure that newly added particles should belong to "this" process
+ *  simple: first put all particle in a temp hashtable, then go through all bucket on "this" process and determine whether particles belong to "this" process
+ */
 int
 setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
         TimeProps * timeprops, MatProps* matprops, int numprocs)
@@ -300,7 +310,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     			   * Here what I did is only remove them from P_table and bucket particle list!
     			   * But the particle in other particles neighbour list is not deleted!---> will be done in search neighbor (please double check)
     			   * And the particle as guest on other processes is not removed!--->well, all particle on other processes will be removed as other processes will execute the same command. ----> you should have already been aware of the fact that no "non_guest" constrain is imposed here.
-    			   * And the particle, if it has image, the image should also be removed! ---> will be done in search_image and imposing BC (please double check)
+    			   * And the particle, if it has image, the image should also be removed! ---> will be done in search_image and imposing BC (please double check----> yes, I checked that, no problem)
     			   */
     			  P_table->remove(tempkey); //remove from the hashtable
 
@@ -357,7 +367,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     	                key[k]=Curr_part->getKey().key[k];
 
     	           //
-                   //default involved is zero---> need to double check what involved should be allocated here
+                   //default involved is zero---> need to double check what involved should be allocated here-->No problem, should be not involved.
                    if (Curr_buck->is_guest())
                    {
                 	      Curr_part->put_guest_flag(true);
@@ -640,18 +650,18 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	                for (k=0; k<TKEYLENGTH; k++)
 	                    key[k]=Curr_part->getKey().key[k];
 	    	           //
-	             //default involved is zero---> need to double check what involved should be allocated here
-	             if (Curr_buck->is_guest())
-	             {
-	                Curr_part->put_guest_flag(true);
-	                tempid = Curr_buck->get_myprocess ();
-	                Curr_part->put_my_processor(tempid);
-	            }
-		    	TKey tmpkey(key);
-		    	Curr_buck->add_erupt_ghost_particle(tmpkey);
-                P_table->add(key, Curr_part);
-                num_particle++; //will be used to update THASHTAB
-		    	}
+	                //default involved is zero---> need to double check what involved should be allocated here
+	                if (Curr_buck->is_guest())
+	                {
+	                  Curr_part->put_guest_flag(true);
+	                  tempid = Curr_buck->get_myprocess ();
+	                  Curr_part->put_my_processor(tempid);
+	                }
+		    	   TKey tmpkey(key);
+		    	   Curr_buck->add_erupt_ghost_particle(tmpkey);
+                   P_table->add(key, Curr_part);
+                   num_particle++; //will be used to update THASHTAB
+		        }
 
 		     }
 
