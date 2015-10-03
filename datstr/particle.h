@@ -79,7 +79,7 @@ private:
   //! update delayed
   bool update_delayed; //if my image goes to other process, the delay will be delayed!
 
-  //! new_old for wall ghost updates across process boundaries
+  //! new_old for wall guest updates across process boundaries
   int new_old;     //new_old = 1 : new
                    //new_old = -1 : old
                    //new_old = 0 :default

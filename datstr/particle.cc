@@ -22,8 +22,11 @@ Particle::Particle ()
 
   mass = 0.;
   smlen = 0.;
+  update_delayed = false;
   guest = false;
   reflection = false;
+  new_old = 0; //default new_old for non-guest particles is 0.
+                 //for guest particles: -1: old, 1: new
   bc_type = 100;
   involved = 0;
 
@@ -34,6 +37,16 @@ Particle::Particle ()
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0.;
+
+  pressure = 0;
+
+  mass_frac = 0;
+  gamma = 0;
+  sound_speed = 0;
+  phase_num = 1;
+  myprocess = 10000; //The default process id
+
+  return;
 }
 
 // constructor for initial air

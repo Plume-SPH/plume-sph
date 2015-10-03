@@ -130,7 +130,7 @@ bool check_particle_bykey (THashTable * P_table, int* id)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[TKEYLENGTH] = {270983364, 16481501, 0}; //key of its neighbor which is missing
+    unsigned keycheck[TKEYLENGTH] = {81155803, 29184500, 0}; //key of its neighbor which is missing
     //{93400792, 2478187757, 0}; //key of the particle itself is:
     //
     unsigned keytemp[TKEYLENGTH] ;
@@ -149,7 +149,8 @@ bool check_particle_bykey (THashTable * P_table, int* id)
 		  	if (find_particle (keytemp, keycheck))
 		  	{
 		  		cout << "The particle found!" << endl;
-		  		*id = p_curr->get_my_processor ();
+//		  		*id = p_curr->get_my_processor (); //when I want to track myprocess
+		  		*id = p_curr->get_new_old ();
 		  		return true;
 		  	}
 

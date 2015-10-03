@@ -112,15 +112,6 @@ main(int argc, char **argv)
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
-#ifdef DEBUG
-  if (check_part)
-  {
-	  find = false;
-	  find = check_particle_bykey (P_table, &id);
-	  if (find)
-	     cout <<"its myid is : " << id << endl;
-  }
-#endif
   // sync data
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
@@ -130,13 +121,23 @@ main(int argc, char **argv)
 	  find = false;
 	  find = check_particle_bykey (P_table, &id);
 	  if (find)
-	     cout <<"its myid is : " << id << endl;
+	     cout <<"its new_old is : " << id << endl;
   }
 #endif
 
 //The reason why I put the following functions late is that adding of pressure_ghost and adding of wall ghost need neighbor info.
   //add pressure ghost
    add_pressure_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+
+#ifdef DEBUG
+  if (check_part)
+  {
+	  find = false;
+	  find = check_particle_bykey (P_table, &id);
+	  if (find)
+	     cout <<"its new_old is : " << id << endl;
+  }
+#endif
 
    //add wall ghost
    add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
@@ -146,7 +147,6 @@ main(int argc, char **argv)
 
    //Adding eruption boundary condition
    setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, numprocs);
-
 
 #ifdef MULTI_PROC
   // wait till initialization has finished
@@ -171,15 +171,6 @@ main(int argc, char **argv)
 //  //set up initial outside bucket layer list
 //  update_out_layer (P_table,BG_mesh, outside_table, numproc, myid);
 
-#ifdef DEBUG
-  if (check_part)
-  {
-	  find = false;
-	  find = check_particle_bykey (P_table, &id);
-	  if (find)
-	     cout <<"its myid is : " << id << endl;
-  }
-#endif
 
 #ifdef DEBUG
   if (check_bucket)
@@ -310,16 +301,6 @@ main(int argc, char **argv)
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
-#endif
-
-#ifdef DEBUG
-  if (check_part)
-  {
-	  find = false;
-	  find = check_particle_bykey (P_table, &id);
-	  if (find)
-	     cout <<"its myid is : " << id << endl;
-  }
 #endif
 
     // update particle positions
