@@ -58,8 +58,8 @@ const double Ate3_p = -0.1709059897e-1;
 
 const double ng0_P=0.05; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
 const double Uv0_P=0.0; /* velocity in horizontal direction*/
-const double Vv0_P=150; /* velocity in verticle direction*/
-//% Vv0_P=0;  /* velocity in verticle direction, this velocity is used to adjust the pressure atomosphere BC*/
+//const double Vv0_P=150; /* velocity in verticle direction*/
+const double Vv0_P=0.00015;  /* velocity in verticle direction, this velocity is used for testing non-eruption*/
 const double Tv0_P=1000;
 const double pv0_P=pa0_P;
 
@@ -80,7 +80,8 @@ const double rhov_P = rhov_g_P/ng0_P; //just notice that this equation is exactl
 const double lamda_v_P=rhov_P*Rv_P/Cvv_P; /*A new defined parameter which lamda_P=rho_m*Rm/Cm, where, rho_m: is the density of the mixture, while Rm is gas constant for the mixture, Cm specific heat of at constatnt volume.*/
 const double ev0_P=ng0_P*Cvg_P*Tv0_P+(1-ng0_P)*Cvs_P*Tv0_P; /*energy of erupted material*/
 
-const double Mv_P=3.9811e+07;  /*mass flow rate, it is not directly used in simulation.*/
+//const double Mv_P=3.9811e+07;  /*mass flow rate, it is not directly used in simulation.*/
+const double Mv_P=1.0;   //for test non-erupt condition
 
 const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
 

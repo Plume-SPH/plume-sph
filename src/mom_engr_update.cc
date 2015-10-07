@@ -64,7 +64,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
    int phasej;
 
    bool check_engr = false;
-   double engr_thresh = 140000;
+   double engr_thresh = 400000;
 #endif
 //
 //  //before moment and energy update, update secondary variables for guest particles

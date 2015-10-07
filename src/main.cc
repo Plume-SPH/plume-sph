@@ -69,7 +69,7 @@ main(int argc, char **argv)
 #endif
 
 #ifdef DEBUG
-  bool check_part = true;
+  bool check_part = false;
   int  id;
   bool find = false;
   bool check_buck = false;
