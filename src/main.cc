@@ -109,35 +109,16 @@ main(int argc, char **argv)
 	  check_bucket_guest (BG_mesh);
 #endif
 
+
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
   // sync data
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
-#ifdef DEBUG
-  if (check_part)
-  {
-	  find = false;
-	  find = check_particle_bykey (P_table, &id);
-	  if (find)
-	     cout <<"its new_old is : " << id << endl;
-  }
-#endif
-
 //The reason why I put the following functions late is that adding of pressure_ghost and adding of wall ghost need neighbor info.
   //add pressure ghost
    add_pressure_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
-
-#ifdef DEBUG
-  if (check_part)
-  {
-	  find = false;
-	  find = check_particle_bykey (P_table, &id);
-	  if (find)
-	     cout <<"its new_old is : " << id << endl;
-  }
-#endif
 
    //add wall ghost
    add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
@@ -170,13 +151,6 @@ main(int argc, char **argv)
 
 //  //set up initial outside bucket layer list
 //  update_out_layer (P_table,BG_mesh, outside_table, numproc, myid);
-
-
-#ifdef DEBUG
-  if (check_bucket)
-	  check_bucket_guest (BG_mesh);
-#endif
-
 
 #ifdef MULTI_PROC
   // send reflections that belong to other procs
@@ -245,11 +219,16 @@ main(int argc, char **argv)
 	  check_bucket_bykey  (BG_mesh);
 #endif
 
+
 #ifdef DEBUG
   if (check_part)
-	  check_particle_bykey (P_table);
+  {
+	  find = false;
+	  find = check_particle_bykey (P_table, &id);
+	  if (find)
+	     cout <<"its new_old is : " << id << endl;
+  }
 #endif
-
       // scan buckets and make them active / inactive
       update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -295,6 +274,10 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
     // smooth out density oscillations (if any)
     smooth_density(P_table);
 

@@ -62,7 +62,10 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 
 #ifdef DEBUG
      bool do_search = false;
+     bool search_by_coor=false;
      double check[DIMENSION] = {-250, -250, 4250};
+     unsigned keycheck[TKEYLENGTH] = {70540343, 676583194, 0};
+     unsigned keytemp[TKEYLENGTH];
 //     double temp[DIMENSION];
 #endif
 
@@ -136,6 +139,18 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 	    				           normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
 	    					   THSFC3d (normc, add_step, &tkeylen, pkey);
+
+#ifdef DEBUG
+		if (do_search)
+		{
+		    for (ii = 0; ii< TKEYLENGTH; ii++)
+			    keytemp[ii] = pkey[ii];
+
+		    if (find_particle (keytemp, keycheck))
+			    cout << "The particle found!" << endl;
+		}
+#endif
+
 		    				   // check for duplicates
 		    				   if (P_table->lookup(pkey))
 		    				   {
@@ -248,7 +263,7 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 			        		pcrd[1] = mincrd[1] + dx2 + j * dx;
 			        		pcrd[2] = mincrd[2] + dx2 + k * dx;
 #ifdef DEBUG
-		                   if (do_search)
+		                   if (search_by_coor)
 		                   {
 		                        if (find_particle (pcrd, check))
 			                    cout << "The particle found!" << endl;
@@ -258,7 +273,16 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 			                  normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
 			                THSFC3d (normc, add_step, &tkeylen, pkey);
+#ifdef DEBUG
+		if (do_search)
+		{
+		    for (ii = 0; ii< TKEYLENGTH; ii++)
+			    keytemp[ii] = pkey[ii];
 
+		    if (find_particle (keytemp, keycheck))
+			    cout << "The particle found!" << endl;
+		}
+#endif
 			                // check for duplicates
 			                if (P_table->lookup(pkey))
 			                {

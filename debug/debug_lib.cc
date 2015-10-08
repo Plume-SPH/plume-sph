@@ -101,7 +101,7 @@ void check_particle_bykey (THashTable * P_table)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[TKEYLENGTH] = {270698385, 16226344, 0}; //key of its neighbor which is missing
+    unsigned keycheck[TKEYLENGTH] = {70540343, 676583194, 0}; //key of its neighbor which is missing
     //{93400792, 2478187757, 0}; //key of the particle itself is:
     //
     unsigned keytemp[TKEYLENGTH] ;

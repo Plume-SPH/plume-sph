@@ -54,6 +54,16 @@ Particle::Particle ()
   return;
 }
 
+/*
+ * No matter which kind of particle I am creating, the second variable should be a function of primitive variable
+ * But in this constructor, secondary variable is given
+ * This is not good, I should double check and try to make the sure that secondary variable computed is consistent with these given.
+ *
+ * So the following constructor should be replaced by some function in the future
+ *
+ * Well, because the density is determine later by SPH summation, so computing of secondary variables from primitive is not feasible!!!
+ * Actually, energy, pressure, density and mass will be determined in initial_air(), secondary variable updating will also be called there.
+ */
 // constructor for initial air
 Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prss, double masfrc, double gmm, double sndspd, int phs_num, int id, int bc)
 {
@@ -80,10 +90,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0;
-
-  for (i = 0; i < PHASE_NUM; i++)
-  	  phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
-                                        //Density will be updated in updating of secondary variable
+//
+//  for (i = 0; i < PHASE_NUM; i++)
+//  	  phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
+//                                        //Density will be updated in updating of secondary variable
 
   state_vars[0] = 1.0;//default density is 1.0;
 
@@ -94,6 +104,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   sound_speed = sndspd;
   phase_num = phs_num;
   myprocess = id;
+
   return;
 }
 
@@ -133,12 +144,12 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
        phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
                                          //Density will be updated in updating of secondary variable
 
-  state_vars[3] = Vv0;//velocity in z direction is set to its initial value
+    state_vars[3] = Vv0;//velocity in z direction is set to its initial value
 
 // The following is newly added
     state_vars[NO_OF_EQNS - 1]= ev0;
     phase_num= 2;
-    mass_frac= 1.;
+    mass_frac= 1.; //default is 1
 
     double des, engr;
     des = rhov;
@@ -147,7 +158,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
     state_vars[NO_OF_EQNS-1] = engr;
 
     update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
-    pressure = pv0;
+    pressure = pv0; //Why I have this? --> I need double check this!
 
 //    gamma=gamma_v;
 //    sound_speed=sndspd;
@@ -214,7 +225,7 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 
 //Updating single phase density
 	phase_density[0]=state_vars[0]*na;
-	phase_density[0]=state_vars[0]*mass_frac;
+	phase_density[1]=state_vars[0]*mass_frac;
 }
 
 

@@ -70,14 +70,14 @@ smooth_density(THashTable * P_table)
       double supp = 3.0 * hi;
       TKey ki = pi->getKey ();
 
-      for (i = 1; i <= PHASE_NUM; i++)
-    	  tmprho[i-1] = 0.;
+      for (i = 0; i < PHASE_NUM; i++)
+    	  tmprho[i] = 0.;
 
-      for (i = 1; i <= PHASE_NUM; i++)
-    	  phaserho[i-1] = 0.;
+      for (i = 0; i < PHASE_NUM; i++)
+    	  phaserho[i] = 0.;
 
-      for (i = 1; i <= PHASE_NUM; i++)
-    	  wnorm [i-1] = 0.;
+      for (i = 0; i < PHASE_NUM; i++)
+    	  wnorm [i] = 0.;
 
       vector <TKey> neighs = pi->get_neighs ();
       vector <TKey> :: iterator p_itr;
@@ -108,7 +108,7 @@ smooth_density(THashTable * P_table)
       		            s[k] = ds[k] / hi;
       		            wght = weight(s, hi);
       		            tmprho[phs_i-1] += wght * (pj->get_mass());
-      		            wnorm[phs_i-1] += wght * (pj->get_mass()) / *(pj->get_phase_density()+phs_i-1);
+      		            wnorm[phs_i-1] += wght * (pj->get_mass()) / (*(pj->get_phase_density()+phs_i-1));
       		         }
       		     }
       	      }//end of if
@@ -117,18 +117,36 @@ smooth_density(THashTable * P_table)
 
       }//end of go through all neighbors
 
-      for (phs_i = 2; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
-      {
-    	  wnorm[0] += wnorm [phs_i-1];
-      }
+/*
+ * There are two ways to normalize SPH kernel summation
+ * 1)based on the concept that each phase in SPH is essentially independent set of discretized points
+ * 2)Another is based on the concept that different types of particles for different phases are essentially the equivalent as discretized points
+ * I prefer the former, so the following is commentted out
+ */
+//      for (phs_i = 2; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
+//      {
+//    	  wnorm[0] += wnorm [phs_i-1];
+//      }
+//
+//      density=0.0;
+//      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+//      {
+//           assert (wnorm[0] > 0);
+//    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
+//    	   density +=phaserho[phs_i-1];
+//      }
 
-      density=0.0;
-      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-      {
-           assert (wnorm[0] > 0);
-    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
-    	   density +=phaserho[phs_i-1];
-      }
+ //Here is the new way of
+            density=0.0;
+            for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+            {
+               if (wnorm[phs_i-1] > 0)
+          	       phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
+          	   else
+          		   phaserho[phs_i-1]=0;
+
+          	   density +=phaserho[phs_i-1];
+            }
 
 #ifdef DEBUG
       if (check_den)
