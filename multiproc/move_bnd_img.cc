@@ -26,6 +26,7 @@ using namespace std;
 #include <particle.h>
 #include <bucket.h>
 #include <bnd_image.h>
+#include <parameters.h> //This will be needed while updating secondary variables
 #include <exvar.h>
 
 int
@@ -159,6 +160,8 @@ move_bnd_images (int myid, int nump, THashTable * P_table,
         for (int i2 = 0; i2 < NO_OF_EQNS; i2++)
           uvec[i2] = recv_buf[j][k].state_vars[i2];
         pghost->put_state_vars (uvec);
+        pghost->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P); //This is added later, there was a bug in old code as the secondary variable is not updated after imposing of boundary condition.
+        pghost->put_update_delayed(false); //This also added later, but I do not think this mistake is a big deal in the old code.
       }
     }
 

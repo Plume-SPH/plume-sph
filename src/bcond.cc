@@ -197,6 +197,7 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
 //        for (i = 0; i < DIMENSION; i++)
 //          uvec[i+1] = velrot[i];
         p_ghost->put_state_vars(uvec);
+        p_ghost->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P); //This is added later, there was a bug in old code as the secondary variable is not updated after imposing of boundary condition.
         p_ghost->put_update_delayed(false);
       }
       // else store the values to snyc at appropriate time--> The late snyc will be done in move_bnd_img.cc
