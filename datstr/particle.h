@@ -64,6 +64,14 @@ private:
   //! sound speed
   double sound_speed;
 
+  //density of each phase
+  double phase_density[PHASE_NUM]; //phase1 = air, phase2 =erupted material
+                               //According to the simplest Japanese Model, d1=d*(1-ks), d2=d*ks
+                               //For more complicated model the above equation does not hold
+                               //What also need to be mentioned here is that for a real multiple phase model, the density of each phase is supposed to be primitive variable.
+
+  //density of each phase new variables
+   double new_phase_density[PHASE_NUM];
   //! if the particle is real, guest or a ghost
   bool guest;
 
@@ -227,6 +235,18 @@ public:
   const double *get_new_state_vars () const
   {
     return new_state_vars;
+  }
+
+  //get phase density
+  const double *get_phase_density () const
+  {
+    return phase_density;
+  }
+
+  //get new phase density
+  const double *get_new_phase_density () const
+  {
+    return new_phase_density;
   }
 
   //! get density
@@ -451,7 +471,15 @@ public:
   {
 	  int i;
 	  for (i = 0; i < NO_OF_EQNS; i++)
-      new_state_vars[i] = u[i];
+           new_state_vars[i] = u[i];
+  }
+
+  //! update new phase density
+  void put_new_phase_density (double phsd[])
+  {
+	  int i;
+	  for (i = 0; i < PHASE_NUM; i++)
+		  new_phase_density[i] = phsd[i];
   }
 
   //! put state_vars. This should only be uesed for ghost particles
@@ -460,6 +488,15 @@ public:
     for (int i = 0; i < NO_OF_EQNS; i++)
       state_vars[i] = u[i];
   }
+
+  //! update phase density
+  void put_phase_density (double phsd[])
+  {
+	  int i;
+	  for (i = 0; i < PHASE_NUM; i++)
+		  phase_density[i] = phsd[i];
+  }
+
   //put energy
   void put_energy (double engr)
   {
@@ -491,6 +528,12 @@ public:
       state_vars[i] = new_state_vars[i];
   }
 
+  //! update state_vars
+  void update_phase_density ()
+  {
+    for (int i = 0; i < PHASE_NUM; i++)
+    	phase_density[i] = new_phase_density[i];
+  }
 
   //! update mass_frac
   void put_mass_frac (double mssfrc)

@@ -12,6 +12,8 @@ using namespace std;
 #include "particle.h"
 #include "constant.h"
 
+const double PHASE_DENS=1.0/PHASE_NUM; //This is just used for constructor of particle
+
 //constructor from no input parameter--> the basic constructor
 Particle::Particle ()
 {
@@ -37,6 +39,9 @@ Particle::Particle ()
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0.;
+
+  for (i = 0; i < PHASE_NUM; i++)
+	  phase_density[i] = 0.;
 
   pressure = 0;
 
@@ -75,6 +80,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0;
+
+  for (i = 0; i < PHASE_NUM; i++)
+  	  phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
+                                        //Density will be updated in updating of secondary variable
 
   state_vars[0] = 1.0;//default density is 1.0;
 
@@ -119,6 +128,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0;//velocity is set to zero
+
+  for (i = 0; i < PHASE_NUM; i++)
+       phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
+                                         //Density will be updated in updating of secondary variable
 
   state_vars[3] = Vv0;//velocity in z direction is set to its initial value
 
@@ -198,6 +211,10 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 
 //	//The new way
 	sound_speed=pow((1+Rmg/Cvmg)*pressure/desmg, 0.5); //use sound speed of only gas phase, that will make sound speed larger than the real value, but safe in determine time steps.
+
+//Updating single phase density
+	phase_density[0]=state_vars[0]*na;
+	phase_density[0]=state_vars[0]*mass_frac;
 }
 
 
