@@ -108,7 +108,7 @@ smooth_density(THashTable * P_table)
       		            s[k] = ds[k] / hi;
       		            wght = weight(s, hi);
       		            tmprho[phs_i-1] += wght * (pj->get_mass());
-      		            wnorm[phs_i-1] += wght * (pj->get_mass()) / (pj->get_density());
+      		            wnorm[phs_i-1] += wght * (pj->get_mass()) / *(pj->get_phase_density()+phs_i-1);
       		         }
       		     }
       	      }//end of if
