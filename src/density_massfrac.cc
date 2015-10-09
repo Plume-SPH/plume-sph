@@ -108,7 +108,12 @@ smooth_density(THashTable * P_table)
       		            s[k] = ds[k] / hi;
       		            wght = weight(s, hi);
       		            tmprho[phs_i-1] += wght * (pj->get_mass());
-      		            wnorm[phs_i-1] += wght * (pj->get_mass()) / (*(pj->get_phase_density()+phs_i-1));
+      		            //View multiple phase SPH as multiple set of discretized points
+//      		            wnorm[phs_i-1] += wght * (pj->get_mass()) / (*(pj->get_phase_density()+phs_i-1));
+
+      		            //View multiple phase SPH as one set of discretized point
+    		            wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
+
       		         }
       		     }
       	      }//end of if
@@ -123,30 +128,30 @@ smooth_density(THashTable * P_table)
  * 2)Another is based on the concept that different types of particles for different phases are essentially the equivalent as discretized points
  * I prefer the former, so the following is commentted out
  */
-//      for (phs_i = 2; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
-//      {
-//    	  wnorm[0] += wnorm [phs_i-1];
-//      }
+      for (phs_i = 2; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
+      {
+    	  wnorm[0] += wnorm [phs_i-1];
+      }
+
+      density=0.0;
+      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+      {
+           assert (wnorm[0] > 0);
+    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
+    	   density +=phaserho[phs_i-1];
+      }
+
+ //Here is the new way of ---> however the new way has some issues while capturing the interface, so I turned to the old way. ---->But I did not give up the second method yet.
+//            density=0.0;
+//            for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+//            {
+//               if (wnorm[phs_i-1] > 0)
+//          	       phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
+//          	 else
+//          		   phaserho[phs_i-1]=0;
 //
-//      density=0.0;
-//      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-//      {
-//           assert (wnorm[0] > 0);
-//    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
-//    	   density +=phaserho[phs_i-1];
-//      }
-
- //Here is the new way of
-            density=0.0;
-            for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-            {
-               if (wnorm[phs_i-1] > 0)
-          	       phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
-          	   else
-          		   phaserho[phs_i-1]=0;
-
-          	   density +=phaserho[phs_i-1];
-            }
+//          	   density +=phaserho[phs_i-1];
+//            }
 
 #ifdef DEBUG
       if (check_den)
