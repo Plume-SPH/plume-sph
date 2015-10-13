@@ -25,6 +25,7 @@ using namespace std;
 
 const double sqrt2 = 1.41421356237310;
 const int NUM_RHS=DIMENSION+1;
+const double two_k = 2*lamda_P; //this is the coefficient that in front of
 
 int
 mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
@@ -38,6 +39,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
   double dwdx[DIMENSION];
   double veli[DIMENSION], velj[DIMENSION], velij[DIMENSION];
   double vis;
+  double Fij;
   double deltae;
   Particle *pi=NULL;
 
@@ -66,7 +68,8 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
    bool check_engr = false;
    double engr_thresh = 400000;
 #endif
-//
+
+//  The following is not a good idea, because it will mess up the structure of my code.
 //  //before moment and energy update, update secondary variables for guest particles
 //  while ((pi = (Particle *) itr->next ()))
 //  {
@@ -78,6 +81,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
   // go through particle table again
 //  itr->reset();
+
 
   while ((pi = (Particle *) itr->next ()))
   {
@@ -107,6 +111,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		  double hi = pi->get_smlen();
 		  double supp = 3 * hi;
 		  double pressi = (pi->get_pressure());
+		  double tempi= pi->get_temperature ();
 
 		  const double *uvec = pi->get_state_vars();
 		  // density must always be positive
@@ -119,11 +124,14 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
                veli[k] = uvec[k+1];
 
           double mpvsqij= 0.;   //mpvsqij=mj*(pi/rhoi^2+pj/rhoj^2);
-		  // reset rhs to zero, for current particle
-	//	  double wnorm = 0.;
 
+
+          double heat_tran = 0.; //heat transfer term heat_tran=mj/rho_j (Ti-Tj) F_ij
+
+          // reset rhs to zero, for current particle
 		  for (i = 0; i < DIMENSION; i++)
 		      rhs_v[i] = 0;
+
 		  rhs_e=0;
 
 		  // list of neighbors
@@ -188,14 +196,20 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          // pre-compute weight function derivatives
 		          for (k = 0; k < DIMENSION; k++)
 		              dwdx[k] = d_weight (si, hi, k);
+
 		          // Velocity rhs
 		          for (k = 0; k < DIMENSION; k++)
 		              rhs_v[k] -= mpvsqij* dwdx[k];
+
 		          // Energy rhs
+		          //heat transfer term
+		          Fij=compute_F(dwdx,dx);
+		          heat_tran = mj*Vj*(tempi- pj->get_temperature ()) *  Fij;
 		          deltae = 0.;
 		          for (k = 0; k < DIMENSION; k++)
 		              deltae += 0.5* (mpvsqij* dwdx[k])* velij[k];
-		          rhs_e += deltae;
+
+		          rhs_e += (deltae + two_k*Vi*heat_tran);
 		      }
 		  } // end loop over neighs
 
@@ -243,7 +257,8 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
     }
 
   // clean up
-  delete itr, it2;
+  delete itr;
+  delete it2;
 
   return 0;
 }

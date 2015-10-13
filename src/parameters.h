@@ -108,4 +108,8 @@ const double eta_smooth_P = 1.2;
 //CFL coefficient for time step update
 const double CFL_P=0.25;
 
+//----------------------------------------------------------------------------------------
+//Heat transfer coefficient
+const double lamda_P = 0.03; //using a constant heat conduction coefficient... That for air is 0.024
+
 #endif /* PARAMETERS_H_ */

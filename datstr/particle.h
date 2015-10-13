@@ -64,6 +64,9 @@ private:
   //! sound speed
   double sound_speed;
 
+  //Temperature
+  double temperature;
+
   //density of each phase
   double phase_density[PHASE_NUM]; //phase1 = air, phase2 =erupted material
                                //According to the simplest Japanese Model, d1=d*(1-ks), d2=d*ks
@@ -294,6 +297,13 @@ public:
   {
     return sound_speed;
   }
+
+  //! get temperature
+  const double get_temperature () const
+  {
+    return temperature;
+  }
+
 
   //! get my processor
   const int get_my_processor () const
@@ -553,7 +563,13 @@ public:
       sound_speed=sndspd;
   }
 
-  //! put sound_speed
+  //! put temperature
+  void put_temperature (double temp)
+  {
+	  temperature=temp;
+  }
+
+  //! put my_processor
   void put_my_processor (int id)
   {
 	  myprocess = id;

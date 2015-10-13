@@ -43,11 +43,12 @@ Particle::Particle ()
   for (i = 0; i < PHASE_NUM; i++)
 	  phase_density[i] = 0.;
 
-  pressure = 0;
+  pressure = 0.;
 
-  mass_frac = 0;
+  mass_frac = 0.;
   gamma = 0;
-  sound_speed = 0;
+  sound_speed = 0.;
+  temperature = 0.;
   phase_num = 1;
   myprocess = 10000; //The default process id
 
@@ -226,6 +227,8 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 //Updating single phase density
 	phase_density[0]=state_vars[0]*na;
 	phase_density[1]=state_vars[0]*mass_frac;
+//update temperature
+	temperature = engr/Cvm;
 }
 
 

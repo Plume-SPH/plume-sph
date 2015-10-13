@@ -214,6 +214,12 @@ double art_vis (
 		//h
 		double
 		);
+//Function to compute F form r_ab and W_ab
+//The relationship is: F r_ab = W_ab
+double compute_F(
+		double* ,  //dwdx
+		double*    //dx
+		);
 
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
 void air_prop (
