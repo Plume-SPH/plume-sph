@@ -1,5 +1,3 @@
-1. Inter-particle rotations are in 2-D plane only. Need 3-D roatations eventually.
-2. Read elevations from DEM or MAP
-3. Calculated boundary normals in preprocessor
-4. Preprocessor should not put any ghost particles, it should be done on the go
-5. Adapt the BG Mesh and mark active/inactive
+1. Remove heat conduction term if turbulent model is added.
+
+2. Try another way of density updating.
