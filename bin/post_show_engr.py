@@ -3,7 +3,7 @@ from paraview.simple import *
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
 
-total_proc=4
+total_proc=32
 #Render={}
 #Disp={}
 #get active source.
@@ -12,7 +12,7 @@ total_proc=4
 # get active view
 #renderView1 = GetActiveViewOrCreate('RenderView')
 
-for i in range(total_proc):
+for i in range(0,32):
    name='H5PartReader'+str(i+1)
       
    # find source
@@ -34,10 +34,10 @@ for i in range(total_proc):
    Disp.RescaleTransferFunctionToDataRange(True)
 
    # show color bar/color legend
-   Disp.SetScalarBarVisibility(renderView1, True)
+   Disp.SetScalarBarVisibility(renderView1, False)
 
-# get color transfer function/color map for 'engr'
-engrLUT = GetColorTransferFunction('engr')
+   # get color transfer function/color map for 'engr'
+   engrLUT = GetColorTransferFunction('engr')
 
-# get opacity transfer function/opacity map for 'engr'
-engrPWF = GetOpacityTransferFunction('engr')
+   # get opacity transfer function/opacity map for 'engr'
+   engrPWF = GetOpacityTransferFunction('engr')

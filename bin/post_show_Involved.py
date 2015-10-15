@@ -19,7 +19,6 @@ h5PartReader32Display = GetDisplayProperties(h5PartReader32, view=renderView1)
 # hide color bar/color legend
 h5PartReader32Display.SetScalarBarVisibility(renderView1, False)
 
-
 for i in range(0, 32):
    name='H5PartReader'+str(i+1)
       
@@ -36,7 +35,7 @@ for i in range(0, 32):
    Disp = GetDisplayProperties(Render, view=renderView1)
 
    # set scalar coloring
-   ColorBy(Disp, ('POINTS', 'Vx'))
+   ColorBy(Disp, ('POINTS', 'Involved'))
 
    # rescale color and/or opacity maps used to include current data range
    Disp.RescaleTransferFunctionToDataRange(True)
@@ -44,14 +43,13 @@ for i in range(0, 32):
    # show color bar/color legend
    Disp.SetScalarBarVisibility(renderView1, True)
 
-   # get color transfer function/color map for 'Vx'
-   vxLUT = GetColorTransferFunction('Vx')
+   # get color transfer function/color map for 'prss'
+   vzLUT = GetColorTransferFunction('Involved')
 
-   # get opacity transfer function/opacity map for 'Vx'
-   xPWF = GetOpacityTransferFunction('Vx')
-
-
+   # get opacity transfer function/opacity map for 'prss'
+   vzPWF = GetOpacityTransferFunction('Involved')
 #
+
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
 

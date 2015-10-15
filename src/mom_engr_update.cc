@@ -204,7 +204,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          // Energy rhs
 		          //heat transfer term
 		          Fij=compute_F(dwdx,dx);
-		          heat_tran = mj*Vj*(tempi- pj->get_temperature ()) *  Fij;
+		          heat_tran = mj*Vj*(tempi- *pj->get_temperature ()) *  Fij;
 		          deltae = 0.;
 		          for (k = 0; k < DIMENSION; k++)
 		              deltae += 0.5* (mpvsqij* dwdx[k])* velij[k];
