@@ -274,10 +274,6 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
-#ifdef DEBUG
-  if (check_part)
-	  check_particle_bykey (P_table);
-#endif
     // smooth out density oscillations (if any)
     smooth_density(P_table);
 
