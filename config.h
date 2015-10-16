@@ -1,8 +1,11 @@
 /* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* Define to 1 if you have the <gdal.h> header file. */
-/* #undef HAVE_GDAL_H */
+/* Define to 1 if you have the <fcntl.h> header file. */
+#define HAVE_FCNTL_H 1
+
+/* Define to 1 if you have the `floor' function. */
+#define HAVE_FLOOR 1
 
 /* Define to 1 if you have the <hdf5.h> header file. */
 #define HAVE_HDF5_H 1
@@ -28,6 +31,16 @@
 /* Define to 1 if you have the `z' library (-lz). */
 #define HAVE_LIBZ 1
 
+/* Define to 1 if you have the <limits.h> header file. */
+#define HAVE_LIMITS_H 1
+
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
+   to 0 otherwise. */
+#define HAVE_MALLOC 1
+
+/* Define to 1 if you have the <malloc.h> header file. */
+#define HAVE_MALLOC_H 1
+
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
@@ -48,6 +61,9 @@
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
+
+/* Define to 1 if you have the `strdup' function. */
+#define HAVE_STRDUP 1
 
 /* Define to 1 if you have the <strings.h> header file. */
 #define HAVE_STRINGS_H 1
@@ -83,13 +99,13 @@
 #define PACKAGE_NAME "particler"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "particler 0.5.1"
+#define PACKAGE_STRING "particler 2.1.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "particler"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.5.1"
+#define PACKAGE_VERSION "2.1.0"
 
 /* support parallel-IO */
 /* #undef PARALLEL_IO */
@@ -101,7 +117,13 @@
 #define THREE_D /**/
 
 /* Version number of package */
-#define VERSION "0.5.1"
+#define VERSION "2.1.0"
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
+
+/* Define to rpl_malloc if the replacement function should be used. */
+/* #undef malloc */
+
+/* Define to `long int' if <sys/types.h> does not define. */
+/* #undef off_t */

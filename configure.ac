@@ -1,8 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
-AC_INIT([particler], [0.5.1], [zhixuanc@buffalo.edu])
+AC_PREREQ([2.63])
+AC_INIT([particler], [2.1.0], [zhixuanc@buffalo.edu])
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_SRCDIR([src/constant.h])
@@ -14,6 +14,9 @@ AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
 AM_PROG_CC_C_O
 AC_PROG_RANLIB
 
@@ -158,7 +161,8 @@ if test -n "$with_gdal" && test "x$with_gdal" != "xno"; then
 fi
 
 
-AC_CHECK_HEADERS([gdal.h], [malloc.h])
+#AC_CHECK_HEADERS([gdal.h], [malloc.h])
+AC_CHECK_HEADERS([fcntl.h limits.h malloc.h stdlib.h string.h unistd.h])
 AC_CHECK_LIB([gdal],[GDALOpen],,)
 AM_CONDITIONAL(HAVE_GDAL, test -n "$with_gdal" && test "x$with_gdal" != "xno")
 
@@ -167,9 +171,12 @@ AC_HEADER_STDC
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_CONST
+AC_TYPE_OFF_T
 
 # Checks for library functions.
-AC_CHECK_FUNCS([pow sqrt])
+#AC_CHECK_FUNCS([pow sqrt])
+AC_CHECK_FUNCS([floor pow sqrt strdup])
+AC_FUNC_MALLOC
 
 AC_CONFIG_FILES([Makefile
                  gisapi/Makefile
