@@ -17,7 +17,7 @@ using namespace std;
 #include <bnd_image.h>
 #include <multiproc.h>
 #include <properties.h>
-
+#include "options.h"
 
 //add air particles
 void

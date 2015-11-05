@@ -7,6 +7,7 @@
 
 #ifndef CONSTANT_H
 #define CONSTANT_H
+#include "options.h"
 
 const int NUM_NODES=4;
 const int DIMENSION=3;
@@ -58,4 +59,11 @@ const double MSFRC_THRESH = 1.0E-06; //Threshold for determine whether air parti
 
 //For adding newly erupted particles, that hash table is a temporiry hash table
 const int ERUPT_TABLE_SIZE = 40000;
+
+//For turbulence modeling with SPH-epsilon method
+#ifdef HAVE_TURBULENCE_LANS
+const double EPSILON = 0.8;
+const double PRANDTL_NUM = 0.72; //Prandtl number
+#endif
+
 #endif /* CONSTANT_H_ */
