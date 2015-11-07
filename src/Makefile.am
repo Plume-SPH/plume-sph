@@ -33,6 +33,7 @@ particler_SOURCES = add_air.cc \
                     scan_outside_layer.cc \
                     setup_erupt.cc\
                     setup_ini.cc\
+                    smooth_velocity.cc \
                     timestep.cc \
                     update_out_layer.cc \
                     update_pos.cc \

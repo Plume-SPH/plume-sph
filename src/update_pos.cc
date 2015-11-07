@@ -59,11 +59,52 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   Particle *p;
 
   while ((p = (Particle *) itr->next()))
+  {
     /*guest particles are moved as well as some of them
 	* The reason why I also move guest particles is guest particles might move in to native doamin.
 	* And it is necessary to monitor it.
     * will move to different partitions */
-    if (p->is_real () || p->is_erupt_ghost())
+    if (p->is_real ())
+    {
+
+#ifdef DEBUG
+		if (do_search)
+		{
+		    for (i = 0; i < TKEYLENGTH; i++)
+			    keytemp[i] = p->getKey ().key[i];
+
+		    if (find_particle (keytemp, keycheck))
+			    cout << "The particle found!" << endl;
+		}
+#endif
+
+      // velocity and coordinates
+      for (i = 0; i < DIMENSION; i++)
+      {
+#ifdef HAVE_TURBULENCE_LANS
+         vel[i] = *(p->get_smoothed_velocity() + i);
+#else
+         vel[i] = *(p->get_vel() + i);
+#endif
+         coord[i] = *(p->get_coords() + i);
+      }
+
+      /* update particle positions
+       * The way I update position of erupted particles is not the perfect way:
+       * all particles move with the average upward velocity
+       * but the velocity of each particle as a primitive variable is obtained from a parabolic profile
+       */
+//      if (p->is_real ())
+         for (i = 0; i < DIMENSION; i++)
+             pos[i] = coord[i] + dt*vel[i];
+
+       p->put_coords(pos);
+
+    }//end of if particle is real
+
+    //Because updating of erupted particle is based on unsmoothed velocity,
+    //SO it is better to do real and erupted separately
+    if (p->is_erupt_ghost())
     {
 
 #ifdef DEBUG
@@ -92,23 +133,19 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 //      if (p->is_real ())
          for (i = 0; i < DIMENSION; i++)
              pos[i] = coord[i] + dt*vel[i];
-//      else
-//      {
-//    	  pos[0] = coord[0];
-//    	  pos[1] = coord[1];
-//    	  pos[2] = coord[2] + dt*Vv0_P;
-//      }
 
       p->put_coords(pos);
 
       //Change ghost to real; change erupt to false
-      if ( (p->is_erupt_ghost()) && (pos[2]>=Lz_P[0]) )//need to make it more general!
+      if ((pos[2]>=Lz_P[0]) ) //need to make it more general!
       {
     	  p->erupt_turn_real();
     	  p->put_smlen(sml_of_phase2);
     	  p->set_involved_flag(INVOLVED); //equivalent to set involved to be true
       }
-    }//end of go through all particles
+    } //end of if particle is erupted
+
+  }//end of go through all particles
 
   // move-in and move out particles from buckets
   vector < TKey > plist;

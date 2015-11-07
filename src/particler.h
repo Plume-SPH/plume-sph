@@ -150,6 +150,11 @@ void smooth_density (
                      THashTable * //! HashTable of SPH partilces
                     );
 
+//! Smooth velocity --> for SPH-epsilon
+void smooth_velocity (
+                     THashTable * //! HashTable of SPH partilces
+                    );
+
 //! Calculate time increment, depending upon CFL condition
 double timestep(
                 THashTable *,    //! HashTable of SPH partilces

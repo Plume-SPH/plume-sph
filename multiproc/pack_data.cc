@@ -107,6 +107,9 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   for (j=0; j < DIMENSION; j++)
     pack_array->coords[j] = psend->coord[j];
 
+  for (j=0; j < DIMENSION; j++)
+      pack_array->smoothed_v[j] = psend->smoothed_v[j];
+
   for (j=0; j < NO_OF_EQNS; j++)
     pack_array->state_vars[j] = psend->state_vars[j];
 
@@ -185,6 +188,9 @@ void unpack_particle (ParticlePack *packet, Particle *part)
   
   for ( i=0; i < DIMENSION; i++ )
     part->coord[i] = packet->coords[i];
+
+  for ( i=0; i < DIMENSION; i++ )
+      part->smoothed_v[i] = packet->smoothed_v[i];
 
   for ( i=0; i < NO_OF_EQNS; i++ )
     part->state_vars[i] = packet->state_vars[i];

@@ -63,6 +63,7 @@ const int ERUPT_TABLE_SIZE = 40000;
 //For turbulence modeling with SPH-epsilon method
 #ifdef HAVE_TURBULENCE_LANS
 const double EPSILON = 0.8;
+const double EPSILON_HALF = 0.4; //For the efficiency of computation EPSILON_HALF = EPSILON/2
 const double PRANDTL_NUM = 0.72; //Prandtl number
 #endif
 

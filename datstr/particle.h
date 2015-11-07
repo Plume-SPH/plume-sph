@@ -73,10 +73,15 @@ private:
                                //For more complicated model the above equation does not hold
                                //What also need to be mentioned here is that for a real multiple phase model, the density of each phase is supposed to be primitive variable.
 
-  //density of each phase new variables
-   double new_phase_density[PHASE_NUM];
-  //! if the particle is real, guest or a ghost
-  bool guest;
+  //density of each phase new variables ---> will need if I want to update density based on mass conservation instead of SPH summation
+  double new_phase_density[PHASE_NUM];
+
+//#ifdef HAVE_TURBULENCE_LANS
+  //Only particle need_neigh will have velocity smoothed -->guest particle, smoothed velocity will be updated in syn process
+  double smoothed_v[DIMENSION]; //smoothed velocity
+
+  double specific_heat_p; //specific heat under constant pressure
+//#endif
 
   //!to indicate whether the particle is eruption ghost particle or not
   int bc_type; //bc_type=0: eruption ghost
@@ -87,16 +92,10 @@ private:
                //The tricky here is that as long as bc_type is not zero,
                //it will not move up while imposing eruption boundary condition.
 
-  //! update delayed
-  bool update_delayed; //if my image goes to other process, the delay will be delayed!
-
   //! new_old for wall guest updates across process boundaries
   int new_old;     //new_old = 1 : new
                    //new_old = -1 : old
                    //new_old = 0 :default
-
-  //! aleardy searched reflection, if flag is up
-  bool reflection; //is true if the ghost particle has already been reflected-->its imaged has already be found
 
   /*
    * involved flag: based on velocity and mass fraction
@@ -105,13 +104,22 @@ private:
    * involve = 1 if potential involved
    * involve = 2 if involved
    */
- int involved;
+  int involved;
 
   //! indicate which phase does the particles belong to
   int phase_num; //1 for air, 2 for erupt material
 
   //indicate which processor does the particles belong to
   int myprocess; //For guest particles, myprocess should be the "home" process id, not the current process on which the guest particle locate on
+
+  //! if the particle is real, guest or a ghost
+  bool guest;
+
+  //! update delayed
+  bool update_delayed; //if my image goes to other process, the delay will be delayed!
+
+  //! aleardy searched reflection, if flag is up
+  bool reflection; //is true if the ghost particle has already been reflected-->its imaged has already be found
 
   //!  neighbors
   vector < TKey > neighs;
@@ -359,6 +367,16 @@ public:
   bool contr_dens() const
   {
 	  return (bc_type == 100);
+  }
+
+  //! check if particle will contribute to the velocity smoothing
+  // only "real" particles should be considered for sure
+  // In my opinion, wall ghost should also contribute to the velocity smoothing ---> to get real no-slip bc ---> But this will also cause rotation (not sure whether it is physical or no physical)
+  // What about pressure ghost? ---> not sure --> no, because that will cause additional turbulence near the boundary
+  // erupted ghost should not be considered for sure
+  bool contr_vel_smooth() const
+  {
+	  return (bc_type == 100 || bc_type == 2);
   }
 
   //! check if particle is erupt ghost particle or not
@@ -635,6 +653,32 @@ public:
   // Operator overloads
   bool operator== (const Particle & rhs) const;
 
+  //#ifdef HAVE_TURBULENCE_LANS
+    //! get specific heat under constant pressure
+    const double get_specific_heat_p() const
+    {
+      return specific_heat_p;
+    }
+
+    //! get smoothed velocity
+    const double *get_smoothed_velocity() const
+    {
+      return smoothed_v;
+    }
+
+    //put smoothed velocity
+    void put_smoothed_velocity (double smed_u[])
+    {
+  	  for(int i=0; i<DIMENSION; i++)
+  		  smoothed_v[i]=smed_u[i];
+    }
+
+    //put smoothed specific heat
+    void put_specific_heat_p (double Cp)
+    {
+  	  specific_heat_p = Cp;
+    }
+  //#endif
 };
 
 #endif /* PARTICLE_H */

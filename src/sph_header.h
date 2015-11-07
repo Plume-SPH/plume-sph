@@ -366,6 +366,19 @@ void initial_air (
 		Particle * //pi
 		);
 
+//function that used to compute the additional term in momentum equation if SPH_epsilon turbulence model is adopted
+double SPH_epsilon_mom(
+		double*,//vab,
+		double //V_b
+		);
+
+//function that used to compute turbulent heat conductivity in energy equation if SPH_epsilon turbulence model is adopted
+double SPH_epsilon_heat_conductivity(
+		double ,  //Cp_ab,
+		double*, //ds,
+		double *  //vab
+		);
+
 //#ifdef DEBUG
 //      //function to check where does the negative sound speed comes from
 //      bool check_particles_sndspd (

@@ -24,6 +24,9 @@ Particle::Particle ()
 
   mass = 0.;
   smlen = 0.;
+
+  specific_heat_p = 0.;
+
   update_delayed = false;
   guest = false;
   reflection = false;
@@ -33,9 +36,10 @@ Particle::Particle ()
   involved = 0;
 
   for (i = 0; i < DIMENSION; i++)
-  {
     coord[i] = 0.;
-  }
+
+  for (i = 0; i < DIMENSION; i++)
+	  smoothed_v[i] = 0.;
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0.;
@@ -73,6 +77,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   mass = m;
   smlen = h;
 
+  specific_heat_p = 0.;
+
   update_delayed = false;
   guest = false;
   reflection = false; //The newly added wall ghost will not have image untill search, so need to be false.
@@ -88,6 +94,9 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   {
     coord[i] = *(crd + i);
   }
+
+  for (i = 0; i < DIMENSION; i++)
+	  smoothed_v[i] = 0.;
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0;
@@ -120,6 +129,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
   mass = m;
   smlen = h;
 
+  specific_heat_p = 0.;
+
   update_delayed = false;
   guest = false;
   reflection = false;
@@ -137,6 +148,9 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
     coord[i] = *(crd + i);
 //    bedfrict[i] = 0;
   }
+
+  for (i = 0; i < DIMENSION; i++)
+	  smoothed_v[i] = 0.;
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0;//velocity is set to zero
@@ -229,6 +243,11 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 	phase_density[1]=state_vars[0]*mass_frac;
 //update temperature
 	temperature = engr/Cvm;
+
+//update specific heat
+#ifdef HAVE_TURBULENCE_LANS
+	specific_heat_p=Cvm;
+#endif
 }
 
 

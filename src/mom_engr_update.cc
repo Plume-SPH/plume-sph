@@ -24,7 +24,7 @@ using namespace std;
 #endif
 
 const double sqrt2 = 1.41421356237310;
-const int NUM_RHS=DIMENSION+1;
+//const int NUM_RHS=DIMENSION+1;
 const double two_k = 2*lamda_P; //this is the coefficient that in front of
 
 int
@@ -39,8 +39,10 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
   double dwdx[DIMENSION];
   double veli[DIMENSION], velj[DIMENSION], velij[DIMENSION];
   double vis;
-  double Fij;
+  double Fij, Cp_ij, kij, Cp_i;
   double deltae;
+  double turb_stress; //turbulent viscosity term
+
   Particle *pi=NULL;
 
   // three point gauss-quadrature points
@@ -53,9 +55,9 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 
 #ifdef DEBUG
-   bool do_search = false;
+   bool do_search = true;
    bool find;
-   unsigned keycheck[TKEYLENGTH] = {69562537, 292385725, 0};
+   unsigned keycheck[TKEYLENGTH] = {69725985, 7503602, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
    bool search_bypos = false;
@@ -68,20 +70,6 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
    bool check_engr = false;
    double engr_thresh = 400000;
 #endif
-
-//  The following is not a good idea, because it will mess up the structure of my code.
-//  //before moment and energy update, update secondary variables for guest particles
-//  while ((pi = (Particle *) itr->next ()))
-//  {
-//      if ((pi->is_guest()))
-//      {
-//          pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
-//      }
-//  }//end of go through all particles
-
-  // go through particle table again
-//  itr->reset();
-
 
   while ((pi = (Particle *) itr->next ()))
   {
@@ -112,6 +100,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		  double supp = 3 * hi;
 		  double pressi = (pi->get_pressure());
 		  double tempi= pi->get_temperature ();
+		  Cp_i = pi->get_specific_heat_p();
 
 		  const double *uvec = pi->get_state_vars();
 		  // density must always be positive
@@ -122,6 +111,13 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
           // velocity veli
           for (k = 0; k < DIMENSION; k++)
                veli[k] = uvec[k+1];
+#ifdef HAVE_TURBULENCE_LANS
+		  for (k = 0; k < DIMENSION; k++)
+		      veli[k] = *(pi->get_smoothed_velocity()+k);
+#else
+          for (k = 0; k < DIMENSION; k++)
+               veli[k] = uvec[k+1];
+#endif
 
           double mpvsqij= 0.;   //mpvsqij=mj*(pi/rhoi^2+pj/rhoj^2);
 
@@ -171,8 +167,14 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 				  // density must always be positive
 				  assert(uvecj[0] > 0);
 		          // velocity veli
+
+#ifdef HAVE_TURBULENCE_LANS
 		          for (k = 0; k < DIMENSION; k++)
-		               velj[k] = uvecj[k+1];
+		               velj[k] = *(pj->get_smoothed_velocity()+k);
+#else
+		          for (k = 0; k < DIMENSION; k++)
+		          	   velj[k] = uvecj[k+1];
+#endif
 
 		          // pre-computing, velocity difference veli-velj
 		          for (k = 0; k < DIMENSION; k++)
@@ -182,6 +184,12 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          double rhoab= 0.5 * ((pi->get_density()) + (pj->get_density()));
 		          double sndspdab = 0.5 * ((pi->get_sound_speed()) + (pj->get_sound_speed()));
 		          vis= art_vis (rhoab, sndspdab, dx, velij, dist_sq, hi);
+
+		          //compute turbulent stress
+#ifdef HAVE_TURBULENCE_LANS
+		          turb_stress=SPH_epsilon_mom(velij, Vj);
+		          vis -=turb_stress;
+#endif
 
 #ifdef DEBUG
 		          if (check_vis)
@@ -202,14 +210,19 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		              rhs_v[k] -= mpvsqij* dwdx[k];
 
 		          // Energy rhs
-		          //heat transfer term
+		          //turbulent heat transfer term
+		          heat_tran = 0.;
+#ifdef HAVE_TURBULENCE_LANS
+		          Cp_ij = 0.5* (pj->get_specific_heat_p() + Cp_i);
+		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
 		          Fij=compute_F(dwdx,dx);
-		          heat_tran = mj*Vj*(tempi- pj->get_temperature ()) *  Fij;
+		          heat_tran =mj*Vj* kij*(tempi- pj->get_temperature ())* Fij;
+#endif
 		          deltae = 0.;
 		          for (k = 0; k < DIMENSION; k++)
 		              deltae += 0.5* (mpvsqij* dwdx[k])* velij[k];
 
-		          rhs_e += (deltae + two_k*Vi*heat_tran);
+		          rhs_e += (deltae + Vi*heat_tran);
 		      }
 		  } // end loop over neighs
 

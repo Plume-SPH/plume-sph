@@ -42,7 +42,7 @@ MPI_Datatype INVOLVED_HEADER_TYPE;
 void
 GMFG_new_MPI_Datatype ()
 {
-
+//MPI data structure for bucket
   int blockcounts[3];
   MPI_Datatype types[3];
   MPI_Aint displs[3];
@@ -66,7 +66,7 @@ GMFG_new_MPI_Datatype ()
   MPI_Type_struct (3, blockcounts, displs, types, &BUCKET_TYPE);
   MPI_Type_commit (&BUCKET_TYPE);
 
-  //create the 2nd new d_type
+  //create the 2nd new d_type-->MPI data structure for particle
   int blockcounts2[3];
   MPI_Datatype types2[3];
   MPI_Aint displs2[3];
@@ -76,7 +76,7 @@ GMFG_new_MPI_Datatype ()
   // 1 int , 2 unsigned, bunch of doubles
   blockcounts2[0] = 5;
   blockcounts2[1] = TKEYLENGTH;
-  blockcounts2[2] = 3 + DIMENSION + NO_OF_EQNS;
+  blockcounts2[2] = 3 + 2*DIMENSION + NO_OF_EQNS;
 
   // get adresses
   MPI_Address (&(particlePack->bc_type), &displs2[0]);

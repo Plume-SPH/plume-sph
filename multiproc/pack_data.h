@@ -41,9 +41,10 @@ struct ParticlePack
   //doubles
   double mass;
   double smlen;
-  double coords[DIMENSION];
-  double state_vars[NO_OF_EQNS];// rho, v , e
   double mass_frac;
+  double coords[DIMENSION];
+  double smoothed_v[DIMENSION];
+  double state_vars[NO_OF_EQNS];// rho, v , e
 };
 
 struct BucketPack

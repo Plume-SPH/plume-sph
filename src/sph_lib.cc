@@ -890,6 +890,39 @@ void initial_air (Particle * pi)
 	return;
 }
 
+
+//function that used to compute the additional term in momentum equation if SPH_epsilon turbulence model is adopted
+double SPH_epsilon_mom(double* vab, double V_b)
+{
+   double dotv=0.;
+   for (int i; i<DIMENSION; i++)
+	   dotv += (*(vab+i)) * (*(vab+i));
+
+   return (EPSILON_HALF*dotv*V_b);
+}
+
+//function that used to compute turbulent heat conductivity in energy equation if SPH_epsilon turbulence model is adopted
+double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
+{
+	double dotvv=0., dotvr=0., dotrr=0.;
+	for (int i; i<DIMENSION; i++)
+		dotvv += (*(vab+i)) * (*(vab+i));
+
+	if(dotvv==0.) //When the velocity difference, there will be no turbulent exchange effect
+		return 0.;
+	else
+	{
+	  for (int i; i<DIMENSION; i++)
+		dotvr += (*(vab+i)) * (*(ds+i));
+	  for (int i; i<DIMENSION; i++)
+		dotrr += (*(ds+i)) * (*(ds+i));
+
+	  double kab=EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr);
+
+	  return kab;
+	}
+}
+
 //#ifdef DEBUG
 //      //function to check where does the negative sound speed comes from
 //      bool check_particles_sndspd (THashTable * P_table)

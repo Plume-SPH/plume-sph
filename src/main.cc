@@ -282,6 +282,17 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
+//
+#ifdef HAVE_TURBULENCE_LANS
+    // smooth out velocity
+    smooth_velocity(P_table);
+#ifdef MULTI_PROC
+    // update guests on all procs
+    move_data(numprocs, myid, my_comm, P_table, BG_mesh);
+#endif
+#endif
+//
+
     // update particle positions
     update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);
 
