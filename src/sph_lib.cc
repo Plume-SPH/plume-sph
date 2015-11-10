@@ -337,7 +337,7 @@ double art_vis ( Particle * pi, Particle * pj)
 }
 
 //overloading function for artificial viscosity
-double art_vis ( double rhoab, double sndspdab, double rab[3], double vab[3], double rsqab, double h)
+double art_vis ( double rhoab, double sndspdab, double rab[DIMENSION], double vab[DIMENSION], double rsqab, double h)
 {
 	int    k;
 	double miuab;
@@ -892,11 +892,11 @@ void initial_air (Particle * pi)
 
 
 //function that used to compute the additional term in momentum equation if SPH_epsilon turbulence model is adopted
-double SPH_epsilon_mom(double* vab, double V_b)
+double SPH_epsilon_mom(double* vab, double V_b) //V_b is the specific volume
 {
    double dotv=0.;
    for (int i; i<DIMENSION; i++)
-	   dotv += (*(vab+i)) * (*(vab+i));
+	   dotv += (*(vab+i)) * (*(vab+i)); //v dot v
 
    return (EPSILON_HALF*dotv*V_b);
 }

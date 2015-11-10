@@ -55,7 +55,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 
 #ifdef DEBUG
-   bool do_search = true;
+   bool do_search = false;
    bool find;
    unsigned keycheck[TKEYLENGTH] = {69725985, 7503602, 0};
    unsigned keytemp[TKEYLENGTH] ;
@@ -188,7 +188,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          //compute turbulent stress
 #ifdef HAVE_TURBULENCE_LANS
 		          turb_stress=SPH_epsilon_mom(velij, Vj);
-		          vis -=turb_stress;
+		          vis -=turb_stress; //The minus comes from the fact that there is a minus sign at the front of discretized equation
 #endif
 
 #ifdef DEBUG
@@ -211,7 +211,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 		          // Energy rhs
 		          //turbulent heat transfer term
-		          heat_tran = 0.;
+		          heat_tran = 0.; //This line is for the situation when we do not have turbulence in our model
 #ifdef HAVE_TURBULENCE_LANS
 		          Cp_ij = 0.5* (pj->get_specific_heat_p() + Cp_i);
 		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
