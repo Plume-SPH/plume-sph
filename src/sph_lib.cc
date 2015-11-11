@@ -895,7 +895,7 @@ void initial_air (Particle * pi)
 double SPH_epsilon_mom(double* vab, double V_b) //V_b is the specific volume
 {
    double dotv=0.;
-   for (int i; i<DIMENSION; i++)
+   for (int i=0; i<DIMENSION; i++)
 	   dotv += (*(vab+i)) * (*(vab+i)); //v dot v
 
    return (EPSILON_HALF*dotv*V_b);
