@@ -349,16 +349,21 @@ double art_vis ( double rhoab, double sndspdab, double rab[DIMENSION], double va
 
 	miuab = h * vrab / (rsqab + ata_P * h * h);
 
+#ifdef 	USE_PHYSICS_VIS
+	vis =  (- alf_P*sndspdab) * miuab / rhoab;
+#else
     if (vrab > 0)
 		vis = 0.;
     else if (vrab < 0)
 		vis = (beta_P * miuab - alf_P*sndspdab) * miuab / rhoab;
+#endif
+
 
 	return vis;
 }
 
 //Function to compute F form r_ab and W_ab
-//The relationship is: F r_ab = W_ab
+//The relationship is: F r_ab = dW_ab
 double compute_F(double* dwdx, double* dx)
 {
 	int i;
@@ -910,7 +915,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 	for (i=0; i<DIMENSION; i++)
 		dotvr += (*(vab+i)) * (*(ds+i));
 
-	if(dotvr==0.) //When the velocity difference, there will be no turbulent exchange effect
+	if(dotvr<=0.) //To be consistent with artificial viscosity -->
 		return 0.;
 	else
 	{
@@ -919,7 +924,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 		dotrr += (*(ds+i)) * (*(ds+i));
 
 	  for (i=0; i<DIMENSION; i++)
-	  		dotvv += (*(vab+i)) * (*(vab+i));
+	  	dotvv += (*(vab+i)) * (*(vab+i));
 
 	  double kab=EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr);
 
