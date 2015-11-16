@@ -904,18 +904,22 @@ double SPH_epsilon_mom(double* vab, double V_b) //V_b is the specific volume
 //function that used to compute turbulent heat conductivity in energy equation if SPH_epsilon turbulence model is adopted
 double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 {
+	int i;
 	double dotvv=0., dotvr=0., dotrr=0.;
-	for (int i; i<DIMENSION; i++)
-		dotvv += (*(vab+i)) * (*(vab+i));
 
-	if(dotvv==0.) //When the velocity difference, there will be no turbulent exchange effect
+	for (i=0; i<DIMENSION; i++)
+		dotvr += (*(vab+i)) * (*(ds+i));
+
+	if(dotvr==0.) //When the velocity difference, there will be no turbulent exchange effect
 		return 0.;
 	else
 	{
-	  for (int i; i<DIMENSION; i++)
-		dotvr += (*(vab+i)) * (*(ds+i));
-	  for (int i; i<DIMENSION; i++)
+
+	  for (i=0; i<DIMENSION; i++)
 		dotrr += (*(ds+i)) * (*(ds+i));
+
+	  for (i=0; i<DIMENSION; i++)
+	  		dotvv += (*(vab+i)) * (*(vab+i));
 
 	  double kab=EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr);
 
