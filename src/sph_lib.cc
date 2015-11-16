@@ -350,7 +350,7 @@ double art_vis ( double rhoab, double sndspdab, double rab[DIMENSION], double va
 	miuab = h * vrab / (rsqab + ata_P * h * h);
 
 #ifdef 	USE_PHYSICS_VIS
-	vis =  (- alf_P*sndspdab) * miuab / rhoab;
+	vis =  (- alf_P*sndspdab) * miuab / rhoab; //beta will become zero, and it is not necessary to make sure vrab>0
 #else
     if (vrab > 0)
 		vis = 0.;
@@ -369,13 +369,22 @@ double compute_F(double* dwdx, double* dx)
 	int i;
 	double r_sq=0.;
 	double W_r=0.;
+	double result;
 	for (i=0; i<DIMENSION; i++)
 	{
 		r_sq += (*(dx+i)) * (*(dx+i));
 		W_r += (*(dwdx+i)) * (*(dx+i));
 	}
 
-	return W_r/r_sq;
+	result=W_r/r_sq;
+
+#ifdef DEBUG
+	bool print = true;
+	if (print && result>=0)
+        cout << "You got a non-negative Fab, something is wrong!" << endl;
+#endif
+
+	return result;
 }
 
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
@@ -927,6 +936,12 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 	  	dotvv += (*(vab+i)) * (*(vab+i));
 
 	  double kab=EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr);
+
+#ifdef DEBUG
+	bool print = true;
+	if (print && kab<0)
+        cout << "You got a negative heat conductivity, something is wrong!" << endl;
+#endif
 
 	  return kab;
 	}

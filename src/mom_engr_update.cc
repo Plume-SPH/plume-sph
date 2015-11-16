@@ -55,9 +55,9 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 
 #ifdef DEBUG
-   bool do_search = false;
+   bool do_search = true;
    bool find;
-   unsigned keycheck[TKEYLENGTH] =  {421559420, 3487994837, 0};
+   unsigned keycheck[TKEYLENGTH] = {267463338, 4228633449, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
    bool search_bypos = false;
@@ -85,7 +85,10 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 			      keytemp[i] = pi->getKey ().key[i];
 
 		      if (find_particle (keytemp, keycheck))
+		      {
 			      cout << "The particle found!" << endl;
+			      cout << "energy: "<< pi->get_energy() <<endl;
+		      }
 		  }
 
 		  if (search_bypos)
