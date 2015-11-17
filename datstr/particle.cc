@@ -241,6 +241,7 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 //Updating single phase density
 	phase_density[0]=state_vars[0]*na;
 	phase_density[1]=state_vars[0]*mass_frac;
+
 //update temperature
 	temperature = engr/Cvm;
 

@@ -257,8 +257,8 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 
 		   pi->put_new_state_vars(unew);
-	  }
-  }
+	  } //end of if particle need to up date particle momentum and energy
+  }//end of go through all particles
 
   //pi = (Particle *) P_table->lookup(*ip); // seem useless pointer
 

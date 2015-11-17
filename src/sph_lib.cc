@@ -924,7 +924,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 	for (i=0; i<DIMENSION; i++)
 		dotvr += (*(vab+i)) * (*(ds+i));
 
-	if(dotvr<=0.) //To be consistent with artificial viscosity -->
+	if(dotvr<=0.) //To be consistent with artificial viscosity --> But in my opinion, it is not really reasonable!
 		return 0.;
 	else
 	{
@@ -944,6 +944,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 #endif
 
 	  return kab;
+//	  return 0;
 	}
 }
 
