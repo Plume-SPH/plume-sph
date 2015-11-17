@@ -350,7 +350,7 @@ double art_vis ( double rhoab, double sndspdab, double rab[DIMENSION], double va
 	miuab = h * vrab / (rsqab + ata_P * h * h);
 
 #ifdef 	USE_PHYSICS_VIS
-	vis =  (- alf_P*sndspdab) * miuab / rhoab; //beta will become zero, and it is not necessary to make sure vrab>0
+	vis =  (- alf_P*sndspdab) * miuab / rhoab; //beta will become zero, and it is not necessary to turn off viscosity for receding
 #else
     if (vrab > 0)
 		vis = 0.;
@@ -358,9 +358,10 @@ double art_vis ( double rhoab, double sndspdab, double rab[DIMENSION], double va
 		vis = (beta_P * miuab - alf_P*sndspdab) * miuab / rhoab;
 #endif
 
-
 	return vis;
 }
+
+//function that used to compute physical viscosity in a more reasonable way. ---> see Monaghan's paper: 2005 review
 
 //Function to compute F form r_ab and W_ab
 //The relationship is: F r_ab = dW_ab
