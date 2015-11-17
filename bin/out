@@ -1,24 +1,2704 @@
 Time-step: 1 dt=0.242017 time=0.242017
 Time-step: 2 dt=0.0994729 time=0.34149
-Time-step: 3 dt=0.0994704 time=0.44096
-Time-step: 4 dt=0.0854289 time=0.526389
-Time-step: 5 dt=0.0860518 time=0.612441
-Time-step: 6 dt=0.0862695 time=0.69871
-Time-step: 7 dt=0.0873142 time=0.786025
-Time-step: 8 dt=0.0861503 time=0.872175
-Time-step: 9 dt=0.0843584 time=0.956533
-Time-step: 10 dt=0.0434668 time=1
-Time-step: 11 dt=0.0876239 time=1.08762
-Time-step: 12 dt=0.0754113 time=1.16304
-sound speed = -nan
-
-===================================================================================
-=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
-=   PID 17563 RUNNING AT rohit.eng.buffalo.edu
-=   EXIT CODE: 134
-=   CLEANING UP REMAINING PROCESSES
-=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
-===================================================================================
-YOUR APPLICATION TERMINATED WITH THE EXIT STRING: Aborted (signal 6)
-This typically refers to a problem with your application.
-Please see the FAQ page for debugging suggestions
+The particle found!
+energy: 1.5939e+06
+Time-step: 3 dt=0.0994729 time=0.440963
+The particle found!
+energy: 1.59379e+06
+Time-step: 4 dt=0.0866141 time=0.527577
+The particle found!
+energy: 1.59071e+06
+Time-step: 5 dt=0.0873892 time=0.614966
+The particle found!
+energy: 1.58439e+06
+Time-step: 6 dt=0.087589 time=0.702555
+The particle found!
+energy: 1.57713e+06
+Time-step: 7 dt=0.0889727 time=0.791528
+The particle found!
+energy: 1.5669e+06
+Time-step: 8 dt=0.089707 time=0.881235
+The particle found!
+energy: 1.55419e+06
+Time-step: 9 dt=0.0901175 time=0.971352
+The particle found!
+energy: 1.53978e+06
+Time-step: 10 dt=0.0286476 time=1
+The particle found!
+energy: 1.52227e+06
+Time-step: 11 dt=0.0913121 time=1.09131
+The particle found!
+energy: 1.51587e+06
+Time-step: 12 dt=0.0923295 time=1.18364
+The particle found!
+energy: 1.4945e+06
+Time-step: 13 dt=0.0930575 time=1.2767
+The particle found!
+energy: 1.47019e+06
+Time-step: 14 dt=0.0938404 time=1.37054
+The particle found!
+energy: 1.44357e+06
+Time-step: 15 dt=0.0931925 time=1.46373
+The particle found!
+energy: 1.41379e+06
+Time-step: 16 dt=0.0937901 time=1.55752
+The particle found!
+energy: 1.38202e+06
+Time-step: 17 dt=0.0948201 time=1.65234
+The particle found!
+energy: 1.34873e+06
+Time-step: 18 dt=0.0947492 time=1.74709
+The particle found!
+energy: 1.31279e+06
+Time-step: 19 dt=0.0958576 time=1.84295
+The particle found!
+energy: 1.27584e+06
+Time-step: 20 dt=0.0965023 time=1.93945
+The particle found!
+energy: 1.23599e+06
+Time-step: 21 dt=0.0605487 time=2
+The particle found!
+energy: 1.19537e+06
+Time-step: 22 dt=0.097601 time=2.0976
+The particle found!
+energy: 1.16882e+06
+Time-step: 23 dt=0.0985658 time=2.19617
+The particle found!
+energy: 1.1257e+06
+Time-step: 24 dt=0.0995897 time=2.29576
+The particle found!
+energy: 1.08159e+06
+Time-step: 25 dt=0.0994729 time=2.39523
+The particle found!
+energy: 1.03598e+06
+Time-step: 26 dt=0.0994729 time=2.4947
+The particle found!
+energy: 990386
+Time-step: 27 dt=0.0994729 time=2.59418
+The particle found!
+energy: 944631
+Time-step: 28 dt=0.0996071 time=2.69378
+The particle found!
+energy: 899496
+Time-step: 29 dt=0.0994729 time=2.79326
+The particle found!
+energy: 853826
+Time-step: 30 dt=0.0996091 time=2.89286
+The particle found!
+energy: 807518
+Time-step: 31 dt=0.0994729 time=2.99234
+The particle found!
+energy: 760531
+Time-step: 32 dt=0.00766255 time=3
+The particle found!
+energy: 715196
+Time-step: 33 dt=0.0994836 time=3.09948
+The particle found!
+energy: 711862
+Time-step: 34 dt=0.0994729 time=3.19896
+The particle found!
+energy: 667582
+Time-step: 35 dt=0.0996121 time=3.29857
+The particle found!
+energy: 628797
+Time-step: 36 dt=0.107392 time=3.40596
+The particle found!
+energy: 594305
+Time-step: 37 dt=0.0994729 time=3.50543
+The particle found!
+energy: 561107
+Time-step: 38 dt=0.0996113 time=3.60504
+The particle found!
+energy: 533969
+Time-step: 39 dt=0.0994729 time=3.70452
+The particle found!
+energy: 510408
+Time-step: 40 dt=0.0994729 time=3.80399
+The particle found!
+energy: 489643
+Time-step: 41 dt=0.0994729 time=3.90346
+The particle found!
+energy: 470811
+Time-step: 42 dt=0.0965365 time=4
+The particle found!
+energy: 454060
+Time-step: 43 dt=0.0994729 time=4.09947
+The particle found!
+energy: 439330
+Time-step: 44 dt=0.0995986 time=4.19907
+The particle found!
+energy: 425238
+Time-step: 45 dt=0.0994729 time=4.29854
+The particle found!
+energy: 412385
+Time-step: 46 dt=0.0994729 time=4.39802
+The particle found!
+energy: 400470
+Time-step: 47 dt=0.0994729 time=4.49749
+The particle found!
+energy: 389359
+Time-step: 48 dt=0.0995841 time=4.59707
+The particle found!
+energy: 379395
+Time-step: 49 dt=0.0994729 time=4.69655
+The particle found!
+energy: 370465
+Time-step: 50 dt=0.0994729 time=4.79602
+The particle found!
+energy: 362239
+Time-step: 51 dt=0.0994729 time=4.89549
+The particle found!
+energy: 354506
+Time-step: 52 dt=0.0995602 time=4.99505
+The particle found!
+energy: 347306
+Time-step: 53 dt=0.00494644 time=5
+The particle found!
+energy: 340479
+Time-step: 54 dt=0.113305 time=5.1133
+The particle found!
+energy: 340151
+Time-step: 55 dt=0.0994729 time=5.21278
+The particle found!
+energy: 332622
+Time-step: 56 dt=0.0994729 time=5.31225
+The particle found!
+energy: 326282
+Time-step: 57 dt=0.0994729 time=5.41172
+The particle found!
+energy: 320664
+Time-step: 58 dt=0.0994729 time=5.5112
+The particle found!
+energy: 315460
+Time-step: 59 dt=0.0994729 time=5.61067
+The particle found!
+energy: 310434
+Time-step: 60 dt=0.0995372 time=5.71021
+The particle found!
+energy: 306571
+Time-step: 61 dt=0.0994729 time=5.80968
+The particle found!
+energy: 303424
+Time-step: 62 dt=0.0994729 time=5.90915
+The particle found!
+energy: 300785
+Time-step: 63 dt=0.0908474 time=6
+The particle found!
+energy: 298502
+Time-step: 64 dt=0.0995251 time=6.09953
+The particle found!
+energy: 296700
+Time-step: 65 dt=0.0994729 time=6.199
+The particle found!
+energy: 294918
+Time-step: 66 dt=0.0994729 time=6.29847
+The particle found!
+energy: 293323
+Time-step: 67 dt=0.0994729 time=6.39794
+The particle found!
+energy: 291897
+Time-step: 68 dt=0.0995285 time=6.49747
+The particle found!
+energy: 290618
+Time-step: 69 dt=0.0994729 time=6.59695
+The particle found!
+energy: 289479
+Time-step: 70 dt=0.0994729 time=6.69642
+The particle found!
+energy: 288461
+Time-step: 71 dt=0.099536 time=6.79595
+The particle found!
+energy: 287525
+Time-step: 72 dt=0.0994729 time=6.89543
+The particle found!
+energy: 286652
+Time-step: 73 dt=0.0995416 time=6.99497
+The particle found!
+energy: 285804
+Time-step: 74 dt=0.00503107 time=7
+The particle found!
+energy: 284931
+Time-step: 75 dt=0.0994768 time=7.09948
+The particle found!
+energy: 284885
+Time-step: 76 dt=0.0994729 time=7.19895
+The particle found!
+energy: 283945
+Time-step: 77 dt=0.0994729 time=7.29842
+The particle found!
+energy: 282913
+Time-step: 78 dt=0.0995567 time=7.39798
+The particle found!
+energy: 281675
+Time-step: 79 dt=0.0994729 time=7.49745
+The particle found!
+energy: 280704
+Time-step: 80 dt=0.0994729 time=7.59693
+The particle found!
+energy: 280326
+Time-step: 81 dt=0.0994729 time=7.6964
+The particle found!
+energy: 280241
+Time-step: 82 dt=0.0995661 time=7.79596
+The particle found!
+energy: 280322
+Time-step: 83 dt=0.0994729 time=7.89544
+The particle found!
+energy: 280495
+Time-step: 84 dt=0.0994729 time=7.99491
+The particle found!
+energy: 280706
+Time-step: 85 dt=0.00508981 time=8
+The particle found!
+energy: 280904
+Time-step: 86 dt=0.0994778 time=8.09948
+The particle found!
+energy: 280911
+Time-step: 87 dt=0.0994729 time=8.19895
+The particle found!
+energy: 281010
+Time-step: 88 dt=0.0994729 time=8.29842
+The particle found!
+energy: 281098
+Time-step: 89 dt=0.0994729 time=8.3979
+The particle found!
+energy: 281060
+Time-step: 90 dt=0.0995745 time=8.49747
+The particle found!
+energy: 280886
+Time-step: 91 dt=0.0994729 time=8.59694
+The particle found!
+energy: 280535
+Time-step: 92 dt=0.0994729 time=8.69642
+The particle found!
+energy: 279855
+Time-step: 93 dt=0.0994729 time=8.79589
+The particle found!
+energy: 278948
+Time-step: 94 dt=0.0995719 time=8.89546
+The particle found!
+energy: 277003
+Time-step: 95 dt=0.0994729 time=8.99493
+The particle found!
+energy: 276307
+Time-step: 96 dt=0.00506515 time=9
+The particle found!
+energy: 275663
+Time-step: 97 dt=0.0994778 time=9.09948
+The particle found!
+energy: 275625
+Time-step: 98 dt=0.0994729 time=9.19895
+The particle found!
+energy: 274837
+Time-step: 99 dt=0.0995704 time=9.29852
+The particle found!
+energy: 274316
+Time-step: 100 dt=0.0994729 time=9.39799
+The particle found!
+energy: 273902
+Time-step: 101 dt=0.0995726 time=9.49757
+The particle found!
+energy: 273567
+Time-step: 102 dt=0.0994729 time=9.59704
+The particle found!
+energy: 273274
+Time-step: 103 dt=0.0994729 time=9.69651
+The particle found!
+energy: 273007
+Time-step: 104 dt=0.0995764 time=9.79609
+The particle found!
+energy: 272748
+Time-step: 105 dt=0.0994729 time=9.89556
+The particle found!
+energy: 272486
+Time-step: 106 dt=0.0995876 time=9.99515
+The particle found!
+energy: 272216
+Time-step: 107 dt=0.00485053 time=10
+The particle found!
+energy: 271933
+Time-step: 108 dt=0.0994785 time=10.0995
+The particle found!
+energy: 271918
+Time-step: 109 dt=0.107309 time=10.2068
+The particle found!
+energy: 271607
+Time-step: 110 dt=0.0994729 time=10.3063
+The particle found!
+energy: 271254
+Time-step: 111 dt=0.0994729 time=10.4057
+The particle found!
+energy: 270891
+Time-step: 112 dt=0.0994729 time=10.5052
+The particle found!
+energy: 270500
+Time-step: 113 dt=0.0996047 time=10.6048
+The particle found!
+energy: 270080
+Time-step: 114 dt=0.0994729 time=10.7043
+The particle found!
+energy: 269631
+Time-step: 115 dt=0.0995977 time=10.8039
+The particle found!
+energy: 269154
+Time-step: 116 dt=0.0994729 time=10.9034
+The particle found!
+energy: 268648
+Time-step: 117 dt=0.0966458 time=11
+The particle found!
+energy: 268112
+Time-step: 118 dt=0.0994729 time=11.0995
+The particle found!
+energy: 267561
+Time-step: 119 dt=0.0995958 time=11.1991
+The particle found!
+energy: 266995
+Time-step: 120 dt=0.0994729 time=11.2985
+The particle found!
+energy: 266420
+Time-step: 121 dt=0.0995898 time=11.3981
+The particle found!
+energy: 265859
+Time-step: 122 dt=0.0994729 time=11.4976
+The particle found!
+energy: 265302
+Time-step: 123 dt=0.0994729 time=11.5971
+The particle found!
+energy: 264708
+Time-step: 124 dt=0.0995838 time=11.6967
+The particle found!
+energy: 264009
+Time-step: 125 dt=0.0994729 time=11.7961
+The particle found!
+energy: 263527
+Time-step: 126 dt=0.0994729 time=11.8956
+The particle found!
+energy: 263233
+Time-step: 127 dt=0.0994729 time=11.9951
+The particle found!
+energy: 263024
+Time-step: 128 dt=0.00491994 time=12
+The particle found!
+energy: 262856
+Time-step: 129 dt=0.0994729 time=12.0995
+The particle found!
+energy: 262848
+Time-step: 130 dt=0.0994729 time=12.1989
+The particle found!
+energy: 262669
+Time-step: 131 dt=0.0995488 time=12.2985
+The particle found!
+energy: 262507
+Time-step: 132 dt=0.0994729 time=12.398
+The particle found!
+energy: 262372
+Time-step: 133 dt=0.0994729 time=12.4974
+The particle found!
+energy: 262230
+Time-step: 134 dt=0.0994729 time=12.5969
+The particle found!
+energy: 262080
+Time-step: 135 dt=0.0995346 time=12.6964
+The particle found!
+energy: 261921
+Time-step: 136 dt=0.0994729 time=12.7959
+The particle found!
+energy: 261751
+Time-step: 137 dt=0.0994729 time=12.8954
+The particle found!
+energy: 261568
+Time-step: 138 dt=0.0994729 time=12.9949
+The particle found!
+energy: 261372
+Time-step: 139 dt=0.00513305 time=13
+The particle found!
+energy: 261163
+Time-step: 140 dt=0.113358 time=13.1134
+The particle found!
+energy: 261152
+Time-step: 141 dt=0.0994729 time=13.2128
+The particle found!
+energy: 260854
+Time-step: 142 dt=0.0995247 time=13.3124
+The particle found!
+energy: 260590
+Time-step: 143 dt=0.114196 time=13.4266
+The particle found!
+energy: 260342
+Time-step: 144 dt=0.0994729 time=13.526
+The particle found!
+energy: 260023
+Time-step: 145 dt=0.0995289 time=13.6256
+The particle found!
+energy: 259722
+Time-step: 146 dt=0.0994729 time=13.725
+The particle found!
+energy: 259388
+Time-step: 147 dt=0.0994729 time=13.8245
+The particle found!
+energy: 259007
+Time-step: 148 dt=0.0994729 time=13.924
+The particle found!
+energy: 258559
+Time-step: 149 dt=0.0760274 time=14
+The particle found!
+energy: 258149
+Time-step: 150 dt=0.113873 time=14.1139
+The particle found!
+energy: 257841
+Time-step: 151 dt=0.0994729 time=14.2133
+The particle found!
+energy: 257426
+Time-step: 152 dt=0.0995251 time=14.3129
+The particle found!
+energy: 257121
+Time-step: 153 dt=0.0994729 time=14.4123
+The particle found!
+energy: 256835
+Time-step: 154 dt=0.099533 time=14.5119
+The particle found!
+energy: 256534
+Time-step: 155 dt=0.0994729 time=14.6113
+The particle found!
+energy: 256199
+Time-step: 156 dt=0.0995342 time=14.7109
+The particle found!
+energy: 255883
+Time-step: 157 dt=0.0994729 time=14.8104
+The particle found!
+energy: 255620
+Time-step: 158 dt=0.0994729 time=14.9098
+The particle found!
+energy: 255388
+Time-step: 159 dt=0.0901703 time=15
+The particle found!
+energy: 255175
+Time-step: 160 dt=0.0995263 time=15.0995
+The particle found!
+energy: 254990
+Time-step: 161 dt=0.0994729 time=15.199
+The particle found!
+energy: 254788
+Time-step: 162 dt=0.0994729 time=15.2985
+The particle found!
+energy: 254589
+Time-step: 163 dt=0.0994729 time=15.3979
+The particle found!
+energy: 254389
+Time-step: 164 dt=0.0995303 time=15.4975
+The particle found!
+energy: 254186
+Time-step: 165 dt=0.0994729 time=15.5969
+The particle found!
+energy: 253976
+Time-step: 166 dt=0.0994729 time=15.6964
+The particle found!
+energy: 253758
+Time-step: 167 dt=0.0995292 time=15.796
+The particle found!
+energy: 253533
+Time-step: 168 dt=0.0994729 time=15.8954
+The particle found!
+energy: 253298
+Time-step: 169 dt=0.0994729 time=15.9949
+The particle found!
+energy: 253053
+Time-step: 170 dt=0.00510363 time=16
+The particle found!
+energy: 252800
+Time-step: 171 dt=0.099476 time=16.0995
+The particle found!
+energy: 252786
+Time-step: 172 dt=0.112514 time=16.212
+The particle found!
+energy: 252502
+Time-step: 173 dt=0.0994729 time=16.3115
+The particle found!
+energy: 252178
+Time-step: 174 dt=0.0995319 time=16.411
+The particle found!
+energy: 251901
+Time-step: 175 dt=0.0994729 time=16.5105
+The particle found!
+energy: 251613
+Time-step: 176 dt=0.0994729 time=16.6099
+The particle found!
+energy: 251311
+Time-step: 177 dt=0.0994729 time=16.7094
+The particle found!
+energy: 250998
+Time-step: 178 dt=0.099535 time=16.8089
+The particle found!
+energy: 250671
+Time-step: 179 dt=0.0994729 time=16.9084
+The particle found!
+energy: 250330
+Time-step: 180 dt=0.0915781 time=17
+The particle found!
+energy: 249974
+Time-step: 181 dt=0.0994729 time=17.0995
+The particle found!
+energy: 249631
+Time-step: 182 dt=0.0995366 time=17.199
+The particle found!
+energy: 249238
+Time-step: 183 dt=0.113158 time=17.3122
+The particle found!
+energy: 248824
+Time-step: 184 dt=0.0994729 time=17.4116
+The particle found!
+energy: 248325
+Time-step: 185 dt=0.0995431 time=17.5112
+The particle found!
+energy: 247865
+Time-step: 186 dt=0.0994729 time=17.6107
+The particle found!
+energy: 247381
+Time-step: 187 dt=0.0994729 time=17.7101
+The particle found!
+energy: 246864
+Time-step: 188 dt=0.0994729 time=17.8096
+The particle found!
+energy: 246309
+Time-step: 189 dt=0.0995473 time=17.9091
+The particle found!
+energy: 245701
+Time-step: 190 dt=0.0908504 time=18
+The particle found!
+energy: 245018
+Time-step: 191 dt=0.0995371 time=18.0995
+The particle found!
+energy: 244281
+Time-step: 192 dt=0.0994729 time=18.199
+The particle found!
+energy: 243663
+Time-step: 193 dt=0.0995434 time=18.2986
+The particle found!
+energy: 243247
+Time-step: 194 dt=0.0994729 time=18.398
+The particle found!
+energy: 242886
+Time-step: 195 dt=0.0994729 time=18.4975
+The particle found!
+energy: 242609
+Time-step: 196 dt=0.0994729 time=18.597
+The particle found!
+energy: 242415
+Time-step: 197 dt=0.0995349 time=18.6965
+The particle found!
+energy: 242258
+Time-step: 198 dt=0.0994729 time=18.796
+The particle found!
+energy: 242123
+Time-step: 199 dt=0.0994729 time=18.8955
+The particle found!
+energy: 242000
+Time-step: 200 dt=0.0995316 time=18.995
+The particle found!
+energy: 241885
+Time-step: 201 dt=0.00501526 time=19
+The particle found!
+energy: 241777
+Time-step: 202 dt=0.0994756 time=19.0995
+The particle found!
+energy: 241772
+Time-step: 203 dt=0.113207 time=19.2127
+The particle found!
+energy: 241639
+Time-step: 204 dt=0.0994729 time=19.3122
+The particle found!
+energy: 241509
+Time-step: 205 dt=0.0994729 time=19.4116
+The particle found!
+energy: 241431
+Time-step: 206 dt=0.0994729 time=19.5111
+The particle found!
+energy: 241346
+Time-step: 207 dt=0.0995211 time=19.6106
+The particle found!
+energy: 241255
+Time-step: 208 dt=0.0994729 time=19.7101
+The particle found!
+energy: 241162
+Time-step: 209 dt=0.0994729 time=19.8096
+The particle found!
+energy: 241068
+Time-step: 210 dt=0.0994729 time=19.909
+The particle found!
+energy: 240972
+Time-step: 211 dt=0.0909589 time=20
+The particle found!
+energy: 240874
+Time-step: 212 dt=0.0994729 time=20.0995
+The particle found!
+energy: 240783
+Time-step: 213 dt=0.0995225 time=20.199
+The particle found!
+energy: 240681
+Time-step: 214 dt=0.0994729 time=20.2985
+The particle found!
+energy: 240578
+Time-step: 215 dt=0.0994729 time=20.3979
+The particle found!
+energy: 240476
+Time-step: 216 dt=0.0994729 time=20.4974
+The particle found!
+energy: 240372
+Time-step: 217 dt=0.0994729 time=20.5969
+The particle found!
+energy: 240266
+Time-step: 218 dt=0.0995294 time=20.6964
+The particle found!
+energy: 240159
+Time-step: 219 dt=0.0994729 time=20.7959
+The particle found!
+energy: 240047
+Time-step: 220 dt=0.0995312 time=20.8954
+The particle found!
+energy: 239933
+Time-step: 221 dt=0.0994729 time=20.9949
+The particle found!
+energy: 239817
+Time-step: 222 dt=0.00510636 time=21
+The particle found!
+energy: 239697
+Time-step: 223 dt=0.111581 time=21.1116
+The particle found!
+energy: 239691
+Time-step: 224 dt=0.0994729 time=21.2111
+The particle found!
+energy: 239496
+Time-step: 225 dt=0.0995357 time=21.3106
+The particle found!
+energy: 239308
+Time-step: 226 dt=0.0994729 time=21.4101
+The particle found!
+energy: 239120
+Time-step: 227 dt=0.0994729 time=21.5095
+The particle found!
+energy: 238887
+Time-step: 228 dt=0.0994729 time=21.609
+The particle found!
+energy: 238622
+Time-step: 229 dt=0.0995347 time=21.7085
+The particle found!
+energy: 238317
+Time-step: 230 dt=0.0994729 time=21.808
+The particle found!
+energy: 237954
+Time-step: 231 dt=0.0995334 time=21.9075
+The particle found!
+energy: 237517
+Time-step: 232 dt=0.0924508 time=22
+The particle found!
+energy: 237155
+Time-step: 233 dt=0.099528 time=22.0995
+The particle found!
+energy: 236851
+Time-step: 234 dt=0.110612 time=22.2101
+The particle found!
+energy: 236531
+Time-step: 235 dt=0.0994729 time=22.3096
+The particle found!
+energy: 236177
+Time-step: 236 dt=0.0995308 time=22.4091
+The particle found!
+energy: 235857
+Time-step: 237 dt=0.0994729 time=22.5086
+The particle found!
+energy: 235520
+Time-step: 238 dt=0.0995341 time=22.6082
+The particle found!
+energy: 235170
+Time-step: 239 dt=0.0994729 time=22.7076
+The particle found!
+energy: 234856
+Time-step: 240 dt=0.0995351 time=22.8072
+The particle found!
+energy: 234450
+Time-step: 241 dt=0.0994729 time=22.9066
+The particle found!
+energy: 234013
+Time-step: 242 dt=0.0933687 time=23
+The particle found!
+energy: 233550
+Time-step: 243 dt=0.0994729 time=23.0995
+The particle found!
+energy: 233091
+Time-step: 244 dt=0.099542 time=23.199
+The particle found!
+energy: 232606
+Time-step: 245 dt=0.0994729 time=23.2985
+The particle found!
+energy: 232138
+Time-step: 246 dt=0.0994729 time=23.398
+The particle found!
+energy: 231686
+Time-step: 247 dt=0.0994729 time=23.4974
+The particle found!
+energy: 231244
+Time-step: 248 dt=0.0995475 time=23.597
+The particle found!
+energy: 230813
+Time-step: 249 dt=0.0994729 time=23.6965
+The particle found!
+energy: 230388
+Time-step: 250 dt=0.0994729 time=23.7959
+The particle found!
+energy: 229970
+Time-step: 251 dt=0.0995576 time=23.8955
+The particle found!
+energy: 229552
+Time-step: 252 dt=0.0994729 time=23.995
+The particle found!
+energy: 229126
+Time-step: 253 dt=0.00504236 time=24
+The particle found!
+energy: 228728
+Time-step: 254 dt=0.0994773 time=24.0995
+The particle found!
+energy: 228708
+Time-step: 255 dt=0.0994729 time=24.199
+The particle found!
+energy: 228308
+Time-step: 256 dt=0.0995535 time=24.2985
+The particle found!
+energy: 227922
+Time-step: 257 dt=0.0994729 time=24.398
+The particle found!
+energy: 227562
+Time-step: 258 dt=0.0995546 time=24.4975
+The particle found!
+energy: 227171
+Time-step: 259 dt=0.0994729 time=24.597
+The particle found!
+energy: 226671
+Time-step: 260 dt=0.0995539 time=24.6966
+The particle found!
+energy: 226367
+Time-step: 261 dt=0.0994729 time=24.796
+The particle found!
+energy: 226096
+Time-step: 262 dt=0.0995512 time=24.8956
+The particle found!
+energy: 225847
+Time-step: 263 dt=0.0994729 time=24.9951
+The particle found!
+energy: 225611
+Time-step: 264 dt=0.00494474 time=25
+The particle found!
+energy: 225384
+Time-step: 265 dt=0.0994764 time=25.0995
+The particle found!
+energy: 225373
+Time-step: 266 dt=0.0994729 time=25.1989
+The particle found!
+energy: 225141
+Time-step: 267 dt=0.0995396 time=25.2985
+The particle found!
+energy: 224915
+Time-step: 268 dt=0.0994729 time=25.398
+The particle found!
+energy: 224666
+Time-step: 269 dt=0.0994729 time=25.4974
+The particle found!
+energy: 224383
+Time-step: 270 dt=0.0995363 time=25.597
+The particle found!
+energy: 224191
+Time-step: 271 dt=0.0994729 time=25.6964
+The particle found!
+energy: 224041
+Time-step: 272 dt=0.0994729 time=25.7959
+The particle found!
+energy: 223919
+Time-step: 273 dt=0.0994729 time=25.8954
+The particle found!
+energy: 223817
+Time-step: 274 dt=0.0995296 time=25.9949
+The particle found!
+energy: 223758
+Time-step: 275 dt=0.00508043 time=26
+The particle found!
+energy: 223731
+Time-step: 276 dt=0.0994756 time=26.0995
+The particle found!
+energy: 223731
+Time-step: 277 dt=0.113508 time=26.213
+The particle found!
+energy: 223748
+Time-step: 278 dt=0.0994729 time=26.3125
+The particle found!
+energy: 223780
+Time-step: 279 dt=0.0995208 time=26.412
+The particle found!
+energy: 223835
+Time-step: 280 dt=0.0994729 time=26.5114
+The particle found!
+energy: 223911
+Time-step: 281 dt=0.0995254 time=26.611
+The particle found!
+energy: 224003
+Time-step: 282 dt=0.0994729 time=26.7104
+The particle found!
+energy: 224110
+Time-step: 283 dt=0.0994729 time=26.8099
+The particle found!
+energy: 224230
+Time-step: 284 dt=0.0994729 time=26.9094
+The particle found!
+energy: 224360
+Time-step: 285 dt=0.0906059 time=27
+The particle found!
+energy: 224494
+Time-step: 286 dt=0.0995211 time=27.0995
+The particle found!
+energy: 224617
+Time-step: 287 dt=0.0994729 time=27.199
+The particle found!
+energy: 224748
+Time-step: 288 dt=0.0995247 time=27.2985
+The particle found!
+energy: 224865
+Time-step: 289 dt=0.0994729 time=27.398
+The particle found!
+energy: 224974
+Time-step: 290 dt=0.0994729 time=27.4975
+The particle found!
+energy: 225078
+Time-step: 291 dt=0.0994729 time=27.5969
+The particle found!
+energy: 225164
+Time-step: 292 dt=0.099532 time=27.6965
+The particle found!
+energy: 225222
+Time-step: 293 dt=0.0994729 time=27.7959
+The particle found!
+energy: 225237
+Time-step: 294 dt=0.0994729 time=27.8954
+The particle found!
+energy: 225196
+Time-step: 295 dt=0.0994729 time=27.9949
+The particle found!
+energy: 225076
+Time-step: 296 dt=0.00511152 time=28
+The particle found!
+energy: 224841
+Time-step: 297 dt=0.112788 time=28.1128
+The particle found!
+energy: 224821
+Time-step: 298 dt=0.0994729 time=28.2123
+The particle found!
+energy: 224382
+Time-step: 299 dt=0.0995256 time=28.3118
+The particle found!
+energy: 223306
+Time-step: 300 dt=0.0994729 time=28.4113
+The particle found!
+energy: 222000
+Time-step: 301 dt=0.0995246 time=28.5108
+The particle found!
+energy: 221683
+Time-step: 302 dt=0.0994729 time=28.6103
+The particle found!
+energy: 221455
+Time-step: 303 dt=0.0995211 time=28.7098
+The particle found!
+energy: 221237
+Time-step: 304 dt=0.113708 time=28.8235
+The particle found!
+energy: 221004
+Time-step: 305 dt=0.0994729 time=28.923
+The particle found!
+energy: 220711
+Time-step: 306 dt=0.0770406 time=29
+The particle found!
+energy: 220423
+Time-step: 307 dt=0.0994729 time=29.0995
+The particle found!
+energy: 220182
+Time-step: 308 dt=0.0994827 time=29.199
+The particle found!
+energy: 219855
+Time-step: 309 dt=0.0994729 time=29.2984
+The particle found!
+energy: 219507
+Time-step: 310 dt=0.0995185 time=29.3979
+The particle found!
+energy: 219145
+Time-step: 311 dt=0.0994729 time=29.4974
+The particle found!
+energy: 218774
+Time-step: 312 dt=0.0994729 time=29.5969
+The particle found!
+energy: 218400
+Time-step: 313 dt=0.0994729 time=29.6964
+The particle found!
+energy: 218030
+Time-step: 314 dt=0.0995199 time=29.7959
+The particle found!
+energy: 217663
+Time-step: 315 dt=0.0994729 time=29.8954
+The particle found!
+energy: 217306
+Time-step: 316 dt=0.0994729 time=29.9948
+The particle found!
+energy: 216962
+Time-step: 317 dt=0.00516827 time=30
+The particle found!
+energy: 216632
+Time-step: 318 dt=0.0994729 time=30.0995
+The particle found!
+energy: 216616
+Time-step: 319 dt=0.0995209 time=30.199
+The particle found!
+energy: 216291
+Time-step: 320 dt=0.0994729 time=30.2985
+The particle found!
+energy: 215985
+Time-step: 321 dt=0.0994729 time=30.3979
+The particle found!
+energy: 215713
+Time-step: 322 dt=0.0995264 time=30.4975
+The particle found!
+energy: 215461
+Time-step: 323 dt=0.0994729 time=30.5969
+The particle found!
+energy: 215231
+Time-step: 324 dt=0.0994729 time=30.6964
+The particle found!
+energy: 215021
+Time-step: 325 dt=0.0994729 time=30.7959
+The particle found!
+energy: 214832
+Time-step: 326 dt=0.099529 time=30.8954
+The particle found!
+energy: 214663
+Time-step: 327 dt=0.0994729 time=30.9949
+The particle found!
+energy: 214514
+Time-step: 328 dt=0.00511313 time=31
+The particle found!
+energy: 214386
+Time-step: 329 dt=0.112295 time=31.1123
+The particle found!
+energy: 214381
+Time-step: 330 dt=0.0994729 time=31.2118
+The particle found!
+energy: 214241
+Time-step: 331 dt=0.0994729 time=31.3112
+The particle found!
+energy: 214156
+Time-step: 332 dt=0.0994729 time=31.4107
+The particle found!
+energy: 214110
+Time-step: 333 dt=0.099532 time=31.5102
+The particle found!
+energy: 214092
+Time-step: 334 dt=0.0994729 time=31.6097
+The particle found!
+energy: 214091
+Time-step: 335 dt=0.0994729 time=31.7092
+The particle found!
+energy: 214085
+Time-step: 336 dt=0.0994729 time=31.8087
+The particle found!
+energy: 214093
+Time-step: 337 dt=0.0995294 time=31.9082
+The particle found!
+energy: 214115
+Time-step: 338 dt=0.0918058 time=32
+The particle found!
+energy: 214161
+Time-step: 339 dt=0.0994729 time=32.0995
+The particle found!
+energy: 214225
+Time-step: 340 dt=0.0995314 time=32.199
+The particle found!
+energy: 214319
+Time-step: 341 dt=0.0994729 time=32.2985
+The particle found!
+energy: 214442
+Time-step: 342 dt=0.0994729 time=32.398
+The particle found!
+energy: 214595
+Time-step: 343 dt=0.0994729 time=32.4974
+The particle found!
+energy: 214781
+Time-step: 344 dt=0.0995329 time=32.597
+The particle found!
+energy: 215002
+Time-step: 345 dt=0.0994729 time=32.6964
+The particle found!
+energy: 215261
+Time-step: 346 dt=0.0995311 time=32.796
+The particle found!
+energy: 215559
+Time-step: 347 dt=0.0994729 time=32.8954
+The particle found!
+energy: 215895
+Time-step: 348 dt=0.0995296 time=32.995
+The particle found!
+energy: 216270
+Time-step: 349 dt=0.00503738 time=33
+The particle found!
+energy: 216686
+Time-step: 350 dt=0.099476 time=33.0995
+The particle found!
+energy: 216710
+Time-step: 351 dt=0.11341 time=33.2129
+The particle found!
+energy: 217203
+Time-step: 352 dt=0.0994729 time=33.3124
+The particle found!
+energy: 217809
+Time-step: 353 dt=0.0994729 time=33.4118
+The particle found!
+energy: 218346
+Time-step: 354 dt=0.0994729 time=33.5113
+The particle found!
+energy: 218919
+Time-step: 355 dt=0.0994729 time=33.6108
+The particle found!
+energy: 219532
+Time-step: 356 dt=0.0995337 time=33.7103
+The particle found!
+energy: 220172
+Time-step: 357 dt=0.0994729 time=33.8098
+The particle found!
+energy: 220835
+Time-step: 358 dt=0.0995366 time=33.9093
+The particle found!
+energy: 221513
+Time-step: 359 dt=0.0906795 time=34
+The particle found!
+energy: 222201
+Time-step: 360 dt=0.0994729 time=34.0995
+The particle found!
+energy: 222830
+Time-step: 361 dt=0.0994729 time=34.1989
+The particle found!
+energy: 223519
+Time-step: 362 dt=0.0995378 time=34.2985
+The particle found!
+energy: 224196
+Time-step: 363 dt=0.0994729 time=34.398
+The particle found!
+energy: 224849
+Time-step: 364 dt=0.0994729 time=34.4974
+The particle found!
+energy: 225476
+Time-step: 365 dt=0.0994729 time=34.5969
+The particle found!
+energy: 226067
+Time-step: 366 dt=0.0995317 time=34.6964
+The particle found!
+energy: 226618
+Time-step: 367 dt=0.0994729 time=34.7959
+The particle found!
+energy: 227122
+Time-step: 368 dt=0.0995286 time=34.8954
+The particle found!
+energy: 227577
+Time-step: 369 dt=0.104564 time=35
+The particle found!
+energy: 227981
+Time-step: 370 dt=0.0994729 time=35.0995
+The particle found!
+energy: 228350
+Time-step: 371 dt=0.0994729 time=35.1989
+The particle found!
+energy: 228642
+Time-step: 372 dt=0.0994729 time=35.2984
+The particle found!
+energy: 228879
+Time-step: 373 dt=0.0995275 time=35.3979
+The particle found!
+energy: 229065
+Time-step: 374 dt=0.0994729 time=35.4974
+The particle found!
+energy: 229196
+Time-step: 375 dt=0.0995245 time=35.5969
+The particle found!
+energy: 229286
+Time-step: 376 dt=0.0994729 time=35.6964
+The particle found!
+energy: 229328
+Time-step: 377 dt=0.0995253 time=35.7959
+The particle found!
+energy: 229311
+Time-step: 378 dt=0.0994729 time=35.8954
+The particle found!
+energy: 229244
+Time-step: 379 dt=0.0995236 time=35.9949
+The particle found!
+energy: 229136
+Time-step: 380 dt=0.00506151 time=36
+The particle found!
+energy: 228992
+Time-step: 381 dt=0.0994755 time=36.0995
+The particle found!
+energy: 228983
+Time-step: 382 dt=0.0994729 time=36.1989
+The particle found!
+energy: 228824
+Time-step: 383 dt=0.0994729 time=36.2984
+The particle found!
+energy: 228633
+Time-step: 384 dt=0.0995238 time=36.3979
+The particle found!
+energy: 228428
+Time-step: 385 dt=0.0994729 time=36.4974
+The particle found!
+energy: 228224
+Time-step: 386 dt=0.0994729 time=36.5969
+The particle found!
+energy: 228010
+Time-step: 387 dt=0.0995232 time=36.6964
+The particle found!
+energy: 227777
+Time-step: 388 dt=0.0994729 time=36.7959
+The particle found!
+energy: 227534
+Time-step: 389 dt=0.0994729 time=36.8954
+The particle found!
+energy: 227291
+Time-step: 390 dt=0.0994729 time=36.9948
+The particle found!
+energy: 227056
+Time-step: 391 dt=0.00516681 time=37
+The particle found!
+energy: 226846
+Time-step: 392 dt=0.11339 time=37.1134
+The particle found!
+energy: 226835
+Time-step: 393 dt=0.0994729 time=37.2129
+The particle found!
+energy: 226573
+Time-step: 394 dt=0.0994729 time=37.3123
+The particle found!
+energy: 226348
+Time-step: 395 dt=0.0994729 time=37.4118
+The particle found!
+energy: 226140
+Time-step: 396 dt=0.0995263 time=37.5113
+The particle found!
+energy: 225943
+Time-step: 397 dt=0.0994729 time=37.6108
+The particle found!
+energy: 225764
+Time-step: 398 dt=0.0995268 time=37.7103
+The particle found!
+energy: 225607
+Time-step: 399 dt=0.0994729 time=37.8098
+The particle found!
+energy: 225474
+Time-step: 400 dt=0.099528 time=37.9093
+The particle found!
+energy: 225371
+Time-step: 401 dt=0.0906638 time=38
+The particle found!
+energy: 225306
+Time-step: 402 dt=0.0995224 time=38.0995
+The particle found!
+energy: 225305
+Time-step: 403 dt=0.0994729 time=38.199
+The particle found!
+energy: 225458
+Time-step: 404 dt=0.0994729 time=38.2985
+The particle found!
+energy: 225562
+Time-step: 405 dt=0.0995256 time=38.398
+The particle found!
+energy: 225535
+Time-step: 406 dt=0.0994729 time=38.4975
+The particle found!
+energy: 225467
+Time-step: 407 dt=0.0995318 time=38.597
+The particle found!
+energy: 225374
+Time-step: 408 dt=0.0994729 time=38.6965
+The particle found!
+energy: 225272
+Time-step: 409 dt=0.0995322 time=38.796
+The particle found!
+energy: 225168
+Time-step: 410 dt=0.0994729 time=38.8955
+The particle found!
+energy: 225068
+Time-step: 411 dt=0.0994729 time=38.9949
+The particle found!
+energy: 224973
+Time-step: 412 dt=0.00505034 time=39
+The particle found!
+energy: 224886
+Time-step: 413 dt=0.0994761 time=39.0995
+The particle found!
+energy: 224882
+Time-step: 414 dt=0.113027 time=39.2125
+The particle found!
+energy: 224797
+Time-step: 415 dt=0.0994729 time=39.312
+The particle found!
+energy: 224708
+Time-step: 416 dt=0.0995347 time=39.4115
+The particle found!
+energy: 224644
+Time-step: 417 dt=0.0994729 time=39.511
+The particle found!
+energy: 224587
+Time-step: 418 dt=0.0995336 time=39.6105
+The particle found!
+energy: 224536
+Time-step: 419 dt=0.0994729 time=39.71
+The particle found!
+energy: 224492
+Time-step: 420 dt=0.0995327 time=39.8095
+The particle found!
+energy: 224454
+Time-step: 421 dt=0.0994729 time=39.909
+The particle found!
+energy: 224421
+Time-step: 422 dt=0.0910037 time=40
+The particle found!
+energy: 224391
+Time-step: 423 dt=0.0995253 time=40.0995
+The particle found!
+energy: 224364
+Time-step: 424 dt=0.0994729 time=40.199
+The particle found!
+energy: 224331
+Time-step: 425 dt=0.0995271 time=40.2985
+The particle found!
+energy: 224297
+Time-step: 426 dt=0.0994729 time=40.398
+The particle found!
+energy: 224236
+Time-step: 427 dt=0.0995283 time=40.4975
+The particle found!
+energy: 224231
+Time-step: 428 dt=0.0994729 time=40.597
+The particle found!
+energy: 224258
+Time-step: 429 dt=0.0994729 time=40.6965
+The particle found!
+energy: 224311
+Time-step: 430 dt=0.0994729 time=40.7959
+The particle found!
+energy: 224389
+Time-step: 431 dt=0.0995327 time=40.8955
+The particle found!
+energy: 224485
+Time-step: 432 dt=0.0994729 time=40.995
+The particle found!
+energy: 224599
+Time-step: 433 dt=0.00504882 time=41
+The particle found!
+energy: 224732
+Time-step: 434 dt=0.099476 time=41.0995
+The particle found!
+energy: 224740
+Time-step: 435 dt=0.0994729 time=41.1989
+The particle found!
+energy: 224898
+Time-step: 436 dt=0.099531 time=41.2985
+The particle found!
+energy: 225067
+Time-step: 437 dt=0.0994729 time=41.398
+The particle found!
+energy: 225246
+Time-step: 438 dt=0.0995361 time=41.4975
+The particle found!
+energy: 225436
+Time-step: 439 dt=0.11217 time=41.6097
+The particle found!
+energy: 225641
+Time-step: 440 dt=0.0994729 time=41.7091
+The particle found!
+energy: 225889
+Time-step: 441 dt=0.0994729 time=41.8086
+The particle found!
+energy: 226127
+Time-step: 442 dt=0.0994729 time=41.9081
+The particle found!
+energy: 226381
+Time-step: 443 dt=0.0919221 time=42
+The particle found!
+energy: 226651
+Time-step: 444 dt=0.0994729 time=42.0995
+The particle found!
+energy: 226914
+Time-step: 445 dt=0.0995473 time=42.199
+The particle found!
+energy: 227212
+Time-step: 446 dt=0.0994729 time=42.2985
+The particle found!
+energy: 227522
+Time-step: 447 dt=0.0995535 time=42.398
+The particle found!
+energy: 227842
+Time-step: 448 dt=0.0994729 time=42.4975
+The particle found!
+energy: 228173
+Time-step: 449 dt=0.0995551 time=42.5971
+The particle found!
+energy: 228513
+Time-step: 450 dt=0.0994729 time=42.6965
+The particle found!
+energy: 228861
+Time-step: 451 dt=0.0994729 time=42.796
+The particle found!
+energy: 229215
+Time-step: 452 dt=0.0994729 time=42.8955
+The particle found!
+energy: 229573
+Time-step: 453 dt=0.0995554 time=42.995
+The particle found!
+energy: 229935
+Time-step: 454 dt=0.0049509 time=43
+The particle found!
+energy: 230298
+Time-step: 455 dt=0.0994729 time=43.0995
+The particle found!
+energy: 230317
+Time-step: 456 dt=0.0994729 time=43.1989
+The particle found!
+energy: 230686
+Time-step: 457 dt=0.0995554 time=43.2985
+The particle found!
+energy: 231051
+Time-step: 458 dt=0.0994729 time=43.398
+The particle found!
+energy: 231411
+Time-step: 459 dt=0.0994729 time=43.4974
+The particle found!
+energy: 231767
+Time-step: 460 dt=0.0994729 time=43.5969
+The particle found!
+energy: 232117
+Time-step: 461 dt=0.0995554 time=43.6965
+The particle found!
+energy: 232459
+Time-step: 462 dt=0.0994729 time=43.7959
+The particle found!
+energy: 232791
+Time-step: 463 dt=0.0994729 time=43.8954
+The particle found!
+energy: 233111
+Time-step: 464 dt=0.0994729 time=43.9949
+The particle found!
+energy: 233420
+Time-step: 465 dt=0.00510565 time=44
+The particle found!
+energy: 233717
+Time-step: 466 dt=0.111684 time=44.1117
+The particle found!
+energy: 233732
+Time-step: 467 dt=0.0994729 time=44.2112
+The particle found!
+energy: 234060
+Time-step: 468 dt=0.0995419 time=44.3107
+The particle found!
+energy: 234330
+Time-step: 469 dt=0.0994729 time=44.4102
+The particle found!
+energy: 234578
+Time-step: 470 dt=0.099541 time=44.5097
+The particle found!
+energy: 234816
+Time-step: 471 dt=0.0994729 time=44.6092
+The particle found!
+energy: 235038
+Time-step: 472 dt=0.0995385 time=44.7087
+The particle found!
+energy: 235245
+Time-step: 473 dt=0.0994729 time=44.8082
+The particle found!
+energy: 235439
+Time-step: 474 dt=0.0994729 time=44.9077
+The particle found!
+energy: 235616
+Time-step: 475 dt=0.0923294 time=45
+The particle found!
+energy: 235779
+Time-step: 476 dt=0.0994729 time=45.0995
+The particle found!
+energy: 235909
+Time-step: 477 dt=0.0995416 time=45.199
+The particle found!
+energy: 236025
+Time-step: 478 dt=0.0994729 time=45.2985
+The particle found!
+energy: 236102
+Time-step: 479 dt=0.0995406 time=45.398
+The particle found!
+energy: 236145
+Time-step: 480 dt=0.0994729 time=45.4975
+The particle found!
+energy: 236169
+Time-step: 481 dt=0.0994729 time=45.597
+The particle found!
+energy: 236184
+Time-step: 482 dt=0.0994729 time=45.6964
+The particle found!
+energy: 236187
+Time-step: 483 dt=0.0995421 time=45.796
+The particle found!
+energy: 236177
+Time-step: 484 dt=0.0994729 time=45.8955
+The particle found!
+energy: 236156
+Time-step: 485 dt=0.0994729 time=45.9949
+The particle found!
+energy: 236126
+Time-step: 486 dt=0.00506507 time=46
+The particle found!
+energy: 236090
+Time-step: 487 dt=0.0994762 time=46.0995
+The particle found!
+energy: 236088
+Time-step: 488 dt=0.11361 time=46.2131
+The particle found!
+energy: 236057
+Time-step: 489 dt=0.0994729 time=46.3126
+The particle found!
+energy: 236006
+Time-step: 490 dt=0.0995364 time=46.4121
+The particle found!
+energy: 235951
+Time-step: 491 dt=0.0994729 time=46.5116
+The particle found!
+energy: 235898
+Time-step: 492 dt=0.0994729 time=46.611
+The particle found!
+energy: 235845
+Time-step: 493 dt=0.0995295 time=46.7106
+The particle found!
+energy: 235791
+Time-step: 494 dt=0.0994729 time=46.81
+The particle found!
+energy: 235739
+Time-step: 495 dt=0.0995268 time=46.9096
+The particle found!
+energy: 235692
+Time-step: 496 dt=0.0904289 time=47
+The particle found!
+energy: 235653
+Time-step: 497 dt=0.0995221 time=47.0995
+The particle found!
+energy: 235628
+Time-step: 498 dt=0.0994729 time=47.199
+The particle found!
+energy: 235614
+Time-step: 499 dt=0.0994729 time=47.2985
+The particle found!
+energy: 235614
+Time-step: 500 dt=0.0994729 time=47.3979
+The particle found!
+energy: 235631
+Time-step: 501 dt=0.0995262 time=47.4975
+The particle found!
+energy: 235661
+Time-step: 502 dt=0.0994729 time=47.5969
+The particle found!
+energy: 235707
+Time-step: 503 dt=0.0994729 time=47.6964
+The particle found!
+energy: 235770
+Time-step: 504 dt=0.0994729 time=47.7959
+The particle found!
+energy: 235852
+Time-step: 505 dt=0.0995259 time=47.8954
+The particle found!
+energy: 235957
+Time-step: 506 dt=0.0994729 time=47.9949
+The particle found!
+energy: 236085
+Time-step: 507 dt=0.00511514 time=48
+The particle found!
+energy: 236236
+Time-step: 508 dt=0.0994759 time=48.0995
+The particle found!
+energy: 236245
+Time-step: 509 dt=0.113588 time=48.2131
+The particle found!
+energy: 236434
+Time-step: 510 dt=0.0994729 time=48.3125
+The particle found!
+energy: 236674
+Time-step: 511 dt=0.0994729 time=48.412
+The particle found!
+energy: 236903
+Time-step: 512 dt=0.0994729 time=48.5115
+The particle found!
+energy: 237159
+Time-step: 513 dt=0.0995361 time=48.611
+The particle found!
+energy: 237442
+Time-step: 514 dt=0.0994729 time=48.7105
+The particle found!
+energy: 237751
+Time-step: 515 dt=0.0995339 time=48.81
+The particle found!
+energy: 238086
+Time-step: 516 dt=0.0994729 time=48.9095
+The particle found!
+energy: 238450
+Time-step: 517 dt=0.090501 time=49
+The particle found!
+energy: 238839
+Time-step: 518 dt=0.0994729 time=49.0995
+The particle found!
+energy: 239218
+Time-step: 519 dt=0.0995337 time=49.199
+The particle found!
+energy: 239661
+Time-step: 520 dt=0.0994729 time=49.2985
+The particle found!
+energy: 240121
+Time-step: 521 dt=0.0994729 time=49.398
+The particle found!
+energy: 240597
+Time-step: 522 dt=0.0994729 time=49.4974
+The particle found!
+energy: 241092
+Time-step: 523 dt=0.0995299 time=49.597
+The particle found!
+energy: 241606
+Time-step: 524 dt=0.0994729 time=49.6964
+The particle found!
+energy: 242138
+Time-step: 525 dt=0.0994729 time=49.7959
+The particle found!
+energy: 242689
+Time-step: 526 dt=0.0995292 time=49.8954
+The particle found!
+energy: 243258
+Time-step: 527 dt=0.0994729 time=49.9949
+The particle found!
+energy: 243839
+Time-step: 528 dt=0.00509657 time=50
+The particle found!
+energy: 244422
+Time-step: 529 dt=0.0994758 time=50.0995
+The particle found!
+energy: 244452
+Time-step: 530 dt=0.0994729 time=50.1989
+The particle found!
+energy: 245053
+Time-step: 531 dt=0.0995322 time=50.2985
+The particle found!
+energy: 245647
+Time-step: 532 dt=0.0994729 time=50.398
+The particle found!
+energy: 246214
+Time-step: 533 dt=0.0994729 time=50.4974
+The particle found!
+energy: 246743
+Time-step: 534 dt=0.0994729 time=50.5969
+The particle found!
+energy: 247287
+Time-step: 535 dt=0.0995322 time=50.6964
+The particle found!
+energy: 247851
+Time-step: 536 dt=0.0994729 time=50.7959
+The particle found!
+energy: 248413
+Time-step: 537 dt=0.0995344 time=50.8954
+The particle found!
+energy: 248965
+Time-step: 538 dt=0.0994729 time=50.9949
+The particle found!
+energy: 249506
+Time-step: 539 dt=0.00508766 time=51
+The particle found!
+energy: 250047
+Time-step: 540 dt=0.111692 time=51.1117
+The particle found!
+energy: 250074
+Time-step: 541 dt=0.0994729 time=51.2112
+The particle found!
+energy: 250674
+Time-step: 542 dt=0.0995407 time=51.3107
+The particle found!
+energy: 251198
+Time-step: 543 dt=0.11167 time=51.4224
+The particle found!
+energy: 251700
+Time-step: 544 dt=0.0994729 time=51.5218
+The particle found!
+energy: 252246
+Time-step: 545 dt=0.0995422 time=51.6214
+The particle found!
+energy: 252710
+Time-step: 546 dt=0.0994729 time=51.7209
+The particle found!
+energy: 253152
+Time-step: 547 dt=0.0994729 time=51.8203
+The particle found!
+energy: 253571
+Time-step: 548 dt=0.0994729 time=51.9198
+The particle found!
+energy: 253965
+Time-step: 549 dt=0.0801899 time=52
+The particle found!
+energy: 254333
+Time-step: 550 dt=0.0994729 time=52.0995
+The particle found!
+energy: 254608
+Time-step: 551 dt=0.0994729 time=52.1989
+The particle found!
+energy: 254925
+Time-step: 552 dt=0.0994729 time=52.2984
+The particle found!
+energy: 255216
+Time-step: 553 dt=0.0995429 time=52.398
+The particle found!
+energy: 255478
+Time-step: 554 dt=0.0994729 time=52.4974
+The particle found!
+energy: 255710
+Time-step: 555 dt=0.0994729 time=52.5969
+The particle found!
+energy: 255908
+Time-step: 556 dt=0.0994729 time=52.6964
+The particle found!
+energy: 256075
+Time-step: 557 dt=0.0995346 time=52.7959
+The particle found!
+energy: 256208
+Time-step: 558 dt=0.0994729 time=52.8954
+The particle found!
+energy: 256307
+Time-step: 559 dt=0.0994729 time=52.9949
+The particle found!
+energy: 256374
+Time-step: 560 dt=0.00513896 time=53
+The particle found!
+energy: 256407
+Time-step: 561 dt=0.113059 time=53.1131
+The particle found!
+energy: 256407
+Time-step: 562 dt=0.0994729 time=53.2125
+The particle found!
+energy: 256376
+Time-step: 563 dt=0.0995274 time=53.3121
+The particle found!
+energy: 256318
+Time-step: 564 dt=0.0994729 time=53.4115
+The particle found!
+energy: 256266
+Time-step: 565 dt=0.0995255 time=53.5111
+The particle found!
+energy: 256191
+Time-step: 566 dt=0.0994729 time=53.6105
+The particle found!
+energy: 256094
+Time-step: 567 dt=0.0995248 time=53.7101
+The particle found!
+energy: 255975
+Time-step: 568 dt=0.0994729 time=53.8095
+The particle found!
+energy: 255832
+Time-step: 569 dt=0.0994729 time=53.909
+The particle found!
+energy: 255665
+Time-step: 570 dt=0.0909985 time=54
+The particle found!
+energy: 255475
+Time-step: 571 dt=0.0995164 time=54.0995
+The particle found!
+energy: 255281
+Time-step: 572 dt=0.0994729 time=54.199
+The particle found!
+energy: 255046
+Time-step: 573 dt=0.0994729 time=54.2985
+The particle found!
+energy: 254789
+Time-step: 574 dt=0.0994729 time=54.3979
+The particle found!
+energy: 254513
+Time-step: 575 dt=0.0995174 time=54.4975
+The particle found!
+energy: 254223
+Time-step: 576 dt=0.113717 time=54.6112
+The particle found!
+energy: 253917
+Time-step: 577 dt=0.0994729 time=54.7106
+The particle found!
+energy: 253552
+Time-step: 578 dt=0.0995232 time=54.8102
+The particle found!
+energy: 253222
+Time-step: 579 dt=0.0994729 time=54.9096
+The particle found!
+energy: 252879
+Time-step: 580 dt=0.0903608 time=55
+The particle found!
+energy: 252520
+Time-step: 581 dt=0.0994729 time=55.0995
+The particle found!
+energy: 252185
+Time-step: 582 dt=0.0995267 time=55.199
+The particle found!
+energy: 251805
+Time-step: 583 dt=0.0994729 time=55.2985
+The particle found!
+energy: 251416
+Time-step: 584 dt=0.0995227 time=55.398
+The particle found!
+energy: 251021
+Time-step: 585 dt=0.0994729 time=55.4975
+The particle found!
+energy: 250616
+Time-step: 586 dt=0.0995234 time=55.597
+The particle found!
+energy: 250203
+Time-step: 587 dt=0.0994729 time=55.6965
+The particle found!
+energy: 249781
+Time-step: 588 dt=0.0995209 time=55.796
+The particle found!
+energy: 249351
+Time-step: 589 dt=0.0994729 time=55.8955
+The particle found!
+energy: 248912
+Time-step: 590 dt=0.0994729 time=55.9949
+The particle found!
+energy: 248466
+Time-step: 591 dt=0.00506863 time=56
+The particle found!
+energy: 248011
+Time-step: 592 dt=0.113234 time=56.1132
+The particle found!
+energy: 247988
+Time-step: 593 dt=0.0994729 time=56.2127
+The particle found!
+energy: 247431
+Time-step: 594 dt=0.0995162 time=56.3122
+The particle found!
+energy: 246940
+Time-step: 595 dt=0.0994729 time=56.4117
+The particle found!
+energy: 246463
+Time-step: 596 dt=0.0995194 time=56.5112
+The particle found!
+energy: 245983
+Time-step: 597 dt=0.0994729 time=56.6107
+The particle found!
+energy: 245499
+Time-step: 598 dt=0.0994729 time=56.7102
+The particle found!
+energy: 245010
+Time-step: 599 dt=0.0994729 time=56.8096
+The particle found!
+energy: 244516
+Time-step: 600 dt=0.0995244 time=56.9092
+The particle found!
+energy: 244024
+Time-step: 601 dt=0.0908409 time=57
+The particle found!
+energy: 243532
+Time-step: 602 dt=0.0994729 time=57.0995
+The particle found!
+energy: 243084
+Time-step: 603 dt=0.0994729 time=57.1989
+The particle found!
+energy: 242591
+Time-step: 604 dt=0.0995223 time=57.2985
+The particle found!
+energy: 242098
+Time-step: 605 dt=0.0994729 time=57.3979
+The particle found!
+energy: 241604
+Time-step: 606 dt=0.0995248 time=57.4975
+The particle found!
+energy: 241111
+Time-step: 607 dt=0.0994729 time=57.5969
+The particle found!
+energy: 240618
+Time-step: 608 dt=0.0995284 time=57.6965
+The particle found!
+energy: 240126
+Time-step: 609 dt=0.0994729 time=57.7959
+The particle found!
+energy: 239638
+Time-step: 610 dt=0.0994729 time=57.8954
+The particle found!
+energy: 239146
+Time-step: 611 dt=0.0995354 time=57.9949
+The particle found!
+energy: 238649
+Time-step: 612 dt=0.00505127 time=58
+The particle found!
+energy: 238150
+Time-step: 613 dt=0.0994729 time=58.0995
+The particle found!
+energy: 238124
+Time-step: 614 dt=0.0995287 time=58.199
+The particle found!
+energy: 237610
+Time-step: 615 dt=0.0994729 time=58.2985
+The particle found!
+energy: 237106
+Time-step: 616 dt=0.099537 time=58.398
+The particle found!
+energy: 236610
+Time-step: 617 dt=0.0994729 time=58.4975
+The particle found!
+energy: 236116
+Time-step: 618 dt=0.0995329 time=58.597
+The particle found!
+energy: 235622
+Time-step: 619 dt=0.0994729 time=58.6965
+The particle found!
+energy: 235133
+Time-step: 620 dt=0.0994729 time=58.796
+The particle found!
+energy: 234655
+Time-step: 621 dt=0.0994729 time=58.8954
+The particle found!
+energy: 234185
+Time-step: 622 dt=0.0995284 time=58.995
+The particle found!
+energy: 233722
+Time-step: 623 dt=0.00503532 time=59
+The particle found!
+energy: 233264
+Time-step: 624 dt=0.0994756 time=59.0995
+The particle found!
+energy: 233241
+Time-step: 625 dt=0.0994729 time=59.1989
+The particle found!
+energy: 232779
+Time-step: 626 dt=0.0994729 time=59.2984
+The particle found!
+energy: 232332
+Time-step: 627 dt=0.0995222 time=59.3979
+The particle found!
+energy: 231895
+Time-step: 628 dt=0.0994729 time=59.4974
+The particle found!
+energy: 231467
+Time-step: 629 dt=0.0994729 time=59.5969
+The particle found!
+energy: 231048
+Time-step: 630 dt=0.0995272 time=59.6964
+The particle found!
+energy: 230637
+Time-step: 631 dt=0.0994729 time=59.7959
+The particle found!
+energy: 230234
+Time-step: 632 dt=0.0994729 time=59.8954
+The particle found!
+energy: 229840
+Time-step: 633 dt=0.0994729 time=59.9948
+The particle found!
+energy: 229453
+Time-step: 634 dt=0.00516437 time=60
+The particle found!
+energy: 229075
+Time-step: 635 dt=0.112451 time=60.1125
+The particle found!
+energy: 229056
+Time-step: 636 dt=0.0994729 time=60.2119
+The particle found!
+energy: 228632
+Time-step: 637 dt=0.0994729 time=60.3114
+The particle found!
+energy: 228271
+Time-step: 638 dt=0.0994729 time=60.4109
+The particle found!
+energy: 227917
+Time-step: 639 dt=0.0994729 time=60.5103
+The particle found!
+energy: 227570
+Time-step: 640 dt=0.0994729 time=60.6098
+The particle found!
+energy: 227231
+Time-step: 641 dt=0.0995325 time=60.7093
+The particle found!
+energy: 226898
+Time-step: 642 dt=0.0994729 time=60.8088
+The particle found!
+energy: 226572
+Time-step: 643 dt=0.0994729 time=60.9083
+The particle found!
+energy: 226251
+Time-step: 644 dt=0.091706 time=61
+The particle found!
+energy: 225935
+Time-step: 645 dt=0.0995277 time=61.0995
+The particle found!
+energy: 225648
+Time-step: 646 dt=0.0994729 time=61.199
+The particle found!
+energy: 225343
+Time-step: 647 dt=0.0994729 time=61.2985
+The particle found!
+energy: 225044
+Time-step: 648 dt=0.0995329 time=61.398
+The particle found!
+energy: 224750
+Time-step: 649 dt=0.0994729 time=61.4975
+The particle found!
+energy: 224461
+Time-step: 650 dt=0.0994729 time=61.597
+The particle found!
+energy: 224177
+Time-step: 651 dt=0.0994729 time=61.6964
+The particle found!
+energy: 223898
+Time-step: 652 dt=0.099534 time=61.796
+The particle found!
+energy: 223624
+Time-step: 653 dt=0.0994729 time=61.8954
+The particle found!
+energy: 223355
+Time-step: 654 dt=0.0994729 time=61.9949
+The particle found!
+energy: 223090
+Time-step: 655 dt=0.00509476 time=62
+The particle found!
+energy: 222832
+Time-step: 656 dt=0.099476 time=62.0995
+The particle found!
+energy: 222819
+Time-step: 657 dt=0.0994729 time=62.1989
+The particle found!
+energy: 222569
+Time-step: 658 dt=0.0994729 time=62.2984
+The particle found!
+energy: 222326
+Time-step: 659 dt=0.0995309 time=62.398
+The particle found!
+energy: 222085
+Time-step: 660 dt=0.0994729 time=62.4974
+The particle found!
+energy: 221851
+Time-step: 661 dt=0.0994729 time=62.5969
+The particle found!
+energy: 221623
+Time-step: 662 dt=0.0995302 time=62.6964
+The particle found!
+energy: 221402
+Time-step: 663 dt=0.0994729 time=62.7959
+The particle found!
+energy: 221187
+Time-step: 664 dt=0.0995355 time=62.8954
+The particle found!
+energy: 220978
+Time-step: 665 dt=0.0994729 time=62.9949
+The particle found!
+energy: 220776
+Time-step: 666 dt=0.00508971 time=63
+The particle found!
+energy: 220580
+Time-step: 667 dt=0.0994762 time=63.0995
+The particle found!
+energy: 220570
+Time-step: 668 dt=0.0994729 time=63.1989
+The particle found!
+energy: 220384
+Time-step: 669 dt=0.0994729 time=63.2984
+The particle found!
+energy: 220207
+Time-step: 670 dt=0.0994729 time=63.3979
+The particle found!
+energy: 220029
+Time-step: 671 dt=0.0995424 time=63.4974
+The particle found!
+energy: 219855
+Time-step: 672 dt=0.0994729 time=63.5969
+The particle found!
+energy: 219684
+Time-step: 673 dt=0.0994729 time=63.6964
+The particle found!
+energy: 219519
+Time-step: 674 dt=0.0994729 time=63.7959
+The particle found!
+energy: 219359
+Time-step: 675 dt=0.099544 time=63.8954
+The particle found!
+energy: 219205
+Time-step: 676 dt=0.0994729 time=63.9949
+The particle found!
+energy: 219060
+Time-step: 677 dt=0.00512678 time=64
+The particle found!
+energy: 218923
+Time-step: 678 dt=0.110389 time=64.1104
+The particle found!
+energy: 218916
+Time-step: 679 dt=0.0994729 time=64.2099
+The particle found!
+energy: 218773
+Time-step: 680 dt=0.0995426 time=64.3094
+The particle found!
+energy: 218655
+Time-step: 681 dt=0.0994729 time=64.4089
+The particle found!
+energy: 218544
+Time-step: 682 dt=0.0994729 time=64.5084
+The particle found!
+energy: 218440
+Time-step: 683 dt=0.0995473 time=64.6079
+The particle found!
+energy: 218346
+Time-step: 684 dt=0.0994729 time=64.7074
+The particle found!
+energy: 218260
+Time-step: 685 dt=0.0995419 time=64.8069
+The particle found!
+energy: 218183
+Time-step: 686 dt=0.0994729 time=64.9064
+The particle found!
+energy: 218116
+Time-step: 687 dt=0.0936145 time=65
+The particle found!
+energy: 218059
+Time-step: 688 dt=0.0994729 time=65.0995
+The particle found!
+energy: 218016
+Time-step: 689 dt=0.0995422 time=65.199
+The particle found!
+energy: 217982
+Time-step: 690 dt=0.0994729 time=65.2985
+The particle found!
+energy: 217950
+Time-step: 691 dt=0.0994729 time=65.398
+The particle found!
+energy: 217923
+Time-step: 692 dt=0.0994729 time=65.4974
+The particle found!
+energy: 217900
+Time-step: 693 dt=0.0995426 time=65.597
+The particle found!
+energy: 217882
+Time-step: 694 dt=0.0994729 time=65.6964
+The particle found!
+energy: 217867
+Time-step: 695 dt=0.0994729 time=65.7959
+The particle found!
+energy: 217857
+Time-step: 696 dt=0.0994729 time=65.8954
+The particle found!
+energy: 217851
+Time-step: 697 dt=0.0994729 time=65.9949
+The particle found!
+energy: 217849
+Time-step: 698 dt=0.0051316 time=66
+The particle found!
+energy: 217851
+Time-step: 699 dt=0.0994767 time=66.0995
+The particle found!
+energy: 217851
+Time-step: 700 dt=0.0994729 time=66.1989
+The particle found!
+energy: 217861
+Time-step: 701 dt=0.0995506 time=66.2985
+The particle found!
+energy: 217873
+Time-step: 702 dt=0.0994729 time=66.398
+The particle found!
+energy: 217885
+Time-step: 703 dt=0.0994729 time=66.4974
+The particle found!
+energy: 217895
+Time-step: 704 dt=0.0994729 time=66.5969
+The particle found!
+energy: 217907
+Time-step: 705 dt=0.0995513 time=66.6965
+The particle found!
+energy: 217925
+Time-step: 706 dt=0.0994729 time=66.7959
+The particle found!
+energy: 217948
+Time-step: 707 dt=0.0994729 time=66.8954
+The particle found!
+energy: 217981
+Time-step: 708 dt=0.0994729 time=66.9949
+The particle found!
+energy: 218028
+Time-step: 709 dt=0.00511079 time=67
+The particle found!
+energy: 218078
+Time-step: 710 dt=0.112687 time=67.1127
+The particle found!
+energy: 218080
+Time-step: 711 dt=0.0994729 time=67.2122
+The particle found!
+energy: 218145
+Time-step: 712 dt=0.099544 time=67.3117
+The particle found!
+energy: 218202
+Time-step: 713 dt=0.0994729 time=67.4112
+The particle found!
+energy: 218263
+Time-step: 714 dt=0.0994729 time=67.5106
+The particle found!
+energy: 218331
+Time-step: 715 dt=0.0994729 time=67.6101
+The particle found!
+energy: 218408
+Time-step: 716 dt=0.0995369 time=67.7097
+The particle found!
+energy: 218493
+Time-step: 717 dt=0.0994729 time=67.8091
+The particle found!
+energy: 218588
+Time-step: 718 dt=0.0994729 time=67.9086
+The particle found!
+energy: 218690
+Time-step: 719 dt=0.0913947 time=68
+The particle found!
+energy: 218803
+Time-step: 720 dt=0.0994729 time=68.0995
+The particle found!
+energy: 218917
+Time-step: 721 dt=0.0994729 time=68.1989
+The particle found!
+energy: 219049
+Time-step: 722 dt=0.0994729 time=68.2984
+The particle found!
+energy: 219191
+Time-step: 723 dt=0.0995342 time=68.398
+The particle found!
+energy: 219342
+Time-step: 724 dt=0.0994729 time=68.4974
+The particle found!
+energy: 219501
+Time-step: 725 dt=0.0994729 time=68.5969
+The particle found!
+energy: 219670
+Time-step: 726 dt=0.0994729 time=68.6964
+The particle found!
+energy: 219847
+Time-step: 727 dt=0.0994729 time=68.7958
+The particle found!
+energy: 220034
+Time-step: 728 dt=0.0994729 time=68.8953
+The particle found!
+energy: 220230
+Time-step: 729 dt=0.0995304 time=68.9948
+The particle found!
+energy: 220436
+Time-step: 730 dt=0.00515185 time=69
+The particle found!
+energy: 220652
+Time-step: 731 dt=0.113972 time=69.114
+The particle found!
+energy: 220664
+Time-step: 732 dt=0.0994729 time=69.2134
+The particle found!
+energy: 220928
+Time-step: 733 dt=0.0995302 time=69.313
+The particle found!
+energy: 221168
+Time-step: 734 dt=0.0994729 time=69.4124
+The particle found!
+energy: 221412
+Time-step: 735 dt=0.099537 time=69.512
+The particle found!
+energy: 221666
+Time-step: 736 dt=0.0994729 time=69.6115
+The particle found!
+energy: 221929
+Time-step: 737 dt=0.0994729 time=69.7109
+The particle found!
+energy: 222200
+Time-step: 738 dt=0.0994729 time=69.8104
+The particle found!
+energy: 222478
+Time-step: 739 dt=0.0994729 time=69.9099
+The particle found!
+energy: 222764
+Time-step: 740 dt=0.0901228 time=70
+The particle found!
+energy: 223058
+Time-step: 741 dt=0.099529 time=70.0995
+The particle found!
+energy: 223330
+Time-step: 742 dt=0.0994729 time=70.199
+The particle found!
+energy: 223637
+Time-step: 743 dt=0.0994729 time=70.2985
+The particle found!
+energy: 223950
+Time-step: 744 dt=0.0994729 time=70.3979
+The particle found!
+energy: 224269
+Time-step: 745 dt=0.0995275 time=70.4975
+The particle found!
+energy: 224593
+Time-step: 746 dt=0.0994729 time=70.5969
+The particle found!
+energy: 224923
+Time-step: 747 dt=0.0995241 time=70.6965
+The particle found!
+energy: 225256
+Time-step: 748 dt=0.113706 time=70.8102
+The particle found!
+energy: 225594
+Time-step: 749 dt=0.0994729 time=70.9097
+The particle found!
+energy: 225984
+Time-step: 750 dt=0.0903489 time=71
+The particle found!
+energy: 226327
+Time-step: 751 dt=0.0994729 time=71.0995
+The particle found!
+energy: 226642
+Time-step: 752 dt=0.0995216 time=71.199
+The particle found!
+energy: 226992
+Time-step: 753 dt=0.0994729 time=71.2985
+The particle found!
+energy: 227344
+Time-step: 754 dt=0.0995182 time=71.398
+The particle found!
+energy: 227697
+Time-step: 755 dt=0.0994729 time=71.4975
+The particle found!
+energy: 228051
+Time-step: 756 dt=0.0994729 time=71.5969
+The particle found!
+energy: 228405
+Time-step: 757 dt=0.0994729 time=71.6964
+The particle found!
+energy: 228763
+Time-step: 758 dt=0.0995195 time=71.7959
+The particle found!
+energy: 229124
+Time-step: 759 dt=0.0994729 time=71.8954
+The particle found!
+energy: 229485
+Time-step: 760 dt=0.0994729 time=71.9949
+The particle found!
+energy: 229846
+Time-step: 761 dt=0.00513004 time=72
+The particle found!
+energy: 230209
+Time-step: 762 dt=0.0994755 time=72.0995
+The particle found!
+energy: 230228
+Time-step: 763 dt=0.113954 time=72.2134
+The particle found!
+energy: 230616
+Time-step: 764 dt=0.0994729 time=72.3129
+The particle found!
+energy: 231034
+Time-step: 765 dt=0.0994729 time=72.4124
+The particle found!
+energy: 231373
+Time-step: 766 dt=0.0994729 time=72.5118
+The particle found!
+energy: 231704
+Time-step: 767 dt=0.0995283 time=72.6114
+The particle found!
+energy: 232030
+Time-step: 768 dt=0.0994729 time=72.7108
+The particle found!
+energy: 232351
+Time-step: 769 dt=0.0994729 time=72.8103
+The particle found!
+energy: 232667
+Time-step: 770 dt=0.0995365 time=72.9099
+The particle found!
+energy: 232977
+Time-step: 771 dt=0.0901407 time=73
+The particle found!
+energy: 233284
+Time-step: 772 dt=0.0994729 time=73.0995
+The particle found!
+energy: 233557
+Time-step: 773 dt=0.0994729 time=73.1989
+The particle found!
+energy: 233855
+Time-step: 774 dt=0.099533 time=73.2985
+The particle found!
+energy: 234148
+Time-step: 775 dt=0.0994729 time=73.398
+The particle found!
+energy: 234436
+Time-step: 776 dt=0.0994729 time=73.4974
+The particle found!
+energy: 234718
+Time-step: 777 dt=0.0994729 time=73.5969
+The particle found!
+energy: 234994
+Time-step: 778 dt=0.0995259 time=73.6964
+The particle found!
+energy: 235265
+Time-step: 779 dt=0.0994729 time=73.7959
+The particle found!
+energy: 235530
+Time-step: 780 dt=0.0995236 time=73.8954
+The particle found!
+energy: 235789
+Time-step: 781 dt=0.10458 time=74
+The particle found!
+energy: 236040
+Time-step: 782 dt=0.0994729 time=74.0995
+The particle found!
+energy: 236298
+Time-step: 783 dt=0.0995221 time=74.199
+The particle found!
+energy: 236534
+Time-step: 784 dt=0.0994729 time=74.2985
+The particle found!
+energy: 236762
+Time-step: 785 dt=0.0994729 time=74.3979
+The particle found!
+energy: 236982
+Time-step: 786 dt=0.0994729 time=74.4974
+The particle found!
+energy: 237194
+Time-step: 787 dt=0.0995275 time=74.5969
+The particle found!
+energy: 237398
+Time-step: 788 dt=0.0994729 time=74.6964
+The particle found!
+energy: 237593
+Time-step: 789 dt=0.0994729 time=74.7959
+The particle found!
+energy: 237777
+Time-step: 790 dt=0.0994729 time=74.8954
+The particle found!
+energy: 237948
+Time-step: 791 dt=0.0995375 time=74.9949
+The particle found!
+energy: 238105
+Time-step: 792 dt=0.00510231 time=75
+The particle found!
+energy: 238251
+Time-step: 793 dt=0.0994765 time=75.0995
+The particle found!
+energy: 238257
+Time-step: 794 dt=0.0994729 time=75.1989
+The particle found!
+energy: 238396
+Time-step: 795 dt=0.0994729 time=75.2984
+The particle found!
+energy: 238523
+Time-step: 796 dt=0.0994729 time=75.3979
+The particle found!
+energy: 238634
+Time-step: 797 dt=0.0994729 time=75.4974
+The particle found!
+energy: 238737
+Time-step: 798 dt=0.0995454 time=75.5969
+The particle found!
+energy: 238831
+Time-step: 799 dt=0.112256 time=75.7092
+The particle found!
+energy: 238916
+Time-step: 800 dt=0.0994729 time=75.8086
+The particle found!
+energy: 239000
+Time-step: 801 dt=0.0995425 time=75.9082
+The particle found!
+energy: 239065
+Time-step: 802 dt=0.0918146 time=76
+The particle found!
+energy: 239121
+Time-step: 803 dt=0.0995394 time=76.0995
+The particle found!
+energy: 239168
+Time-step: 804 dt=0.0994729 time=76.199
+The particle found!
+energy: 239214
+Time-step: 805 dt=0.0994729 time=76.2985
+The particle found!
+energy: 239258
+Time-step: 806 dt=0.0994729 time=76.398
+The particle found!
+energy: 239298
+Time-step: 807 dt=0.0995305 time=76.4975
+The particle found!
+energy: 239337
+Time-step: 808 dt=0.0994729 time=76.597
+The particle found!
+energy: 239376
+Time-step: 809 dt=0.0995244 time=76.6965
+The particle found!
+energy: 239414
+Time-step: 810 dt=0.0994729 time=76.796
+The particle found!
+energy: 239453
+Time-step: 811 dt=0.0994729 time=76.8954
+The particle found!
+energy: 239494
+Time-step: 812 dt=0.0994729 time=76.9949
+The particle found!
+energy: 239537
+Time-step: 813 dt=0.00509501 time=77
+The particle found!
+energy: 239584
+Time-step: 814 dt=0.113272 time=77.1133
+The particle found!
+energy: 239586
+Time-step: 815 dt=0.0994729 time=77.2127
+The particle found!
+energy: 239650
+Time-step: 816 dt=0.0995168 time=77.3123
+The particle found!
+energy: 239705
+Time-step: 817 dt=0.113407 time=77.4257
+The particle found!
+energy: 239760
+Time-step: 818 dt=0.0994729 time=77.5251
+The particle found!
+energy: 239826
+Time-step: 819 dt=0.0994729 time=77.6246
+The particle found!
+energy: 239887
+Time-step: 820 dt=0.0994729 time=77.7241
+The particle found!
+energy: 239952
+Time-step: 821 dt=0.0995308 time=77.8236
+The particle found!
+energy: 240021
+Time-step: 822 dt=0.0994729 time=77.9231
+The particle found!
+energy: 240092
+Time-step: 823 dt=0.076908 time=78
+The particle found!
+energy: 240167
+Time-step: 824 dt=0.0994729 time=78.0995
+The particle found!
+energy: 240226
+Time-step: 825 dt=0.0994729 time=78.1989
+The particle found!
+energy: 240307
+Time-step: 826 dt=0.0994729 time=78.2984
+The particle found!
+energy: 240388
+Time-step: 827 dt=0.0995387 time=78.398
+The particle found!
+energy: 240470
+Time-step: 828 dt=0.0994729 time=78.4974
+The particle found!
+energy: 240552
+Time-step: 829 dt=0.0994729 time=78.5969
+The particle found!
+energy: 240636
+Time-step: 830 dt=0.0994729 time=78.6964
+The particle found!
+energy: 240719
+Time-step: 831 dt=0.0995371 time=78.7959
+The particle found!
+energy: 240802
+Time-step: 832 dt=0.113649 time=78.9096
+The particle found!
+energy: 240884
+Time-step: 833 dt=0.0904375 time=79
+The particle found!
+energy: 240975
+Time-step: 834 dt=0.0994729 time=79.0995
+The particle found!
+energy: 241044
+Time-step: 835 dt=0.0994729 time=79.1989
+The particle found!
+energy: 241119
+Time-step: 836 dt=0.0994729 time=79.2984
+The particle found!
+energy: 241190
+Time-step: 837 dt=0.0994729 time=79.3979
+The particle found!
+energy: 241256
+Time-step: 838 dt=0.0995275 time=79.4974
+The particle found!
+energy: 241317
+Time-step: 839 dt=0.0994729 time=79.5969
+The particle found!
+energy: 241371
+Time-step: 840 dt=0.0994729 time=79.6964
+The particle found!
+energy: 241418
+Time-step: 841 dt=0.0994729 time=79.7958
+The particle found!
+energy: 241457
+Time-step: 842 dt=0.0995225 time=79.8954
+The particle found!
+energy: 241487
+Time-step: 843 dt=0.0994729 time=79.9948
+The particle found!
+energy: 241508
+Time-step: 844 dt=0.00516648 time=80
+The particle found!
+energy: 241520
+Time-step: 845 dt=0.0994753 time=80.0995
+The particle found!
+energy: 241520
+Time-step: 846 dt=0.0994729 time=80.1989
+The particle found!
+energy: 241526
+Time-step: 847 dt=0.0995208 time=80.2985
+The particle found!
+energy: 241519
+Time-step: 848 dt=0.0994729 time=80.3979
+The particle found!
+energy: 241500
+Time-step: 849 dt=0.0995239 time=80.4975
+The particle found!
+energy: 241474
+Time-step: 850 dt=0.113808 time=80.6113
+The particle found!
+energy: 241440
+Time-step: 851 dt=0.0994729 time=80.7107
+The particle found!
+energy: 241391
+Time-step: 852 dt=0.0995334 time=80.8103
+The particle found!
+energy: 241336
+Time-step: 853 dt=0.0994729 time=80.9098
+The particle found!
+energy: 241274
+Time-step: 854 dt=0.0902469 time=81
+The particle found!
+energy: 241203
+Time-step: 855 dt=0.0994729 time=81.0995
+The particle found!
+energy: 241130
+Time-step: 856 dt=0.0995475 time=81.199
+The particle found!
+energy: 241043
+Time-step: 857 dt=0.0994729 time=81.2985
+The particle found!
+energy: 240947
+Time-step: 858 dt=0.0994729 time=81.398
+The particle found!
+energy: 240846
+Time-step: 859 dt=0.0994729 time=81.4974
+The particle found!
+energy: 240738
+Time-step: 860 dt=0.0995493 time=81.597
+The particle found!
+energy: 240615
+Time-step: 861 dt=0.0994729 time=81.6965
+The particle found!
+energy: 240479
+Time-step: 862 dt=0.0994729 time=81.7959
+The particle found!
+energy: 240331
+Time-step: 863 dt=0.0994729 time=81.8954
+The particle found!
+energy: 240174
+Time-step: 864 dt=0.0994729 time=81.9949
+The particle found!
+energy: 240008
+Time-step: 865 dt=0.00511962 time=82
+The particle found!
+energy: 239835
+Time-step: 866 dt=0.0994758 time=82.0995
+The particle found!
+energy: 239825
+Time-step: 867 dt=0.0994729 time=82.1989
+The particle found!
+energy: 239649
+Time-step: 868 dt=0.0995304 time=82.2985
+The particle found!
+energy: 239466
+Time-step: 869 dt=0.0994729 time=82.398
+The particle found!
+energy: 239274
+Time-step: 870 dt=0.0994729 time=82.4974
+The particle found!
+energy: 239078
+Time-step: 871 dt=0.0994729 time=82.5969
+The particle found!
+energy: 238878
+Time-step: 872 dt=0.0995229 time=82.6964
+The particle found!
+energy: 238676
+Time-step: 873 dt=0.0994729 time=82.7959
+The particle found!
+energy: 238474
+Time-step: 874 dt=0.0994729 time=82.8954
+The particle found!
+energy: 238273
+Time-step: 875 dt=0.0994729 time=82.9948
+The particle found!
+energy: 238078
+Time-step: 876 dt=0.0051602 time=83
+The particle found!
+energy: 237882
+Time-step: 877 dt=0.113291 time=83.1133
+The particle found!
+energy: 237871
+Time-step: 878 dt=0.0994729 time=83.2128
+The particle found!
+energy: 237653
+Time-step: 879 dt=0.0995249 time=83.3123
+The particle found!
+energy: 237463
+Time-step: 880 dt=0.0994729 time=83.4118
+The particle found!
+energy: 237270
+Time-step: 881 dt=0.0994729 time=83.5112
+The particle found!
+energy: 237083
+Time-step: 882 dt=0.0994729 time=83.6107
+The particle found!
+energy: 236901
+Time-step: 883 dt=0.0995361 time=83.7102
+The particle found!
+energy: 236728
+Time-step: 884 dt=0.0994729 time=83.8097
+The particle found!
+energy: 236567
+Time-step: 885 dt=0.0995416 time=83.9093
+The particle found!
+energy: 236417
+Time-step: 886 dt=0.0907416 time=84
+The particle found!
+energy: 236281
+Time-step: 887 dt=0.0994729 time=84.0995
+The particle found!
+energy: 236170
+Time-step: 888 dt=0.0994729 time=84.1989
+The particle found!
+energy: 236063
+Time-step: 889 dt=0.0994729 time=84.2984
+The particle found!
+energy: 235971
+Time-step: 890 dt=0.0995506 time=84.398
+The particle found!
+energy: 235896
+Time-step: 891 dt=0.0994729 time=84.4974
+The particle found!
+energy: 235838
+Time-step: 892 dt=0.0994729 time=84.5969
+The particle found!
+energy: 235798
+Time-step: 893 dt=0.0994729 time=84.6964
+The particle found!
+energy: 235776
+Time-step: 894 dt=0.0994729 time=84.7959
+The particle found!
+energy: 235772
+Time-step: 895 dt=0.0994729 time=84.8953
+The particle found!
+energy: 235790
+Time-step: 896 dt=0.0995325 time=84.9949
+The particle found!
+energy: 235829
+Time-step: 897 dt=0.00513335 time=85
+The particle found!
+energy: 235884
+Time-step: 898 dt=0.0994758 time=85.0995
+The particle found!
+energy: 235887
+Time-step: 899 dt=0.0994729 time=85.1989
+The particle found!
+energy: 235967
+Time-step: 900 dt=0.0995239 time=85.2985
+The particle found!
+energy: 236060
+Time-step: 901 dt=0.0994729 time=85.3979
+The particle found!
+energy: 236167
+Time-step: 902 dt=0.0995277 time=85.4975
+The particle found!
+energy: 236291

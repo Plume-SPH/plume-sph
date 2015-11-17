@@ -921,10 +921,17 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 	int i;
 	double dotvv=0., dotvr=0., dotrr=0.;
 
-	for (i=0; i<DIMENSION; i++)
-		dotvr += (*(vab+i)) * (*(ds+i));
+	/*
+	 * when ds=[-577.7861  577.7746  -74.8549], vab=[-5.8261    5.9188   90.6049]  ds*vab is very small, this is not reasonable
+	 */
 
-	if(dotvr<=0.) //To be consistent with artificial viscosity --> But in my opinion, it is not really reasonable!
+	for (i=0; i<DIMENSION; i++)
+		dotvr += abs((*(vab+i)) * (*(ds+i))); //add abs here to avoid superficial large heat conductivity
+                                              //Actually, I believe this kind of treatment is reasonable, at least will not be worse than original equation.
+                                              //The derivation of original expression is based on some viscous equation which comes from one paper in 1980s and no one explain how the equation obtained.
+                                              //Any way, theories on SPH is far away from complete and there are so many abitary treatment.....
+
+	if(dotvr==0.) //To be consistent with artificial viscosity --> But in my opinion, it is not really reasonable!
 		return 0.;
 	else
 	{
