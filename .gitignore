@@ -53,6 +53,7 @@ config.log
 myconfig*
 mymake*
 mymakeinstall*
+
 #Simulation generated files
 particler
 funky*.h5
@@ -73,3 +74,8 @@ ccr-install.sh
 build.sh
 bin/err
 bin/out
+
+#gprof files:
+gmon.out
+gmon.out.gprof
+
