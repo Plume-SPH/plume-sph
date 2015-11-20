@@ -921,6 +921,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 {
 	int i;
 	double dotvv=0., dotvr=0., dotrr=0.;
+	double kab;
 
 	/*
 	 * when ds=[-577.7861  577.7746  -74.8549], vab=[-5.8261    5.9188   90.6049]  ds*vab is very small, this is not reasonable
@@ -943,7 +944,12 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 	  for (i=0; i<DIMENSION; i++)
 	  	dotvv += (*(vab+i)) * (*(vab+i));
 
-	  double kab=EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr);
+      if (DIMENSION==3)
+	    kab=6.0*EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 3D shear viscosity is 1/6 of h*alf*soundspeed
+      else if (DIMENSION==2)
+        kab=4.8*EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 5/24 of h*alf*soundspeed
+      else
+    	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
 
 #ifdef DEBUG
 	bool print = true;
@@ -951,7 +957,15 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
         cout << "You got a negative heat conductivity, something is wrong!" << endl;
 #endif
 
-	  return kab;
+	  return 0.1*kab; //This 0.1 is not justified, but simulation experiment shows that heat transfer is too faster and I just want to make it slower
+	                  //Some thing that not sure currently is
+	                  //1) JJ Monaghan's SPH discretize of second order derivative for 2D/3D is based on 1D Talor's series expansion...
+	                  //2) He transfer from using grad (w_ab) to F_ab is not justified, maybe he is correct, but I am still suspecting...
+	                  //3) viscosity in JJ Monaghan's equation depends on h? physically, it should be independent of numerical simulations
+	                  //4) He turned off viscosity for departing and turned on viscosity for approaching
+	                  //5) there is an additional coefficient, which has no physical significance and just numerical make up
+	                  //6) The turbulence turn (turbulence stress), behaves not like a shear stress term---> more like a attractive force...
+	                  //7) I might have negative heat conductivity term or superficial large heat conductivity, In my opinion, this comes from problem 1) and 2)
 //	  return 0;
 	}
 }
