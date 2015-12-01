@@ -35,10 +35,16 @@ void
 write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 {
   int i, j;
-  vector < double >x, y, z, Vx, Vy, Vz, rho, engr, mssfrc, prss, phase, bctp, guest ;
+  vector < double >x, y, z, Vx, Vy, Vz, rho, engr, mssfrc, prss;
+  vector < int >  phase, bctp, guest;
+
 
 #ifdef DEBUG
-  vector < double > involved;
+  vector < int > involved;
+#endif
+
+#ifdef DEBUG
+  vector < int > myprocess;
 #endif
 
   char filename[18];
@@ -84,6 +90,10 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 
 #ifdef DEBUG
       involved.push_back(pi->get_involved ());
+#endif
+
+#ifdef WRITE_PID
+      myprocess.push_back(myid);
 #endif
 
 #ifndef WRITE_GHOSTS
@@ -152,6 +162,12 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   ierr = GH5_Write(gid, "Involved", dims, (void *) ibuf, start, my_count, INTTYPE);
 #endif
 
+  //myprocess
+#ifdef DEBUG
+  copy(myprocess.begin(), myprocess.end(), ibuf);
+  ierr = GH5_Write(gid, "myprocess", dims, (void *) ibuf, start, my_count, INTTYPE);
+#endif
+
   // x-coordinates
   copy(x.begin(), x.end(), buf);
   ierr = GH5_Write(gid, "x", dims, (void *) buf, start, my_count, DOUBLETYPE);
@@ -193,16 +209,16 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   ierr = GH5_Write(gid, "prss", dims, (void *) buf, start, my_count, DOUBLETYPE);
 
   // phase
-  copy(phase.begin(), phase.end(), buf);
-  ierr = GH5_Write(gid, "phase", dims, (void *) buf, start, my_count, DOUBLETYPE);
+  copy(phase.begin(), phase.end(), ibuf);
+  ierr = GH5_Write(gid, "phase", dims, (void *) ibuf, start, my_count,INTTYPE);
 
   // bctp
-  copy(bctp.begin(), bctp.end(), buf);
-  ierr = GH5_Write(gid, "bctp", dims, (void *) buf, start, my_count, DOUBLETYPE);
+  copy(bctp.begin(), bctp.end(), ibuf);
+  ierr = GH5_Write(gid, "bctp", dims, (void *) ibuf, start, my_count, INTTYPE);
 
   // guest flag
-  copy(guest.begin(), guest.end(), buf);
-  ierr = GH5_Write(gid, "guest", dims, (void *) buf, start, my_count, DOUBLETYPE);
+  copy(guest.begin(), guest.end(), ibuf);
+  ierr = GH5_Write(gid, "guest", dims, (void *) ibuf, start, my_count, INTTYPE);
 
   // close file and group
   ierr = GH5_gclose(gid);
