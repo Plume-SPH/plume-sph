@@ -112,4 +112,12 @@ const double CFL_P=0.25;
 //Heat transfer coefficient
 const double lamda_P = 0.03; //using a constant heat conduction coefficient... That for air is 0.024
 
+
+//----------------------------------------------------------------------------------------
+//Work load for each type of particles ----> the data is obtained by profiling
+const double realp_load = 1.8;
+const double wallp_load = 1.2;
+const double pressp_load = 0.;
+const double erupt_load = 0.02;
+
 #endif /* PARAMETERS_H_ */

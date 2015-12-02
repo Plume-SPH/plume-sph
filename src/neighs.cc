@@ -321,7 +321,7 @@ search_neighs_consth (int myid, THashTable * P_table, HashTable * BG_mesh)
     	     pi = (Particle *) P_table->lookup(*itr);
     	     assert(pi);
 
-    	     if (!pi->get_bc_type ()) //if bc_type is not zero
+    	     if (pi->get_bc_type () != 100) //if bc_type is not 100, means if particle is not real particle
     	    	 continue;
     	     else
     	     {
