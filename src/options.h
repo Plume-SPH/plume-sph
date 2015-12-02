@@ -24,10 +24,10 @@
 #define HAVE_TURBULENCE_LANS
 #endif
 
-//output ghost particles --->will out put guest and ghost
-#ifndef WRITE_GHOSTS
-#define WRITE_GHOSTS
-#endif
+////output ghost particles --->will out put guest and ghost
+//#ifndef WRITE_GHOSTS
+//#define WRITE_GHOSTS
+//#endif
 
 //output PID
 #ifndef WRITE_PID
@@ -38,7 +38,6 @@
 //#ifndef USE_PHYSICS_VIS
 //#define USE_PHYSICS_VIS
 //#endif
-
 
 //Output ghost particles
 //#ifndef WRITE_GHOSTS
