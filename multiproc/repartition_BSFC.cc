@@ -111,8 +111,24 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
       for (p_itr = particles.begin (); p_itr != particles.end (); p_itr++)
       {
         Particle *p_curr = (Particle *) P_table->lookup (*p_itr);
-        if ((!p_curr->is_guest ()) && (p_curr->get_bc_type ()== 100 || p_curr->get_bc_type ()== 2))
-          wght += 1.;
+        if ((!p_curr->is_guest ()))
+        	switch (p_curr->get_bc_type ())
+        	{
+        	case 100:
+        		wght +=realp_load;
+        		break;
+        	case 2:
+        		wght +=wallp_load;
+        		break;
+        	case 0:
+        		wght +=eruptp_load;
+        		break;
+        	case 1:
+        		wght +=pressp_load;
+        		break;
+        	}
+
+//          wght += 1.;
       }
       curr_buck = (Bucket *) BG_mesh->lookup (curr_buck->which_neigh (Up));
       assert (curr_buck);

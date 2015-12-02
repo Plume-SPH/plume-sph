@@ -118,6 +118,6 @@ const double lamda_P = 0.03; //using a constant heat conduction coefficient... T
 const double realp_load = 1.8;
 const double wallp_load = 1.2;
 const double pressp_load = 0.;
-const double erupt_load = 0.02;
+const double eruptp_load = 0.02;
 
 #endif /* PARAMETERS_H_ */
