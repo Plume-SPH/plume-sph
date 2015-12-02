@@ -187,7 +187,7 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
       local_balanced_flag_array[i] = BSFC_BALANCED;
     local_balanced_flag_array[number_of_cuts] = balanced_flag;
 
-    /* refine bins util a satisfactory partition tolerece in obtained */
+    /* refine bins until a satisfactory partition tolerance in obtained */
     int refinement_level_counter = 0;
     while (balanced_flag != BSFC_BALANCED &&
            refinement_level_counter < MAX_REFINEMENT_LEVEL)

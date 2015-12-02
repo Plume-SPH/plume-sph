@@ -196,7 +196,7 @@ main(int argc, char **argv)
     adapt = (int) round (global_data[2]);
     if (adapt)
     {
-      //sync data, in outside layer scanning, guest bucket is not able to updated!
+      //sync data, in outside-layer-scanning, guest bucket is not able to updated! So syn here
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
       // adapt_domain -> What did here is make the domain larger--->because the involved particle enter the most outside bucket layer (has_potential_involved = 1;)
