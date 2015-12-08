@@ -115,8 +115,8 @@ const double lamda_P = 0.03; //using a constant heat conduction coefficient... T
 
 //----------------------------------------------------------------------------------------
 //Work load for each type of particles ----> the data is obtained by profiling
-const double realp_load = 1.8;
-const double wallp_load = 1.2;
+const double realp_load = 2.0;
+const double wallp_load = 0.75;
 const double pressp_load = 0.;
 const double eruptp_load = 0.02;
 
