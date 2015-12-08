@@ -30,7 +30,7 @@ using namespace std;
 bool determine_erupt_buket (double *mincrd, double *maxcrd, double *xcrd, double *ycrd, double *zcrd)
 {
 	int flag[DIMENSION];
-	int sum = 0;
+//	int sum = 0;
 	int k;
 	bool erpt_flag = true;
 	int bt[6];
@@ -76,7 +76,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	bool erpt;
 	//unsigned num_particle = 0;
     int i, j, k;
-    int ii;
+//    int ii;
     int tempid;
     unsigned tkeylen = TKEYLENGTH;
    
@@ -384,7 +384,8 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
       }// end of loop go through all buckets
 
     //clear up:
-    delete itr, itr2;
+    delete itr;
+    delete itr2;
     delete P_temp;
 
 return 0;
@@ -410,7 +411,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double rvsq=rv_P*rv_P;
 	unsigned key[TKEYLENGTH]; //should be time depend key for particle
     int i, j, k;
-    int ii;
+//    int ii;
     int num_particle=0;
     unsigned tkeylen = TKEYLENGTH;
     double mindom[DIMENSION], maxdom[DIMENSION];
@@ -429,7 +430,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double sml2 =0.5*sml;
     double t_total=timeprops->time;
     double mss = timeprops->mass;
-    double cof = timeprops->cof;
+//    double cof = timeprops->cof;
 
     /*
      * t_add, t_each is based on average velocity

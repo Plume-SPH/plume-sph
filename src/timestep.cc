@@ -29,7 +29,7 @@ using namespace std;
 double
 timestep(THashTable * P_table, TimeProps* timeprops)
 {
-  int i, j, k;
+//  int i, j, k;
   double dt, temp;
 
   dt = 1.0E+10;                 // Initialize to very high value

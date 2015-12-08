@@ -292,12 +292,11 @@ using namespace std;
 int
 search_neighs_consth (int myid, THashTable * P_table, HashTable * BG_mesh)
 {
-  int i, j, k;
+  int i, j;
 
   Particle * pi = NULL ;
   Particle * pj = NULL ;
-  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION];
-  double wght;
+  double xi[DIMENSION];
 
   double hi;
   Key *neighbors;//bucket key

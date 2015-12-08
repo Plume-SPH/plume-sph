@@ -25,7 +25,7 @@ using namespace std;
 void
 smooth_velocity(THashTable * P_table)
 {
-  int i, j, k, no_of_neighs;
+  int i, k;
   //unsigned jkey[TKEYLENGTH];
   double xi[DIMENSION], ds[DIMENSION], s[DIMENSION];
   double wght, temp_dv[DIMENSION];
@@ -38,10 +38,10 @@ smooth_velocity(THashTable * P_table)
   Particle * pi = NULL;
 
 #ifdef DEBUG
-   bool check_den = false;
+//   bool check_den = false;
    bool do_search = false;
-   bool check_mssfrac = false;
-   bool find;
+//   bool check_mssfrac = false;
+//   bool find;
    unsigned keycheck[TKEYLENGTH] =  {70615689, 3732101160, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif

@@ -45,10 +45,10 @@ int scan_outside_layer (THashTable * P_table, HashTable * BG_mesh, int numproc, 
 {
 	int adapt = 0;
 	int i;
-	int REAL = 100;
+//	int REAL = 100;
 	HTIterator * itr = new HTIterator (BG_mesh);
 	Bucket * Bnd_buck = NULL;
-	Bucket * Curr_buck = NULL;
+//	Bucket * Curr_buck = NULL;
 	Bucket * neigh = NULL;
 
 	vector < TKey > plist;

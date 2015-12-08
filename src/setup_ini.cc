@@ -86,23 +86,23 @@ int
 setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
                 TimeProps * timeprops, int numprocs, int* my_comm)
 {
-  int i, j, rid, cid;
+  int i, j;
+//  int rid, cid;
 
   vector < TKey > pneighs;
 
-  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION], sj[DIMENSION];
-  double vel[DIMENSION] = {0., 0., 0.};  //initial velocity need to be set to zero
-  double prss, erg, dens, mss;
-  double range[6];
-  double sml2;
-  double pressj, rhoj;
-  unsigned keyr[TKEYLENGTH], keyc[TKEYLENGTH];
+//  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION], sj[DIMENSION];
+//  double vel[DIMENSION] = {0., 0., 0.};  //initial velocity need to be set to zero
+//  double prss, erg, dens, mss;
+//  double range[6];
+//  double sml2;
+//  double pressj, rhoj;
+//  unsigned keyr[TKEYLENGTH], keyc[TKEYLENGTH];
   Particle *pi=NULL;
-  Bucket   *bi=NULL;
+//  Bucket   *bi=NULL;
 
 #ifdef DEBUG
    bool do_search = false;
-   bool find;
    unsigned keycheck[TKEYLENGTH] = {81794040, 83755327, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif

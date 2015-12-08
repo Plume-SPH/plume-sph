@@ -25,7 +25,7 @@ using namespace std;
 void
 smooth_density(THashTable * P_table)
 {
-  int i, j, k, no_of_neighs;
+  int i, k;
   //unsigned jkey[TKEYLENGTH];
   double xi[DIMENSION], ds[DIMENSION], s[DIMENSION];
   double wght, density=0.0;
@@ -41,7 +41,6 @@ smooth_density(THashTable * P_table)
    bool check_den = false;
    bool do_search = false;
    bool check_mssfrac = false;
-   bool find;
    unsigned keycheck[TKEYLENGTH] =  {69674717, 3383906357, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
