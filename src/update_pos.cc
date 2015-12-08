@@ -37,7 +37,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
   double sml_of_phase2 = matprops->smoothing_length;
 
-  int i, j;
+  int i;
 //  int adapt = 0;
 //  double bndnorm;
 //  const double v_coef = 0.5;
@@ -406,7 +406,8 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   }
 
   // clean up
-  delete itr, it2;
+  delete itr;
+  delete it2;
 
 //  return adapt;
   return;

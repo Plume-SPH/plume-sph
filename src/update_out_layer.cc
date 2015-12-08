@@ -43,14 +43,14 @@ using namespace std;
  */
 void update_out_layer (THashTable * P_table, HashTable * BG_mesh, vector < OutSideBucket > outside_table, int numproc, int myid)
 {
-	int adapt = 0;
-	int i;
-	int PRESSURE_GHOST = 1;
-	int REAL = 100;
+//	int adapt = 0;
+//	int i;
+//	int PRESSURE_GHOST = 1;
+//	int REAL = 100;
 	HTIterator * itr = new HTIterator (BG_mesh);
 	Bucket * Bnd_buck = NULL;
-	Bucket * Curr_buck = NULL;
-	Bucket * neigh = NULL;
+//	Bucket * Curr_buck = NULL;
+//	Bucket * neigh = NULL;
 
 	vector < TKey > plist;
 	vector < TKey >::iterator p_itr;
