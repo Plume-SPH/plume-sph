@@ -307,7 +307,7 @@ main(int argc, char **argv)
     adapt = scan_outside_layer (P_table, BG_mesh, numprocs, myid);
 
     /* DYNAMIC LOAD BALANCING */
-    if ((numprocs > 1) && (timeprops->ifoutput()) &&( ((int) timeprops->timesec()) % 10 == 0))
+    if ((numprocs > 1) && (timeprops->ifoutput()) &&( ((int) timeprops->timesec()) % 5 == 0))
     {
       // remove guest buckets and particles
       delete_guest_buckets (BG_mesh, P_table);
