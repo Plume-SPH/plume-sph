@@ -33,7 +33,7 @@ void createfunky(int myid, int nhtvars, double * htvars,
                  vector <BucketStruct> & bg, vector <unsigned> & partition)
 {
 
-  int i, j;
+//  int i, j;
   string basename = "funky";
   string exten    = ".h5";
   const int padding = 4;

@@ -37,7 +37,7 @@ using namespace std;
 int
 main(int argc, char **argv)
 {
-  int i, j, ierr = 0;
+  int i, ierr = 0;
   double dt;
   MatProps *matprops = new MatProps();
   TimeProps *timeprops = new TimeProps();

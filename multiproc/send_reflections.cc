@@ -40,9 +40,9 @@ send_foreign_images (int myid, int numprocs, HashTable * BG_mesh,
     return;
 
   int i, j;
-  int dir[DIMENSION];
-  double coord[DIMENSION], tmpc[DIMENSION];
-  double refc[DIMENSION], intsct[DIMENSION];
+//  int dir[DIMENSION];
+//  double coord[DIMENSION], tmpc[DIMENSION];
+  double intsct[DIMENSION];
 //  unsigned ghst_key[KEYLENGTH], buck_key[KEYLENGTH];
 
   int *send_info = new int [numprocs];//number of particles need to be send corresponding to each process. If the value is zero, then no communication needed with that process

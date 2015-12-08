@@ -32,23 +32,22 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   int dir[DIMENSION];
   double pos[DIMENSION], coord[DIMENSION], vel[DIMENSION];
   double mincrd[DIMENSION], maxcrd[DIMENSION];
-  double smooth_vel[DIMENSION], vj[DIMENSION], wnorm;
-  double dx[DIMENSION], s[DIMENSION], junk[DIMENSION];
+//  double smooth_vel[DIMENSION], vj[DIMENSION], wnorm;
+//  double dx[DIMENSION], s[DIMENSION], junk[DIMENSION];
 
   double sml_of_phase2 = matprops->smoothing_length;
 
   int i, j;
 //  int adapt = 0;
-  double bndnorm;
-  const double v_coef = 0.5;
+//  double bndnorm;
+//  const double v_coef = 0.5;
   double dt = timeprops->dtime;
-  double fluxsrc[2];
-  bool add_material_check, add_material;
+//  double fluxsrc[2];
+//  bool add_material_check, add_material;
   bool los;
 
 #ifdef DEBUG
    bool do_search = false;
-   bool find;
    bool check_contain = false;
    unsigned keycheck[TKEYLENGTH] = {69562537, 292385725, 0};
    unsigned keytemp[TKEYLENGTH] ;
@@ -153,7 +152,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   vector < TKey > my_realp, my_particles;
 
   HTIterator *it2 = new HTIterator(BG_mesh);
-  Bucket *curr_bucket, *buck_save;
+  Bucket *curr_bucket;
 
   while ((curr_bucket = (Bucket *) it2->next()))
     if (curr_bucket->is_active())

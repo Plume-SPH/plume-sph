@@ -98,11 +98,11 @@ int main(int argc, char *argv[])
 {
 
   int i, j, k, l;
-  int np, kk;
+  int np;
   double xcrd[2],ycrd[2], zcrd[2],cntr[DIMENSION],smlen;
   unsigned keylen=KEYLENGTH;
   unsigned key[KEYLENGTH], key2[KEYLENGTH];
-  double mindom[DIMENSION], maxdom[DIMENSION], polyconst[DIMENSION+1];
+  double mindom[DIMENSION], maxdom[DIMENSION];
   double mindom_o[DIMENSION], maxdom_o[DIMENSION];
   string gis_db, gis_location, gis_mapname, gis_mapset;
   bool gis_flag = to_bool (argv[3]); //flag that used to indicate whether use real geometry or flat ground : | 1: real ground
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
   smlen = atof(argv[2]);
 
   double del=PARTICLE_DENSITY*smlen;
-  double resolution = del;
+//  double resolution = del;
 
   // get domain limits from GIS
 	  mindom_o[0]= Lx_P[0];  //original domain
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
 
   int type;
   int bk_index[2*DIMENSION];
-  double time = 0.;
+//  double time = 0.;
   for (i = 0; i < nx; i++)
   {
     xcrd[0] = mindom[0] + i*del;
@@ -383,7 +383,7 @@ void determine_the_key(double norm_coord[], unsigned nkey, unsigned key[],
   // call Hilbert's Space Filling Curve
   HSFC3d (norm_coord, &nkey, key);
 
-    int i;
+//    int i;
 
   if(key[0]>ma[0] || (key[0]==ma[0] && key[1]>ma[1])) {ma[0]=key[0]; ma[1]=key[1];}
   if(key[0]<mi[0] || (key[0]==mi[0] && key[1]<mi[1])) {mi[0]=key[0]; mi[1]=key[1];}
