@@ -31,8 +31,8 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
   double normal[DIMENSION], velrot[DIMENSION];
   double uvec[NO_OF_EQNS], state_vars[NO_OF_EQNS];
   double dx[DIMENSION], s[DIMENSION], pcoord[DIMENSION];
-  double supp, bnddist, wnorm, smlen;
-  double engr;
+  double supp, bnddist, wnorm;
+//  double engr;
 
   Key * neighbors;//bucket key
   Particle * p_ghost = NULL;

@@ -351,7 +351,7 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   }
 
   int keylength = KEYLENGTH;
-  double center[2];
+//  double center[2];
   unsigned * part_keys = new unsigned [dims[0]];//dims[0] should be the size of certain file... --> will be used to determine the number of particles that need to been add
   int incr = 2 + keylength;
   GH5_readdata (fp, "/partition_table", part_keys);

@@ -52,8 +52,8 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	  double mindom[DIMENSION], maxdom[DIMENSION];
 	  double normc[DIMENSION];
 	  double pcrd[DIMENSION];
-	  double poly[DIMENSION + 1];
-	  double bnd[2*DIMENSION], flag[DIMENSION],index[2*DIMENSION];
+//	  double poly[DIMENSION + 1];
+	  double bnd[2*DIMENSION], index[2*DIMENSION];
 
 	  Bucket *Curr_buck = NULL;
 	  int num_particle = 0;
@@ -65,14 +65,14 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	  double dx2 = 0.5 * dx;
 
 	  // direction vectors for neighbors
-	  int Up[DIMENSION] = { 0, 0, 2 };
+//	  int Up[DIMENSION] = { 0, 0, 2 };
 	  int Down[DIMENSION] = { 0, 0, 1 };
 
-#ifdef DEBUG
-     bool do_search = false;
-     double check[DIMENSION] = {-250, -250, 4250};
-//     double temp[DIMENSION];
-#endif
+//#ifdef DEBUG
+////     bool do_search = false;
+////     double check[DIMENSION] = {-250, -250, 4250};
+////     double temp[DIMENSION];
+//#endif
 
 	  // get min-max domain from hashtable, for key generation
 	  for (i = 0; i < DIMENSION; i++)
@@ -83,7 +83,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 
 	  //Initial particle property
 	  int bctp =2; //wall condition ghost particle type.
-	  int ptype = 0; //real particle
+//	  int ptype = 0; //real particle
 	  double prss = 0.;
 	  double masfrc = 0.;
 	  double gmm = 1.4;

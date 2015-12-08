@@ -40,12 +40,12 @@ using namespace std;
 void adapt_domain(THashTable * P_table, HashTable * BG_mesh, int numproc, int myid)
 {
 	  int i;
-	  int PRESSURE_GHOST = 1;
+//	  int PRESSURE_GHOST = 1;
 	  int REAL = 100;
 	  double pos[DIMENSION];
 	  HTIterator * itr = new HTIterator (BG_mesh);
 	  Bucket * Bnd_buck = NULL;
-	  Bucket * Curr_buck = NULL;
+//	  Bucket * Curr_buck = NULL;
 	  Bucket * neigh = NULL;
 
 	  vector < TKey > plist;
