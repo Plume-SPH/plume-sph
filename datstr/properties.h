@@ -103,6 +103,14 @@ struct TimeProps
     return ((time >= ndmax_time) || (step > max_steps));
   }
 
+  bool is_int_time () //function that used to determine whether time is a integer or not, different from ifoutput, it does not change values of member data
+  {
+    if (time >= ndtimeoutput)
+      return true;
+    else
+      return false;
+  }
+
   bool ifoutput ()
   {
     if (time >= ndtimeoutput)
