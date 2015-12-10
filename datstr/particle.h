@@ -42,16 +42,6 @@ private:
   //! support of each particle
   double smlen;
 
-  //! current (normalized) postion of each particle
-  double coord[DIMENSION];
-
-
-  //! state_vars are normalized density, velocities;  stresses is not included in my model
-  double state_vars[NO_OF_EQNS];
-
-  //! new_state_vars stores updated state variables
-  double new_state_vars[NO_OF_EQNS];
-
   //! pressure
   double pressure;
 
@@ -67,6 +57,8 @@ private:
   //Temperature
   double temperature;
 
+  double specific_heat_p; //specific heat under constant pressure
+
   //density of each phase
   double phase_density[PHASE_NUM]; //phase1 = air, phase2 =erupted material
                                //According to the simplest Japanese Model, d1=d*(1-ks), d2=d*ks
@@ -76,12 +68,17 @@ private:
   //density of each phase new variables ---> will need if I want to update density based on mass conservation instead of SPH summation
   double new_phase_density[PHASE_NUM];
 
-//#ifdef HAVE_TURBULENCE_LANS
   //Only particle need_neigh will have velocity smoothed -->guest particle, smoothed velocity will be updated in syn process
   double smoothed_v[DIMENSION]; //smoothed velocity
 
-  double specific_heat_p; //specific heat under constant pressure
-//#endif
+  //! current (normalized) postion of each particle
+  double coord[DIMENSION];
+
+  //! state_vars are normalized density, velocities;  stresses is not included in my model
+  double state_vars[NO_OF_EQNS];
+
+  //! new_state_vars stores updated state variables
+  double new_state_vars[NO_OF_EQNS];
 
   //!to indicate whether the particle is eruption ghost particle or not
   int bc_type; //bc_type=0: eruption ghost

@@ -76,7 +76,6 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	bool erpt;
 	//unsigned num_particle = 0;
     int i, j, k;
-//    int ii;
     int tempid;
     unsigned tkeylen = TKEYLENGTH;
    
@@ -119,16 +118,10 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	simprops->sml_of_phase2 = sml;
 
     double sml2 = 0.5*sml;
-//    double t_each = sml/Vv0_P;
     double bot = range_z[0];
-//    timeprops->update_teach(t_each);
     simprops->update_bot(bot);
 
 	//create new particles and put them into a temporary hash table: coordinate -> key -> new particle
-
-//    double pi = PI;
-//    double r = rv_P;
-//    timeprops->cof = (pi*r*r)/(sml*sml);
     double normc[DIMENSION];
     crd_p[2]=range_z[1]-sml2;
     while ( crd_p[2] >= range_z[0] )
@@ -430,23 +423,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double sml2 =0.5*sml;
     double t_total=timeprops->time;
     double mss = simprops->mass_of_phase2;
-//    double cof = timeprops->cof;
-
-    /*
-     * t_add, t_each is based on average velocity
-     * If I wanna to use parabolic profile, something need to be changed!
-     */
-//    t_add = timeprops-> get_tadd();
-//    t_each = timeprops-> get_teach();
-
-//    t_add = t_add + dt;
-//    n = floor (t_add/t_each);
-//	t_add =t_add - n*t_each;
-//	timeprops->t_add = t_add;
-
 	unsigned add_step;
-    //add time step
-//    add_step = (unsigned) floor(2*t_total/t_each); //t_each is based on average velocity, in my code, the parabolic profile is assumed, umax = 2* uavg;
     //the more robust way: use time step as add_step
 	add_step = timeprops->step;
 
@@ -458,7 +435,6 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     range_z[1] = 0.; // not exact, should use ground height
     range_z[0] = range_z[1]-(matprops->smoothing_length)*1.5*PARTICLE_DENSITY;
 
-//    double dt = timeprops-> get_dt();
     t_total -= dt; //get t_total of the previous time step
 
 	//create new particles: coordinate -> key -> new particle

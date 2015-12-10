@@ -192,7 +192,5 @@ struct SimProps
     {
    	   bot = val;
     }
-
-
 };
 #endif /* PROPERTIES_H_ */

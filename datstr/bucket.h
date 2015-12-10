@@ -36,17 +36,14 @@ class Bucket
 
 private:
     Key key;
+    Key neighbors[NEIGH_SIZE];   //neighbor buckets
+
   double lb_weight;
   double mincrd[DIMENSION];
   double maxcrd[DIMENSION];//domain information
-  double bnd[2*DIMENSION];
   double poly[4];
-  bool active;
-  bool guest_flag;
-  bool erupt_flag;/*flag that used to indicate the bucket is source bucket or not
-                   * if erupt_flag = true, it is eruption bucket
-                   * if erupt_flag = false, it is not eruption bucket
-                   * */
+  double bnd[2*DIMENSION];
+
   int has_involved; /*flag that used to determine what kind of particles does the bucekt contain
                      * 0 : no involved particles
                      * 1 : has potential involved particles
@@ -59,7 +56,13 @@ private:
   int bucket_type; //mixed, pressure_bc, underground, overground... 0: invalid bucket
   int bucket_index[2*DIMENSION];//used to determine bucket type.
   int neigh_proc[NEIGH_SIZE];  //neighbor processes
-  Key neighbors[NEIGH_SIZE];   //neighbor buckets
+
+  bool active;
+  bool guest_flag;
+  bool erupt_flag;/*flag that used to indicate the bucket is source bucket or not
+                    * if erupt_flag = true, it is eruption bucket
+                    * if erupt_flag = false, it is not eruption bucket
+                    * */
   vector < TKey > particles;
   vector < TKey > new_plist;
 
