@@ -64,7 +64,7 @@ bool determine_erupt_buket (double *mincrd, double *maxcrd, double *xcrd, double
  */
 int
 setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
-        TimeProps * timeprops, MatProps* matprops, int numprocs)
+        TimeProps * timeprops, MatProps* matprops, SimProps *simprops, int numprocs)
 {
 	double range_x[2];
 	double range_y[2];
@@ -115,20 +115,20 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	int np = num_erupt_particles; // total number of erupt ghost particle
 	Compute_mass (np, range_x, range_y, range_z, des, &mss, &sml);
 
-	timeprops->mass = mss;
-	timeprops->sml = sml;
+	simprops->mass_of_phase2 = mss;
+	simprops->sml_of_phase2 = sml;
 
     double sml2 = 0.5*sml;
-    double t_each = sml/Vv0_P;
+//    double t_each = sml/Vv0_P;
     double bot = range_z[0];
-    timeprops->update_teach(t_each);
-    timeprops->update_bot(bot);
+//    timeprops->update_teach(t_each);
+    simprops->update_bot(bot);
 
 	//create new particles and put them into a temporary hash table: coordinate -> key -> new particle
 
-    double pi = PI;
-    double r = rv_P;
-    timeprops->cof = (pi*r*r)/(sml*sml);
+//    double pi = PI;
+//    double r = rv_P;
+//    timeprops->cof = (pi*r*r)/(sml*sml);
     double normc[DIMENSION];
     crd_p[2]=range_z[1]-sml2;
     while ( crd_p[2] >= range_z[0] )
@@ -394,7 +394,7 @@ return 0;
 //function for adding new ghost erupt particles at the bottom of the duck
 void
 add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
-        TimeProps * timeprops, MatProps* matprops, double dt)
+        TimeProps * timeprops, MatProps* matprops, SimProps *simprops, double dt)
 {
     double t_add, t_each;
     int n;
@@ -425,24 +425,24 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 	THashTable * P_temp = new THashTable(ERUPT_TABLE_SIZE, 2017, mindom, maxdom);; //particle hash table
 
-    bot = timeprops->get_bot();
-    double sml = timeprops->sml;
+    bot = simprops->get_bot();
+    double sml = simprops->sml_of_phase2;
     double sml2 =0.5*sml;
     double t_total=timeprops->time;
-    double mss = timeprops->mass;
+    double mss = simprops->mass_of_phase2;
 //    double cof = timeprops->cof;
 
     /*
      * t_add, t_each is based on average velocity
      * If I wanna to use parabolic profile, something need to be changed!
      */
-    t_add = timeprops-> get_tadd();
-    t_each = timeprops-> get_teach();
+//    t_add = timeprops-> get_tadd();
+//    t_each = timeprops-> get_teach();
 
-    t_add = t_add + dt;
-    n = floor (t_add/t_each);
-	t_add =t_add - n*t_each;
-	timeprops->t_add = t_add;
+//    t_add = t_add + dt;
+//    n = floor (t_add/t_each);
+//	t_add =t_add - n*t_each;
+//	timeprops->t_add = t_add;
 
 	unsigned add_step;
     //add time step

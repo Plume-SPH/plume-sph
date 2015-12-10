@@ -127,7 +127,7 @@ main(int argc, char **argv)
 //   setup_ini(myid,  P_table,  BG_mesh, timeprops, numprocs, my_comm);
 
    //Adding eruption boundary condition
-   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, numprocs);
+   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
 
 #ifdef MULTI_PROC
   // wait till initialization has finished
@@ -297,7 +297,7 @@ main(int argc, char **argv)
     update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);
 
     // add new layers of particle in the duct
-    add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, dt);
+    add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
 
 #ifdef MULTI_PROC
     // update guests as density has changed since last update

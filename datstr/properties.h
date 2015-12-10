@@ -43,23 +43,9 @@ struct TimeProps
   //! maximum time-steps allowed
   int max_steps;
 
-  //! non-dimensional t_add, used to determine new layers of particles should be added or not.
-  //! It is essentially the time from previous adding of new layers
-  double t_add;
-
-  //! non-dimensional t_each, the time that one erupt ghost particle need to move through a length of h (smooth length)--->computed based on average velocity
-  double t_each;
-
-  //! the z coordinate of the lowest layer of erupt ghost particles.
-  double bot;
-  //! the number of particles per layer in duct
-  double cof;
   //! Scale to Normalize the time
   double TIME_SCALE;
-  //mass of erupted particle---> mass in Matprops is for air particles
-  double mass;
-  // smooth length of erupted particle---> sml in Matprops is for air particles
-  double sml;
+
   //! constructor to allocate default values
     TimeProps ()
   {
@@ -71,10 +57,6 @@ struct TimeProps
     ioutput = 0;
     step = 0;
     max_steps = 10;
-
-    t_add=0.;
-    t_each=1.;
-    bot = 0;
   }
 
   void incrtime (double *dt)
@@ -122,56 +104,6 @@ struct TimeProps
     else
       return false;
   }
-
-  void update_tadd (double dt)
-  {
-	  t_add += dt;
-  }
-
-  void set_back_tadd (double value)
-  {
-	  t_add = value;
-  }
-
-  void update_teach (double value)
-  {
-	  t_each = value;
-  }
-  // bot is the z coordinate of the lowest layer in the duct
-  void update_bot (double val)
-  {
-	  bot = val;
-  }
-
-  double get_tadd()
-  {
-	  return t_add;
-  }
-
-//  //get dimensional dt
-//  double get_dt()
-//  {
-//	  return (dtime * TIME_SCALE);
-//  }
-
-
-//time for adding a new layer, t_each = dist/vel;
-  //where dist is the distance between eahch layer
-  //and vel is the eruption velocity
-  double get_teach()
-  {
-	  return t_each;
-  }
-  // bot is the z coordinate of the lowest layer in the duct
-  double get_bot ()
-  {
-	  return bot;
-  }
-//  //normalized time
-//  double get_ntime ()
-//  {
-//	  return ndmax_time;
-//  }
 
   void chunktime (int *hours, int *minutes, double *seconds)
   {
@@ -230,6 +162,10 @@ struct SimProps
    double Idom_y_max;
    double Idom_z_min;
    double Idom_z_max;
+   double bot;
+   double mass_of_phase2;
+   // smooth length of erupted particle---> sml in Matprops is for air particles
+   double sml_of_phase2;
 
    SimProps()
    {
@@ -239,6 +175,24 @@ struct SimProps
 	   Idom_y_max = 2000;
 	   Idom_z_min = 0;
 	   Idom_z_max = 7000;
+
+	   bot = 0.;
+	   mass_of_phase2 =0.;
+	   sml_of_phase2 =0.;
    }
+
+   // bot is the z coordinate of the lowest layer in the duct
+   double get_bot () const
+   {
+ 	  return bot;
+   }
+
+    // bot is the z coordinate of the lowest layer in the duct
+    void update_bot (double val)
+    {
+   	   bot = val;
+    }
+
+
 };
 #endif /* PROPERTIES_H_ */

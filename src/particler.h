@@ -189,6 +189,7 @@ int setup_erupt(
 		        HashTable * ,  //BG_mesh
                 TimeProps * ,  //timeProps
                 MatProps * ,   //matprops
+				SimProps *,    //simprops
                 int            //Number of processor
                 );
 
@@ -199,6 +200,7 @@ void add_new_erupt(
 		          HashTable *,   //background mesh table
                   TimeProps *,   //Time propos
 				  MatProps *,    //matprops
+				  SimProps *,    //simprops
                   double         //Time steps
                   );
 //set up initial air
