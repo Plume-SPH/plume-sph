@@ -74,6 +74,7 @@ ccr-install.sh
 build.sh
 bin/err
 bin/out
+*.swp
 
 #gprof files:
 gmon.out
