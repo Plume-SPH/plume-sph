@@ -466,7 +466,6 @@ write_h5part_bctp(int myid, int numproc, THashTable * P_table, TimeProps * timep
 void
 write_particles_debug(int myid, int numprocs,
              THashTable * P_table, HashTable * BG_mesh,
-             vector <BucketHead> & partition_table,
              TimeProps * timeprops, int format, char *prefix)
 {
   int bctp;

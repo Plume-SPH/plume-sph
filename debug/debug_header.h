@@ -117,7 +117,6 @@ write_particles_debug(
 		     int , //numprocs
              THashTable * , //P_table
              HashTable * ,  //BG_mesh
-             vector <BucketHead> &, //partition_table
              TimeProps * , //timeprops
              int,  //format
              char *//prefix

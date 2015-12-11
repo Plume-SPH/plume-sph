@@ -54,30 +54,4 @@ void search_bnd_images (
     list < BndImage > &,
     //! flag to reset image-table
     int);
-
-//int put_ghost_particles (
-//    //! Hash-table of paritcles
-//    THashTable *,
-//    //! Hash-table if Buckets
-//    HashTable *,
-//    //! Partition table
-//    vector<BucketHead> &,
-//    //! Material properties
-//    MatProps *,
-//    //! array of flags for communication
-//    int *,
-//    //! process id
-//    int ,
-//    //! total number of procs
-//    int ,
-//    //! flag : up if ghost were added
-//    int *);
-
-//int delete_unused_ghosts (
-//    //! Hash-table of paritcle
-//    THashTable *,
-//    //! Hash-table of buckets
-//    HashTable *,
-//    //! process id
-//    int);
 #endif
