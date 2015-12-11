@@ -76,7 +76,7 @@ void get_plane_coef(double x[], double y[], double z[], double poly[])
   return;
 }
 
-bool compare_keys ( const ColumnHead  & buck1, const ColumnHead & buck2)
+bool compare_keys ( const PartiHead  & buck1, const PartiHead & buck2)
 {
 
 	  if (buck1.key[0] < buck2.key[0])
@@ -98,13 +98,15 @@ int main(int argc, char *argv[])
 {
 
   int i, j, k, l;
+  int ii, jj, kk;
   int np;
   double xcrd[2],ycrd[2], zcrd[2],cntr[DIMENSION],smlen;
   unsigned keylen=KEYLENGTH;
   unsigned key[KEYLENGTH], key2[KEYLENGTH];
   double mindom[DIMENSION], maxdom[DIMENSION];
   double mindom_o[DIMENSION], maxdom_o[DIMENSION];
-  string gis_db, gis_location, gis_mapname, gis_mapset;
+//  string gis_db, gis_location, gis_mapname, gis_mapset;
+
   bool gis_flag = to_bool (argv[3]); //flag that used to indicate whether use real geometry or flat ground : | 1: real ground
  //                                                                                                            | 0: flat ground
 
@@ -143,17 +145,6 @@ int main(int argc, char *argv[])
 	  maxdom[i] = maxdom_o[i] + extend_cof * del;
   }
 
-  /*
-  if the wall boundary buckets has two ghost buckets
-  The lowest bucket will not be able find the bucket which contains
-  boundary information
-  In addition, the reason to have thicker ghost layer is to avoid
-  influence of "near boundary effect" on static pressure ghost,
-  It is not necessary for wall ghost to have multiple ghost bucket.
-  So, reset value of mindom[2];
-  */
-  mindom[2] = mindom_o[2] - 1.5*del;
-
   // max number of buckets along each directions
   int nx = (int) ceil((maxdom[0]-mindom[0])/(del));
   int ny = (int) ceil((maxdom[1]-mindom[1])/(del));
@@ -172,7 +163,7 @@ int main(int argc, char *argv[])
   htvars[5] = maxdom[2];
 
   int Nbucket = nx*ny*nz;
-  vector<ColumnHead> partition_table;
+  vector<PartiHead> partition_table;
 
   // data-structure for back-ground mesh
   // is a 2-d array of linkded lists
@@ -190,7 +181,7 @@ int main(int argc, char *argv[])
   //In my code, I would like to let all buckets have the information,
   //But only on ground MIXED bucket will need the information.
   for (i=0; i<4; i++)
-	  elev[i]=mindom_o[2];
+	  elev[i]=mindom_o[2]; //the boundary on the ground
 
   int type;
   int bk_index[2*DIMENSION];
@@ -248,34 +239,30 @@ int main(int argc, char *argv[])
           bgmesh[i][j][k].key[l] = key[l];
 
         // find key value for partition bucket
-        if ( k==0 )
-        {
-          HSFC2d (normc, & keylen, key2);
-          ColumnHead temp_head (i, j, key2);
+          PartiHead temp_head (i, j, k, key);
           partition_table.push_back(temp_head);
-        }
-      }
-    }
-  }
+      }//end of z direction
+    }//end of y direction
+  }//end of x direction
 
   // order buckets according to keys
   sort(partition_table.begin(), partition_table.end());
 
-  int bucks_per_proc = (nx*ny/np);
-  int nxny = nx * ny;
-  for (i=0; i < nxny; i++ )
+  int bucks_per_proc = (nx*ny*nz/np);
+  int nxnynz = nx * ny * nz;
+  for (ii=0; ii < nxnynz; ii++ )
   {
-    int myid = i/bucks_per_proc;
+    int myid = ii/bucks_per_proc;
     if ( myid >= np )  myid = np-1;
-    partition_table[i].proc = myid;
-    j = partition_table[i].xind;
-    k = partition_table[i].yind;
-    for (l = 0; l < nz; l++)
-      if ( bgmesh[j][k][l].buckettype )//if buckettype is valid!
-        bgmesh[j][k][l].myproc = myid;
-      else
-        bgmesh[j][k][l].myproc = -1;
-  }
+    partition_table[ii].proc = myid;
+    i = partition_table[ii].xind;
+    j = partition_table[ii].yind;
+    k = partition_table[ii].zind;
+    if ( bgmesh[i][j][k].buckettype )//if buckettype is valid!
+       bgmesh[i][j][k].myproc = myid;
+    else
+       bgmesh[i][j][k].myproc = -1;
+  }//end of for loop
 
   // determine neighbors
   for (i = 0; i < nx; i++)
@@ -284,8 +271,8 @@ int main(int argc, char *argv[])
       {
         int ncount=0;
         int npcount=0;
-        for (int ii=i-1; ii<i+2; ii++)
-          for (int jj=j-1; jj<j+2; jj++)
+        for (ii=i-1; ii<i+2; ii++)
+          for (jj=j-1; jj<j+2; jj++)
             for (int kk=k-1; kk<k+2; kk++)
             {
               if ( ! bgmesh[i][j][k].buckettype )//bucket type == 0: means invalid bucket.
@@ -314,7 +301,7 @@ int main(int argc, char *argv[])
       }
 
   int kcount;
-  vector <ColumnHead> :: iterator c_itr = partition_table.begin ();
+  vector <PartiHead> :: iterator c_itr = partition_table.begin ();
   for (int iproc = 0; iproc < np; iproc++)
   {
     vector<BucketStruct> proc_bucks;
@@ -323,10 +310,10 @@ int main(int argc, char *argv[])
     {
       i = c_itr->xind;
       j = c_itr->yind;
+      k = c_itr->zind;
       kcount = 0;
-      for (k = 0; k < nz; k++)
-        if ( bgmesh[i][j][k].buckettype > 0)
-        {
+      if ( bgmesh[i][j][k].buckettype > 0)
+      {
           if (bgmesh[i][j][k].myproc == iproc)
           {
             proc_bucks.push_back(bgmesh[i][j][k]);
@@ -337,31 +324,32 @@ int main(int argc, char *argv[])
             cerr << "Error: proc-ids don't match" << endl;
             exit (1);
           }
-        }
+      }
         // copy partition table keys
-        for (k = 0; k < KEYLENGTH; k++)
-          partition_keys.push_back (c_itr->key[k]);
+        for (kk = 0; kk < KEYLENGTH; kk++)
+          partition_keys.push_back (c_itr->key[kk]); //For 3D decomposition, this key is actually bucket key
 
-        // search for the first-bucket
-        for (l = 0; l < nz; l++)
-          if (bgmesh[i][j][l].buckettype == 1)
-            break;
+//        // search for the first-bucket --> Why do I need this?
+//        for (l = 0; l < nz; l++)
+//          if (bgmesh[i][j][l].buckettype == 1)
+//            break;
 
-        // copy key of the first bucket in the column
-        for (k = 0; k < KEYLENGTH; k++)
-          partition_keys.push_back (bgmesh[i][j][l].key[k]);
+        // copy key of the bucket in the column
+        for (kk = 0; kk < KEYLENGTH; kk++)
+          partition_keys.push_back(bgmesh[i][j][k].key[kk]);//The same key as the the partition key for 3D decomposition
 
         // advance the iterator
         c_itr++;
         if ( c_itr == partition_table.end () )
           break;
-    }
+    }//end of while loop
+
     createfunky (iproc, 6, htvars, proc_bucks, partition_keys);
     proc_bucks.clear();
-  }
+  } //end of go through all processes
 
   // Create write initial data to HDF5 file
-  cout << "Total "<< Nbucket <<", "<< bucks_per_proc * nz <<" buckets per proc" << endl;
+  cout << "Total "<< Nbucket <<", "<< bucks_per_proc <<" buckets per proc" << endl;
   cout << "it's ready to run"<<endl;
 
 

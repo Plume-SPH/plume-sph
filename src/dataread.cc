@@ -352,17 +352,17 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
 
   int keylength = KEYLENGTH;
 //  double center[2];
-  unsigned * part_keys = new unsigned [dims[0]];//dims[0] should be the size of certain file... --> will be used to determine the number of particles that need to been add
-  int incr = 2 + keylength;
+  unsigned * part_keys = new unsigned [dims[0]];//dims[0] should be the size of partition_table.
+  int incr = 2 + keylength; //The incr is very important 2 is size of sfc-key in BucketHead, and length is keylength of bucket key
   GH5_readdata (fp, "/partition_table", part_keys);
   for (i = 0; i < dims[0]; i += incr)
   {
     Bucket * buck = (Bucket *) (*BG_mesh)->lookup (part_keys + i + 2);
-    if (buck->which_neigh_proc (Down) != -1)
-    {
-      fprintf (stderr, "ERROR: Partition table do not have correct keys.\n");
-      exit (1);
-    }
+//    if (buck->which_neigh_proc (Down) != -1)
+//    {
+//      fprintf (stderr, "ERROR: Partition table do not have correct keys.\n");
+//      exit (1);
+//    }
     partition_tab.push_back (BucketHead (part_keys + i, part_keys + i + 2));
   }
 

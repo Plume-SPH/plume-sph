@@ -14,23 +14,24 @@ using namespace std;
 
 #include <buckstr.h>
 
-struct ColumnHead
+struct PartiHead
 {
-  int xind, yind, proc;
+  int xind, yind, zind, proc;
   unsigned key[KEYLENGTH];
 
   // constructor
-  ColumnHead (int i, int j, unsigned keyi[])
+  PartiHead (int i, int j, int k, unsigned keyi[])
   {
     xind = i;
     yind = j;
+    zind = k; //This is newly added, as a new member int k is added
     proc = 0;
     for (i = 0; i < KEYLENGTH; i++)
       key[i] = keyi[i];
   }
 
 
-    bool operator < (const ColumnHead & rhs) const
+    bool operator < (const PartiHead & rhs) const
     {
       if ( key[0] < rhs.key[0] )
         return true;

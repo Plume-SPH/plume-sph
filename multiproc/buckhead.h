@@ -51,7 +51,7 @@ public:
     return sfc_key;
   }
 
-  //! comparison operator for sorting
+  //! comparison operator for sorting-->comparison is based on SFC-key
   bool operator < (const BucketHead & rhs) const
   {
     if ( sfc_key[0] < rhs.getKey ()[0] )

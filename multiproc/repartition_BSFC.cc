@@ -104,12 +104,12 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
     Bucket *curr_buck = (Bucket *) BG_mesh->lookup (buck_key);
     assert (curr_buck);
     float wght = 0.;
-    do
+//    do
+//    {
+    vector < TKey > particles = curr_buck->get_plist ();
+    vector < TKey >::iterator p_itr;
+    for (p_itr = particles.begin (); p_itr != particles.end (); p_itr++)
     {
-      vector < TKey > particles = curr_buck->get_plist ();
-      vector < TKey >::iterator p_itr;
-      for (p_itr = particles.begin (); p_itr != particles.end (); p_itr++)
-      {
         Particle *p_curr = (Particle *) P_table->lookup (*p_itr);
         if ((!p_curr->is_guest ()))
         	switch (p_curr->get_bc_type ())
@@ -129,18 +129,18 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
         	}
 
 //          wght += 1.;
-      }
-      curr_buck = (Bucket *) BG_mesh->lookup (curr_buck->which_neigh (Up));
-      assert (curr_buck);
-    }
-    while ((curr_buck->which_neigh_proc (Up)) != -1);
+    }//go through all particles in the bucket
+//      curr_buck = (Bucket *) BG_mesh->lookup (curr_buck->which_neigh (Up));
+//      assert (curr_buck);
+//    }//end of go from bottom to top
+//    while ((curr_buck->which_neigh_proc (Up)) != -1);
     weights.push_back (wght);
     total_weight += wght;
   }
 
   double * work_per_proc = new double [numprocs];
-  MPI_Allgather (&total_weight, 1, MPI_INT,
-                 work_per_proc, 1, MPI_INT, MPI_COMM_WORLD);
+  MPI_Allgather (&total_weight, 1, MPI_FLOAT,
+                 work_per_proc, 1, MPI_FLOAT, MPI_COMM_WORLD); //Work load is averaged among several processes
 
   double global_weight = 0;
   for (i = 0; i < numprocs; i++)
@@ -167,7 +167,7 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
   unstructured_communication verts_in_cut_info;
   verts_in_cut_info.used_flag = 0;
 
-  /* create bins, fill global weight vector and perform intial partition */
+  /* create bins, fill global weight vector and perform initial partition --->Based on SFC only*/
   BSFC_create_bins (num_local_objects, sfc_vertices, & bits_used,
                     size_of_unsigned, global_actual_work_allocated, 
                     work_percent_array, & total_weight, & balanced_flag,
@@ -302,12 +302,12 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
   {
     Bucket * buck = (Bucket *) BG_mesh->lookup (sfc_vertices[i].obj_key);
     buck->put_myprocess (sfc_vertices[i].destination_proc);
-    do 
-    {
-      buck = (Bucket *) BG_mesh->lookup (buck->which_neigh (Up));
-      buck->put_myprocess (sfc_vertices[i].destination_proc);
-    }
-    while (buck->which_neigh_proc (Up) != -1);
+//    do
+//    {
+//      buck = (Bucket *) BG_mesh->lookup (buck->which_neigh (Up));
+//      buck->put_myprocess (sfc_vertices[i].destination_proc);
+//    }
+//    while (buck->which_neigh_proc (Up) != -1);
   }
  
 #ifdef DEBUG2
@@ -380,18 +380,18 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
       if (neigh_proc[i] > -1)
         my_comm[neigh_proc[i]] = 1;
 
-    if (buck->which_neigh_proc (Down) == -1)
-    {
+//    if (buck->which_neigh_proc (Down) == -1)
+//    {
       Key bkey = buck->getKey ();
-      for (i = 0; i < 2; i++)
+      for (i = 0; i < DIMENSION; i++)
       {
         xx[i] = (*(buck->get_mincrd () + i) + *(buck->get_maxcrd () + i)) * 0.5;
         normc[i] = (xx[i] - mindom[i]) / (maxdom[i] - mindom[i]);
       }
-      HSFC2d (normc , & keylen, sfc_key);
+      HSFC3d (normc , & keylen, sfc_key);
       BucketHead bhead (sfc_key, bkey.key);
       PartitionTable.push_back (bhead);
-    }
+//    }
   }
 
   // no self communication
