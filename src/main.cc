@@ -120,6 +120,9 @@ main(int argc, char **argv)
   //add pressure ghost
    add_pressure_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
 
+  // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
+    move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
    //add wall ghost
    add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
 
@@ -207,6 +210,9 @@ main(int argc, char **argv)
 
       //add pressure ghost --> will not delete the old pressure ghost, just add pressure ghost where computational domain is "exposed"
       add_pressure_ghost (P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+
+      // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
+      move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
       //add wall ghost
       add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);

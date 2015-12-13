@@ -101,9 +101,15 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
        bnd[5]=Lz_P[1];
       // will not add pressure ghost on UNDERGROUND bucket
 	  while ((Bnd_buck = (Bucket *) itr->next ()))
-      if (!(Bnd_buck->get_has_involved()) && !Bnd_buck->has_pressure_ghost_particles() && !Bnd_buck->is_erupt ())  // make sure bucket is has_involved >0 and is not added yet (Bnd_buck->has_pressure_ghost_particles() is false), is not erupted bucket
+	  // 1) Bnd_buck has involved flag = 0
+	  // 2) pressure ghost has not been added in Bnd_buck yet
+	  // 3) Bnd_buck is not erupt ghost bucket
+	  // 4) Because the overall work flow is changed slightly, we will not try add pressure ghost for guest bucket, so also need to make sure that : Bnd_buck is not guest.
+      if (!(Bnd_buck->get_has_involved()) && !Bnd_buck->has_pressure_ghost_particles() && !Bnd_buck->is_erupt () && !Bnd_buck->is_guest())
 	  {
         // if any neighbor has_potential_involved or has_involved
+    	//1) I need to make sure that Bnd_buck is not guest bucket, otherwise, no neighbor info will be available --> So finally, pressure ghost for guest bucket will not be added at this step.
+    	//2) need to syn data after this function
         const int * neigh_proc = Bnd_buck->get_neigh_proc ();
         Key * neighbors = Bnd_buck->get_neighbors ();
 
@@ -114,7 +120,11 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
               {
                   // some neighs may not of available on current process
             	  neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
-                  if ( neigh && neigh->get_has_involved()) //sometimes, neigh might be on other processors --> actually, no guest bucket can be found on current process!
+                  if ( neigh && neigh->get_has_involved())
+                	  //sometimes, neigh might be on other processors
+                	  //--> actually, for guest buckets, it is possible that some of its neighbors can not be found on current process!
+                	  //--> So syn is necessary after adding of pressure ghost, because, it is possible that some guest buckets that should contain pressure ghost particles will not add pressure ghost particles at this step.
+                	  //--> Finally, I decided that I will not try to add pressure ghost particles within this function, instead, I will syn data after this function.
                   {
                 	Bnd_buck->mark_active ();
               	    if (Bnd_buck->get_bucket_type () == MIXED)

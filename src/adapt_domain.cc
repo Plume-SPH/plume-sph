@@ -57,7 +57,9 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, int numproc, int my
 	 {
 		 //make sure that 1)the bucket is not empty, 2)has_involved = 0, 3) is not underground buckets 4) is not PRESS_BC.
 		 //Note: in the old version of the code, the PRESS_BC is not excluded, actually, it should be, because "extension of the domain should stop when it reached to the largest domain" ---> This should not influence adding of pressure ghost because when adding pressure ghost, we do not care about whether one of our neigh has_involved or has_potential_involved, we only care about whether has_inolved==0
-	      if (!(Bnd_buck->get_has_involved()) && ((Bnd_buck->get_plist ()).size()) && Bnd_buck->get_bucket_type()!=UNDERGROUND && Bnd_buck->get_bucket_type()!=PRESS_BC)
+		 //The new adjustment for 3D domain decomposition: we only care about no-guest bucket, data for guest bucket will be syn after ths step.
+		 //---> As a results we will only consider the no-guest bucket
+	      if (!(Bnd_buck->get_has_involved()) && ((Bnd_buck->get_plist ()).size()) && Bnd_buck->get_bucket_type()!=UNDERGROUND && Bnd_buck->get_bucket_type()!=PRESS_BC && !Bnd_buck->is_guest())
 		  {
 	    	  const int * neigh_proc = Bnd_buck->get_neigh_proc ();
 	    	  Key * neighbors = Bnd_buck->get_neighbors ();
@@ -66,7 +68,7 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, int numproc, int my
 	    	  {
 	    	     if (neigh_proc[i] > -1)
 	    	     {
-	                // some neighs may not of available on current process
+	                // some neighs may not of available on current process --> This is true for guest buckets, so we have to syn data after domain adapt
 	            	neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
 	                if ( neigh && neigh->is_has_involved ())
 	                {

@@ -170,59 +170,67 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
     	    		}
 
     	    // add wall ghost on under ground bucket
-	        Bucket *Down_buck = (Bucket *) BG_mesh->lookup (Bnd_buck->which_neigh (Down));
+    	    //--> For 3D decomposition, if the Mixed bucket is guest bucket, it DOWN bucket will not be able to find, SO
+    	    //1) make sure the current bucket is not guest bucket
+    	    //2) On the process on which the current bucekt is host, the DOWN bucket (no matter the DOWN bucket is guest or not) can be found and, wall ghost particles can be added there.
+    	    //3) I just need to point out that the idea that adding particles for ghost bucket to avoid syn still works for 3D decomposition. ---> but need to be more careful to avoid mistake like looking for neighbor for a guest bucket.
+    	    if (!Bnd_buck->is_guest())
+    	    {
+    	        Bucket *Down_buck = (Bucket *) BG_mesh->lookup (Bnd_buck->which_neigh (Down));
+                assert(Down_buck); //make sure Down_buck exist.
 
-	        Down_buck->mark_active ();// the down bucket is not marked as active yet! so need to mark it here
+    	        Down_buck->mark_active ();// the down bucket is not marked as active yet! so need to mark it here
 
-    	    for (i = 0; i < DIMENSION; i++)
-    		{
-    		   mincrd[i] = *(Down_buck->get_mincrd () + i);
-    		   maxcrd[i] = *(Down_buck->get_maxcrd () + i);
-    		}
-    		//generate air particles
-    		Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
-    		Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
-    		Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
+        	    for (i = 0; i < DIMENSION; i++)
+        		{
+        		   mincrd[i] = *(Down_buck->get_mincrd () + i);
+        		   maxcrd[i] = *(Down_buck->get_maxcrd () + i);
+        		}
+        		//generate air particles
+        		Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
+        		Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
+        		Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
 
-    		Curr_buck = Down_buck;
-    		for (i = 0; i < Nx; i++)
-    		    for (j = 0; j < Ny; j++)
-    		        for (k = 0; k < Nz; k++)
-    		        {
-    		        		pcrd[0] = mincrd[0] + dx2 + i * dx;
-    			        	pcrd[1] = mincrd[1] + dx2 + j * dx;
-    			        	pcrd[2] = mincrd[2] + dx2 + k * dx;
+        		Curr_buck = Down_buck;
+        		for (i = 0; i < Nx; i++)
+        		    for (j = 0; j < Ny; j++)
+        		        for (k = 0; k < Nz; k++)
+        		        {
+        		        		pcrd[0] = mincrd[0] + dx2 + i * dx;
+        			        	pcrd[1] = mincrd[1] + dx2 + j * dx;
+        			        	pcrd[2] = mincrd[2] + dx2 + k * dx;
 
-    			            for (ii = 0; ii < DIMENSION; ii++)
-    			               normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
+        			            for (ii = 0; ii < DIMENSION; ii++)
+        			               normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
- 	    					THSFC3d (normc, add_step, &tkeylen, pkey);
- 		    				// check for duplicates
- 		    				if (P_table->lookup(pkey))
- 		    				{
- 		    				    fprintf(stderr, "ERROR: Trying to add particle "
- 		    				           "twice on same location.\n");
- 		    				    exit(1);
- 		    				}
- 		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
+     	    					THSFC3d (normc, add_step, &tkeylen, pkey);
+     		    				// check for duplicates
+     		    				if (P_table->lookup(pkey))
+     		    				{
+     		    				    fprintf(stderr, "ERROR: Trying to add particle "
+     		    				           "twice on same location.\n");
+     		    				    exit(1);
+     		    				}
+     		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
 
- 		    				//default involved is zero
- 					        if (Down_buck->is_guest())
-					        {
-					            pnew->put_guest_flag(true);
-					            tempid = Down_buck->get_myprocess();
-					            pnew->put_my_processor(tempid);
-					        }
+     		    				//default involved is zero
+     					        if (Down_buck->is_guest())
+    					        {
+    					            pnew->put_guest_flag(true);
+    					            tempid = Down_buck->get_myprocess();
+    					            pnew->put_my_processor(tempid);
+    					        }
 
 
 
- 		    				// add to hash-table
- 		    				P_table->add(pkey, pnew);
- 		    				num_particle++;
- 		    				TKey tmpkey(pkey);
+     		    				// add to hash-table
+     		    				P_table->add(pkey, pnew);
+     		    				num_particle++;
+     		    				TKey tmpkey(pkey);
 
- 		    				Curr_buck->add_pressure_ghost_particle(tmpkey);
-    		         }
+     		    				Curr_buck->add_pressure_ghost_particle(tmpkey);
+        		         }
+    	    }//end of if bnd_bucket is not a guest bucket.
 
 	  }//finish go though all buckets
 
