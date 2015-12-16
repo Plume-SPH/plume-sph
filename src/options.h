@@ -24,24 +24,9 @@
 #define HAVE_TURBULENCE_LANS
 #endif
 
-////output ghost particles --->will out put guest and ghost
-//#ifndef WRITE_GHOSTS
-//#define WRITE_GHOSTS
-//#endif
-
-//output PID
-#ifndef WRITE_PID
-#define WRITE_PID
-#endif
-
 ////Define have physics viscosity
 //#ifndef USE_PHYSICS_VIS
 //#define USE_PHYSICS_VIS
-//#endif
-
-//Output ghost particles
-//#ifndef WRITE_GHOSTS
-//#define WRITE_GHOSTS
 //#endif
 
 //Have heat transfer
@@ -73,4 +58,26 @@
 //#define UNIFORM_ATMOSPHERE
 //#endif
 
+//---------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//--------------------------------OPTIONS FOR DEBUG--------------------------------------------
+#ifdef DEBUG
+
+#ifndef OUT_PUT_EXCUT_TIME
+#define OUT_PUT_EXCUT_TIME
+#endif
+
+//Output ghost particles
+//#ifndef WRITE_GHOSTS
+//#define WRITE_GHOSTS
+//#endif
+
+//output PID
+#ifndef WRITE_PID
+#define WRITE_PID
+#endif
+
+#endif
+//----------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------
 #endif /* OPTIONS_H */

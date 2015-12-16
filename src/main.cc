@@ -57,6 +57,7 @@ main(int argc, char **argv)
 
 #ifdef MULTI_PROC
   double start, finish;
+  double walltime;
 
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
@@ -190,6 +191,19 @@ main(int argc, char **argv)
     if (myid == 0)
       cout << "Time-step: " << timeprops->step << " dt=" << dt
         << " time=" << timeprops->timesec() << endl;
+
+#ifdef DEBUG
+#ifdef OUT_PUT_EXCUT_TIME
+#ifdef MULTI_PROC
+    if (myid == 0 && (timeprops->is_int_time()) &&(((int) timeprops->timesec()) % 2 == 0) )
+    {
+    	finish = MPI_Wtime();
+    	walltime = finish - start;
+    	cout << "Computation time up to now is: " << walltime << " seconds" << endl;
+    }
+#endif
+#endif
+#endif
 
     ierr = (int) round (global_data[1]);
     if ( ierr )
@@ -366,7 +380,7 @@ main(int argc, char **argv)
   if (myid == 0)
   {
     printf("A total of %d SPH Particles were lost.\n", lostsum);
-    double walltime = finish - start;
+    walltime = finish - start;
     int hours = (int) (walltime / 3600.);
     int mins = (int) ((walltime - hours * 3600) / 60);
     double secs = walltime - (hours * 3600) - (mins * 60);
