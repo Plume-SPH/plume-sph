@@ -195,7 +195,7 @@ main(int argc, char **argv)
 #ifdef DEBUG
 #ifdef OUT_PUT_EXCUT_TIME
 #ifdef MULTI_PROC
-    if (myid == 0 && (timeprops->is_int_time()) &&(((int) timeprops->timesec()) % 2 == 0) )
+    if (myid == 0 && (timeprops->is_int_time()) &&(((int) timeprops->timesec()) % 10 == 0) )
     {
     	finish = MPI_Wtime();
     	walltime = finish - start;
