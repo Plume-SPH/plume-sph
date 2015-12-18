@@ -103,7 +103,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
     //Because updating of erupted particle is based on unsmoothed velocity,
     //SO it is better to do real and erupted separately
-    if (p->is_erupt_ghost())
+    else if (p->is_erupt_ghost()  && timeprops->iferupt() )
     {
 
 #ifdef DEBUG

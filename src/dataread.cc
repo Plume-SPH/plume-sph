@@ -105,6 +105,8 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
   inD2 >> timeprops->max_time;
   inD2 >> timeprops->max_steps;
   inD2 >> timeprops->timeoutput;
+  inD2 >> timeprops->stat_erupt;
+  inD2 >> timeprops->end_erupt;
   inD2 >> *(format);
   timeprops->TIME_SCALE = time_scale;
   timeprops->ndtimeoutput = timeprops->timeoutput / time_scale;
@@ -118,7 +120,6 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
   matprops->particle_mass = rhoa0_P*pow(matprops->smoothing_length, DIMENSION);//This is incorrect
 
   //simulation properties
-
   inD2 >>simprops->Idom_x_min;
   inD2 >>simprops->Idom_x_max;
   inD2 >>simprops->Idom_y_min;

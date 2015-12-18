@@ -34,15 +34,6 @@
 //#define HAVE_HEAT_TRANSFER
 //#endif
 
-////Define eruption time period, so the eruption will only happen during a period of the whole simulation
-//#ifndef HAVE_ERUPT_PERIOD
-//#define HAVE_ERUPT_PERIOD
-
-//No eruption
-//#ifndef NO_ERUPTION
-//#define NO_ERUPTION 1
-//#endif
-
 ////Define a situation where erupted material is pure air
 //#ifndef ERUPT_PURE_AIR
 //#define ERUPT_PURE_AIR 1

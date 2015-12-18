@@ -117,21 +117,18 @@ main(int argc, char **argv)
   // sync data
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
-//The reason why I put the following functions late is that adding of pressure_ghost and adding of wall ghost need neighbor info.
+  //The reason why I put the following functions after add air is that adding of pressure_ghost and adding of wall ghost need neighbor info.
   //add pressure ghost
-   add_pressure_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+  add_pressure_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
 
   // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
-    move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+  move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
-   //add wall ghost
-   add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+  //add wall ghost
+  add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
 
-   //initialized the mass of all particles---> actually, only initial air need to set up initial! wall ghost and pressure ghost will set up parameter while adding particles
-//   setup_ini(myid,  P_table,  BG_mesh, timeprops, numprocs, my_comm);
-
-   //Adding eruption boundary condition
-   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
+  //Adding eruption boundary condition
+  setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
 
 #ifdef MULTI_PROC
   // wait till initialization has finished
@@ -152,9 +149,6 @@ main(int argc, char **argv)
 
   // search mirror imgaes of ghost particles into boundary
   search_bnd_images(myid, P_table, BG_mesh, Image_table, 1);
-
-//  //set up initial outside bucket layer list
-//  update_out_layer (P_table,BG_mesh, outside_table, numproc, myid);
 
 #ifdef MULTI_PROC
   // send reflections that belong to other procs
@@ -194,14 +188,12 @@ main(int argc, char **argv)
 
 #ifdef DEBUG
 #ifdef OUT_PUT_EXCUT_TIME
-#ifdef MULTI_PROC
     if (myid == 0 && (timeprops->is_int_time()) &&(((int) timeprops->timesec()) % 10 == 0) )
     {
     	finish = MPI_Wtime();
     	walltime = finish - start;
     	cout << "Computation time up to now is: " << walltime << " seconds" << endl;
     }
-#endif
 #endif
 #endif
 
@@ -302,7 +294,6 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
-//
 #ifdef HAVE_TURBULENCE_LANS
     // smooth out velocity
     smooth_velocity(P_table);
@@ -311,21 +302,23 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 #endif
-//
 
     // update particle positions
     update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);
 
     // add new layers of particle in the duct
-    add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
+    if (timeprops->iferupt())
+       add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
 
 #ifdef MULTI_PROC
     // update guests as density has changed since last update
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
+#endif
 
     //scan most outside layer of has_potential_involved buckets
     adapt = scan_outside_layer (P_table, BG_mesh, numprocs, myid);
 
+#ifdef MULTI_PROC
     /* DYNAMIC LOAD BALANCING */
     if ((numprocs > 1) && (timeprops->is_int_time()) &&( ((int) timeprops->timesec()) % 5 == 0))
     {
@@ -360,7 +353,7 @@ main(int argc, char **argv)
 
     // write output if needed
     if (timeprops->ifoutput())
-      write_output (myid, numprocs, P_table, BG_mesh,
+       write_output (myid, numprocs, P_table, BG_mesh,
                     partition_table, timeprops, format);
   }
 

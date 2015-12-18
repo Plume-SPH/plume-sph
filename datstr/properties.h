@@ -34,6 +34,15 @@ struct TimeProps
   //! non-dimensional timeoutput
   double ndtimeoutput;
 
+  //! Scale to Normalize the time
+  double TIME_SCALE;\
+
+  //! start erupt time --> in seconds
+  double stat_erupt;
+
+  //! end erupt time --> in seconds
+  double end_erupt;
+
   //! current time-step
   int step;
 
@@ -42,9 +51,6 @@ struct TimeProps
 
   //! maximum time-steps allowed
   int max_steps;
-
-  //! Scale to Normalize the time
-  double TIME_SCALE;
 
   //! constructor to allocate default values
     TimeProps ()
@@ -103,6 +109,17 @@ struct TimeProps
     }
     else
       return false;
+  }
+
+  //function to determine whether the volcano is eruptting or not.
+  bool iferupt()
+  {
+	  if((time * TIME_SCALE) < stat_erupt)
+		 return false;
+	  else if ((time * TIME_SCALE) > end_erupt)
+		 return false;
+	  else
+		 return true;
   }
 
   void chunktime (int *hours, int *minutes, double *seconds)
