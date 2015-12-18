@@ -26,7 +26,6 @@ void
 smooth_density(THashTable * P_table)
 {
   int i, k;
-  //unsigned jkey[TKEYLENGTH];
   double xi[DIMENSION], ds[DIMENSION], s[DIMENSION];
   double wght, density=0.0;
   TKey tmpkey;
@@ -107,8 +106,6 @@ smooth_density(THashTable * P_table)
       		            s[k] = ds[k] / hi;
       		            wght = weight(s, hi);
       		            tmprho[phs_i-1] += wght * (pj->get_mass());
-      		            //View multiple phase SPH as multiple set of discretized points
-//      		            wnorm[phs_i-1] += wght * (pj->get_mass()) / (*(pj->get_phase_density()+phs_i-1));
 
       		            //View multiple phase SPH as one set of discretized point
     		            wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();

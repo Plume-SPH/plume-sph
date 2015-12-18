@@ -48,6 +48,9 @@ private:
   //! mass fraction
   double mass_frac;
 
+  //! new mass fraction
+  double new_mass_frac;
+
   //! gamma
   double gamma;
 
@@ -255,6 +258,12 @@ public:
   const double *get_new_phase_density () const
   {
     return new_phase_density;
+  }
+
+  //get new_mass_frac
+  const double get_new_mass_frac () const
+  {
+    return new_mass_frac;
   }
 
   //! get density
@@ -507,6 +516,12 @@ public:
 		  new_phase_density[i] = phsd[i];
   }
 
+  //! put new_mass_frac
+  void put_new_mass_frac (double mssfrc)
+  {
+	  new_mass_frac=mssfrc;
+  }
+
   //! put state_vars. This should only be uesed for ghost particles
   void put_state_vars (double u[])
   {
@@ -558,6 +573,18 @@ public:
   {
     for (int i = 0; i < PHASE_NUM; i++)
     	phase_density[i] = new_phase_density[i];
+  }
+
+  //! update mass_frac
+  void update_mass_frac ()
+  {
+	  mass_frac=new_mass_frac;
+  }
+
+  //! update density
+  void update_density ()
+  {
+	  state_vars[0]=new_state_vars[0];
   }
 
   //! update mass_frac
