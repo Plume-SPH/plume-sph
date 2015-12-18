@@ -158,7 +158,10 @@ smooth_density(THashTable * P_table)
 #endif
 
 	  assert(density > 0);
-      pi->put_density(density);
+	  //In the old code, I was using
+	  //pi->put_density(density);
+      pi->put_new_density(density);
+
       mssfrc=phaserho[1]/density;
 
 #ifdef DEBUG
@@ -169,24 +172,39 @@ smooth_density(THashTable * P_table)
       }
 #endif
       assert(mssfrc <= 1);
-      pi->put_mass_frac(mssfrc);
+      pi->put_new_mass_frac(mssfrc);
 
-      /*
-       * the bad thing here is: particle do not have information about its bgmesh, the better way is set adapt +=1 only if the bucket where the particle belong to originally does not have involved particles.
-       * Well why not add a new member Key mybucket in particle ---> this is another story, keep track bgmesh for each particle requires additional effort
-       *
-       * Any way, what is the solution? The solution is give up determine the value of adapt(which will determine whether updating of background mesh is necessary!) within density updating function.
-       * update_adpt_domain will be called at more frequent to determine whether updating of background mesh is necessary.
-       */
-
-      if (mssfrc >= MSFRC_THRESH && !pi->is_involved())
-          pi->set_involved_flag(INVOLVED);
+//      /*
+//       * the bad thing here is: particle do not have information about its bgmesh, the better way is set adapt +=1 only if the bucket where the particle belong to originally does not have involved particles.
+//       * Well why not add a new member Key mybucket in particle ---> this is another story, keep track bgmesh for each particle requires additional effort
+//       *
+//       * Any way, what is the solution? The solution is give up determine the value of adapt(which will determine whether updating of background mesh is necessary!) within density updating function.
+//       * update_adpt_domain will be called at more frequent to determine whether updating of background mesh is necessary.
+//       */
+//
+//      if (mssfrc >= MSFRC_THRESH && !pi->is_involved())
+//          pi->set_involved_flag(INVOLVED);
 
     }//end of if --> if the density of that particle need to be updated based summation
   }//end of loop -->go through all particle
 
+  //In the old code, mass fraction is updated while computing, put it separately after density updating done
+   THTIterator *it2 = new THTIterator(P_table);
+   while ((pi = (Particle *) it2->next()))
+     if (pi->need_neigh())
+     {
+       pi->update_mass_frac();
+       mssfrc = pi->get_mass_frac();
+       if ( mssfrc>= MSFRC_THRESH && !pi->is_involved())
+          pi->set_involved_flag(INVOLVED);
+
+       pi->update_density();
+       pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P); //The secondary varible was not updated after updating density and mass fraction.
+     }
+
   // clean up stuff
   delete itr;
+  delete it2;
 
   return;
 }
