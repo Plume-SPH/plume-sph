@@ -78,6 +78,12 @@ double d_weight(
                  double h,
                  //! { 0, 1, 2 }: direction of differentiation
                  int dir);
+//Function to compute F form r_ab and W_ab
+//The relationship is: F r_ab = W_ab
+double compute_F(
+		double* ,  //dwdx
+		double*    //dx
+		);
 
 //These basic algebra code is not used in SPH code, but will be used in GSPH code
 //The recommended option is to use libraries for such basic things, such as blas, Lapack, Petsc
@@ -128,48 +134,6 @@ void matrix_vec_mult(
                       //! c = A*b
                       double *c);
 
-///*!
-// *  For very small dimensional matericies
-// *  For any higher order multiplication BLAS etc is preferred
-// */
-//void matrix_matrix_mult(
-//                         //! Matix A ( N x P )
-//                         double *A,
-//                         //! Matix A leading dim, i.e. N
-//                         int N,
-//                         //! Matrix A lagging dim i.e. P
-//                         int P,
-//                         //! Matrix B ( P x M )
-//                         double *B,
-//                         //! Matrix B lagging dim, i.e. M
-//                         int M,
-//                         //! C = A*B
-//                         double *C);
-//
-///*!
-// *  Solve Liner equations
-// *  Used to compute velocity gradients
-// */
-//void linsolve(
-//               //! Matix A (3,3)
-//               double * A,
-//               //! RHS ( set of vectors, in columns )
-//               double * b,
-//               //! No of vectors in the set, (N x M)
-//               int M,
-//               //! solution (N x M)
-//               double *d);
-//
-//
-//void linsolve31 (
-//                 //! 3 x 3 Matrix as row-major format (LHS)
-//                 double * A,
-//                 //! 3 x 1 column vector (RHS)
-//                 double * d,
-//                 //! 3 x 1 solution vector
-//                 double * sol);
-
-
 void lsq_surf3 (
                 //! [x(i), x(i+1)]
                 double * x,
@@ -214,12 +178,6 @@ double art_vis (
 		//h
 		double
 		);
-//Function to compute F form r_ab and W_ab
-//The relationship is: F r_ab = W_ab
-double compute_F(
-		double* ,  //dwdx
-		double*    //dx
-		);
 
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
 void air_prop (
@@ -238,6 +196,27 @@ void air_prop (
 		double *, //density
 		double *  //particle mass
 		);
+
+//function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
+//Based on realistic atmosphere model
+void air_prop_realistic (
+		double *, //coordinate of particle
+		double *, //internal energy of particle
+		double *, //pressure
+		double *  //density
+        );
+
+//overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
+//Based on realistic atmosphere model
+void air_prop_realistic (
+		double *, //coordinate of particle
+		double *, //range of the space which is occupied by the particle [xmin, xmax, ymin, ymax, zmin, zmax]
+		double *, //internal energy of particle
+		double *, //pressure
+		double *, //density
+		double *  //particle mass
+		);
+
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
 //Based on hydro-static equation dp/dz=-rho*g ---> This will give a less realistic initial atmosphere, but more consistent with current model.
 void air_prop_hydro (
@@ -250,6 +229,28 @@ void air_prop_hydro (
 //overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
 //Based on hydro-static equation dp/dz=-rho*g ---> This will give a less realistic initial atmosphere, but more consistent with current model.
 void air_prop_hydro (
+		double *, //coordinate of particle
+		double *, //range of the space which is occupied by the particle [xmin, xmax, ymin, ymax, zmin, zmax]
+		double *, //internal energy of particle
+		double *, //pressure
+		double *, //density
+		double *  //particle mass
+		);
+
+//function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
+//Function that will give a "uniform" atmosphere ---> which is not realistic for sure
+//Used for code testing
+void air_prop_uniform (
+		double *, //coordinate of particle
+		double *, //internal energy of particle
+		double *, //pressure
+		double *  //density
+        );
+
+//overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
+//Function that will give a "uniform" atmosphere ---> which is not realistic for sure
+//Used for code testing
+void air_prop_uniform (
 		double *, //coordinate of particle
 		double *, //range of the space which is occupied by the particle [xmin, xmax, ymin, ymax, zmin, zmax]
 		double *, //internal energy of particle

@@ -44,10 +44,15 @@
 //#define ERUPT_COOL_MATERIAL 1
 //#endif
 
-////Define a situation where atmosphere is uniform property ---> also no gravity
-//#ifndef UNIFORM_ATMOSPHERE
-//#define UNIFORM_ATMOSPHERE
-//#endif
+//Define the atmosphere type
+/*
+ * 0: realistic
+ * 1: hydro-static
+ * 2: uniform
+ */
+#ifndef ATMOSPHERE_TYPE
+#define ATMOSPHERE_TYPE 2 //The default value represents hydro-static atmosphere
+#endif
 
 //---------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------

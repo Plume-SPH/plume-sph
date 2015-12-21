@@ -24,8 +24,12 @@ const int N_total_P=2700;  // This one is actually not used in current code!
 
 //----------------------------------------------------------------------------------------
 //% parameter for phase1 (air), use  to generated initial atmosphere condition
+#if ATMOSPHERE_TYPE==2
+const double g_P=0.;
+#else
 const double g_P=9.81;
-const double Rg_P=462.; /*%gas constant for volcanic gases*/
+#endif
+
 //the following 4 parameters are not independent!, they should satisfy the EOS
 const double Ta0_P=273;
 const double pa0_P=1.013e5;
@@ -55,7 +59,7 @@ const double Ate3_p = -0.1709059897e-1;
 //----------------------------------------------------------------------------------------
 // %parameter at vent, used to impose eruption condition
 // %v: vent
-
+const double Rg_P=462.; /*%gas constant for volcanic gases*/
 const double ng0_P=0.05; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
 const double Uv0_P=0.0; /* velocity in horizontal direction*/
 const double Vv0_P=150; /* velocity in verticle direction*/
