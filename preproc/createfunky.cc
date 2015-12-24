@@ -43,7 +43,7 @@ void createfunky(int myid, int nhtvars, double * htvars,
   hid_t fp = GH5_fopen_serial (fname.c_str(),'w');
 
   // write HASH TABLE constants
-  int dims1[2]={nhtvars,0};
+  int dims1[2]={nhtvars,0}; //nhtvars is the number of elements in htvars
   GH5_WriteS (fp ,"/hashtable_constants", dims1, (void *) htvars, 0, 0, DOUBLETYPE);
 
   // copy vector to an regular array

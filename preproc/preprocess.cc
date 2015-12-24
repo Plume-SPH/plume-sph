@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 
 #ifdef DEBUG
    bool do_search = false;
-   unsigned keycheck[KEYLENGTH] = {92836425, 613566756};
+   unsigned keycheck[KEYLENGTH] = {205661440, 304357968};
 //   unsigned keytemp[KEYLENGTH] ;
 #endif
 
@@ -139,11 +139,19 @@ int main(int argc, char *argv[])
 
   //To impose pressure atmosphere and wall bc, expand the domain
   double extend_cof = EXT_DOM_COF;
-  for (i=0; i<DIMENSION; i++)
+  double extend_cof_bottom = EXT_DOM_COF_BOT;
+  for (i=0; i<DIMENSION-1; i++) //In old code, it was for (i=0; i<DIMENSION; i++)
   {
 	  mindom[i] = mindom_o[i] - extend_cof * del;
 	  maxdom[i] = maxdom_o[i] + extend_cof * del;
   }
+
+  //The purpose of the following modification is to useless particle in the buckets
+  //If I use the old extend_cof, and put number of particles in each bucket as 5, one layer of particles will exactly
+  //locate on the boundary and cause instability for simulation
+
+  mindom[2] = mindom_o[2] - extend_cof_bottom * del;
+  maxdom[2] = maxdom_o[2] + (1-extend_cof_bottom) * del;
 
   // max number of buckets along each directions
   int nx = (int) ceil((maxdom[0]-mindom[0])/(del));

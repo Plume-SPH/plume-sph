@@ -159,7 +159,7 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
 
 #ifdef DEBUG
    bool do_search = false;
-   unsigned keycheck[KEYLENGTH] = {92836425, 613566756};
+   unsigned keycheck[KEYLENGTH] = {205661440, 304357968};
 //   unsigned keytemp[KEYLENGTH] ;
 #endif
 

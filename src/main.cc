@@ -102,6 +102,11 @@ main(int argc, char **argv)
     exit(1);
   }
 
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
+
   //add air particles and put particles into bucket, bc_type is determined in this process
   add_air (P_table, BG_mesh, matprops, numprocs, myid);
 
@@ -228,7 +233,7 @@ main(int argc, char **argv)
 
 #ifdef DEBUG
   if (check_buck)
-	  check_bucket_bykey  (BG_mesh);
+	  check_bucket_bykey (BG_mesh);
 #endif
 
 
