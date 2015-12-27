@@ -51,7 +51,7 @@
  * 2: uniform
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 2 //The default value represents hydro-static atmosphere
+#define ATMOSPHERE_TYPE 1 //The default value represents hydro-static atmosphere
 #endif
 
 //---------------------------------------------------------------------------

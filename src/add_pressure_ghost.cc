@@ -45,13 +45,11 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 	  double mindom[DIMENSION], maxdom[DIMENSION];
 	  double normc[DIMENSION];
 	  double pcrd[DIMENSION];
-//	  double poly[DIMENSION + 1];
 	  double bnd[2*DIMENSION], index[2*DIMENSION];
 
 	  Bucket *Curr_buck = NULL;
 
 	  // direction indices on upper bucket
-//	  int Up[DIMENSION] = { 0, 0, 2 };
 	  int num_particle = 0;
 
 	  // start putting piles
