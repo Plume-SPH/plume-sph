@@ -49,9 +49,10 @@
  * 0: realistic
  * 1: hydro-static
  * 2: uniform
+ * 3: uniform-temperature, atmosphere stratefied due to gravity
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 1 //The default value represents hydro-static atmosphere
+#define ATMOSPHERE_TYPE 3 //The default value represents hydro-static atmosphere
 #endif
 
 //---------------------------------------------------------------------------

@@ -409,8 +409,66 @@ void air_prop_hydro (double *coord, double *range, double * energy, double *pres
 }
 
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
+//Function that will give a "uniform temperature" atmosphere ---> which is not realistic for sure
+//Used for code testing
+//Gravity coefficient will be set to 9.81 -->This is different from uniform environment.
+void air_prop_uniformT (double *coord, double * energy, double *pressure, double * density)
+{
+        double h=coord[2];
+
+        if (h>H3_P)
+                cout << "height of domain exceeds the maximum height of atmosphere, in air_prop! \n" <<endl;
+
+        double T;
+        T = Ta0_P;
+        *pressure = pa0_P*exp(Atf_P * h);
+        *density = (*pressure) /(Ra_P*T) ;
+        *energy = (*pressure) /(*density * (gamma_P-1));
+
+#ifdef DEBUG
+        bool print = false;
+        if (print)
+        cout << "h=" << h<< "\t T=" << T << "\t p="  << *pressure << "\t rho=" << *density << "\t e=" << *energy << "\n" << endl;
+#endif
+}
+//overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
+//Function that will give a "uniform temperature" atmosphere ---> which is not realistic for sure
+//Used for code testing
+//Gravity coefficient will be set to 9.81 -->This is different from uniform environment.
+void air_prop_uniformT (double *coord, double *range, double * energy, double *pressure, double * density, double * mass)
+{
+        double h=coord[2];
+
+        if (h>H3_P)
+                cout << "height of domain exceeds the maximum height of atmosphere, in air_prop! \n" <<endl;
+
+        double T;
+        T = Ta0_P;
+        *pressure = pa0_P*exp(Atf_P * h);
+        *density = (*pressure) /(Ra_P*T) ;
+        *energy = (*pressure) /(*density * (gamma_P-1));
+
+#ifdef DEBUG
+        bool print = false;
+        if (print)
+        cout << "h=" << h<< "\t T=" << T << "\t p="  << *pressure << "\t rho=" << *density << "\t e=" << *energy << "\n" << endl;
+#endif
+        //integration is based on interpolation of order 2 (three points)
+        double h1=range[4];
+        double h2=range[5];
+        double p1 = pa0_P * exp(Atf_P * h1);
+        double d1 = p1/(Ra_P*Ta0_P);
+        double p2 = pa0_P * exp(Atf_P * h2);
+        double d2 = p2/(Ra_P*Ta0_P);
+        double d = *density;
+        //The following code is based on numerical integration, coefficient are 1/6, 4/6 1/6
+        *mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*(0.1666667*d1+0.6666666*d+0.1666667*d2);        
+}
+
+//function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
 //Function that will give a "uniform" atmosphere ---> which is not realistic for sure
 //Used for code testing
+//Gravity coefficient will be set to zero -->This is real uniform environment.
 void air_prop_uniform (double *coord, double * energy, double *pressure, double * density)
 {
 	double h=coord[2];
@@ -434,6 +492,7 @@ void air_prop_uniform (double *coord, double * energy, double *pressure, double 
 //overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
 //Function that will give a "uniform" atmosphere ---> which is not realistic for sure
 //Used for code testing
+////Gravity coefficient will be set to zero -->This is real uniform environment.
 void air_prop_uniform (double *coord, double *range, double * energy, double *pressure, double * density, double * mass)
 {
 	double h=coord[2];
@@ -470,6 +529,8 @@ void air_prop(double *coord, double * energy, double *pressure, double * density
 	air_prop_hydro(coord, energy, pressure, density);
 #elif ATMOSPHERE_TYPE==2
 	air_prop_uniform(coord, energy, pressure, density);
+#elif ATMOSPHERE_TYPE==3
+        air_prop_uniformT(coord, energy, pressure, density);
 #endif
 }
 
@@ -482,6 +543,8 @@ void air_prop(double *coord, double *range, double * energy, double *pressure, d
 	air_prop_hydro(coord, range, energy, pressure, density, mass);
 #elif ATMOSPHERE_TYPE==2
 	air_prop_uniform(coord, range, energy, pressure, density, mass);
+#elif ATMOSPHERE_TYPE==3
+        air_prop_uniformT(coord, range, energy, pressure, density, mass);
 #endif
 }
 

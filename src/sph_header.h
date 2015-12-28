@@ -258,7 +258,28 @@ void air_prop_uniform (
 		double *, //density
 		double *  //particle mass
 		);
-
+//function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
+//Function that will give a "uniform temperature" atmosphere ---> which is not realistic for sure
+////Used for code testing
+//Gravity coefficient will be set to 9.81 -->This is different from uniform environment.
+void air_prop_uniformT (
+                double *, //coordinate of particle
+                double *, //internal energy of particle
+                double *, //pressure
+                double *  //density
+        );
+//overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
+//Function that will give a "uniform temperature" atmosphere ---> which is not realistic for sure
+//Used for code testing
+//Gravity coefficient will be set to 9.81 -->This is different from uniform environment.
+void air_prop_uniformT (
+                double *, //coordinate of particle
+                double *, //range of the space which is occupied by the particle [xmin, xmax, ymin, ymax, zmin, zmax]
+                double *, //internal energy of particle
+                double *, //pressure
+                double *, //density
+                double *  //particle mass
+                );
 //function that used to determine only internal energy based on altitude.
 //This function is based on a less realistic model: hydrostatic model
 //This function will be used while imposing wall boundary condition
