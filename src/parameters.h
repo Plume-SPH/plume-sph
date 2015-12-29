@@ -18,7 +18,7 @@
 
 const double Lx_P[2]={-12000,12000};
 const double Ly_P[2]={-12000,12000};
-const double Lz_P[2]={0, 22000};
+const double Lz_P[2]={0, 23000};
 
 const int N_total_P=2700;  // This one is actually not used in current code!
 
@@ -102,8 +102,8 @@ const int num_erupt_particles = 1400; //number of particle in the initial erupt 
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
-const double alf_P=0.5;
-const double beta_P=1.;
+const double alf_P=0.3;
+const double beta_P=6.;
 const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length
