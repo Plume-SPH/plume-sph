@@ -18,11 +18,11 @@ struct BucketStruct
   int      buckettype; // bucket type: Mixed, over ground ect....
   int      myproc;
   int      neigh_proc[NEIGH_SIZE];//corresponding process id of neighbor buckets
+  int      bucket_index[2*DIMENSION];
   double   xcoord[2];
   double   ycoord[2];
   double   zcoord[2];
   double   elev[4]; //elev only needed for onground MIXED bucket.
-  int      bucket_index[2*DIMENSION];
 };
 
 #endif /* BUCKSTR_H_ */
