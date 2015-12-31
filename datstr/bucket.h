@@ -27,42 +27,130 @@ const int EXPT_SECND_BIT_UP = 0xD;
 const int EXPT_THIRD_BIT_UP = 0xB;
 const int EXPT_FOURTH_BIT_UP = 0x7;
 
+//brief summary of bucket
+//This is used to store empty bucket
+//other class will be derived based on this most basic class:
+class BriefBucket
+{
+	  // friends in repartition
+	  friend void pack_bucket (BriefBucketPack *, BriefBucket *, int);
+	  friend void unpack_bucket (BriefBucketPack *, BriefBucket *, int);
+protected:
+	  int myprocess;   //the myprocess is the id of process where the bucket originally belong to--> that is to say, for guest buckets, myprocess should be the id of its own home.
+	  int neigh_proc[NEIGH_SIZE];  //neighbor processes
+	  Key key;
+	  double mincrd[DIMENSION];
+public:
+	  BriefBucket();
+	  BriefBucket(
+	    		//!key
+	    		unsigned *,
+	    		//! Minimum coordinates
+	    		double *,
+	            //! my procees id
+	            int ,
+	            //! Neighbor process info
+	            int *
+	            );
+	  //! change process id (only called from repartition)
+	  void put_myprocess (int myid)
+	  {
+	    myprocess = myid;
+	  }
+
+	  //! get my process id
+	  int get_myprocess ()
+	  {
+	    return myprocess;
+	  }
+
+	  // update neigh_proc
+	  void put_neigh_proc (int *, int);
+
+	  //! get neigh_proc info. neigh_proc also tells if neigh is boundary
+	  const int *get_neigh_proc () const
+	  {
+	    return neigh_proc;
+	  }
+
+	  //! get neigh_proc info in up, down etc direction
+	  int which_neigh_proc (int dir[]) const;
+
+	  //! Access HT key of current bucket
+	  Key getKey () const
+	  {
+	    return key;
+	  }
+
+	  //! Compare hash-table keys for equality
+	  bool compare_keys (Key k1, Key k2) const
+	  {
+	    for (int i = 0; i < KEYLENGTH; i++)
+	      if (k1.key[i] != k2.key[i])
+	        return false;
+	    return true;
+	  }
+
+	  //! Access minimum coordinates of current bucket
+	  const double *get_mincrd () const
+	  {
+	    return mincrd;
+	  }
+
+//	  //! overload get neigh_proc info. neigh_proc also tells if neigh is boundary
+//	  void get_neigh_proc (int * neigh_pc, int *np, int np_total)
+//	  {
+//	    int i, k;
+//	    k=0;
+//	    for (i=0; i<NEIGH_SIZE; i++)
+//	    {
+//	    	if (neigh_proc[i]>0 && neigh_proc[i]<np_total) //make sure that the id of processor is valid
+//	    	{
+//	    		neigh_pc[k]=neigh_proc[i];
+//	    		k++;
+//	    	}
+//	    }
+//
+//	    *np = k;
+//	  }
+
+};
+
 // Bucket is a unit of background mesh
-class Bucket
+class Bucket: public BriefBucket
 {
   // friends in repartition
   friend void pack_bucket (BucketPack *, Bucket *, int);
   friend void unpack_bucket (BucketPack *, Bucket *, int);
 
-private:
-    Key key;
-    Key neighbors[NEIGH_SIZE];   //neighbor buckets
-
-  double lb_weight;
-  double mincrd[DIMENSION];
-  double maxcrd[DIMENSION];//domain information
-  double poly[4];
-  double bnd[2*DIMENSION];
-
-  int has_involved; /*flag that used to determine what kind of particles does the bucekt contain
-                     * 0 : no involved particles
-                     * 1 : has potential involved particles
-                     * 2 : only has involved particles
-                     * 3 : has both involved particles and potential involved particles
-                    */
-//  int newold;
-  int myprocess;   //the myprocess is the id of process where the bucket originally belong to--> that is to say, for guest buckets, myprocess should be the id of its own home.
-  int particles_type; // used to determine whether bucket has ghost or not.
-  int bucket_type; //mixed, pressure_bc, underground, overground... 0: invalid bucket
-  int bucket_index[2*DIMENSION];//used to determine bucket type.
-  int neigh_proc[NEIGH_SIZE];  //neighbor processes
-
+protected:
   bool active;
   bool guest_flag;
   bool erupt_flag;/*flag that used to indicate the bucket is source bucket or not
                     * if erupt_flag = true, it is eruption bucket
                     * if erupt_flag = false, it is not eruption bucket
                     * */
+
+  int has_involved; /*flag that used to determine what kind of particles does the bucekt contain
+                      * 0 : no involved particles
+                      * 1 : has potential involved particles
+                      * 2 : only has involved particles
+                      * 3 : has both involved particles and potential involved particles
+                     */
+ //  int newold;
+   int particles_type; // used to determine whether bucket has ghost or not.
+   int bucket_type; //mixed, pressure_bc, underground, overground... 0: invalid bucket
+
+  double lb_weight;
+
+  int bucket_index[2*DIMENSION];//used to determine bucket type.
+
+  Key neighbors[NEIGH_SIZE];   //neighbor buckets
+
+  double maxcrd[DIMENSION];//domain information
+  double poly[4];
+  double bnd[2*DIMENSION];
+
   vector < TKey > particles;
   vector < TKey > new_plist;
 
@@ -97,12 +185,6 @@ public:
             double*
             );
 
-  //! change process id (only called from repartition)
-  void put_myprocess (int myid)
-  {
-    myprocess = myid;
-  }
-
   //! put repartition weights
   void put_lb_weight (double wght)
   {
@@ -113,12 +195,6 @@ public:
   void put_guest_flag (int fl)
   {
     guest_flag = fl;
-  }
-
-  //! add a particle to the bucket
-  void add_particle (TKey pk)
-  {
-    new_plist.push_back (pk);
   }
 
   //! put a list of particles
@@ -239,30 +315,7 @@ public:
 	  particles_type = in;
    }
 
-//  //! put newold information
-//  void put_new_old (int info)
-//  {
-//    newold = info;
-//  }
-
   // access methods
-  //! Access HT key of current bucket
-  Key getKey () const
-  {
-    return key;
-  }
-
-  //! get my process id
-  int get_myprocess ()
-  {
-    return myprocess;
-  }
-
-  //! Access minimum coordinates of current bucket
-  const double *get_mincrd () const
-  {
-    return mincrd;
-  }
 
   //! Access maximum coordinates of current bucket
   const double *get_maxcrd () const
@@ -294,25 +347,10 @@ public:
 	  return particles;
   }
 
-//  //! get newold info
-//  int get_new_old ()
-//  {
-//    return newold;
-//  }
-
   //! get repartition weights
   double get_lb_weight () const
   {
     return lb_weight;
-  }
-
-  //! Compare hash-table keys for equality
-  bool compare_keys (Key k1, Key k2) const
-  {
-    for (int i = 0; i < KEYLENGTH; i++)
-      if (k1.key[i] != k2.key[i])
-        return false;
-    return true;
   }
 
   //! Value of elevation z(x,y) using linear interpolation, it will be only called by Mixed Buckets
@@ -349,9 +387,6 @@ public:
   {
     return bucket_index;
   }
-
-  // update neigh_proc
-  void put_neigh_proc (int *, int);
 
   /*!
    * distance of point from the boundary,
@@ -425,34 +460,8 @@ public:
     return neighbors;
   }
 
-  //! get neigh_proc info. neigh_proc also tells if neigh is boundary
-  const int *get_neigh_proc () const
-  {
-    return neigh_proc;
-  }
-
-  //! overload get neigh_proc info. neigh_proc also tells if neigh is boundary
-  void get_neigh_proc (int * neigh_pc, int *np, int np_total)
-  {
-    int i, k;
-    k=0;
-    for (i=0; i<NEIGH_SIZE; i++)
-    {
-    	if (neigh_proc[i]>0 && neigh_proc[i]<np_total) //make sure that the id of processor is valid
-    	{
-    		neigh_pc[k]=neigh_proc[i];
-    		k++;
-    	}
-    }
-
-    *np = k;
-  }
-
   //! get HT key of the neighbor is  up,down etc direction
   Key which_neigh (int dir[]) const;
-
-  //! get neigh_proc info in up, down etc direction
-  int which_neigh_proc (int dir[]) const;
 
   //! find out direction of the neighbor
   bool find_neigh_dir (Key k, int dir[]) const;
@@ -482,6 +491,12 @@ public:
   bool determine_escape (
 		  double * // position of particles
 		  );
+
+  //! add a particle to the bucket
+  void add_particle (TKey pk)
+  {
+    new_plist.push_back (pk);
+  }
 
   //*! Add particles for initial piles.
   void add_real_particle (TKey k)
@@ -515,17 +530,6 @@ public:
     particles.push_back (k);
   }
 
-  //! Add ghost particles to the bucket
-  int put_ghost_particles (
-    //! Particle HashTable
-    THashTable *,
-    //! Background Mesh
-    HashTable *,
-    //! Material properties
-    MatProps *,
-    //! Time properties
-    TimeProps*
-    );
   //! overloading Add ghost particles to the bucket
   int put_ghost_particles ();
 

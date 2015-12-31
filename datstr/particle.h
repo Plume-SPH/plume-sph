@@ -31,7 +31,7 @@ class Particle
   friend void particle_deb (int myid);
 #endif
 
-private:
+protected:
 
   //! Data Structure properties
   TKey key;

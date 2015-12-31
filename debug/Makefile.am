@@ -14,4 +14,5 @@ libdebug_a_SOURCES = \
 
 libdebug_a_CPPFLAGS = -I$(top_srcdir)/datstr \
                       -I$(top_srcdir)/src \
-                      -I$(top_srcdir)/multiproc 
+                      -I$(top_srcdir)/multiproc \
+                      -I$(top_srcdir)/preproc

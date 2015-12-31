@@ -47,6 +47,14 @@ struct ParticlePack
   double state_vars[NO_OF_EQNS];// rho, v , e
 };
 
+struct BriefBucketPack
+{
+	int myprocess;
+	int neigh_proc[NEIGH_SIZE];
+	unsigned key[KEYLENGTH];
+	double mincrd[DIMENSION];
+};
+
 struct BucketPack
 {
   // Integers

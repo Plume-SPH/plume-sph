@@ -50,6 +50,4 @@ particler_LDADD = $(top_builddir)/datstr/libbgmesh.a \
                   $(top_builddir)/debug/libdebug.a \
                   libgmfghdf5.a libgmfgsph.a
 
-#funky2ascii_SOURCES = funky2txt.cc hdf5calls.h
-#funky2ascii_LDADD = libgmfghdf5.a
 

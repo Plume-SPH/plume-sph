@@ -24,36 +24,84 @@ int ineigh[3][3][3] = {{{13, 12, 14}, {10,  9, 11}, {16, 15, 17}},
                        {{4,   3,  5}, {1,   0,  2}, {7,   6,  8}},
                        {{22, 21, 23}, {19, 18, 20}, {25, 24, 26}}
                       };
+//default constructor
+BriefBucket::BriefBucket ()
+{
+  int i;
+
+  myprocess = -1;
+  for (i = 0; i < DIMENSION; i++)
+    mincrd[i] = 0.;
+  for (i = 0; i < NEIGH_SIZE; i++)
+    neigh_proc[i] = -1;
+  for (i = 0; i < KEYLENGTH; i++)
+	  key.key[i] = 0;
+
+  return;
+}
+
+BriefBucket::BriefBucket (unsigned *keyi, double *minx, int myid, int *nproc)
+{
+  int i;
+  myprocess = myid;
+  for (i = 0; i < KEYLENGTH; i++)
+    key.key[i] = keyi[i];
+  for (i = 0; i < DIMENSION; i++)
+    mincrd[i] = minx[i];
+  for (i = 0; i < NEIGH_SIZE; i++)
+    neigh_proc[i] = nproc[i];
+} // end constuctor
+
+void
+BriefBucket::put_neigh_proc (int dir[], int proc)
+{
+  int i = dir[0], j = dir[1], k = dir[2];
+
+  neigh_proc[ineigh[i][j][k]] = proc;
+  return;
+}
+
+int
+BriefBucket::which_neigh_proc (int dir[]) const
+{
+  int i, j, k;
+
+  i = dir[0];
+  j = dir[1];
+  k = dir[2];
+  return neigh_proc[ineigh[i][j][k]];
+}
 
 // constructors with bucket_index as input
 // bnd_xcrd ect does not matter
 // bnd is determined.
 // bnd_xcrd might be useful when ground is not flat
 Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
-                double *elev, int myid, int *nproc, Key * neigh, int* bt, double* flat)
+                double *elev, int myid, int *nproc, Key * neigh, int* bt,
+				double* flat) : BriefBucket (keyi, minx, myid, nproc)
 {
   erupt_flag = false;
   int i;
 
   bucket_type = buck_type;
-  myprocess = myid;
+//  myprocess = myid;
   guest_flag = 0;
   active = false;
   particles_type = 0;
   has_involved = 0;
 
-  for (i = 0; i < KEYLENGTH; i++)
-    key.key[i] = keyi[i];
+//  for (i = 0; i < KEYLENGTH; i++)
+//    key.key[i] = keyi[i];
 
   for (i = 0; i < DIMENSION; i++)
   {
-    mincrd[i] = minx[i];
+//    mincrd[i] = minx[i];
     maxcrd[i] = maxx[i];
   }
   for (i = 0; i < NEIGH_SIZE; i++)
   {
     neighbors[i] = neigh[i];
-    neigh_proc[i] = nproc[i];
+//    neigh_proc[i] = nproc[i];
   }
 
   for (i=0; i<2*DIMENSION; i++)
@@ -117,13 +165,13 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
   }
 } // end constuctor
 
-Bucket::Bucket ()
+Bucket::Bucket () : BriefBucket()
 {
   erupt_flag = false;
 
   int i, j;
 
-  myprocess = -1;
+//  myprocess = -1;
   active = false;
   guest_flag = 0;
   bucket_type = 0;
@@ -132,7 +180,7 @@ Bucket::Bucket ()
 
   for (i = 0; i < DIMENSION; i++)
   {
-    mincrd[i] = 0.;
+//    mincrd[i] = 0.;
     maxcrd[i] = 0.;
   }
 
@@ -142,7 +190,7 @@ Bucket::Bucket ()
 
   for (i = 0; i < NEIGH_SIZE; i++)
   {
-    neigh_proc[i] = -1;
+//    neigh_proc[i] = -1;
     for (j = 0; j < KEYLENGTH; j++)
       neighbors[i].key[j] = 0;
   }
@@ -191,26 +239,6 @@ Bucket::which_neigh (int dir[]) const
   j = dir[1];
   k = dir[2];
   return neighbors[ineigh[i][j][k]];
-}
-
-int
-Bucket::which_neigh_proc (int dir[]) const
-{
-  int i, j, k;
-
-  i = dir[0];
-  j = dir[1];
-  k = dir[2];
-  return neigh_proc[ineigh[i][j][k]];
-}
-
-void
-Bucket::put_neigh_proc (int dir[], int proc)
-{
-  int i = dir[0], j = dir[1], k = dir[2];
-
-  neigh_proc[ineigh[i][j][k]] = proc;
-  return;
 }
 
 bool
