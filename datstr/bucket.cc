@@ -84,25 +84,16 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
   int i;
 
   bucket_type = buck_type;
-//  myprocess = myid;
   guest_flag = 0;
   active = false;
   particles_type = 0;
   has_involved = 0;
 
-//  for (i = 0; i < KEYLENGTH; i++)
-//    key.key[i] = keyi[i];
-
   for (i = 0; i < DIMENSION; i++)
-  {
-//    mincrd[i] = minx[i];
     maxcrd[i] = maxx[i];
-  }
+
   for (i = 0; i < NEIGH_SIZE; i++)
-  {
     neighbors[i] = neigh[i];
-//    neigh_proc[i] = nproc[i];
-  }
 
   for (i=0; i<2*DIMENSION; i++)
 	  bucket_index[i]=bt[i];
@@ -171,7 +162,6 @@ Bucket::Bucket () : BriefBucket()
 
   int i, j;
 
-//  myprocess = -1;
   active = false;
   guest_flag = 0;
   bucket_type = 0;
@@ -179,21 +169,17 @@ Bucket::Bucket () : BriefBucket()
   has_involved = 0;
 
   for (i = 0; i < DIMENSION; i++)
-  {
-//    mincrd[i] = 0.;
     maxcrd[i] = 0.;
-  }
+
 
   for (i = 0; i < 4; i++)
     poly[i] = 0.2; //0.2 for poly means useless for this kind of buckets.
 
 
   for (i = 0; i < NEIGH_SIZE; i++)
-  {
-//    neigh_proc[i] = -1;
     for (j = 0; j < KEYLENGTH; j++)
       neighbors[i].key[j] = 0;
-  }
+
   particles.clear ();
   new_plist.clear ();
   return;

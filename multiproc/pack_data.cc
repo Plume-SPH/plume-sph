@@ -31,8 +31,24 @@ using namespace std;
 #include <particle.h>
 #include "pack_data.h"
 
+// pack brief buck
+void pack_bucket (BriefBucketPack *buckpack, BriefBucket *sendbuck, int process)
+{
+  int i;
+  buckpack->myprocess = process;
+  for (i=0; i<KEYLENGTH; i++)
+    buckpack->key[i] = sendbuck->key.key[i];
 
-// for BSFC repartitioning scheme
+  for (i = 0; i < NEIGH_SIZE; i++)
+    buckpack->neigh_proc[i] = sendbuck->neigh_proc[i];
+
+  for (i=0; i < DIMENSION; i++)
+    buckpack->mincrd[i] = sendbuck->mincrd[i];
+
+  return;
+}
+
+// pack buck
 void pack_bucket (BucketPack *buckpack, Bucket *sendbuck, int process)
 {
   int j, i;
@@ -116,7 +132,26 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   return;
 }
 
+//unpack brief bucket
+void unpack_bucket (BriefBucketPack *recvdBuck, BriefBucket *buck, int myid)
+{
+  int i;
 
+  buck->myprocess = myid;//Why do not use recvdBuck->myprocess? Need double check!
+
+  for ( i=0; i < KEYLENGTH; i++ )
+    buck->key.key[i] = recvdBuck->key[i];
+
+  for ( i=0; i < NEIGH_SIZE; i++ )
+    buck->neigh_proc[i] = recvdBuck->neigh_proc[i];
+
+  for ( i=0; i < DIMENSION; i++ )
+    buck->mincrd[i] = recvdBuck->mincrd[i];
+
+  return;
+}
+
+//unpack bucket
 void unpack_bucket (BucketPack *recvdBuck, Bucket *buck, int myid)
 {
 

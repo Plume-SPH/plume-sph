@@ -20,7 +20,7 @@
 #  define EXVAR_H
 
 #  include <mpi.h>
-
+extern MPI_Datatype BRIEF_BUCKET_TYPE;
 extern MPI_Datatype BUCKET_TYPE;
 extern MPI_Datatype PARTICLE_TYPE;
 extern MPI_Datatype BND_IMAGE_TYPE;

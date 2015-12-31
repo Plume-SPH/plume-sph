@@ -55,6 +55,9 @@ struct BriefBucketPack
 	double mincrd[DIMENSION];
 };
 
+//It is not a good idea to derive BucketPack from BriefBucketPack
+//Because that will change the order of members --> as results, corresponding MPI data structure also need to be changed
+//It will definitely cause trouble in the future
 struct BucketPack
 {
   // Integers

@@ -97,23 +97,6 @@ public:
 	    return mincrd;
 	  }
 
-//	  //! overload get neigh_proc info. neigh_proc also tells if neigh is boundary
-//	  void get_neigh_proc (int * neigh_pc, int *np, int np_total)
-//	  {
-//	    int i, k;
-//	    k=0;
-//	    for (i=0; i<NEIGH_SIZE; i++)
-//	    {
-//	    	if (neigh_proc[i]>0 && neigh_proc[i]<np_total) //make sure that the id of processor is valid
-//	    	{
-//	    		neigh_pc[k]=neigh_proc[i];
-//	    		k++;
-//	    	}
-//	    }
-//
-//	    *np = k;
-//	  }
-
 };
 
 // Bucket is a unit of background mesh

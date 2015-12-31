@@ -33,6 +33,7 @@
 #include "pack_data.h"
 #include "repartition_BSFC.h"
 
+MPI_Datatype BRIEF_BUCKET_TYPE;
 MPI_Datatype BUCKET_TYPE;
 MPI_Datatype PARTICLE_TYPE;
 MPI_Datatype BND_IMAGE_TYPE;
@@ -42,43 +43,65 @@ MPI_Datatype INVOLVED_HEADER_TYPE;
 void
 GMFG_new_MPI_Datatype ()
 {
-//MPI data structure for bucket
-  int blockcounts[3];
-  MPI_Datatype types[3];
-  MPI_Aint displs[3];
+
+//MPI data structure for brief bucket
+  int blockcounts0[3];
+  MPI_Datatype types0[3];
+  MPI_Aint displs0[3];
   int d;
-  BucketPack * buck = new BucketPack;
+  BriefBucketPack * brief_buck = new BriefBucketPack;
 
-  blockcounts[0] = 7 + NEIGH_SIZE + 2*DIMENSION;
-  blockcounts[1] = KEYLENGTH * (1 + NEIGH_SIZE) + MAX_PARTICLES_PER_BUCKET * TKEYLENGTH ;
-  blockcounts[2] = (4 * DIMENSION) + 4;
-  MPI_Address (&(buck->myprocess), &displs[0]);
-  MPI_Address (&(buck->key[0]), &displs[1]);
-  MPI_Address (&(buck->mincrd[0]), &displs[2]);
+  blockcounts0[0] = 1+NEIGH_SIZE;
+  blockcounts0[1] = KEYLENGTH;
+  blockcounts0[2] = DIMENSION;
+  MPI_Address (&(brief_buck->myprocess), &displs0[0]);
+  MPI_Address (&(brief_buck->key[0]), &displs0[1]);
+  MPI_Address (&(brief_buck->mincrd[0]), &displs0[2]);
 
-  types[0] = MPI_INT;
-  types[1] = MPI_UNSIGNED;
-  types[2] = MPI_DOUBLE;
+  types0[0] = MPI_INT;
+  types0[1] = MPI_UNSIGNED;
+  types0[2] = MPI_DOUBLE;
 
   for (d = 2; d >= 0; d--)// disp is the relative displacement, what MPI_Address return is absolute disp. That is why we need this step here!
-    displs[d] -= displs[0];
+    displs0[d] -= displs0[0];
 
-  MPI_Type_struct (3, blockcounts, displs, types, &BUCKET_TYPE);
-  MPI_Type_commit (&BUCKET_TYPE);
+  MPI_Type_struct (3, blockcounts0, displs0, types0, &BRIEF_BUCKET_TYPE);
+  MPI_Type_commit (&BRIEF_BUCKET_TYPE);
 
-  //create the 2nd new d_type-->MPI data structure for particle
+  //MPI data structure for bucket
+    int blockcounts[3];
+    MPI_Datatype types[3];
+    MPI_Aint displs[3];
+    BucketPack * buck = new BucketPack;
+
+    blockcounts[0] = 7 + NEIGH_SIZE + 2*DIMENSION;
+    blockcounts[1] = KEYLENGTH * (1 + NEIGH_SIZE) + MAX_PARTICLES_PER_BUCKET * TKEYLENGTH ;
+    blockcounts[2] = (4 * DIMENSION) + 4;
+    MPI_Address (&(buck->myprocess), &displs[0]);
+    MPI_Address (&(buck->key[0]), &displs[1]);
+    MPI_Address (&(buck->mincrd[0]), &displs[2]);
+
+    types[0] = MPI_INT;
+    types[1] = MPI_UNSIGNED;
+    types[2] = MPI_DOUBLE;
+
+    for (d = 2; d >= 0; d--)// disp is the relative displacement, what MPI_Address return is absolute disp. That is why we need this step here!
+      displs[d] -= displs[0];
+
+    MPI_Type_struct (3, blockcounts, displs, types, &BUCKET_TYPE);
+    MPI_Type_commit (&BUCKET_TYPE);
+
+  //MPI data structure for particle
   int blockcounts2[3];
   MPI_Datatype types2[3];
   MPI_Aint displs2[3];
 
   ParticlePack * particlePack = new ParticlePack;
 
-  // 1 int , 2 unsigned, bunch of doubles
   blockcounts2[0] = 5;
   blockcounts2[1] = TKEYLENGTH;
   blockcounts2[2] = 3 + 2*DIMENSION + NO_OF_EQNS;
 
-  // get adresses
   MPI_Address (&(particlePack->bc_type), &displs2[0]);
   MPI_Address (&(particlePack->key), &displs2[1]);
   MPI_Address (&(particlePack->mass), &displs2[2]);
@@ -93,7 +116,7 @@ GMFG_new_MPI_Datatype ()
   MPI_Type_struct (3, blockcounts2, displs2, types2, &PARTICLE_TYPE);
   MPI_Type_commit (&PARTICLE_TYPE);
 
-  // create 3rd datatype for Boundary Images
+  // create datatype for Boundary Images
   int blockcounts3[3] = { 2, TKEYLENGTH + KEYLENGTH, DIMENSION + NO_OF_EQNS };
   MPI_Datatype type3[3] = { MPI_INT, MPI_UNSIGNED, MPI_DOUBLE };
   MPI_Aint displs3[3];
@@ -111,7 +134,6 @@ GMFG_new_MPI_Datatype ()
   MPI_Type_struct (3, blockcounts3, displs3, type3, &BND_IMAGE_TYPE);
   MPI_Type_commit (&BND_IMAGE_TYPE);
 
-  //This is not necessary to change!
   // create 4th datatype for SFC verticies
   int blockcounts6[3] = {3,KEYLENGTH+1,1};
   MPI_Datatype types6[3] = {MPI_INT, MPI_UNSIGNED, MPI_FLOAT};
@@ -134,7 +156,6 @@ GMFG_new_MPI_Datatype ()
   MPI_Datatype type5[2] = { MPI_INT, MPI_UNSIGNED};
   MPI_Aint displs5[2];
 
-  // get adresses
   InvolvedHead * involvedhead = new InvolvedHead();
 
   MPI_Address (&(involvedhead->has_involved), &(displs5[0]));

@@ -11,6 +11,7 @@
 void create_indmpi_struct()
 {
  //Define a new MPI data type corresponding to IndMap
+ //Used for setting up initial condition by solving system of equations!
     int one=1;
     MPI_Aint zero=0;
     int tkeylength = TKEYLENGTH;

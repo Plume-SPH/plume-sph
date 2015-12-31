@@ -157,6 +157,15 @@ void BSFC_create_bins(
                        int numprocs);
 
 //! Packs bucket data for migration
+//for brief bucket
+void pack_bucket(
+                  //! packet for bucket data
+		          BriefBucketPack *,
+                  //! pointer to the bucket being packed
+				  BriefBucket *,
+                  //! destination process id
+                  int);
+//for bucket
 void pack_bucket(
                   //! packet for bucket data
                   BucketPack *,
@@ -166,11 +175,20 @@ void pack_bucket(
                   int);
 
 //! Unpacks bucket data from recieved packets
+//for brief bucket
 void unpack_bucket(
                     //! pointer to recieved bucket packet
-                    ParticlePack *,
+		            BucketPack *,
                     //! pointer to bucket to be filled
                     Bucket *,
+                    //! current process id
+                    int);
+//for bucket
+void unpack_bucket(
+                    //! pointer to recieved bucket packet
+		            BriefBucketPack *,
+                    //! pointer to bucket to be filled
+					BriefBucket *,
                     //! current process id
                     int);
 
