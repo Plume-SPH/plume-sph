@@ -38,8 +38,9 @@ const double EXT_DOM_COF_BOT = 1.5;//Coefficient that used to extend  -z directi
 const int PARTICLE_DENSITY=6;
 
 // Bucket TYPES
+const int BREIF = 0x0;  //Brief bucket which is totally empty
 const int UNDERGROUND = 0xA;  //10
-const int MIXED       = 0xB;  //11
+const int MIXED       = 0xB;  //11  -->MIXED is important, it contains boundary info
 const int OVERGROUND  = 0xC;  //12
 const int PRESS_BC    = 0xD;  //13
 

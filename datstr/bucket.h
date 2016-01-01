@@ -97,6 +97,86 @@ public:
 	    return mincrd;
 	  }
 
+	  //The following are virtual member functions
+	  //! Access has_involved flag
+	  virtual int get_has_involved ()
+	  {
+	    return HAS_NON_INVOLVED;
+	  }
+
+	  //! get list of particles in the current bucket -->return nothing
+	  virtual vector < TKey > get_plist ()
+	  {
+		  return vector<TKey>();
+	  }
+
+	  //! Access bucket-type
+	  virtual int get_bucket_type ()
+	  {
+	    return BREIF;
+	  }
+
+	  //! check if bucket belongs to different proc
+	  virtual int is_guest ()
+	  {
+	    return false;
+	  }
+
+	  //! Check is the bucket is active/inactive
+	  virtual bool is_active ()
+	   {
+	     return false;
+	   }
+
+	   //! Check is the eruption source or not
+	  virtual bool is_erupt ()
+	   {
+	     return false;
+	   }
+
+	   //! check if bucket has any real particles
+	  virtual bool has_real_particles ()
+	   {
+	     return false;
+	   }
+
+	   //! check if bucket has wall ghost particles
+	  virtual bool has_wall_ghost_particles ()
+	   {
+	     return false;
+	   }
+
+	   //! check if bucket has pressure ghost particles
+	  virtual bool has_pressure_ghost_particles ()
+	   {
+	     return false;
+	   }
+
+	   //! check if bucket has erupt ghost particles
+	  virtual bool has_erupt_ghost_particles ()
+	   {
+	     return false;
+	   }
+
+
+	   //! check if bucket has potential involved particle
+	  virtual bool is_has_potential_involved ()
+	   {
+	     return false;
+	   }
+
+	   //! check if bucket has potential involved particle
+	  virtual bool is_has_involved ()
+	   {
+	     return false;
+	   }
+
+	  //! Check if the bucket is on ground or under ground
+	  virtual  bool is_onground_or_underground ()
+	  {
+		  return false;
+	  }
+
 };
 
 // Bucket is a unit of background mesh
@@ -380,6 +460,12 @@ public:
   bool is_onground () const
   {
 	  return (bucket_index[4] == -1 && bucket_index[5] == 0);
+  }
+
+  //! Check if the bucket is on ground or under ground
+  bool is_onground_or_underground () const
+  {
+	  return (bucket_index[4] == -1);
   }
 
   //! Check is the bucket is active/inactive
