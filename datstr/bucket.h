@@ -475,6 +475,13 @@ public:
 		  double * // position of particles
 		  );
 
+  //function that used to determine the type of bucket
+  //--->This is actually exactly the same as the bucket type determine function from preprocess
+  //--->Remember to update this section when any modification is made in preprocess
+  void determine_bucket_type (
+		  double *,
+          double *);
+
   //! add a particle to the bucket
   void add_particle (TKey pk)
   {

@@ -103,7 +103,7 @@ const int num_erupt_particles = 1400; //number of particle in the initial erupt 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
 const double alf_P=0.3;
-const double beta_P=6.;
+const double beta_P=0.6;
 const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length

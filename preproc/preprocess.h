@@ -57,20 +57,6 @@ void createfunky(
                  //! partition table keys
                  vector <unsigned> &
                 );
-
-//! Generate key based on location
-void determine_the_key (
-                //! Normalized coordinates
-                double ,
-                //! Keylength
-                unsigned ,
-                //! key to be generated
-                unsigned ,
-                //! Max key
-                unsigned ,
-                //! Min key
-                unsigned
-                );
 //function that used to determine the type of bucket
 void determine_bucket_type
                (

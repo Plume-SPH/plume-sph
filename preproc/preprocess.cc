@@ -65,34 +65,6 @@ void usage_flatg()
   cerr <<"Ideal Flat Ground, Usage :"<< "./preprocess <nproc> <smooth-length> <gis-flag>" << endl;
   exit(0);
 }
-void get_plane_coef(double x[], double y[], double z[], double poly[])
-{
-  double temp1 = z[1] - z[0];
-  double temp2 = x[1] - x[0];
-  double temp3 = sqrt(pow(temp1,2)+pow(temp2,2));
-  poly[0] = -temp1/temp3;
-  poly[1] = temp2/temp3;
-  poly[2] = (temp1*x[0]-temp2*z[0])/temp3;
-  return;
-}
-
-bool compare_keys ( const PartiHead  & buck1, const PartiHead & buck2)
-{
-
-	  if (buck1.key[0] < buck2.key[0])
-	    return true;
-	  else if (buck1.key[0] > buck2.key[0])
-	    return false;
-	  else if (buck1.key[1] < buck2.key[1])
-	    return true;
-	  else
-	    return false;
-
-  cerr << "ERROR: Two keys match exactly, expand keylength" << endl;
-  cerr << buck1.key[0] <<", " << buck1.key[1] << " == "
-          << buck2.key[0] <<", " << buck2.key[1] << endl;
-  exit(1);
-}
 
 int main(int argc, char *argv[])
 {
@@ -373,21 +345,10 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-void determine_the_key(double norm_coord[], unsigned nkey, unsigned key[],
-                             unsigned ma[], unsigned mi[])
-{
-  // call Hilbert's Space Filling Curve
-  HSFC3d (norm_coord, &nkey, key);
-
-//    int i;
-
-  if(key[0]>ma[0] || (key[0]==ma[0] && key[1]>ma[1])) {ma[0]=key[0]; ma[1]=key[1];}
-  if(key[0]<mi[0] || (key[0]==mi[0] && key[1]<mi[1])) {mi[0]=key[0]; mi[1]=key[1];}
-
-  return;
-}
-
 //function that used to determine the value of face by the face's index;
+//-->remember to update corresponding member function in bucket class
+//-->determine of face type also defined in sph-lib, so also need to be updated there if any modification made here
+//I should do something so that only one such function show up ---> to avoid having the same function at different directory!
 int determine_face_type (double crd, double max, double min)
 {
 	int flag;
@@ -403,6 +364,9 @@ int determine_face_type (double crd, double max, double min)
 }
 
 //function that used to determine the type of bucket
+//-->remember to update corresponding member function in bucket class
+//-->determine of face type also defined in sph-lib, so also need to be updated there if any modification made here
+//I should do something so that only one such function show up ---> to avoid having the same function at different directory!
 void determine_bucket_type (double *mincrd, double *maxcrd, double *xcrd, double *ycrd, double *zcrd, int* type, int* bt)
 {
 	int flag[DIMENSION];

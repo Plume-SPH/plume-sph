@@ -107,7 +107,6 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
 	     else
 	    	bnd[i]= 0.1;
 	 }
-
   }
   else
   {
@@ -171,10 +170,8 @@ Bucket::Bucket () : BriefBucket()
   for (i = 0; i < DIMENSION; i++)
     maxcrd[i] = 0.;
 
-
   for (i = 0; i < 4; i++)
     poly[i] = 0.2; //0.2 for poly means useless for this kind of buckets.
-
 
   for (i = 0; i < NEIGH_SIZE; i++)
     for (j = 0; j < KEYLENGTH; j++)
@@ -413,4 +410,91 @@ Bucket::determine_escape (double * pos)
 		}
 	}
 	return false;
+}
+
+//function that used to determine the value of face by the face's index;
+//--->This is actually exactly the same as the face type determine function from preprocess
+//--->Remember to update this section when any modification is made in preprocess
+//The name of the function is changed from determine_face_type to determine_face_index to avoid compile conflict
+int
+determine_face_index (double crd, double max, double min)
+{
+	int flag;
+
+	if (crd<min)
+		flag = -1;
+	else if (crd > max)
+		flag =1;
+	else
+		flag =0;
+
+	return flag;
+}
+
+//function that used to determine the type of bucket
+//--->This is actually exactly the same as the bucket type determine function from preprocess
+//--->Remember to update this section when any modification is made in preprocess
+void
+Bucket::determine_bucket_type (double *mindom, double *maxdom)
+{
+	int flag[DIMENSION];
+	int sum = 0;
+	int k;
+
+    bucket_index[0]=determine_face_index(mincrd[0],maxdom[0],mindom[0]);
+    bucket_index[1]=determine_face_index(maxcrd[0],maxdom[0],mindom[0]);
+    bucket_index[2]=determine_face_index(mincrd[1],maxdom[1],mindom[1]);
+    bucket_index[3]=determine_face_index(maxcrd[1],maxdom[1],mindom[1]);
+    bucket_index[4]=determine_face_index(mincrd[2],maxdom[2],mindom[2]);
+    bucket_index[5]=determine_face_index(maxcrd[2],maxdom[2],mindom[2]);
+
+    for (k=0; k<DIMENSION; k++)
+    	flag[k]=abs(bucket_index[2*k]+bucket_index[2*k+1]);
+
+    for (k=0; k<DIMENSION; k++)
+    	sum += flag[k];
+
+    if ( (flag[0]==2) || (flag[1]==2) || (flag[2]==2))
+    {
+    	if ((bucket_index[4] == -1) && (bucket_index[5] == -1)) //only bucket_index[5] == -1 is enough!
+    		bucket_type = 1; //underground
+    	else
+    		bucket_type = 4; //pressure bc
+    }
+
+    else if ( (flag[0]==1) || (flag[1]==1) || (flag[2]==1) )
+    	bucket_type = 2;     //Mixed
+    else if(sum == 0)
+    	bucket_type = 3;     //overground
+    else
+    {
+    	bucket_type = 0;     //invalid
+    	cout << "Invalid input bucket_index!!!" << endl;
+    }
+
+    /*Some buckets which are "underground" but also has ground boundary information are shift to MIXED
+
+        |
+        |                                        ORIGINAL DOMAIN
+        |
+        |                 Left boundary
+        |______________|_______!_______
+        |Orig:UNDG     |       !       |
+        |._._._._._._._|._._._.!_._._._|._._._.  Bottom Boundary
+        |Changed to:   |       !       |
+        |Mixed___ _____|_______!_______|_______
+        |              |       !       |
+        |              |       !       |
+        |              |       !       |
+        |______________|_______!_______|________________________
+
+         The bucket at the left
+         corner should still
+         be UNDERGROUND!
+    */
+
+    if (bucket_index[4]==-1 && bucket_index[5]==0)
+    	bucket_type = 2;
+
+    return ;
 }
