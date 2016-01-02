@@ -33,7 +33,6 @@ using namespace std;
 #include "sph_header.h"
 #include "particler.h"
 
-
 int
 main(int argc, char **argv)
 {

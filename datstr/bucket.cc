@@ -37,6 +37,8 @@ BriefBucket::BriefBucket ()
   for (i = 0; i < KEYLENGTH; i++)
 	  key.key[i] = 0;
 
+  is_brief = true;
+
   return;
 }
 
@@ -50,6 +52,8 @@ BriefBucket::BriefBucket (unsigned *keyi, double *minx, int myid, int *nproc)
     mincrd[i] = minx[i];
   for (i = 0; i < NEIGH_SIZE; i++)
     neigh_proc[i] = nproc[i];
+
+  is_brief = true;
 } // end constuctor
 
 void
@@ -153,6 +157,8 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
       if (isnan (poly[i]))
         exit (51);
   }
+
+  is_brief = false; //The old value true initialized by BriefBucket constructor is over written here
 } // end constuctor
 
 Bucket::Bucket () : BriefBucket()
@@ -179,6 +185,8 @@ Bucket::Bucket () : BriefBucket()
 
   particles.clear ();
   new_plist.clear ();
+
+  is_brief = false; //The old value true initialized by BriefBucket constructor is over written here
   return;
 }
 

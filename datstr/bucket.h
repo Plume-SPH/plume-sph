@@ -40,6 +40,9 @@ protected:
 	  int neigh_proc[NEIGH_SIZE];  //neighbor processes
 	  Key key;
 	  double mincrd[DIMENSION];
+	  bool is_brief; //Flag that used to indicate the basic type of bucket:
+	                 //True: the bucket is brief bucket
+	                 //False: the bucket is not brief bucket
 public:
 	  BriefBucket();
 	  BriefBucket(
@@ -95,6 +98,12 @@ public:
 	  const double *get_mincrd () const
 	  {
 	    return mincrd;
+	  }
+
+	  //! figure out whether the bucket is brief or not
+	  bool check_brief() const
+	  {
+		return is_brief;
 	  }
 
 	  //The following are virtual member functions

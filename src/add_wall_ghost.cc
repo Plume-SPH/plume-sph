@@ -111,7 +111,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	 //--->The reason why need to make sure the bucket is not empty is that for MIXED bucket that need to add wall ghost, it should already have either real particles or pressure ghost particle on up part of buckets which above boundary
 	 //But I need to make sure that wall ghost particles will not be added repeatedly ---> !Bnd_buck->has_wall_ghost_particles ()
      //Why do I need to make sure that bucket is non_empty? ---->because MIXED in which wall ghost needed should be active, as some pressure ghost has already been added and the bucket was marked as active.
-	  if ((Bnd_buck->is_onground_or_underground() && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
+	  if (Bnd_buck->is_onground_or_underground() && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
 	  {
 //      	    Bnd_buck->mark_active ();
 
