@@ -238,29 +238,37 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     //mark bucket as erupt_source
     HTIterator * itr = new HTIterator (BG_mesh);
     Bucket * Curr_buck;
+	BriefBucket *breif_buck = NULL;
+	void * tempptr =NULL;
+
     double coordtmp[DIMENSION];
     double mincrd[DIMENSION], maxcrd[DIMENSION];
     THTIterator * itr2 = new THTIterator (P_temp);
     Particle * Curr_part;
-    while ((Curr_buck = (Bucket *) itr->next ()))
-//      if (!Curr_buck->is_guest()) //Well, this is not necessary! ---> Maybe can also be updated in move data.
-      {
-    	/* Again --->even guest bucket need to be checked,
-    	 * ---> so that the synchronization is not needed
-    	 * */
-	    for (i = 0; i < DIMENSION; i++)
-	    {
-	        mincrd[i] = *(Curr_buck->get_mincrd () + i);
-	        maxcrd[i] = *(Curr_buck->get_maxcrd () + i);
-	    }
+    while (tempptr=itr->next ())
+    {
+    	breif_buck = (BriefBucket *) tempptr;
+    	if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+    		continue;
+    	else
+    	{
+    		Curr_buck = (Bucket*) tempptr;
+        	/* Again --->even guest bucket need to be checked,
+        	 * ---> so that the synchronization is not needed
+        	 * */
+    	    for (i = 0; i < DIMENSION; i++)
+    	    {
+    	        mincrd[i] = *(Curr_buck->get_mincrd () + i);
+    	        maxcrd[i] = *(Curr_buck->get_maxcrd () + i);
+    	    }
 
-	    //determine whether some portion of the bucket include
-	    erpt = determine_erupt_buket (mincrd, maxcrd, range_x, range_y, range_z);
+    	    //determine whether some portion of the bucket include
+    	    erpt = determine_erupt_buket (mincrd, maxcrd, range_x, range_y, range_z);
 
-	    if (erpt)
-	    	 Curr_buck->mark_erupt();
-
-      }// end of loop go through all buckets
+    	    if (erpt)
+    	    	 Curr_buck->mark_erupt();
+    	}//end of if bucket is not brief
+    }// end of loop go through all buckets
 
     /*go through all erupt buckets and
      * 1) delete all non-erupt ghost particles that within the range of the duct
@@ -274,107 +282,117 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     itr->reset();
     int bctp ;
     //go through all buckets
-    while ((Curr_buck = (Bucket *) itr->next ()))
-      if (Curr_buck->is_erupt ())
-      {
-    	  //set particles type to be 0
-    	  Curr_buck->put_particles_type (0);
+    while (tempptr=itr->next ())
+    {
+    	breif_buck = (BriefBucket *) tempptr;
+    	if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+    		continue;
+    	else
+    	{
+    		Curr_buck = (Bucket*) tempptr;
+    	      if (Curr_buck->is_erupt ())
+    	      {
+    	    	  //set particles type to be 0
+    	    	  Curr_buck->put_particles_type (0);
 
-    	  //check all particle in the erupt bucket and remove them when necessary!
-    	  pnew.clear();
-    	  plist = Curr_buck->get_particle_list ();
-    	  for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
-    	  {
-    		  pj = (Particle *) P_table->lookup(*p_itr);
-    		  assert (pj);
-    		  for (k=0; k<DIMENSION; k++)
-    			  crd_p[k] = *(pj->get_coords() + k);
+    	    	  //check all particle in the erupt bucket and remove them when necessary!
+    	    	  pnew.clear();
+    	    	  plist = Curr_buck->get_particle_list ();
+    	    	  for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+    	    	  {
+    	    		  pj = (Particle *) P_table->lookup(*p_itr);
+    	    		  assert (pj);
+    	    		  for (k=0; k<DIMENSION; k++)
+    	    			  crd_p[k] = *(pj->get_coords() + k);
 
-    		  dist = 0;
-    		  for (j=0; j<2; j++)
-    		      dist += (crd_p[j]*crd_p[j]);
+    	    		  dist = 0;
+    	    		  for (j=0; j<2; j++)
+    	    		      dist += (crd_p[j]*crd_p[j]);
 
-    		  if ((dist <= rvsq) && crd_p[2]<=range_z[1] && crd_p[2]>=range_z[0] &&  (!pj->is_erupt_ghost())) // if particle is in the duct
-    		  {
-    			  for (k = 0; k<TKEYLENGTH; k++)
-    			      tempkey[k] = pj->getKey().key[k];
+    	    		  if ((dist <= rvsq) && crd_p[2]<=range_z[1] && crd_p[2]>=range_z[0] &&  (!pj->is_erupt_ghost())) // if particle is in the duct
+    	    		  {
+    	    			  for (k = 0; k<TKEYLENGTH; k++)
+    	    			      tempkey[k] = pj->getKey().key[k];
 
-    			  /*
-    			   * Here what I did is only remove them from P_table and bucket particle list!
-    			   * But the particle in other particles neighbour list is not deleted!---> will be done in search neighbor (please double check)
-    			   * And the particle as guest on other processes is not removed!--->well, all particle on other processes will be removed as other processes will execute the same command. ----> you should have already been aware of the fact that no "non_guest" constrain is imposed here.
-    			   * And the particle, if it has image, the image should also be removed! ---> will be done in search_image and imposing BC (please double check----> yes, I checked that, no problem)
-    			   */
-    			  P_table->remove(tempkey); //remove from the hashtable
+    	    			  /*
+    	    			   * Here what I did is only remove them from P_table and bucket particle list!
+    	    			   * But the particle in other particles neighbour list is not deleted!---> will be done in search neighbor (please double check)
+    	    			   * And the particle as guest on other processes is not removed!--->well, all particle on other processes will be removed as other processes will execute the same command. ----> you should have already been aware of the fact that no "non_guest" constrain is imposed here.
+    	    			   * And the particle, if it has image, the image should also be removed! ---> will be done in search_image and imposing BC (please double check----> yes, I checked that, no problem)
+    	    			   */
+    	    			  P_table->remove(tempkey); //remove from the hashtable
 
-    		  }
-    		  else
-    		  {
-    			  pnew.push_back(*p_itr);//remove from the from particle list!
-    			  bctp = pj->get_bc_type ();
-				  switch (bctp)
-				  {
-				      case 0 :
-					      Curr_buck->set_erupt_ghost_particles(true);
-					      break;
-				      case 2 :
-					      Curr_buck->set_wall_ghost_particles(true);
-					      break;
-				      case 100 :
-					      Curr_buck->set_real_particles(true);
-					      break;
-				      case 1 :
-					      Curr_buck->set_pressure_ghost_particles(true);
-					      break;
-				      default:
-					      cout << "bctp incorrect in function set_up_erupt!\n" << endl;
-				   }
-    		  }
-    	  }
+    	    		  }
+    	    		  else
+    	    		  {
+    	    			  pnew.push_back(*p_itr);//remove from the from particle list!
+    	    			  bctp = pj->get_bc_type ();
+    					  switch (bctp)
+    					  {
+    					      case 0 :
+    						      Curr_buck->set_erupt_ghost_particles(true);
+    						      break;
+    					      case 2 :
+    						      Curr_buck->set_wall_ghost_particles(true);
+    						      break;
+    					      case 100 :
+    						      Curr_buck->set_real_particles(true);
+    						      break;
+    					      case 1 :
+    						      Curr_buck->set_pressure_ghost_particles(true);
+    						      break;
+    					      default:
+    						      cout << "bctp incorrect in function set_up_erupt!\n" << endl;
+    					   }
+    	    		  }
+    	    	  }
 
-    	  //update particle list
-    	  Curr_buck->put_new_plist (pnew);
-    	  Curr_buck->update_particles();
+    	    	  //update particle list
+    	    	  Curr_buck->put_new_plist (pnew);
+    	    	  Curr_buck->update_particles();
 
-    	  //go through all temporarily added particles and added it into
+    	    	  //go through all temporarily added particles and added it into
 
-    	  /*
-    	  * Here what I did is only add them to P_table and bucket particle list!
-    	  * But the particle in other particles neighbour list is not deleted!
-    	  * And the particle as guest on other processes is not removed!
-    	  */
-  	      for (i = 0; i < DIMENSION; i++)
-  	      {
-  	          mincrd[i] = *(Curr_buck->get_mincrd () + i);
-  	          maxcrd[i] = *(Curr_buck->get_maxcrd () + i);
-  	      }
-    	  itr2->reset();
-    	  while ((Curr_part = (Particle *) itr2->next() ))
-    	  {
-    	 	  for (i=0; i < DIMENSION; i++)
-    	 	      coordtmp[i]= *(Curr_part->get_coords ()+i);
+    	    	  /*
+    	    	  * Here what I did is only add them to P_table and bucket particle list!
+    	    	  * But the particle in other particles neighbour list is not deleted!
+    	    	  * And the particle as guest on other processes is not removed!
+    	    	  */
+    	  	      for (i = 0; i < DIMENSION; i++)
+    	  	      {
+    	  	          mincrd[i] = *(Curr_buck->get_mincrd () + i);
+    	  	          maxcrd[i] = *(Curr_buck->get_maxcrd () + i);
+    	  	      }
+    	    	  itr2->reset();
+    	    	  while ((Curr_part = (Particle *) itr2->next() ))
+    	    	  {
+    	    	 	  for (i=0; i < DIMENSION; i++)
+    	    	 	      coordtmp[i]= *(Curr_part->get_coords ()+i);
 
-    	 	  if (in_bucket(maxcrd, mincrd, coordtmp))
-    	 	  {
-    	           for (k=0; k<TKEYLENGTH; k++)
-    	                key[k]=Curr_part->getKey().key[k];
+    	    	 	  if (in_bucket(maxcrd, mincrd, coordtmp))
+    	    	 	  {
+    	    	           for (k=0; k<TKEYLENGTH; k++)
+    	    	                key[k]=Curr_part->getKey().key[k];
 
-    	           //
-                   //default involved is zero---> need to double check what involved should be allocated here-->No problem, should be not involved.
-                   if (Curr_buck->is_guest())
-                   {
-                	      Curr_part->put_guest_flag(true);
-                          tempid = Curr_buck->get_myprocess ();
-                          Curr_part->put_my_processor(tempid);
-                   }
+    	    	           //
+    	                   //default involved is zero---> need to double check what involved should be allocated here-->No problem, should be not involved.
+    	                   if (Curr_buck->is_guest())
+    	                   {
+    	                	      Curr_part->put_guest_flag(true);
+    	                          tempid = Curr_buck->get_myprocess ();
+    	                          Curr_part->put_my_processor(tempid);
+    	                   }
 
-    	 	       TKey tmpkey(key);
-    	 	       Curr_buck->add_erupt_ghost_particle(tmpkey);
-    	    	   P_table->add(key, Curr_part);
-    	 	   }
-    	  }
+    	    	 	       TKey tmpkey(key);
+    	    	 	       Curr_buck->add_erupt_ghost_particle(tmpkey);
+    	    	    	   P_table->add(key, Curr_part);
+    	    	 	   }
+    	    	  }
 
-      }// end of loop go through all buckets
+    	      }// end of loop go through all buckets
+    	}
+    }//end of go through all buckets
+
 
     //clear up:
     delete itr;
@@ -603,46 +621,56 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	// put newly generated particles into the bucket, particles has already been added into P_table
 	    HTIterator * itr = new HTIterator (BG_mesh);
 	    Bucket * Curr_buck;
+		BriefBucket *breif_buck = NULL;
+		void * tempptr =NULL;
+
 	    double coordtmp[DIMENSION];
 	    double mincrd[DIMENSION], maxcrd[DIMENSION];
 	    THTIterator * itr2 = new THTIterator (P_temp);
 	    Particle * Curr_part;
 
-	    while ((Curr_buck = (Bucket *) itr->next ()))
-	      if (Curr_buck->is_erupt())
-	      {
-		    for (i = 0; i < DIMENSION; i++)
-		    {
-		        mincrd[i] = *(Curr_buck->get_mincrd () + i);
-		        maxcrd[i] = *(Curr_buck->get_maxcrd () + i);
-		     }
+		while (tempptr=itr->next ())
+		{
+			breif_buck = (BriefBucket *) tempptr;
+			if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+				continue;
+			else
+			{
+				Curr_buck = (Bucket*) tempptr;
+			      if (Curr_buck->is_erupt())
+			      {
+				    for (i = 0; i < DIMENSION; i++)
+				    {
+				        mincrd[i] = *(Curr_buck->get_mincrd () + i);
+				        maxcrd[i] = *(Curr_buck->get_maxcrd () + i);
+				     }
 
-		     itr2->reset();
-		     while ((Curr_part = (Particle *) itr2->next() ))
-		     {
-		    	for (i=0; i < DIMENSION; i++)
-		    		coordtmp[i]= *(Curr_part->get_coords ()+i);
-		    	if (in_bucket(maxcrd, mincrd, coordtmp))
-		    	{
-	                for (k=0; k<TKEYLENGTH; k++)
-	                    key[k]=Curr_part->getKey().key[k];
-	    	           //
-	                //default involved is zero---> need to double check what involved should be allocated here
-	                if (Curr_buck->is_guest())
-	                {
-	                  Curr_part->put_guest_flag(true);
-	                  tempid = Curr_buck->get_myprocess ();
-	                  Curr_part->put_my_processor(tempid);
-	                }
-		    	   TKey tmpkey(key);
-		    	   Curr_buck->add_erupt_ghost_particle(tmpkey);
-                   P_table->add(key, Curr_part);
-                   num_particle++; //will be used to update THASHTAB
-		        }
-
-		     }
-
-	      }// end of loop go through all buckets
+				     itr2->reset();
+				     while ((Curr_part = (Particle *) itr2->next() ))
+				     {
+				    	for (i=0; i < DIMENSION; i++)
+				    		coordtmp[i]= *(Curr_part->get_coords ()+i);
+				    	if (in_bucket(maxcrd, mincrd, coordtmp))
+				    	{
+			                for (k=0; k<TKEYLENGTH; k++)
+			                    key[k]=Curr_part->getKey().key[k];
+			    	           //
+			                //default involved is zero---> need to double check what involved should be allocated here
+			                if (Curr_buck->is_guest())
+			                {
+			                  Curr_part->put_guest_flag(true);
+			                  tempid = Curr_buck->get_myprocess ();
+			                  Curr_part->put_my_processor(tempid);
+			                }
+				    	   TKey tmpkey(key);
+				    	   Curr_buck->add_erupt_ghost_particle(tmpkey);
+		                   P_table->add(key, Curr_part);
+		                   num_particle++; //will be used to update THASHTAB
+				        }
+				     }
+			      }// end of if
+			}//end of if bucket is not brief
+		}//end of while loop go through all buckets
 
 	//clean up
     delete itr;

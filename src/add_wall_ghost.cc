@@ -65,14 +65,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	  double dx2 = 0.5 * dx;
 
 	  // direction vectors for neighbors
-//	  int Up[DIMENSION] = { 0, 0, 2 };
 	  int Down[DIMENSION] = { 0, 0, 1 };
-
-//#ifdef DEBUG
-////     bool do_search = false;
-////     double check[DIMENSION] = {-250, -250, 4250};
-////     double temp[DIMENSION];
-//#endif
 
 	  // get min-max domain from hashtable, for key generation
 	  for (i = 0; i < DIMENSION; i++)
@@ -95,6 +88,8 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	// add particles
 	  HTIterator * itr = new HTIterator (BG_mesh);
 	  Bucket * Bnd_buck;
+	  BriefBucket *breif_buck = NULL;
+	  void * tempptr =NULL;
 
 	  /*temporarily use the following way to get bnd, Finally, I will put bnd either
 	   * in SimulProps or parameters.h
@@ -107,130 +102,137 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
        bnd[4]=Lz_P[0];
        bnd[5]=Lz_P[1];
 
-	  while ((Bnd_buck = (Bucket *) itr->next ()))
-	 //--->The reason why need to make sure the bucket is not empty is that for MIXED bucket that need to add wall ghost, it should already have either real particles or pressure ghost particle on up part of buckets which above boundary
-	 //But I need to make sure that wall ghost particles will not be added repeatedly ---> !Bnd_buck->has_wall_ghost_particles ()
-     //Why do I need to make sure that bucket is non_empty? ---->because MIXED in which wall ghost needed should be active, as some pressure ghost has already been added and the bucket was marked as active.
-	  if (Bnd_buck->is_onground_or_underground() && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
-	  {
-//      	    Bnd_buck->mark_active ();
+ 	  while (tempptr=itr->next ())
+ 	  {
+ 		  breif_buck = (BriefBucket *) tempptr;
+ 		  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+ 			  continue;
+ 		  else
+ 		  {
+ 			  Bnd_buck = (Bucket*) tempptr;
+	          //--->The reason why need to make sure the bucket is not empty is that for MIXED bucket that need to add wall ghost, it should already have either real particles or pressure ghost particle on up part of buckets which above boundary
+	          //But I need to make sure that wall ghost particles will not be added repeatedly ---> !Bnd_buck->has_wall_ghost_particles ()
+              //Why do I need to make sure that bucket is non_empty? ---->because MIXED in which wall ghost needed should be active, as some pressure ghost has already been added and the bucket was marked as active.
+ 			  if (Bnd_buck->is_onground_or_underground() && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
+ 			  {
+ 		    	    for (i = 0; i < DIMENSION; i++)
+ 		    	    {
+ 		    	    	mincrd[i] = *(Bnd_buck->get_mincrd () + i);
+ 		    	    	maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
+ 		    	        index[2*i] = *(Bnd_buck->get_bucket_index () + 2*i);
+ 		    	        index[2*i+1] = *(Bnd_buck->get_bucket_index () + 2*i+1);
+ 		    	    }
+ 		    	    //generate air particles
+ 		    	    Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
+ 		    	    Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
+ 		    	    Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
 
-    	    for (i = 0; i < DIMENSION; i++)
-    	    {
-    	    	mincrd[i] = *(Bnd_buck->get_mincrd () + i);
-    	    	maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
-    	        index[2*i] = *(Bnd_buck->get_bucket_index () + 2*i);
-    	        index[2*i+1] = *(Bnd_buck->get_bucket_index () + 2*i+1);
-    	    }
-    	    //generate air particles
-    	    Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
-    	    Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
-    	    Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
+ 		    	    Curr_buck = Bnd_buck;
+ 		    	    for (i = 0; i < Nx; i++)
+ 		    	    	for (j = 0; j < Ny; j++)
+ 		    	    		for (k = 0; k < Nz; k++)
+ 		    	    		{
+ 		    	    				pcrd[0] = mincrd[0] + dx2 + i * dx;
+ 		    	    				pcrd[1] = mincrd[1] + dx2 + j * dx;
+ 		    	    				pcrd[2] = mincrd[2] + dx2 + k * dx;
 
-    	    Curr_buck = Bnd_buck;
-    	    for (i = 0; i < Nx; i++)
-    	    	for (j = 0; j < Ny; j++)
-    	    		for (k = 0; k < Nz; k++)
-    	    		{
-    	    				pcrd[0] = mincrd[0] + dx2 + i * dx;
-    	    				pcrd[1] = mincrd[1] + dx2 + j * dx;
-    	    				pcrd[2] = mincrd[2] + dx2 + k * dx;
+ 		    	    				//I need to figure out one way to make sure that particles will not be added repeatedly in MIXED bucket. ---> should keep in mind that efficiency is very important!
+ 		    	    				if (pcrd[2]<bnd[4]) // make sure newly added particle is underground
+ 		    	    				{
+ 		    	    					for (ii = 0; ii < DIMENSION; ii++)
+ 		    	    					    normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
-    	    				//I need to figure out one way to make sure that particles will not be added repeatedly in MIXED bucket. ---> should keep in mind that efficiency is very important!
-    	    				if (pcrd[2]<bnd[4]) // make sure newly added particle is underground
-    	    				{
-    	    					for (ii = 0; ii < DIMENSION; ii++)
-    	    					    normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
+ 		    	    					THSFC3d (normc, add_step, &tkeylen, pkey);
+ 		    		    				// check for duplicates
+ 		    		    				if (P_table->lookup(pkey))
+ 		    		    				{
+ 		    		    				    fprintf(stderr, "ERROR: Trying to add particle "
+ 		    		    				            "twice on same location.\n");
+ 		    		    				    exit(1);
+ 		    		    				 }
+ 		    		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
 
-    	    					THSFC3d (normc, add_step, &tkeylen, pkey);
-    		    				// check for duplicates
-    		    				if (P_table->lookup(pkey))
-    		    				{
-    		    				    fprintf(stderr, "ERROR: Trying to add particle "
-    		    				            "twice on same location.\n");
-    		    				    exit(1);
-    		    				 }
-    		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
+ 		    		    				//default involved is zero
+ 		 					           if (Bnd_buck->is_guest())
+ 		 					           {
+ 		 					               pnew->put_guest_flag(true);
+ 		 					               tempid = Bnd_buck->get_myprocess ();
+ 		 					               pnew->put_my_processor(tempid);
+ 		 					           }
 
-    		    				//default involved is zero
- 					           if (Bnd_buck->is_guest())
- 					           {
- 					               pnew->put_guest_flag(true);
- 					               tempid = Bnd_buck->get_myprocess ();
- 					               pnew->put_my_processor(tempid);
- 					           }
+ 		    		    				// add to hash-table
+ 		    		    				P_table->add(pkey, pnew);
+ 		    		    				num_particle++;
+ 		    		    				TKey tmpkey(pkey);
 
-    		    				// add to hash-table
-    		    				P_table->add(pkey, pnew);
-    		    				num_particle++;
-    		    				TKey tmpkey(pkey);
+ 		    		    				Curr_buck->add_wall_ghost_particle(tmpkey);
+ 		    	    				}
+ 		    	    		}
 
-    		    				Curr_buck->add_wall_ghost_particle(tmpkey);
-    	    				}
-    	    		}
+ 		    	    // add wall ghost on under ground bucket
+ 		    	    //--> For 3D decomposition, if the Mixed bucket is guest bucket, it DOWN bucket will not be able to find, SO
+ 		    	    //1) make sure the current bucket is not guest bucket
+ 		    	    //2) On the process on which the current bucekt is host, the DOWN bucket (no matter the DOWN bucket is guest or not) can be found and, wall ghost particles can be added there.
+ 		    	    //3) I just need to point out that the idea that adding particles for ghost bucket to avoid syn still works for 3D decomposition. ---> but need to be more careful to avoid mistake like looking for neighbor for a guest bucket.
+ 		    	    if (!Bnd_buck->is_guest())
+ 		    	    {
+ 		    	        Bucket *Down_buck = (Bucket *) BG_mesh->lookup (Bnd_buck->which_neigh (Down));
+ 		                assert(Down_buck); //make sure Down_buck exist.
 
-    	    // add wall ghost on under ground bucket
-    	    //--> For 3D decomposition, if the Mixed bucket is guest bucket, it DOWN bucket will not be able to find, SO
-    	    //1) make sure the current bucket is not guest bucket
-    	    //2) On the process on which the current bucekt is host, the DOWN bucket (no matter the DOWN bucket is guest or not) can be found and, wall ghost particles can be added there.
-    	    //3) I just need to point out that the idea that adding particles for ghost bucket to avoid syn still works for 3D decomposition. ---> but need to be more careful to avoid mistake like looking for neighbor for a guest bucket.
-    	    if (!Bnd_buck->is_guest())
-    	    {
-    	        Bucket *Down_buck = (Bucket *) BG_mesh->lookup (Bnd_buck->which_neigh (Down));
-                assert(Down_buck); //make sure Down_buck exist.
+ 		    	        Down_buck->mark_active ();// the down bucket is not marked as active yet! so need to mark it here
 
-    	        Down_buck->mark_active ();// the down bucket is not marked as active yet! so need to mark it here
+ 		        	    for (i = 0; i < DIMENSION; i++)
+ 		        		{
+ 		        		   mincrd[i] = *(Down_buck->get_mincrd () + i);
+ 		        		   maxcrd[i] = *(Down_buck->get_maxcrd () + i);
+ 		        		}
+ 		        		//generate air particles
+ 		        		Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
+ 		        		Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
+ 		        		Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
 
-        	    for (i = 0; i < DIMENSION; i++)
-        		{
-        		   mincrd[i] = *(Down_buck->get_mincrd () + i);
-        		   maxcrd[i] = *(Down_buck->get_maxcrd () + i);
-        		}
-        		//generate air particles
-        		Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
-        		Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
-        		Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
+ 		        		Curr_buck = Down_buck;
+ 		        		for (i = 0; i < Nx; i++)
+ 		        		    for (j = 0; j < Ny; j++)
+ 		        		        for (k = 0; k < Nz; k++)
+ 		        		        {
+ 		        		        		pcrd[0] = mincrd[0] + dx2 + i * dx;
+ 		        			        	pcrd[1] = mincrd[1] + dx2 + j * dx;
+ 		        			        	pcrd[2] = mincrd[2] + dx2 + k * dx;
 
-        		Curr_buck = Down_buck;
-        		for (i = 0; i < Nx; i++)
-        		    for (j = 0; j < Ny; j++)
-        		        for (k = 0; k < Nz; k++)
-        		        {
-        		        		pcrd[0] = mincrd[0] + dx2 + i * dx;
-        			        	pcrd[1] = mincrd[1] + dx2 + j * dx;
-        			        	pcrd[2] = mincrd[2] + dx2 + k * dx;
+ 		        			            for (ii = 0; ii < DIMENSION; ii++)
+ 		        			               normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
-        			            for (ii = 0; ii < DIMENSION; ii++)
-        			               normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
+ 		     	    					THSFC3d (normc, add_step, &tkeylen, pkey);
+ 		     		    				// check for duplicates
+ 		     		    				if (P_table->lookup(pkey))
+ 		     		    				{
+ 		     		    				    fprintf(stderr, "ERROR: Trying to add particle "
+ 		     		    				           "twice on same location.\n");
+ 		     		    				    exit(1);
+ 		     		    				}
+ 		     		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
 
-     	    					THSFC3d (normc, add_step, &tkeylen, pkey);
-     		    				// check for duplicates
-     		    				if (P_table->lookup(pkey))
-     		    				{
-     		    				    fprintf(stderr, "ERROR: Trying to add particle "
-     		    				           "twice on same location.\n");
-     		    				    exit(1);
-     		    				}
-     		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
-
-     		    				//default involved is zero
-     					        if (Down_buck->is_guest())
-    					        {
-    					            pnew->put_guest_flag(true);
-    					            tempid = Down_buck->get_myprocess();
-    					            pnew->put_my_processor(tempid);
-    					        }
+ 		     		    				//default involved is zero
+ 		     					        if (Down_buck->is_guest())
+ 		    					        {
+ 		    					            pnew->put_guest_flag(true);
+ 		    					            tempid = Down_buck->get_myprocess();
+ 		    					            pnew->put_my_processor(tempid);
+ 		    					        }
 
 
 
-     		    				// add to hash-table
-     		    				P_table->add(pkey, pnew);
-     		    				num_particle++;
-     		    				TKey tmpkey(pkey);
+ 		     		    				// add to hash-table
+ 		     		    				P_table->add(pkey, pnew);
+ 		     		    				num_particle++;
+ 		     		    				TKey tmpkey(pkey);
 
-     		    				Curr_buck->add_pressure_ghost_particle(tmpkey);
-        		         }
-    	    }//end of if bnd_bucket is not a guest bucket.
+ 		     		    				Curr_buck->add_pressure_ghost_particle(tmpkey);
+ 		        		         }
+ 		    	    }//end of if bnd_bucket is guest
+ 			  }//end of if bucket is .....
+ 		  }//end of if bucket is not brief
 
 	  }//finish go though all buckets
 
@@ -260,68 +262,75 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	    Particle *pj;
 	    itr->reset();
 	    //go through all buckets
-	    while ((Bnd_buck = (Bucket *) itr->next ()))
-	      if (Bnd_buck->is_erupt () && Bnd_buck->has_wall_ghost_particles ())
-	      {
-	    	  //set particles type to be 0
-	    	  Bnd_buck->put_particles_type (0);
-	    	  //check all particle in the erupt bucket and remove them when necessary!
-	    	  pnew.clear();
-	    	  plist = Bnd_buck->get_particle_list ();
-	    	  for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
-	    	  {
-	    		pj = (Particle *) P_table->lookup(*p_itr);
-	    		assert (pj);
-//	    		if (!pj->is_erupt_ghost()) // if particle is not erupted ghost
-//	    		{
-	    		  for (k=0; k<DIMENSION; k++)
-	    			  pcrd[k] = *(pj->get_coords() + k);
+		while (tempptr=itr->next ())
+		{
+			  breif_buck = (BriefBucket *) tempptr;
+			  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+				  continue;
+			  else
+			  {
+				  Bnd_buck = (Bucket*) tempptr;
+				  if (Bnd_buck->is_erupt () && Bnd_buck->has_wall_ghost_particles ())
+			      {
+			    	  //set particles type to be 0
+			    	  Bnd_buck->put_particles_type (0);
+			    	  //check all particle in the erupt bucket and remove them when necessary!
+			    	  pnew.clear();
+			    	  plist = Bnd_buck->get_particle_list ();
+			    	  for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+			    	  {
+			    		pj = (Particle *) P_table->lookup(*p_itr);
+			    		assert (pj);
+		//	    		if (!pj->is_erupt_ghost()) // if particle is not erupted ghost
+		//	    		{
+			    		  for (k=0; k<DIMENSION; k++)
+			    			  pcrd[k] = *(pj->get_coords() + k);
 
-	    		  dist = 0;
-	    		  for (j=0; j<2; j++)
-	    		      dist += (pcrd[j]*pcrd[j]);
+			    		  dist = 0;
+			    		  for (j=0; j<2; j++)
+			    		      dist += (pcrd[j]*pcrd[j]);
 
-	    		  if ((dist <= rvsq) && pcrd[2]<=range_z[1] && pcrd[2]>=range_z[0] && (!pj->is_erupt_ghost())) // if particle is in the duct and particle is wall ghost
-	    		  {
-	    			  for (k = 0; k<TKEYLENGTH; k++)
-	    			      tempkey[k] = pj->getKey().key[k];
+			    		  if ((dist <= rvsq) && pcrd[2]<=range_z[1] && pcrd[2]>=range_z[0] && (!pj->is_erupt_ghost())) // if particle is in the duct and particle is wall ghost
+			    		  {
+			    			  for (k = 0; k<TKEYLENGTH; k++)
+			    			      tempkey[k] = pj->getKey().key[k];
 
-	    			  /*
-	    			   * Here what I did is only remove them from P_table and bucket particle list!
-	    			   * But the particle in other particles neighbour list is not deleted!
-	    			   * And the particle, if it has image, the image should also be removed!
-	    			   */
-	    			  P_table->remove(tempkey); //remove from the hashtable
-	    		  }
-	    		  else  // particles_type also need to be updated on current bucket---> Maybe it is not necessary.
-	    		  {
-	    			  pnew.push_back(*p_itr);//remove from the from particle list!
-	    			  bctp = pj->get_bc_type ();
-   				      switch (bctp)
-   				      {
-   				      case 0 :
-   				    	Bnd_buck->set_erupt_ghost_particles(true);
-   					      break;
-   				      case 2 :
-   				    	Bnd_buck->set_wall_ghost_particles(true);
-   					      break;
-   				      case 100 :
-   				    	Bnd_buck->set_real_particles(true);
-   					      break;
-   				      case 1 :
-   				    	Bnd_buck->set_pressure_ghost_particles(true);
-   					      break;
-   				      default:
-   					      cout << "bctp incorrect in function add_wall_ghost!\n" << endl;
-   				      }
-	    		  }
-//	    		}//end of only check non_erupted particles
-	    	  }
-
-	    	  //update particle list
-	    	  Bnd_buck->put_new_plist (pnew);
-	    	  Bnd_buck->update_particles();
-	      }// end of loop go through all buckets
+			    			  /*
+			    			   * Here what I did is only remove them from P_table and bucket particle list!
+			    			   * But the particle in other particles neighbour list is not deleted!
+			    			   * And the particle, if it has image, the image should also be removed!
+			    			   */
+			    			  P_table->remove(tempkey); //remove from the hashtable
+			    		  }
+			    		  else  // particles_type also need to be updated on current bucket---> Maybe it is not necessary.
+			    		  {
+			    			  pnew.push_back(*p_itr);//remove from the from particle list!
+			    			  bctp = pj->get_bc_type ();
+		   				      switch (bctp)
+		   				      {
+		   				      case 0 :
+		   				    	Bnd_buck->set_erupt_ghost_particles(true);
+		   					      break;
+		   				      case 2 :
+		   				    	Bnd_buck->set_wall_ghost_particles(true);
+		   					      break;
+		   				      case 100 :
+		   				    	Bnd_buck->set_real_particles(true);
+		   					      break;
+		   				      case 1 :
+		   				    	Bnd_buck->set_pressure_ghost_particles(true);
+		   					      break;
+		   				      default:
+		   					      cout << "bctp incorrect in function add_wall_ghost!\n" << endl;
+		   				      }
+			    		  }
+			    	  }//end of for loop: go through all particles
+			    	  //update particle list
+			    	  Bnd_buck->put_new_plist (pnew);
+			    	  Bnd_buck->update_particles();
+			      }// end of loop go through all buckets
+			  } //end of if bucket is not brief
+		}// end of go through all buckets in the hash table
 
 	  delete itr;
 

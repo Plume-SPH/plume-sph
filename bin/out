@@ -100,7 +100,7 @@ Time-step: 99 dt=0.0994729 time=9.70813
 Time-step: 100 dt=0.0994729 time=9.8076
 Time-step: 101 dt=0.105113 time=9.91271
 Time-step: 102 dt=0.0872872 time=10
-Computation time up to now is: 1280.58 seconds
+Computation time up to now is: 1245.69 seconds
 Time-step: 103 dt=0.105095 time=10.1051
 Time-step: 104 dt=0.105062 time=10.2102
 Time-step: 105 dt=0.0994729 time=10.3096
@@ -201,7 +201,7 @@ Time-step: 199 dt=0.0994729 time=19.7213
 Time-step: 200 dt=0.0994729 time=19.8208
 Time-step: 201 dt=0.0994729 time=19.9203
 Time-step: 202 dt=0.0797058 time=20
-Computation time up to now is: 3201.64 seconds
+Computation time up to now is: 3188.59 seconds
 Time-step: 203 dt=0.0994729 time=20.0995
 Time-step: 204 dt=0.11242 time=20.2119
 Time-step: 205 dt=0.0994729 time=20.3114
@@ -302,7 +302,7 @@ Time-step: 299 dt=0.0994729 time=29.7362
 Time-step: 300 dt=0.0994729 time=29.8357
 Time-step: 301 dt=0.0994729 time=29.9352
 Time-step: 302 dt=0.0648301 time=30
-Computation time up to now is: 5584.64 seconds
+Computation time up to now is: 5618.12 seconds
 Time-step: 303 dt=0.0994729 time=30.0995
 Time-step: 304 dt=0.111746 time=30.2112
 Time-step: 305 dt=0.0994729 time=30.3107
@@ -403,7 +403,7 @@ Time-step: 399 dt=0.0994729 time=39.7353
 Time-step: 400 dt=0.112128 time=39.8474
 Time-step: 401 dt=0.0994729 time=39.9469
 Time-step: 402 dt=0.053097 time=40
-Computation time up to now is: 8389.09 seconds
+Computation time up to now is: 8543.51 seconds
 Time-step: 403 dt=0.111528 time=40.1115
 Time-step: 404 dt=0.0994729 time=40.211
 Time-step: 405 dt=0.11053 time=40.3215
@@ -504,7 +504,7 @@ Time-step: 499 dt=0.0994729 time=49.7185
 Time-step: 500 dt=0.0994729 time=49.818
 Time-step: 501 dt=0.108942 time=49.9269
 Time-step: 502 dt=0.0730823 time=50
-Computation time up to now is: 12021.7 seconds
+Computation time up to now is: 12379.3 seconds
 Time-step: 503 dt=0.0994729 time=50.0995
 Time-step: 504 dt=0.0994729 time=50.1989
 Time-step: 505 dt=0.108869 time=50.3078
@@ -605,7 +605,7 @@ Time-step: 599 dt=0.111228 time=59.7189
 Time-step: 600 dt=0.0994729 time=59.8184
 Time-step: 601 dt=0.111921 time=59.9303
 Time-step: 602 dt=0.06972 time=60
-Computation time up to now is: 16260.6 seconds
+Computation time up to now is: 16659.2 seconds
 Time-step: 603 dt=0.111992 time=60.112
 Time-step: 604 dt=0.0994729 time=60.2115
 Time-step: 605 dt=0.0994729 time=60.3109
@@ -706,7 +706,7 @@ Time-step: 699 dt=0.0994729 time=69.7366
 Time-step: 700 dt=0.0994729 time=69.8361
 Time-step: 701 dt=0.0994729 time=69.9355
 Time-step: 702 dt=0.0644558 time=70
-Computation time up to now is: 21257.5 seconds
+Computation time up to now is: 21661.4 seconds
 Time-step: 703 dt=0.111631 time=70.1116
 Time-step: 704 dt=0.0994729 time=70.2111
 Time-step: 705 dt=0.0994729 time=70.3106
@@ -740,161 +740,3 @@ Time-step: 732 dt=0.079872 time=73
 Time-step: 733 dt=0.0994729 time=73.0995
 Time-step: 734 dt=0.0994729 time=73.1989
 Time-step: 735 dt=0.112106 time=73.3111
-Time-step: 736 dt=0.0994729 time=73.4105
-Time-step: 737 dt=0.0994729 time=73.51
-Time-step: 738 dt=0.0994729 time=73.6095
-Time-step: 739 dt=0.112246 time=73.7217
-Time-step: 740 dt=0.0994729 time=73.8212
-Time-step: 741 dt=0.11271 time=73.9339
-Time-step: 742 dt=0.0661001 time=74
-Time-step: 743 dt=0.0994729 time=74.0995
-Time-step: 744 dt=0.113002 time=74.2125
-Time-step: 745 dt=0.0994729 time=74.3119
-Time-step: 746 dt=0.0994729 time=74.4114
-Time-step: 747 dt=0.0994729 time=74.5109
-Time-step: 748 dt=0.112873 time=74.6238
-Time-step: 749 dt=0.0994729 time=74.7232
-Time-step: 750 dt=0.0994729 time=74.8227
-Time-step: 751 dt=0.0994729 time=74.9222
-Time-step: 752 dt=0.0778143 time=75
-Time-step: 753 dt=0.0994729 time=75.0995
-Time-step: 754 dt=0.0994729 time=75.1989
-Time-step: 755 dt=0.0994729 time=75.2984
-Time-step: 756 dt=0.0994729 time=75.3979
-Time-step: 757 dt=0.0994729 time=75.4974
-Time-step: 758 dt=0.111661 time=75.609
-Time-step: 759 dt=0.111364 time=75.7204
-Time-step: 760 dt=0.0994729 time=75.8199
-Time-step: 761 dt=0.111121 time=75.931
-Time-step: 762 dt=0.0690166 time=76
-Time-step: 763 dt=0.110451 time=76.1105
-Time-step: 764 dt=0.0994729 time=76.2099
-Time-step: 765 dt=0.0994729 time=76.3094
-Time-step: 766 dt=0.0994729 time=76.4089
-Time-step: 767 dt=0.0994729 time=76.5083
-Time-step: 768 dt=0.0994729 time=76.6078
-Time-step: 769 dt=0.109435 time=76.7173
-Time-step: 770 dt=0.0994729 time=76.8167
-Time-step: 771 dt=0.0994729 time=76.9162
-Time-step: 772 dt=0.0838041 time=77
-Time-step: 773 dt=0.109258 time=77.1093
-Time-step: 774 dt=0.0994729 time=77.2087
-Time-step: 775 dt=0.109137 time=77.3179
-Time-step: 776 dt=0.0994729 time=77.4173
-Time-step: 777 dt=0.108985 time=77.5263
-Time-step: 778 dt=0.0994729 time=77.6258
-Time-step: 779 dt=0.0994729 time=77.7253
-Time-step: 780 dt=0.109035 time=77.8343
-Time-step: 781 dt=0.0994729 time=77.9338
-Time-step: 782 dt=0.06622 time=78
-Time-step: 783 dt=0.0994729 time=78.0995
-Time-step: 784 dt=0.0994729 time=78.1989
-Time-step: 785 dt=0.0994729 time=78.2984
-Time-step: 786 dt=0.108808 time=78.4072
-Time-step: 787 dt=0.0994729 time=78.5067
-Time-step: 788 dt=0.0994729 time=78.6062
-Time-step: 789 dt=0.0994729 time=78.7056
-Time-step: 790 dt=0.109687 time=78.8153
-Time-step: 791 dt=0.0994729 time=78.9148
-Time-step: 792 dt=0.0851949 time=79
-Time-step: 793 dt=0.0994729 time=79.0995
-Time-step: 794 dt=0.0994729 time=79.1989
-Time-step: 795 dt=0.0994729 time=79.2984
-Time-step: 796 dt=0.0994729 time=79.3979
-Time-step: 797 dt=0.110704 time=79.5086
-Time-step: 798 dt=0.0994729 time=79.6081
-Time-step: 799 dt=0.0994729 time=79.7075
-Time-step: 800 dt=0.0994729 time=79.807
-Time-step: 801 dt=0.111437 time=79.9185
-Time-step: 802 dt=0.0815489 time=80
-Computation time up to now is: 26912.7 seconds
-Time-step: 803 dt=0.0994729 time=80.0995
-Time-step: 804 dt=0.0994729 time=80.1989
-Time-step: 805 dt=0.111575 time=80.3105
-Time-step: 806 dt=0.0994729 time=80.41
-Time-step: 807 dt=0.112123 time=80.5221
-Time-step: 808 dt=0.0994729 time=80.6216
-Time-step: 809 dt=0.0994729 time=80.7211
-Time-step: 810 dt=0.112186 time=80.8332
-Time-step: 811 dt=0.0994729 time=80.9327
-Time-step: 812 dt=0.067279 time=81
-Time-step: 813 dt=0.0994729 time=81.0995
-Time-step: 814 dt=0.111761 time=81.2112
-Time-step: 815 dt=0.0994729 time=81.3107
-Time-step: 816 dt=0.0994729 time=81.4102
-Time-step: 817 dt=0.0994729 time=81.5097
-Time-step: 818 dt=0.111752 time=81.6214
-Time-step: 819 dt=0.0994729 time=81.7209
-Time-step: 820 dt=0.11159 time=81.8325
-Time-step: 821 dt=0.0994729 time=81.9319
-Time-step: 822 dt=0.0680585 time=82
-Time-step: 823 dt=0.0994729 time=82.0995
-Time-step: 824 dt=0.0994729 time=82.1989
-Time-step: 825 dt=0.110988 time=82.3099
-Time-step: 826 dt=0.0994729 time=82.4094
-Time-step: 827 dt=0.0994729 time=82.5089
-Time-step: 828 dt=0.0994729 time=82.6084
-Time-step: 829 dt=0.111349 time=82.7197
-Time-step: 830 dt=0.0994729 time=82.8192
-Time-step: 831 dt=0.0994729 time=82.9186
-Time-step: 832 dt=0.0813521 time=83
-Time-step: 833 dt=0.111518 time=83.1115
-Time-step: 834 dt=0.0994729 time=83.211
-Time-step: 835 dt=0.112032 time=83.323
-Time-step: 836 dt=0.0994729 time=83.4225
-Time-step: 837 dt=0.0994729 time=83.522
-Time-step: 838 dt=0.0994729 time=83.6214
-Time-step: 839 dt=0.11235 time=83.7338
-Time-step: 840 dt=0.0994729 time=83.8333
-Time-step: 841 dt=0.112043 time=83.9453
-Time-step: 842 dt=0.0546918 time=84
-Time-step: 843 dt=0.111911 time=84.1119
-Time-step: 844 dt=0.0994729 time=84.2114
-Time-step: 845 dt=0.0994729 time=84.3109
-Time-step: 846 dt=0.112075 time=84.4229
-Time-step: 847 dt=0.0994729 time=84.5224
-Time-step: 848 dt=0.111954 time=84.6344
-Time-step: 849 dt=0.0994729 time=84.7338
-Time-step: 850 dt=0.0994729 time=84.8333
-Time-step: 851 dt=0.0994729 time=84.9328
-Time-step: 852 dt=0.067222 time=85
-Time-step: 853 dt=0.0994729 time=85.0995
-Time-step: 854 dt=0.0994729 time=85.1989
-Time-step: 855 dt=0.111952 time=85.3109
-Time-step: 856 dt=0.0994729 time=85.4104
-Time-step: 857 dt=0.111956 time=85.5223
-Time-step: 858 dt=0.0994729 time=85.6218
-Time-step: 859 dt=0.0994729 time=85.7213
-Time-step: 860 dt=0.0994729 time=85.8207
-Time-step: 861 dt=0.0994729 time=85.9202
-Time-step: 862 dt=0.0797815 time=86
-Time-step: 863 dt=0.112259 time=86.1123
-Time-step: 864 dt=0.0994729 time=86.2117
-Time-step: 865 dt=0.0994729 time=86.3112
-Time-step: 866 dt=0.0994729 time=86.4107
-Time-step: 867 dt=0.112482 time=86.5232
-Time-step: 868 dt=0.0994729 time=86.6226
-Time-step: 869 dt=0.112279 time=86.7349
-Time-step: 870 dt=0.0994729 time=86.8344
-Time-step: 871 dt=0.112267 time=86.9467
-Time-step: 872 dt=0.0533479 time=87
-Time-step: 873 dt=0.112135 time=87.1121
-Time-step: 874 dt=0.112197 time=87.2243
-Time-step: 875 dt=0.0994729 time=87.3238
-Time-step: 876 dt=0.112221 time=87.436
-Time-step: 877 dt=0.0994729 time=87.5355
-Time-step: 878 dt=0.0994729 time=87.635
-Time-step: 879 dt=0.0994729 time=87.7344
-Time-step: 880 dt=0.112084 time=87.8465
-Time-step: 881 dt=0.0994729 time=87.946
-Time-step: 882 dt=0.0539983 time=88
-Time-step: 883 dt=0.0994729 time=88.0995
-Time-step: 884 dt=0.11224 time=88.2117
-Time-step: 885 dt=0.0994729 time=88.3112
-Time-step: 886 dt=0.0994729 time=88.4107
-Time-step: 887 dt=0.0994729 time=88.5101
-Time-step: 888 dt=0.112173 time=88.6223
-Time-step: 889 dt=0.0994729 time=88.7218
-Time-step: 890 dt=0.112624 time=88.8344
-Time-step: 891 dt=0.0994729 time=88.9339
-Time-step: 892 dt=0.0661257 time=89

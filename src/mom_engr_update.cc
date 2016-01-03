@@ -12,7 +12,7 @@ using namespace std;
 
 #include <hashtab.h>
 #include <thashtab.h>
-#include <bucket.h>
+//#include <bucket.h>
 
 #include "particler.h"
 #include "constant.h"
@@ -24,7 +24,6 @@ using namespace std;
 #endif
 
 const double sqrt2 = 1.41421356237310;
-//const int NUM_RHS=DIMENSION+1;
 const double two_k = 2*lamda_P; //this is the coefficient that in front of
 
 int
@@ -50,6 +49,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
   // time-step
   double dt = timeprops->dtime;
+
   //create a hash table iterator instance
   THTIterator *itr = new THTIterator(P_table);
 
@@ -149,7 +149,6 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		         continue;
 
 		      double dist_sq = 0;
-//		      double dist = 0;
 
 		      for (i = 0; i < DIMENSION; i++)
 		      {
@@ -157,8 +156,6 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		           si[i] = dx[i] / hi;
 		           dist_sq += dx[i] * dx[i];
 		      }
-//		      dist = sqrt(dist_sq);
-		      // if dx < 3 * sqrt(2) * h
 		      if (in_support(dx, supp))
 		      {
 		          double mj = pj->get_mass();
@@ -168,7 +165,6 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 				  const double *uvecj = pj->get_state_vars();
 				  // density must always be positive
 				  assert(uvecj[0] > 0);
-		          // velocity veli
 
 #ifdef HAVE_TURBULENCE_LANS
 		          for (k = 0; k < DIMENSION; k++)

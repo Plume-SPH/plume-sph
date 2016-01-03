@@ -48,8 +48,6 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 	  double bnd[2*DIMENSION], index[2*DIMENSION];
 
 	  Bucket *Curr_buck = NULL;
-	  BriefBucket *breif_buck = NULL;
-	  void * tempptr =NULL;
 
 	  // direction indices on upper bucket
 	  int num_particle = 0;
@@ -59,12 +57,6 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 	  double smlen = matprops->smoothing_length;
 	  double dx = smlen;
 	  double dx2 = 0.5 * dx;
-
-//#ifdef DEBUG
-////     bool do_search = false;
-////     double check[DIMENSION] = {-250, -250, 4250};
-////     double temp[DIMENSION];
-//#endif
 
 	  // get min-max domain from hashtable, for key generation
 	  for (i = 0; i < DIMENSION; i++)
@@ -87,6 +79,8 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 	// add particles
 	  HTIterator * itr = new HTIterator (BG_mesh);
 	  Bucket * Bnd_buck;
+	  BriefBucket *breif_buck = NULL;
+	  void * tempptr =NULL;
 	  Bucket * neigh = NULL;
 
 	  /*temporarily use the following way to get bnd, Finally, I will put bnd either

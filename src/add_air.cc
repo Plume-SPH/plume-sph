@@ -45,13 +45,11 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 	  double mindom[DIMENSION], maxdom[DIMENSION];
 	  double normc[DIMENSION];
 	  double pcrd[DIMENSION];
-//	  double poly[DIMENSION + 1];
 	  double bnd[2*DIMENSION], index[2*DIMENSION];
 
 	  Bucket *Curr_buck = NULL;
 
 	  // direction indices on upper bucket
-//	  int Up[DIMENSION] = { 0, 0, 2 };
 	  int num_particle = 0;
 
 	  // start putting piles
@@ -66,7 +64,6 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
      double check[DIMENSION] = {-250, -250, 4250};
      unsigned keycheck[TKEYLENGTH] = {70540343, 676583194, 0};
      unsigned keytemp[TKEYLENGTH];
-//     double temp[DIMENSION];
 #endif
 
 	  // get min-max domain from hashtable, for key generation
@@ -90,7 +87,10 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
       int Nx, Ny, Nz;
 	// add particles
 	  HTIterator * itr = new HTIterator (BG_mesh);
+
 	  Bucket * Bnd_buck;
+	  BriefBucket *breif_buck = NULL;
+	  void * tempptr =NULL;
 
 	  /*temporarily use the following way to get bnd, Finally, I will put bnd either
 	   * in SimulProps or parameters.h
@@ -103,219 +103,228 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
        bnd[4]=Lz_P[0];
        bnd[5]=Lz_P[1];
 
-	  while ((Bnd_buck = (Bucket *) itr->next ()))
-      if (Bnd_buck->get_has_involved() && !((Bnd_buck->get_plist ()).size()))  // make sure bucket is has_involved >0 ; is not added yet;
+	  while (tempptr=itr->next ())
 	  {
-    	Bnd_buck->mark_active ();
-	    if (Bnd_buck->get_bucket_type () == MIXED )
-	    {
-	    	for (i = 0; i < DIMENSION; i++)
-	    	{
-	    		mincrd[i] = *(Bnd_buck->get_mincrd () + i);
-	    		maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
-	            index[2*i] = *(Bnd_buck->get_bucket_index () + 2*i);
-	            index[2*i+1] = *(Bnd_buck->get_bucket_index () + 2*i+1);
-	    	}
-	    	//generate air particles
-	    	Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
-	    	Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
-	    	Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
+		  breif_buck = (BriefBucket *) tempptr;
+		  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+			  continue;
+		  else
+		  {
+			  Bnd_buck = (Bucket*) tempptr;
+		      if (Bnd_buck->get_has_involved() && !((Bnd_buck->get_plist ()).size()))  // make sure bucket is has_involved >0 ; is not added yet;
+			  {
+		    	Bnd_buck->mark_active ();
+			    if (Bnd_buck->get_bucket_type () == MIXED )
+			    {
+			    	for (i = 0; i < DIMENSION; i++)
+			    	{
+			    		mincrd[i] = *(Bnd_buck->get_mincrd () + i);
+			    		maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
+			            index[2*i] = *(Bnd_buck->get_bucket_index () + 2*i);
+			            index[2*i+1] = *(Bnd_buck->get_bucket_index () + 2*i+1);
+			    	}
+			    	//generate air particles
+			    	Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
+			    	Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
+			    	Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
 
-	    	Curr_buck = Bnd_buck;
-	    	for (i = 0; i < Nx; i++)
-	    		for (j = 0; j < Ny; j++)
-	    			 for (k = 0; k < Nz; k++)
-	    			 {
-	    				   ptype = 0; // is real
-	    				   pcrd[0] = mincrd[0] + dx2 + i * dx;
-	    				   pcrd[1] = mincrd[1] + dx2 + j * dx;
-	    				   pcrd[2] = mincrd[2] + dx2 + k * dx;
+			    	Curr_buck = Bnd_buck;
+			    	for (i = 0; i < Nx; i++)
+			    		for (j = 0; j < Ny; j++)
+			    			 for (k = 0; k < Nz; k++)
+			    			 {
+			    				   ptype = 0; // is real
+			    				   pcrd[0] = mincrd[0] + dx2 + i * dx;
+			    				   pcrd[1] = mincrd[1] + dx2 + j * dx;
+			    				   pcrd[2] = mincrd[2] + dx2 + k * dx;
 
-		                   if ((Bnd_buck->get_bucket_index())[4] == -1) //on ground MIXED
-		                   {
-		                	 if (pcrd[2]>bnd[4]) //This is only for on-ground MIXED, for Mixed in the air, the bnd[4]=0.1, which does not make any sense. for over-ground MIXED and PRESSURE_BC, pressure ghost need to be full of the bucket.
-		                	 {
-	    				       for (ii = 0; ii < DIMENSION; ii++)
-	    				           normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
+				                   if ((Bnd_buck->get_bucket_index())[4] == -1) //on ground MIXED
+				                   {
+				                	 if (pcrd[2]>bnd[4]) //This is only for on-ground MIXED, for Mixed in the air, the bnd[4]=0.1, which does not make any sense. for over-ground MIXED and PRESSURE_BC, pressure ghost need to be full of the bucket.
+				                	 {
+			    				       for (ii = 0; ii < DIMENSION; ii++)
+			    				           normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
-	    					   THSFC3d (normc, add_step, &tkeylen, pkey);
+			    					   THSFC3d (normc, add_step, &tkeylen, pkey);
 
-#ifdef DEBUG
-		if (do_search)
-		{
-		    for (ii = 0; ii< TKEYLENGTH; ii++)
-			    keytemp[ii] = pkey[ii];
+		#ifdef DEBUG
+				if (do_search)
+				{
+				    for (ii = 0; ii< TKEYLENGTH; ii++)
+					    keytemp[ii] = pkey[ii];
 
-		    if (find_particle (keytemp, keycheck))
-			    cout << "The particle found!" << endl;
-		}
-#endif
+				    if (find_particle (keytemp, keycheck))
+					    cout << "The particle found!" << endl;
+				}
+		#endif
 
-		    				   // check for duplicates
-		    				   if (P_table->lookup(pkey))
-		    				   {
-		    				       fprintf(stderr, "ERROR: Trying to add particle "
-		    				               "twice on same location.\n");
-		    				       exit(1);
-		    				   }
-		    				   Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
-					           pnew->set_involved_flag(involved);
+				    				   // check for duplicates
+				    				   if (P_table->lookup(pkey))
+				    				   {
+				    				       fprintf(stderr, "ERROR: Trying to add particle "
+				    				               "twice on same location.\n");
+				    				       exit(1);
+				    				   }
+				    				   Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
+							           pnew->set_involved_flag(involved);
 
-					           if (Bnd_buck->is_guest())
-					           {
-					               pnew->put_guest_flag(true);
-					               tempid = Bnd_buck->get_myprocess ();
-					               pnew->put_my_processor(tempid);
-					           }
+							           if (Bnd_buck->is_guest())
+							           {
+							               pnew->put_guest_flag(true);
+							               tempid = Bnd_buck->get_myprocess ();
+							               pnew->put_my_processor(tempid);
+							           }
 
- 					           //determine initial parameter of air
- 					           initial_air (pnew);
+		 					           //determine initial parameter of air
+		 					           initial_air (pnew);
 
-		    				   // add to hash-table
-		    				   P_table->add(pkey, pnew);
-		    				   num_particle++;
-		    				   TKey tmpkey(pkey);
+				    				   // add to hash-table
+				    				   P_table->add(pkey, pnew);
+				    				   num_particle++;
+				    				   TKey tmpkey(pkey);
 
-		    				   switch (bctp)
-		    				   {
-		    				   case 1 :
-		    					   Curr_buck->add_pressure_ghost_particle(tmpkey);
-		    					   break;
-		    				   case 2 :
-		    					   Curr_buck->add_wall_ghost_particle(tmpkey);
-		    					   break;
-		    				   case 100 :
-		    					   Curr_buck->add_real_particle(tmpkey);
-		    					   break;
-		    				   default:
-		    					   cout << "bctp incorrect in function add_air!\n" << endl;
-		    			      }
-		                	 }
-		                   }//end of if bucket is on ground MIXED
-		                   else // bucket is over ground MIXED
-		                   {
-	    				       for (ii = 0; ii < DIMENSION; ii++)
-	    				           normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
+				    				   switch (bctp)
+				    				   {
+				    				   case 1 :
+				    					   Curr_buck->add_pressure_ghost_particle(tmpkey);
+				    					   break;
+				    				   case 2 :
+				    					   Curr_buck->add_wall_ghost_particle(tmpkey);
+				    					   break;
+				    				   case 100 :
+				    					   Curr_buck->add_real_particle(tmpkey);
+				    					   break;
+				    				   default:
+				    					   cout << "bctp incorrect in function add_air!\n" << endl;
+				    			      }
+				                	 }
+				                   }//end of if bucket is on ground MIXED
+				                   else // bucket is over ground MIXED
+				                   {
+			    				       for (ii = 0; ii < DIMENSION; ii++)
+			    				           normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
-	    					   THSFC3d (normc, add_step, &tkeylen, pkey);
-		    				   // check for duplicates
-		    				   if (P_table->lookup(pkey))
-		    				   {
-		    				       fprintf(stderr, "ERROR: Trying to add particle "
-		    				               "twice on same location.\n");
-		    				       exit(1);
-		    				   }
-		    				   Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
-					           pnew->set_involved_flag(involved);
+			    					   THSFC3d (normc, add_step, &tkeylen, pkey);
+				    				   // check for duplicates
+				    				   if (P_table->lookup(pkey))
+				    				   {
+				    				       fprintf(stderr, "ERROR: Trying to add particle "
+				    				               "twice on same location.\n");
+				    				       exit(1);
+				    				   }
+				    				   Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
+							           pnew->set_involved_flag(involved);
 
-					           if (Bnd_buck->is_guest())
-					           {
-					               pnew->put_guest_flag(true);
-					               tempid = Bnd_buck->get_myprocess ();
-					               pnew->put_my_processor(tempid);
-					           }
+							           if (Bnd_buck->is_guest())
+							           {
+							               pnew->put_guest_flag(true);
+							               tempid = Bnd_buck->get_myprocess ();
+							               pnew->put_my_processor(tempid);
+							           }
 
- 					           //determine initial parameter of air
- 					           initial_air (pnew);
+		 					           //determine initial parameter of air
+		 					           initial_air (pnew);
 
-		    				   // add to hash-table
-		    				   P_table->add(pkey, pnew);
-		    				   num_particle++;
-		    				   TKey tmpkey(pkey);
+				    				   // add to hash-table
+				    				   P_table->add(pkey, pnew);
+				    				   num_particle++;
+				    				   TKey tmpkey(pkey);
 
-		    				   switch (bctp)
-		    				   {
-		    				   case 1 :
-		    					   Curr_buck->add_pressure_ghost_particle(tmpkey);
-		    					   break;
-		    				   case 2 :
-		    					   Curr_buck->add_wall_ghost_particle(tmpkey);
-		    					   break;
-		    				   case 100 :
-		    					   Curr_buck->add_real_particle(tmpkey);
-		    					   break;
-		    				   default:
-		    					   cout << "bctp incorrect in function add_air!\n" << endl;
-		    				   }
-		                   }
-	    			 }
+				    				   switch (bctp)
+				    				   {
+				    				   case 1 :
+				    					   Curr_buck->add_pressure_ghost_particle(tmpkey);
+				    					   break;
+				    				   case 2 :
+				    					   Curr_buck->add_wall_ghost_particle(tmpkey);
+				    					   break;
+				    				   case 100 :
+				    					   Curr_buck->add_real_particle(tmpkey);
+				    					   break;
+				    				   default:
+				    					   cout << "bctp incorrect in function add_air!\n" << endl;
+				    				   }
+				                   }
+			    			 }
 
-	    }//finish bucket is Mixed
-	    else if (Bnd_buck->get_bucket_type () == OVERGROUND)
-	    {
-//	    	bctp = 100;
-	    	for (i = 0; i < DIMENSION; i++)
-		     {
-		        mincrd[i] = *(Bnd_buck->get_mincrd () + i);
-		        maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
-		      }
-		      //generate air particles
-		        Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
-		        Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
-		        Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
+			    }//finish bucket is Mixed
+			    else if (Bnd_buck->get_bucket_type () == OVERGROUND)
+			    {
+		//	    	bctp = 100;
+			    	for (i = 0; i < DIMENSION; i++)
+				     {
+				        mincrd[i] = *(Bnd_buck->get_mincrd () + i);
+				        maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
+				      }
+				      //generate air particles
+				        Nx = (int) round((maxcrd[0] - mincrd[0]) / dx);
+				        Ny = (int) round((maxcrd[1] - mincrd[1]) / dx);
+				        Nz = (int) round((maxcrd[2] - mincrd[2]) / dx);
 
-		        Curr_buck = Bnd_buck;
-		        for (i = 0; i < Nx; i++)
-		        	for (j = 0; j < Ny; j++)
-		        		for (k = 0; k < Nz; k++)
-		        		{
-		        			pcrd[0] = mincrd[0] + dx2 + i * dx;
-			        		pcrd[1] = mincrd[1] + dx2 + j * dx;
-			        		pcrd[2] = mincrd[2] + dx2 + k * dx;
-#ifdef DEBUG
-		                   if (search_by_coor)
-		                   {
-		                        if (find_particle (pcrd, check))
-			                    cout << "The particle found!" << endl;
-		                    }
-#endif
-			                for (ii = 0; ii < DIMENSION; ii++)
-			                  normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
+				        Curr_buck = Bnd_buck;
+				        for (i = 0; i < Nx; i++)
+				        	for (j = 0; j < Ny; j++)
+				        		for (k = 0; k < Nz; k++)
+				        		{
+				        			pcrd[0] = mincrd[0] + dx2 + i * dx;
+					        		pcrd[1] = mincrd[1] + dx2 + j * dx;
+					        		pcrd[2] = mincrd[2] + dx2 + k * dx;
+		#ifdef DEBUG
+				                   if (search_by_coor)
+				                   {
+				                        if (find_particle (pcrd, check))
+					                    cout << "The particle found!" << endl;
+				                    }
+		#endif
+					                for (ii = 0; ii < DIMENSION; ii++)
+					                  normc[ii] = (pcrd[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
-			                THSFC3d (normc, add_step, &tkeylen, pkey);
-#ifdef DEBUG
-		if (do_search)
-		{
-		    for (ii = 0; ii< TKEYLENGTH; ii++)
-			    keytemp[ii] = pkey[ii];
+					                THSFC3d (normc, add_step, &tkeylen, pkey);
+		#ifdef DEBUG
+				if (do_search)
+				{
+				    for (ii = 0; ii< TKEYLENGTH; ii++)
+					    keytemp[ii] = pkey[ii];
 
-		    if (find_particle (keytemp, keycheck))
-			    cout << "The particle found!" << endl;
-		}
-#endif
-			                // check for duplicates
-			                if (P_table->lookup(pkey))
-			                {
-			                  fprintf(stderr, "ERROR: Trying to add particle "
-			                                  "twice on same location.\n");
-			                  exit(1);
-			                }
-			                Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
-				            pnew->set_involved_flag(involved);
+				    if (find_particle (keytemp, keycheck))
+					    cout << "The particle found!" << endl;
+				}
+		#endif
+					                // check for duplicates
+					                if (P_table->lookup(pkey))
+					                {
+					                  fprintf(stderr, "ERROR: Trying to add particle "
+					                                  "twice on same location.\n");
+					                  exit(1);
+					                }
+					                Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
+						            pnew->set_involved_flag(involved);
 
-					        if (Bnd_buck->is_guest())
-					        {
-					            pnew->put_guest_flag(true);
-					            tempid = Bnd_buck->get_myprocess ();
-					            pnew->put_my_processor(tempid);
-					         }
+							        if (Bnd_buck->is_guest())
+							        {
+							            pnew->put_guest_flag(true);
+							            tempid = Bnd_buck->get_myprocess ();
+							            pnew->put_my_processor(tempid);
+							         }
 
-					         //determine initial parameter of air
-					         initial_air (pnew);
+							         //determine initial parameter of air
+							         initial_air (pnew);
 
-			                // add to hash-table
-			                P_table->add(pkey, pnew);
-			                num_particle++;
-			                TKey tmpkey(pkey);
-			                Curr_buck->add_real_particle(tmpkey);
-		        		}
+					                // add to hash-table
+					                P_table->add(pkey, pnew);
+					                num_particle++;
+					                TKey tmpkey(pkey);
+					                Curr_buck->add_real_particle(tmpkey);
+				        		}
 
-	    }//finish bucket is overground
-	    else if (Bnd_buck->get_bucket_type () == PRESS_BC)
-	    	cout << "The initial domain is larger than the simulation domain, please double check the input domain parameters!" << endl;
-	    else if (Bnd_buck->get_bucket_type () == UNDERGROUND)
-	    	cout << "Wow! you marked underground bucket as has_potential_involved, something was wrong!" << endl;
-	  }//finish go though all buckets
+			    }//finish bucket is overground
+			    else if (Bnd_buck->get_bucket_type () == PRESS_BC)
+			    	cout << "The initial domain is larger than the simulation domain, please double check the input domain parameters!" << endl;
+			    else if (Bnd_buck->get_bucket_type () == UNDERGROUND)
+			    	cout << "Wow! you marked underground bucket as has_potential_involved, something was wrong!" << endl;
+			  }//finish if
+		  }//end if bucket is no brief bucket
+	  }//finish  go through all buckets
 
 	  int ntotal = 0;
 

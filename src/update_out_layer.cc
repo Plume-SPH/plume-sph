@@ -43,30 +43,34 @@ using namespace std;
  */
 void update_out_layer (THashTable * P_table, HashTable * BG_mesh, vector < OutSideBucket > outside_table, int numproc, int myid)
 {
-//	int adapt = 0;
-//	int i;
-//	int PRESSURE_GHOST = 1;
-//	int REAL = 100;
+
 	HTIterator * itr = new HTIterator (BG_mesh);
 	Bucket * Bnd_buck = NULL;
-//	Bucket * Curr_buck = NULL;
-//	Bucket * neigh = NULL;
+	BriefBucket *breif_buck = NULL;
+	void * tempptr =NULL;
 
 	vector < TKey > plist;
 	vector < TKey >::iterator p_itr;
 
-	while ((Bnd_buck = (Bucket *) itr->next ()))
+	while (tempptr=itr->next ())
 	{
-		/*
-		 * 1) is not empty
-		 * 2) is not guest -->not necessary to do extra work to check guest bucket
-		 * 3) has_involved = 0 --> up to now, what only left is pressure ghost buckets and underground buckets
-		 * 4) so, need to make sure that bucket is not UNDERGROUND bucket
-		 *
-		 */
-		if (((Bnd_buck->get_plist ()).size()) && !Bnd_buck->is_guest() && !Bnd_buck->get_has_involved() && Bnd_buck->get_bucket_type () != UNDERGROUND)
+		breif_buck = (BriefBucket *) tempptr;
+		if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+			continue;
+		else
 		{
+			Bnd_buck = (Bucket*) tempptr;
+			/*
+			 * 1) is not empty
+			 * 2) is not guest -->not necessary to do extra work to check guest bucket
+			 * 3) has_involved = 0 --> up to now, what only left is pressure ghost buckets and underground buckets
+			 * 4) so, need to make sure that bucket is not UNDERGROUND bucket
+			 *
+			 */
+			if (((Bnd_buck->get_plist ()).size()) && !Bnd_buck->is_guest() && !Bnd_buck->get_has_involved() && Bnd_buck->get_bucket_type () != UNDERGROUND)
+			{
 
+			}
 		}
 	}
 	return;

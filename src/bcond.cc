@@ -75,7 +75,7 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
       for (i = 0; i < NO_OF_EQNS; i++)
         uvec[i] = 0.;
 
-      // get hold of bucket containing the image
+      // get hold of bucket containing the image --> it should be a no brief bucket, so no worries about whether the bucket is brief bucket or not!
       Bucket *buck = (Bucket *) BG_mesh->lookup(i_img->bucket_key);
       assert(buck);
 
