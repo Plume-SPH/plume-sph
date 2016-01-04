@@ -102,7 +102,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
        bnd[4]=Lz_P[0];
        bnd[5]=Lz_P[1];
 
- 	  while (tempptr=itr->next ())
+ 	  while ((tempptr=itr->next ()))
  	  {
  		  breif_buck = (BriefBucket *) tempptr;
  		  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
@@ -262,7 +262,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
 	    Particle *pj;
 	    itr->reset();
 	    //go through all buckets
-		while (tempptr=itr->next ())
+		while ((tempptr=itr->next ()))
 		{
 			  breif_buck = (BriefBucket *) tempptr;
 			  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!

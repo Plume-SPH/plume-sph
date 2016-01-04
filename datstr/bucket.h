@@ -196,7 +196,8 @@ class Bucket: public BriefBucket
   friend void unpack_bucket (BucketPack *, Bucket *, int);
 
 protected:
-  bool active;
+  bool active; //active and inactive flag make sense for non brief buckets
+               //Active flag should be always false for brief bucket --> not necessary to define it as a member in the class.
   bool guest_flag;
   bool erupt_flag;/*flag that used to indicate the bucket is source bucket or not
                     * if erupt_flag = true, it is eruption bucket

@@ -48,6 +48,7 @@ using namespace std;
 
 
 //function that used to determine the involved flag
+//can also be used for determine initial active flag
 int determine_bucket_involved_flag (double *mincrd, double *maxcrd, double *left, double *right)
 {
 	int flag[DIMENSION];
@@ -99,7 +100,6 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
   double temp;
   double len_scale = matprops->LENGTH_SCALE;
 
-  //double time_scale = sqrt(len_scale / matprops->GRAVITY_SCALE);
   double time_scale = 1.;
   // simulation time properties
   inD2 >> timeprops->max_time;
@@ -143,10 +143,12 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   int P_TABLE_SIZE = 4000000;
   double mindom[DIMENSION], maxdom[DIMENSION];
   double mindom_i[DIMENSION], maxdom_i[DIMENSION];
+  double mindom_new[DIMENSION], maxdom_new[DIMENSION];
   unsigned btkey[KEYLENGTH];
   Key tempbtkey;
   double hvars[6], min_crd[DIMENSION], max_crd[DIMENSION];
   char filename[14];
+
   int Down[DIMENSION] = { 0, 0, 1 };
 
   BucketStruct *bucket;
@@ -154,8 +156,10 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   int neigh_proc[NEIGH_SIZE];
   double elev[4];
   int i, j, k;
-  int btflag, btype, has_involved;
+  int btflag, btype, has_involved, active;
+
   double len_scale = matprops->LENGTH_SCALE;
+  double bucket_size = PARTICLE_DENSITY * (matprops->smoothing_length);
 
 #ifdef DEBUG
    bool do_search = false;
@@ -218,6 +222,13 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   maxdom_i[0]=simprops->Idom_x_max;
   maxdom_i[1]=simprops->Idom_y_max;
   maxdom_i[2]=simprops->Idom_z_max;
+
+  //The initial domain is extended to have a layer of empty non-brief buckets ---> for adding of
+  for (i = 0; i < DIMENSION; i++)
+  {
+    mindom_new[i] = mindom_i[i] - bucket_size;
+    maxdom_new[i] = maxdom_i[i] + bucket_size;
+  }
 
   // create hash-table for back-ground mesh
   *BG_mesh = new HashTable (BG_TABLE_SIZE, 2017, mindom, maxdom);
@@ -289,48 +300,59 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
         my_comm[neigh_proc[j]] = 1;
     }
 
-    // buckettype flag
-    int bt_index[2*DIMENSION];
-    for (k=0; k<2*DIMENSION; k++)
-    	bt_index[k]= bucket[i].bucket_index[k];
+    active=0;
+    active=determine_bucket_involved_flag(mindom_new, maxdom_new, min_crd, max_crd);
 
-    for (j = 0; j < 4; j++)
-      elev[j] = bucket[i].elev[j];
-
-    btype = bucket[i].buckettype;
-    switch (btype)
+    if(active)
     {
-    case 1:
-      btflag = UNDERGROUND;
-      break;
-    case 2:
-      btflag = MIXED;
-      if (bt_index[4] == -1)
-          for (j = 0; j < 4; j++)
-               elev[j] = bucket[i].elev[j] / len_scale;
-      break;
-    case 3:
-      btflag = OVERGROUND;
-      break;
-    case 4:
-      btflag = PRESS_BC;
-      break;
-    default:
-      fprintf(stderr,"ERROR: Unknown buckettype flag.\nCheck the preoprocessor\n");
-      exit(1);
+        // buckettype flag
+    	int bt_index[2*DIMENSION];
+    	for (k=0; k<2*DIMENSION; k++)
+    	    bt_index[k]= bucket[i].bucket_index[k];
+
+    	for (j = 0; j < 4; j++)
+    	    elev[j] = bucket[i].elev[j];
+
+    	btype = bucket[i].buckettype;
+    	switch (btype)
+    	{
+    	  case 1:
+    	    btflag = UNDERGROUND;
+    	    break;
+    	  case 2:
+    	    btflag = MIXED;
+    	    if (bt_index[4] == -1)
+    	       for (j = 0; j < 4; j++)
+    	           elev[j] = bucket[i].elev[j] / len_scale;
+    	    break;
+    	  case 3:
+    	    btflag = OVERGROUND;
+    	    break;
+    	  case 4:
+    	    btflag = PRESS_BC;
+    	    break;
+    	  default:
+    	    fprintf(stderr,"ERROR: Unknown buckettype flag.\nCheck the preoprocessor\n");
+    	    exit(1);
+    	}
+
+    	// create a new bucket
+    	Bucket * buck = new Bucket(btkey, min_crd, max_crd, btflag, elev,
+                myid, neigh_proc, neigh_btkeys, bt_index, flat);
+
+    	//determine has_involved flag for the bucket
+    	has_involved=0;
+    	has_involved=determine_bucket_involved_flag(mindom_i, maxdom_i, min_crd, max_crd);
+    	// set has_potential involved
+    	buck->set_has_potential_involved ((bool) has_involved); //Initially, all buckets "contains" the initial domain should be has_potential_involved.
+    	(*BG_mesh)->add(btkey, buck);
+    } //end of if bucket is active
+    else
+    {
+    	// create a new bucket
+    	BriefBucket * briefbuck = new BriefBucket(btkey, min_crd, myid, neigh_proc);
+ 	    (*BG_mesh)->add(btkey, briefbuck);
     }
-
-    // create a new bucket
-    Bucket * buck = new Bucket(btkey, min_crd, max_crd, btflag, elev,
-                               myid, neigh_proc, neigh_btkeys, bt_index, flat);
-
-    //determine has_involved flag for the bucket
-	has_involved=0;
-    has_involved=determine_bucket_involved_flag(mindom_i, maxdom_i, min_crd, max_crd);
-    // set has_potential involved
-    buck->set_has_potential_involved ((bool) has_involved); //Initially, all buckets "contains" the initial domain should be has_potential_involved.
-
-    (*BG_mesh)->add(btkey, buck);
   } //end of go through all buckets, loop index: i
 
   // please don't talk to yourself
@@ -338,7 +360,6 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
 
   // free memory
   delete [] bucket;
-
 
   // clear out the partition table
   partition_tab.clear();
@@ -352,23 +373,16 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   }
 
   int keylength = KEYLENGTH;
-//  double center[2];
   unsigned * part_keys = new unsigned [dims[0]];//dims[0] should be the size of partition_table.
   int incr = 2 + keylength; //The incr is very important 2 is size of sfc-key in BucketHead, and length is keylength of bucket key
   GH5_readdata (fp, "/partition_table", part_keys);
   for (i = 0; i < dims[0]; i += incr)
   {
-    Bucket * buck = (Bucket *) (*BG_mesh)->lookup (part_keys + i + 2);
-//    if (buck->which_neigh_proc (Down) != -1)
-//    {
-//      fprintf (stderr, "ERROR: Partition table do not have correct keys.\n");
-//      exit (1);
-//    }
+    //Bucket * buck = (Bucket *) (*BG_mesh)->lookup (part_keys + i + 2);
     partition_tab.push_back (BucketHead (part_keys + i, part_keys + i + 2));
   }
 
   // Create hash-table for particles
-//  *P_table = new THashTable(P_TABLE_SIZE, 2017, mindom, maxdom, MAX_ADD_STEPS );
   *P_table = new THashTable(P_TABLE_SIZE, 2017, mindom, maxdom);
   return 0;
 }

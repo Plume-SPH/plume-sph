@@ -95,7 +95,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
        bnd[5]=Lz_P[1];
 
       // will not add pressure ghost on UNDERGROUND bucket
-	  while (tempptr=itr->next ())
+	  while ((tempptr=itr->next ()))
 	  {
 		  breif_buck = (BriefBucket *) tempptr;
 		  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!

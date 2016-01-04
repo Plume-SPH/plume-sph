@@ -27,6 +27,8 @@ using namespace std;
 /*
  * Scan mesh and mark buckets active and inactive
  */
+//It would be better if the inactive bucket will be turn to brief bucket.
+//This will help to save memory!
 int
 update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
 {
@@ -36,39 +38,52 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
     // visit every bucket
     HTIterator * itr = new HTIterator (BG_mesh);
     Bucket *curr_bucket = NULL, *neigh = NULL;
-    while ((curr_bucket = (Bucket *) itr->next ()))
+	BriefBucket *breif_buck = NULL;
+	void * tempptr =NULL;
+
+    while (tempptr=itr->next ())
     {
-        // mark it inactive to start with
-        curr_bucket->mark_inactive ();
+    	breif_buck = (BriefBucket *) tempptr;
+    	if(breif_buck->check_brief())
+    		continue;
+    	else
+    	{
+    		curr_bucket = (Bucket*) tempptr;
 
-        // if any neighbor has any particle, mark current bucket active
-        const int * neigh_proc = curr_bucket->get_neigh_proc ();
-        Key * neighbors = curr_bucket->get_neighbors ();
+            // mark it inactive to start with
+            curr_bucket->mark_inactive ();
 
-        for (i = 0; i < NEIGH_SIZE; i++)
-            if (neigh_proc[i] > -1)
-            {
-                // some neighs may not of available on current process--> if that happens, what should I do?
-                neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
-                if ( neigh && (neigh->get_plist ().size () > 0))
+            // if any neighbor has any particle, mark current bucket active
+            const int * neigh_proc = curr_bucket->get_neigh_proc ();
+            Key * neighbors = curr_bucket->get_neighbors ();
+
+            for (i = 0; i < NEIGH_SIZE; i++)
+                if (neigh_proc[i] > -1)
                 {
-                    curr_bucket->mark_active ();
-                    break; // no need to look any further
+                    // some neighs may not of available on current process--> if that happens, what should I do? ---> Almost impossible for no-guest buckets, but if it happens? what should I do?
+                	// No, it is not possible!
+                    neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
+                    if ( neigh && (neigh->get_plist ().size () > 0)) //It is not necessary to check whether neighbor bucket is brief bucket or not, if it is brief bucket, it will return a empty particle list
+                    {
+                        curr_bucket->mark_active ();
+                        break; // no need to look any further
+                    }
+
+                    // check for mesh errors
+                    if ((! neigh) && (neigh_proc[i] == myid))
+                    {
+                        fprintf (stderr,"Error: neigh-bucket missing on %d\n",
+                                 myid);
+                        fprintf (stderr,"trace: %s:%d\n", __FILE__, __LINE__);
+                        return -1;
+                    }
                 }
 
-                // check for mesh errors
-                if ((! neigh) && (neigh_proc[i] == myid))
-                {
-                    fprintf (stderr,"Error: neigh-bucket missing on %d\n",
-                             myid);
-                    fprintf (stderr,"trace: %s:%d\n", __FILE__, __LINE__);
-                    return -1;
-                }
-            }
-    }
+    	} //end of if bucket is not brief bucket
+    }//end of while loop go through all buckets
 
     /*
-     * To switch buckets on foreign procs,
+     * To switch buckets on foreign procs ---> because for guest buckets, it is very possible that its non-empty neighbor is not available locally
      * do some communications
      */
     int * recv_info = new int [numproc];
@@ -89,16 +104,26 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
 
     // calculate send_info
     itr->reset ();
-    while ((curr_bucket = (Bucket *) itr->next ()))
-        if ((! curr_bucket->is_guest ()) &&
-            (! curr_bucket->get_plist ().empty ()))
-        {
-            const int * neigh_proc = curr_bucket->get_neigh_proc ();
-            for (i = 0; i < NEIGH_SIZE; i++)
-                if ((neigh_proc[i] > -1) &&
-                    (neigh_proc[i] != myid))
-                    send_info[neigh_proc[i]] += KEYLENGTH;
-        }
+    while (tempptr=itr->next ())
+    {
+		breif_buck = (BriefBucket *) tempptr;
+		if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+			continue;
+		else
+		{
+			curr_bucket = (Bucket*) tempptr;
+	        if ((! curr_bucket->is_guest ()) &&
+	            (! curr_bucket->get_plist ().empty ())) //bucket is not empty, this is important: In the first loop go through all buckets, active inactive is marked based info only available locally.
+	        	                                        //This part will exchange information which are not available locally, to mark active and inactive.
+	        {
+	            const int * neigh_proc = curr_bucket->get_neigh_proc ();
+	            for (i = 0; i < NEIGH_SIZE; i++)
+	                if ((neigh_proc[i] > -1) &&
+	                    (neigh_proc[i] != myid))
+	                    send_info[neigh_proc[i]] += KEYLENGTH;
+	        }
+		}
+    }//end of while loop
 
     // make send calls
     for (i = 0; i < numproc; i++)
@@ -144,21 +169,31 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
         count[i] = 0;
 
     itr->reset ();
-    while ((curr_bucket = (Bucket *) itr->next ()))
-        if ((! curr_bucket->is_guest ()) &&
-            (! curr_bucket->get_plist ().empty ()))
-        {
-            const int * neigh_proc = curr_bucket->get_neigh_proc ();
-            Key * neighbors = curr_bucket->get_neighbors ();
-            for ( i = 0; i < NEIGH_SIZE; i++)
-                if ((neigh_proc[i] > -1) &&
-                    (neigh_proc[i] != myid))
-                {
-                    int k = neigh_proc[i];
-                    for (j = 0; j < KEYLENGTH; j++)
-                        sendbuf[k][count[k]++] = neighbors[i].key[j];
-                }
-        }
+    while (tempptr=itr->next ())
+    {
+		breif_buck = (BriefBucket *) tempptr;
+		if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+			continue;
+		else
+		{
+			curr_bucket = (Bucket*) tempptr;
+	        if ((! curr_bucket->is_guest ()) &&
+	            (! curr_bucket->get_plist ().empty ()))
+	        {
+	            const int * neigh_proc = curr_bucket->get_neigh_proc ();
+	            Key * neighbors = curr_bucket->get_neighbors ();
+	            for ( i = 0; i < NEIGH_SIZE; i++)
+	                if ((neigh_proc[i] > -1) &&
+	                    (neigh_proc[i] != myid))
+	                {
+	                    int k = neigh_proc[i];
+	                    for (j = 0; j < KEYLENGTH; j++)
+	                        sendbuf[k][count[k]++] = neighbors[i].key[j];
+	                }
+	        }
+		}//end of if bucket is not brief buckets
+    }//end of while loop go through all buckets
+
 
     // post sends
     send_info[myid] = 0;
@@ -176,7 +211,7 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
             {
                 for (int k = 0; k < KEYLENGTH; k++)
                 	btkey[k] = recvbuf[i][j + k];
-                curr_bucket = (Bucket *) BG_mesh->lookup (btkey);
+                curr_bucket = (Bucket *) BG_mesh->lookup (btkey); //This btkey should always be the key of a bucket. it is impossible that the bucket is a brief bucket
                 assert (curr_bucket);
 
                 // regardless of its current status / make it active

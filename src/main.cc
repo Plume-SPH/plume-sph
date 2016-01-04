@@ -213,7 +213,7 @@ main(int argc, char **argv)
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
       // adapt_domain -> What did here is make the domain larger--->because the involved particle enter the most outside bucket layer (has_potential_involved = 1;)
-      adapt_domain (P_table, BG_mesh, numprocs, myid);
+      adapt_domain (P_table, BG_mesh, matprops, numprocs, myid);
 
       //sync data, as some ghost_pressure bucket becomes has_potential_involved (also for the particles inside)-->these information is needed when adding pressure ghost and as well as wall ghost.
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);

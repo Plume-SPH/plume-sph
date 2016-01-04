@@ -948,6 +948,74 @@ int determine_face_type (double crd, double max, double min)
 	return flag;
 }
 
+//function that used to determine the type of bucket
+//--->This is actually exactly the same as the face type determine function from preprocess
+//--->Remember to update this section when any modification is made in preprocess
+void determine_bucket_type (double *mincrd, double *maxcrd, double *xcrd, double *ycrd, double *zcrd, int* type, int* bt)
+{
+	int flag[DIMENSION];
+	int sum = 0;
+	int k;
+
+    bt[0]=determine_face_type(xcrd[0],maxcrd[0],mincrd[0]);
+    bt[1]=determine_face_type(xcrd[1],maxcrd[0],mincrd[0]);
+    bt[2]=determine_face_type(ycrd[0],maxcrd[1],mincrd[1]);
+    bt[3]=determine_face_type(ycrd[1],maxcrd[1],mincrd[1]);
+    bt[4]=determine_face_type(zcrd[0],maxcrd[2],mincrd[2]);
+    bt[5]=determine_face_type(zcrd[1],maxcrd[2],mincrd[2]);
+
+    for (k=0; k<DIMENSION; k++)
+    	flag[k]=abs(bt[2*k]+bt[2*k+1]);
+
+    for (k=0; k<DIMENSION; k++)
+    	sum += flag[k];
+
+    if ( (flag[0]==2) || (flag[1]==2) || (flag[2]==2))
+    {
+    	if ((bt[4] == -1) && (bt[5] == -1)) //only bt[5] == -1 is enough!
+    		*type = 1; //underground
+    	else
+    		*type = 4; //pressure bc
+    }
+
+    else if ( (flag[0]==1) || (flag[1]==1) || (flag[2]==1) )
+    	*type = 2;     //Mixed
+    else if(sum == 0)
+    	*type = 3;     //overground
+    else
+    {
+    	*type = 0;     //invalid
+    	cout << "Invalid input bucket_index!!!" << endl;
+    }
+
+    /*Some buckets which are "underground" but also has ground boundary information are shift to MIXED
+
+        |
+        |                                        ORIGINAL DOMAIN
+        |
+        |                 Left boundary
+        |______________|_______!_______
+        |Orig:UNDG     |       !       |
+        |._._._._._._._|._._._.!_._._._|._._._.  Bottom Boundary
+        |Changed to:   |       !       |
+        |Mixed___ _____|_______!_______|_______
+        |              |       !       |
+        |              |       !       |
+        |              |       !       |
+        |______________|_______!_______|________________________
+
+         The bucket at the left
+         corner should still
+         be UNDERGROUND!
+    */
+
+    if (bt[4]==-1 && bt[5]==0)
+    	*type = 2;
+
+    return ;
+}
+
+
 //function that used to compute the additional term in momentum equation if SPH_epsilon turbulence model is adopted
 double SPH_epsilon_mom(double* vab, double V_b) //V_b is the specific volume
 {
@@ -1010,6 +1078,120 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 	                  //7) I might have negative heat conductivity term or superficial large heat conductivity, In my opinion, this comes from problem 1) and 2)
 //	  return 0;
 	}
+}
+
+//function that switch brief bucket to a bucket
+void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, double * mindom_o, double * maxdom_o, double bucket_size, double len_scale, Bucket * buck)
+{
+	unsigned btkey[KEYLENGTH];
+	Key tempbtkey;
+	Key neigh_btkeys[NEIGH_SIZE];
+	int neigh_proc[NEIGH_SIZE];
+	double min_crd[DIMENSION], max_crd[DIMENSION], cent_crd[DIMENSION], normc[DIMENSION];
+	double xcrd[2], ycrd[2], zcrd[2];
+	double neigh_crd[DIMENSION];
+	double elev[4];
+	int i, j, k, l;
+	unsigned keylen= KEYLENGTH;
+	int btflag, has_involved=0, type;
+	int bk_index[2*DIMENSION];
+
+	double flat[2*DIMENSION];
+	flat[0]=Lx_P[0];
+	flat[1]=Lx_P[1];
+	flat[2]=Ly_P[0];
+	flat[3]=Ly_P[1];
+	flat[4]=Lz_P[0];
+	flat[5]=Lz_P[1];
+
+	for (j = 0; j < DIMENSION; j++)
+		min_crd[j]= *(breif_neigh->get_mincrd () + j);
+	for (j = 0; j < DIMENSION; j++)
+		max_crd[j]= min_crd[j] + bucket_size;
+	for (j = 0; j < DIMENSION; j++)
+		cent_crd[j]= 0.5 * (min_crd[j] + max_crd[j]);
+
+	for (j = 0; j <  NEIGH_SIZE; j++)
+	    neigh_proc[i]= *(breif_neigh->get_neigh_proc () + j);
+
+	//go through all neighbors and determine their keys based on their location, then add the key into neigh_btkeys
+	double bucket_size_half = bucket_size*0.5;
+	int count = 0;
+	for (i=-1; i<2; i++)
+	{
+		neigh_crd[0] = cent_crd[0] + i * bucket_size;
+		for (j=-1; j<2; j++)
+		{
+			neigh_crd[1] = cent_crd[1] + i * bucket_size;
+			for (k=-1; k<2; k++)
+			{
+				neigh_crd[2] = cent_crd[2] + i * bucket_size;
+				xcrd[0]=neigh_crd[0]- bucket_size_half;
+				xcrd[1]=neigh_crd[0]+ bucket_size_half;
+				ycrd[0]=neigh_crd[1]- bucket_size_half;
+				ycrd[1]=neigh_crd[1]+ bucket_size_half;
+				zcrd[0]=neigh_crd[2]- bucket_size_half;
+				zcrd[1]=neigh_crd[2]+ bucket_size_half;
+				determine_bucket_type (mindom, maxdom, xcrd, ycrd, zcrd, &type, bk_index);
+				if (type == 3)//if the bucket is within the domain ---> the so called OVERGROUND buckets
+				{
+				    for ( l=0; l<DIMENSION; l++)
+				        normc[l]=(neigh_crd[l]- *(mindom+l))/(*(maxdom+l)- *(mindom+l));
+				    HSFC3d (normc, &keylen, btkey);
+				    neigh_btkeys[count] = btkey;
+				    count ++;
+				}
+				else
+				{
+					tempbtkey.key[0]=0;
+					tempbtkey.key[1]=0;
+					neigh_btkeys[count] = btkey;
+				}
+			}
+		}
+	}
+
+	for (i=0; i<4; i++)
+	   elev[i]= mindom_o[2]; //the boundary on the ground --> This is only for flat ground.
+
+	xcrd[0]=min_crd[0];
+	ycrd[0]=min_crd[1];
+	zcrd[0]=min_crd[2];
+	xcrd[1]=max_crd[0];
+	ycrd[1]=max_crd[1];
+	zcrd[1]=max_crd[2];
+	determine_bucket_type (mindom_o, maxdom_o, xcrd, ycrd, zcrd, &type, bk_index);
+	switch (type)
+	{
+	  case 1:
+	    btflag = UNDERGROUND;
+	    break;
+	  case 2:
+	    btflag = MIXED;
+	    if (bk_index[4] == -1)
+	       for (j = 0; j < 4; j++)
+	           elev[j] = elev[j] / len_scale;
+	    break;
+	  case 3:
+	    btflag = OVERGROUND;
+	    break;
+	  case 4:
+	    btflag = PRESS_BC;
+	    break;
+	  default:
+	    fprintf(stderr,"ERROR: Unknown buckettype flag.\nCheck the preoprocessor\n");
+	    exit(1);
+	}
+
+	tempbtkey=breif_neigh->getKey ();
+	for (j = 0; j < KEYLENGTH; j++)
+	    btkey[j] = tempbtkey.key[j];
+
+	int myid = breif_neigh->get_myprocess();
+	buck = new Bucket(btkey, min_crd, max_crd, btflag, elev,
+	                myid, neigh_proc, neigh_btkeys, bk_index, flat);
+	buck->mark_active();
+	buck->set_has_potential_involved ((bool) has_involved); //Initially, all buckets "contains" the initial domain should be has_potential_involved.
 }
 
 

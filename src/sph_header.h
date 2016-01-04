@@ -383,6 +383,18 @@ int determine_face_type (
 		double // min, min domain
 		);
 
+//function that used to determine the type of bucket
+void determine_bucket_type (
+		double *,  //mincrd,
+		double *,  //maxcrd,
+		double *,  //xcrd,
+		double *,  //ycrd,
+		double *,  //zcrd,
+		int*,      // type,
+		int*       //bt
+		);
+
+
 //function that determines parameters of certain particle
 void initial_air (
 		Particle * //pi
@@ -390,23 +402,25 @@ void initial_air (
 
 //function that used to compute the additional term in momentum equation if SPH_epsilon turbulence model is adopted
 double SPH_epsilon_mom(
-		double*,//vab,
-		double //V_b
+		double*, //vab,
+		double   //V_b
 		);
 
 //function that used to compute turbulent heat conductivity in energy equation if SPH_epsilon turbulence model is adopted
 double SPH_epsilon_heat_conductivity(
 		double ,  //Cp_ab,
-		double*, //ds,
+		double*,  //ds,
 		double *  //vab
 		);
-
-//#ifdef DEBUG
-//      //function to check where does the negative sound speed comes from
-//      bool check_particles_sndspd (
-//    		  THashTable * /*particle hash table*/
-//           );
-//
-//#endif
-
+//function that switch brief bucket to a bucket
+void switch_brief(
+		BriefBucket *,   // breif_neigh,
+		double * ,       //mindom,
+		double * ,       //maxdom,
+		double * ,       //mindom_o,
+		double * ,       //maxdom_o,
+		double ,         //bucket_size,
+		double ,         //len_scale
+		Bucket *         //buck
+		);
 #endif  //SPH_HEADER_H_

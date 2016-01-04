@@ -76,6 +76,7 @@ add_wall_ghost(
 void adapt_domain(
 		THashTable * , // P_table
 		HashTable * ,  // BG_mesh
+		MatProps * ,   //matprops,
 		int ,          // numproc
 		int            // myid
 		);
