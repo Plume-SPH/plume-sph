@@ -50,6 +50,7 @@ struct ParticlePack
 struct BriefBucketPack
 {
 	int myprocess;
+	int is_brief;
 	int neigh_proc[NEIGH_SIZE];
 	unsigned key[KEYLENGTH];
 	double mincrd[DIMENSION];

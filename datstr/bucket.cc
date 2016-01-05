@@ -38,7 +38,7 @@ BriefBucket::BriefBucket ()
 	  key.key[i] = 0;
 
   is_brief = true;
-
+  guest_flag = false;
   return;
 }
 
@@ -88,7 +88,6 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
   int i;
 
   bucket_type = buck_type;
-  guest_flag = 0;
   active = false;
   particles_type = 0;
   has_involved = 0;
@@ -168,7 +167,6 @@ Bucket::Bucket () : BriefBucket()
   int i, j;
 
   active = false;
-  guest_flag = 0;
   bucket_type = 0;
   particles_type = 0;
   has_involved = 0;

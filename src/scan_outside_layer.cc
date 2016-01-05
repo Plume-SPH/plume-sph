@@ -57,7 +57,7 @@ int scan_outside_layer (THashTable * P_table, HashTable * BG_mesh, int numproc, 
 
 //	Particle * p_curr;
 
-	while (tempptr=itr->next ())
+	while ((tempptr=itr->next ()))
 	{
 		breif_buck = (BriefBucket *) tempptr;
 		if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!

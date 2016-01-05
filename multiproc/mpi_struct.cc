@@ -51,7 +51,7 @@ GMFG_new_MPI_Datatype ()
   int d;
   BriefBucketPack * brief_buck = new BriefBucketPack;
 
-  blockcounts0[0] = 1+NEIGH_SIZE;
+  blockcounts0[0] = 2+NEIGH_SIZE;
   blockcounts0[1] = KEYLENGTH;
   blockcounts0[2] = DIMENSION;
   MPI_Address (&(brief_buck->myprocess), &displs0[0]);

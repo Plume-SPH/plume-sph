@@ -1112,7 +1112,7 @@ void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, d
 		cent_crd[j]= 0.5 * (min_crd[j] + max_crd[j]);
 
 	for (j = 0; j <  NEIGH_SIZE; j++)
-	    neigh_proc[i]= *(breif_neigh->get_neigh_proc () + j);
+	    neigh_proc[j]= *(breif_neigh->get_neigh_proc () + j);
 
 	//go through all neighbors and determine their keys based on their location, then add the key into neigh_btkeys
 	double bucket_size_half = bucket_size*0.5;
@@ -1122,10 +1122,10 @@ void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, d
 		neigh_crd[0] = cent_crd[0] + i * bucket_size;
 		for (j=-1; j<2; j++)
 		{
-			neigh_crd[1] = cent_crd[1] + i * bucket_size;
+			neigh_crd[1] = cent_crd[1] + j * bucket_size;
 			for (k=-1; k<2; k++)
 			{
-				neigh_crd[2] = cent_crd[2] + i * bucket_size;
+				neigh_crd[2] = cent_crd[2] + k * bucket_size;
 				xcrd[0]=neigh_crd[0]- bucket_size_half;
 				xcrd[1]=neigh_crd[0]+ bucket_size_half;
 				ycrd[0]=neigh_crd[1]- bucket_size_half;

@@ -65,7 +65,7 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
 {
   int i, j, k;                  /* local variables */
   int num_local_objects;        /* the number of objects this processor owns */
-  float total_weight = 0;      /* the amount of work for all objects */
+  float total_weight = 0, wght;      /* the amount of work for all objects */
   const double TINY = 0.1e-4;
   int balanced_flag;
   int number_of_cuts = 0;
@@ -92,6 +92,10 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
   FILE * fp = fopen (filename, "w");
 #endif
 
+  Bucket * buck = NULL;
+  Bucket *curr_buck;
+  BriefBucket *breif_buck = NULL;
+  void * tempptr =NULL;
 
   /* get application data (number of objects, ids, weights, and coords */
   vector < BucketHead >::iterator ibuck;
@@ -101,42 +105,51 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
     for (i = 0; i < KEYLENGTH; i++)
       buck_key[i] = ibuck->get_buck_head ()[i];
 
-    Bucket *curr_buck = (Bucket *) BG_mesh->lookup (buck_key);
-    assert (curr_buck);
-    float wght = 0.;
-//    do
-//    {
-    vector < TKey > particles = curr_buck->get_plist ();
-    vector < TKey >::iterator p_itr;
-    for (p_itr = particles.begin (); p_itr != particles.end (); p_itr++)
-    {
-        Particle *p_curr = (Particle *) P_table->lookup (*p_itr);
-        if ((!p_curr->is_guest ()))
-        	switch (p_curr->get_bc_type ())
-        	{
-        	case 100:
-        		wght +=realp_load;
-        		break;
-        	case 2:
-        		wght +=wallp_load;
-        		break;
-        	case 0:
-        		wght +=eruptp_load;
-        		break;
-        	case 1:
-        		wght +=pressp_load;
-        		break;
-        	}
+    tempptr = BG_mesh->lookup (buck_key);
+	breif_buck = (BriefBucket *) tempptr;
+	if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+	{
+		wght = 0.;
+	}
+	else
+	{
+	    curr_buck = (Bucket *) tempptr;
+	    assert (curr_buck);
+	    wght = 0.;
+	//    do
+	//    {
+	    vector < TKey > particles = curr_buck->get_plist ();
+	    vector < TKey >::iterator p_itr;
+	    for (p_itr = particles.begin (); p_itr != particles.end (); p_itr++)
+	    {
+	        Particle *p_curr = (Particle *) P_table->lookup (*p_itr);
+	        if ((!p_curr->is_guest ()))
+	        	switch (p_curr->get_bc_type ())
+	        	{
+	        	case 100:
+	        		wght +=realp_load;
+	        		break;
+	        	case 2:
+	        		wght +=wallp_load;
+	        		break;
+	        	case 0:
+	        		wght +=eruptp_load;
+	        		break;
+	        	case 1:
+	        		wght +=pressp_load;
+	        		break;
+	        	}
 
-//          wght += 1.;
-    }//go through all particles in the bucket
-//      curr_buck = (Bucket *) BG_mesh->lookup (curr_buck->which_neigh (Up));
-//      assert (curr_buck);
-//    }//end of go from bottom to top
-//    while ((curr_buck->which_neigh_proc (Up)) != -1);
+	//          wght += 1.;
+	     }//go through all particles in the bucket
+	//      curr_buck = (Bucket *) BG_mesh->lookup (curr_buck->which_neigh (Up));
+	//      assert (curr_buck);
+	//    }//end of go from bottom to top
+	//    while ((curr_buck->which_neigh_proc (Up)) != -1);
+	}//end of if bucket is not brief bucket
     weights.push_back (wght);
     total_weight += wght;
-  }
+  }//end of while loop go through all buckets in the partition table
 
   double * work_per_proc = new double [numprocs];
   MPI_Allgather (&total_weight, 1, MPI_FLOAT,
@@ -300,8 +313,9 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
   // update proc-info
   for (i = 0; i < num_local_objects; i++)
   {
-    Bucket * buck = (Bucket *) BG_mesh->lookup (sfc_vertices[i].obj_key);
-    buck->put_myprocess (sfc_vertices[i].destination_proc);
+	tempptr=BG_mesh->lookup (sfc_vertices[i].obj_key);
+	breif_buck = (BriefBucket*) tempptr; //Whether this works? ---> need test!
+	breif_buck->put_myprocess (sfc_vertices[i].destination_proc);
 //    do
 //    {
 //      buck = (Bucket *) BG_mesh->lookup (buck->which_neigh (Up));
@@ -365,31 +379,33 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
     my_comm [i] = 0;
 
   // update the repartion info
-  PartitionTable.clear ();
-  Bucket * buck = NULL;
+  PartitionTable.clear();
   HTIterator *itr = new HTIterator (BG_mesh);
   const double * mindom = BG_mesh->get_minDom();
   const double * maxdom = BG_mesh->get_maxDom();
   unsigned keylen = KEYLENGTH;
   double normc[2];
-  while ((buck = (Bucket *) itr->next ()))
+  while ((breif_buck = (BriefBucket *) itr->next ())) //Whether this works? ---> need test!
   {
     // find out communication buddies of this prcess
-    const int * neigh_proc = buck->get_neigh_proc ();
+    const int * neigh_proc = breif_buck->get_neigh_proc ();
     for (i = 0; i < NEIGH_SIZE; i++)
       if (neigh_proc[i] > -1)
         my_comm[neigh_proc[i]] = 1;
 
 //    if (buck->which_neigh_proc (Down) == -1)
 //    {
-      Key bkey = buck->getKey ();
-      for (i = 0; i < DIMENSION; i++)
-      {
-        xx[i] = (*(buck->get_mincrd () + i) + *(buck->get_maxcrd () + i)) * 0.5;
-        normc[i] = (xx[i] - mindom[i]) / (maxdom[i] - mindom[i]);
-      }
-      HSFC3d (normc , & keylen, sfc_key);
-      BucketHead bhead (sfc_key, bkey.key);
+      Key bkey = breif_buck->getKey ();
+//      for (i = 0; i < DIMENSION; i++)
+//      {
+//        xx[i] = (*(breif_buck->get_mincrd () + i) + *(breif_buck->get_maxcrd () + i)) * 0.5;
+//        normc[i] = (xx[i] - mindom[i]) / (maxdom[i] - mindom[i]);
+//      }
+//      HSFC2d (normc , & keylen, sfc_key);
+//      BucketHead bhead (sfc_key, bkey.key);
+
+//      Key sfc_bkey = breif_buck->getKey ();
+      BucketHead bhead (bkey.key, bkey.key);
       PartitionTable.push_back (bhead);
 //    }
   }

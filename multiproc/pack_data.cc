@@ -36,6 +36,7 @@ void pack_bucket (BriefBucketPack *buckpack, BriefBucket *sendbuck, int process)
 {
   int i;
   buckpack->myprocess = process;
+  buckpack->is_brief = (int) sendbuck->is_brief;
   for (i=0; i<KEYLENGTH; i++)
     buckpack->key[i] = sendbuck->key.key[i];
 
@@ -55,8 +56,8 @@ void pack_bucket (BucketPack *buckpack, Bucket *sendbuck, int process)
   buckpack->myprocess = process;
   buckpack->bucket_type = sendbuck->bucket_type;
   buckpack->particles_type = sendbuck->particles_type;
-  buckpack->activeflag = (int) sendbuck->active;
   buckpack->erupt_flag = (int) sendbuck->erupt_flag;
+  buckpack->activeflag = (int) sendbuck->active;
   buckpack->has_involved = sendbuck->has_involved;
   for (j=0; j<KEYLENGTH; j++)
     buckpack->key[j] = sendbuck->key.key[j];
@@ -138,6 +139,7 @@ void unpack_bucket (BriefBucketPack *recvdBuck, BriefBucket *buck, int myid)
   int i;
 
   buck->myprocess = myid;//Why do not use recvdBuck->myprocess? Need double check!
+  buck->is_brief = (bool) recvdBuck->is_brief;
 
   for ( i=0; i < KEYLENGTH; i++ )
     buck->key.key[i] = recvdBuck->key[i];

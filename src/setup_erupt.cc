@@ -245,7 +245,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double mincrd[DIMENSION], maxcrd[DIMENSION];
     THTIterator * itr2 = new THTIterator (P_temp);
     Particle * Curr_part;
-    while (tempptr=itr->next ())
+    while ((tempptr=itr->next ()))
     {
     	breif_buck = (BriefBucket *) tempptr;
     	if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
@@ -282,7 +282,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     itr->reset();
     int bctp ;
     //go through all buckets
-    while (tempptr=itr->next ())
+    while ((tempptr=itr->next ()))
     {
     	breif_buck = (BriefBucket *) tempptr;
     	if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
@@ -629,7 +629,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	    THTIterator * itr2 = new THTIterator (P_temp);
 	    Particle * Curr_part;
 
-		while (tempptr=itr->next ())
+		while ((tempptr=itr->next ()))
 		{
 			breif_buck = (BriefBucket *) tempptr;
 			if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!

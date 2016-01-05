@@ -91,28 +91,40 @@ move_data (int nump, int myid, int * my_comm,
     /* count how many buckets we should send and receive from other procs */
     HTIterator *itr = new HTIterator (BG_mesh);
     Bucket *buck;
+	BriefBucket *breif_buck = NULL;
+	void * tempptr =NULL;
 
-    while ((buck = (Bucket *) itr->next ()))
-        if ((! buck->is_guest ()) &&
-            (buck->is_active ()))
-        {
-            const int *neigh_proc = buck->get_neigh_proc ();
-            vector < TKey > plist = buck->get_plist ();
-            for (i = 0; i < nump; i++)
-                check_proc[i] = 0;
+	while ((tempptr=itr->next ()))
+	{
+		breif_buck = (BriefBucket *) tempptr;
+		if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!---> not necessary to communicate at all
+			continue;
+		else
+		{
+			buck = (Bucket*) tempptr;
+	        if ((! buck->is_guest ()) &&
+	            (buck->is_active ()))
+	        {
+	            const int *neigh_proc = buck->get_neigh_proc ();
+	            vector < TKey > plist = buck->get_plist ();
+	            for (i = 0; i < nump; i++)
+	                check_proc[i] = 0;
 
-            // find out number of buckets and particles to send-recv
-            for (i = 0; i < NEIGH_SIZE; i++)
-                if ((neigh_proc[i] > -1) &&    //make sure process id is valid
-                    (neigh_proc[i] != myid) && //do not talk to myself
-                    (check_proc[neigh_proc[i]] == 0)) //make sure that this process is not checked yet.
-                {
-                    check_proc[neigh_proc[i]] = 1;  //turn the value corresponding to neigh_proc[i] to 1;
-                    send_info[2 * neigh_proc[i]]++; //number of buckets
-                    if ( plist.size () > 0 )
-                        send_info[2 * neigh_proc[i] + 1] += plist.size (); //number of particles
-                }
-        }//end of go through all buckets
+	            // find out number of buckets and particles to send-recv
+	            for (i = 0; i < NEIGH_SIZE; i++)
+	                if ((neigh_proc[i] > -1) &&    //make sure process id is valid
+	                    (neigh_proc[i] != myid) && //do not talk to myself
+	                    (check_proc[neigh_proc[i]] == 0)) //make sure that this process is not checked yet.
+	                {
+	                    check_proc[neigh_proc[i]] = 1;  //turn the value corresponding to neigh_proc[i] to 1;
+	                    send_info[2 * neigh_proc[i]]++; //number of buckets
+	                    if ( plist.size () > 0 )
+	                        send_info[2 * neigh_proc[i] + 1] += plist.size (); //number of particles
+	                }
+	        }//end if ...
+		}//end of if bucket is not a brief.
+	} //end of while loop go through all buckets
+
     send_info[2 * myid] = 0;      // don't need to send info to myself
     send_info[2 * myid + 1] = 0;  // info for # of particles
 
@@ -132,17 +144,26 @@ move_data (int nump, int myid, int * my_comm,
 
     /* Mark particles in guest-buckets "old" (if present) */
     itr->reset ();
-    while ((buck = (Bucket *) itr->next ()))
-        if (buck->is_guest ())
-        {
-            vector < TKey > plist = buck->get_plist ();
-            vector < TKey >::iterator p_itr;
-            for (p_itr = plist.begin (); p_itr != plist.end (); p_itr++)
-            {
-                Particle *p_old = (Particle *) P_table->lookup (*p_itr);
-                p_old->put_new_old (OLD);
-            }
-        }
+	while ((tempptr=itr->next ()))
+	{
+		breif_buck = (BriefBucket *) tempptr;
+		if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!---> not necessary to communicate at all
+			continue;
+		else
+		{
+			buck = (Bucket*) tempptr;
+	        if (buck->is_guest())
+	        {
+	            vector < TKey > plist = buck->get_plist ();
+	            vector < TKey >::iterator p_itr;
+	            for (p_itr = plist.begin (); p_itr != plist.end (); p_itr++)
+	            {
+	                Particle *p_old = (Particle *) P_table->lookup (*p_itr);
+	                p_old->put_new_old (OLD);
+	            }
+	        }
+		}//end of if bucket is not brief
+	}//end of while loop go through all buckets
 
     // Wait to receive size info from others
     MPI_Status status1;
@@ -209,60 +230,69 @@ move_data (int nump, int myid, int * my_comm,
 
     /* Pack buckets and particles that are being sent over to other procs */
     itr->reset ();
-    while ((buck = (Bucket *) itr->next ()))
-        if ((! buck->is_guest ()) &&
-            ( buck->is_active ()))
-        {
-            const int *neigh_proc = buck->get_neigh_proc ();
-            vector < TKey > plist = buck->get_plist ();
-            vector < TKey >::iterator ip;
+    while ((tempptr=itr->next ()))
+	{
+		breif_buck = (BriefBucket *) tempptr;
+		if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!---> not necessary to communicate at all
+			continue;
+		else
+		{
+			buck = (Bucket*) tempptr;
+	        if ((! buck->is_guest ()) &&
+	            ( buck->is_active ()))
+	        {
+	            const int *neigh_proc = buck->get_neigh_proc ();
+	            vector < TKey > plist = buck->get_plist ();
+	            vector < TKey >::iterator ip;
 
-            // set check proc to zero
-            for (i = 0; i < nump; i++)
-                check_proc[i] = 0;
+	            // set check proc to zero
+	            for (i = 0; i < nump; i++)
+	                check_proc[i] = 0;
 
-            // pack data to be sent over to neighs
-            for (i = 0; i < NEIGH_SIZE; i++)
-                if ((neigh_proc[i] > -1) &&
-                    (neigh_proc[i] != myid) && 
-                    (check_proc[neigh_proc[i]] == 0))//to make sure that data will not be send repeatedly
-                {
-                    check_proc[neigh_proc[i]] = 1;
-                    pack_bucket ((send_buckets + 
-                                 counter_send_proc[2 * neigh_proc[i]]),
-                                      buck, myid);
-                    counter_send_proc[2 * neigh_proc[i]]++;
-                    if ( plist.size () > 0 )
-                    {
-                        for (ip = plist.begin (); ip != plist.end (); ip++)
-                        {
-                            Particle *psend = (Particle *) P_table->lookup (*ip);
-#ifdef DEBUG
-                            if ( ! psend )
-                            {
-                                printf ("attach debugger here\n");
-                            }
-#endif
+	            // pack data to be sent over to neighs
+	            for (i = 0; i < NEIGH_SIZE; i++)
+	                if ((neigh_proc[i] > -1) &&
+	                    (neigh_proc[i] != myid) &&
+	                    (check_proc[neigh_proc[i]] == 0))//to make sure that data will not be send repeatedly
+	                {
+	                    check_proc[neigh_proc[i]] = 1;
+	                    pack_bucket ((send_buckets +
+	                                 counter_send_proc[2 * neigh_proc[i]]),
+	                                      buck, myid);
+	                    counter_send_proc[2 * neigh_proc[i]]++;
+	                    if ( plist.size () > 0 )
+	                    {
+	                        for (ip = plist.begin (); ip != plist.end (); ip++)
+	                        {
+	                            Particle *psend = (Particle *) P_table->lookup (*ip);
+	#ifdef DEBUG
+	                            if ( ! psend )
+	                            {
+	                                printf ("attach debugger here\n");
+	                            }
+	#endif
 
-#ifdef DEBUG
-		                    if (do_search)
-		                    {
-		                      for (j = 0; j < TKEYLENGTH; j++)
-			                      keytemp[j] = psend->getKey().key[j];
+	#ifdef DEBUG
+			                    if (do_search)
+			                    {
+			                      for (j = 0; j < TKEYLENGTH; j++)
+				                      keytemp[j] = psend->getKey().key[j];
 
-		                      if (find_particle (keytemp, keycheck))
-			                      cout << "The particle found, will be send out!" << endl;
-		                    }
-#endif
-                            assert (psend);
-                            pack_particles (psend,
-                                            (send_particles +
-                                            counter_send_proc[2 * neigh_proc[i] + 1]));
-                            counter_send_proc[2 * neigh_proc[i] + 1]++;
-                        }
-                    }
-                }
-        }
+			                      if (find_particle (keytemp, keycheck))
+				                      cout << "The particle found, will be send out!" << endl;
+			                    }
+	#endif
+	                            assert (psend);
+	                            pack_particles (psend,
+	                                            (send_particles +
+	                                            counter_send_proc[2 * neigh_proc[i] + 1]));
+	                            counter_send_proc[2 * neigh_proc[i] + 1]++;
+	                        }
+	                    }
+	                }
+	        }
+		}//end of if bucket is not brief
+	}//end of while loop go through all buckets
 
     //first nump is for buckets, 2nd nump is for particles
     MPI_Request *send_req = new MPI_Request[2 * nump];

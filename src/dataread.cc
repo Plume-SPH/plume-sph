@@ -149,8 +149,6 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   double hvars[6], min_crd[DIMENSION], max_crd[DIMENSION];
   char filename[14];
 
-  int Down[DIMENSION] = { 0, 0, 1 };
-
   BucketStruct *bucket;
   Key neigh_btkeys[NEIGH_SIZE];
   int neigh_proc[NEIGH_SIZE];

@@ -28,7 +28,6 @@ write_matlab(int myid, THashTable * P_table, HashTable * BG_mesh,
              TimeProps * timeprops, vector <BucketHead>  & partition_table)
 {
     int i, j;
-    int Up[3] = {0, 0, 2};
     char file1[25];
     static int icount = 0;
     double mincrd[DIMENSION], maxcrd[DIMENSION];

@@ -149,7 +149,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   BriefBucket *breif_buck = NULL;
   void * tempptr =NULL;
 
-  while (tempptr= it2->next())
+  while ((tempptr= it2->next()))
   {
 	  breif_buck = (BriefBucket *) tempptr;
 	  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
@@ -365,7 +365,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
   // Update particle lists in the buckets--->go through all buckets again!
   it2->reset();
 
-  while (tempptr= it2->next())
+  while ((tempptr= it2->next()))
   {
 	  breif_buck = (BriefBucket *) tempptr;
 	  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!

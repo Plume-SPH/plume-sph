@@ -43,6 +43,8 @@ protected:
 	  bool is_brief; //Flag that used to indicate the basic type of bucket:
 	                 //True: the bucket is brief bucket
 	                 //False: the bucket is not brief bucket
+	  bool guest_flag; //if true, bucket is guest
+	                   //if false, bucket is not guest
 public:
 	  BriefBucket();
 	  BriefBucket(
@@ -98,6 +100,17 @@ public:
 	  const double *get_mincrd () const
 	  {
 	    return mincrd;
+	  }
+	  //! mark bucket as guest, i.e. belongs to different proc
+	  void put_guest_flag (int fl)
+	  {
+	    guest_flag = fl;
+	  }
+
+	  //! check if bucket belongs to different proc
+	  int is_guest () const
+	  {
+	    return guest_flag;
 	  }
 
 	  //! figure out whether the bucket is brief or not
@@ -198,7 +211,6 @@ class Bucket: public BriefBucket
 protected:
   bool active; //active and inactive flag make sense for non brief buckets
                //Active flag should be always false for brief bucket --> not necessary to define it as a member in the class.
-  bool guest_flag;
   bool erupt_flag;/*flag that used to indicate the bucket is source bucket or not
                     * if erupt_flag = true, it is eruption bucket
                     * if erupt_flag = false, it is not eruption bucket
@@ -262,12 +274,6 @@ public:
   void put_lb_weight (double wght)
   {
     lb_weight = wght;
-  }
-
-  //! mark bucket as guest, i.e. belongs to different proc
-  void put_guest_flag (int fl)
-  {
-    guest_flag = fl;
   }
 
   //! put a list of particles
@@ -406,12 +412,6 @@ public:
   int get_has_involved () const
   {
     return has_involved;
-  }
-
-  //! check if bucket belongs to different proc
-  int is_guest () const
-  {
-    return guest_flag;
   }
 
   //!get particle list in the buckets

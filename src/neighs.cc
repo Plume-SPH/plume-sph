@@ -53,7 +53,7 @@ search_neighs_consth (int myid, THashTable * P_table, HashTable * BG_mesh)
   BriefBucket *breif_buck = NULL;
   void * tempptr =NULL;
 
-  while (tempptr = igrd->next())
+  while ((tempptr = igrd->next()))
   {
 	  breif_buck = (BriefBucket *) tempptr;
 	  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
