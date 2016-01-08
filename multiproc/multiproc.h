@@ -61,6 +61,21 @@ void move_data(
     //! Hash-Table of Buckets 
     HashTable *);
 
+//This function will only move brief buckets
+//I will have another function for communication of only brief buckets.
+//The reason why I want to separate these two process is that it is not necessary to syn empty brief bucket for physical data syn
+//But it is necessary to syn brief bucket for repartition
+void
+move_brief_buck (
+	    //! Number of total processes
+	    int,
+	    //! process's MPI rank
+	    int,
+	    //! array of flags for communication with other procs
+	    int *,
+	    //! Hash-Table of Buckets
+	    HashTable *);
+
 //! Update ghost reflections from other processors
 int move_bnd_images(
     //! My process ID

@@ -41,6 +41,10 @@ using namespace std;
 #  include <debug_header.h>
 #endif
 
+//This function will only move buckets which are not brief buckets
+//I will have another function for communication of only brief buckets.
+//The reason why I want to separate these two process is that it is not necessary to syn empty brief bucket for physical data syn
+//But it is necessary to syn brief bucket for repartition
 void
 move_data (int nump, int myid, int * my_comm, 
            THashTable * P_table, HashTable * BG_mesh)
@@ -225,7 +229,7 @@ move_data (int nump, int myid, int * my_comm,
         counter_send_proc[2 * i] =
         counter_send_proc[2 * (i - 1)] + send_info[2 * (i - 1)];
         counter_send_proc[2 * i + 1] =
-            counter_send_proc[2 * (i - 1) + 1] + send_info[2 * (i - 1) + 1];
+        counter_send_proc[2 * (i - 1) + 1] + send_info[2 * (i - 1) + 1];
     }
 
     /* Pack buckets and particles that are being sent over to other procs */
@@ -415,6 +419,264 @@ move_data (int nump, int myid, int * my_comm,
     delete [] send_req;
     delete [] send_buckets;
     delete [] send_particles;
+    delete [] send_info;
+    delete [] counter_send_proc;
+    delete itr;
+
+    return;
+}
+
+//This function will only move brief buckets
+//I will have another function for communication of only brief buckets.
+//The reason why I want to separate these two process is that it is not necessary to syn empty brief bucket for physical data syn
+//But it is necessary to syn brief bucket for repartition
+void
+move_brief_buck (int nump, int myid, int * my_comm, HashTable * BG_mesh)
+{
+    // if number of procs == 1 , don't waste time here
+    if (nump < 2)
+        return;
+
+#ifdef DEBUG
+   bool do_search = false;
+   unsigned keycheck[TKEYLENGTH] = {270983364, 16481501, 0}; //key of its neighbor which is missing
+   unsigned keytemp[TKEYLENGTH] ;
+#endif
+
+
+    int i, j, ierr;
+    const int NEW = 1;
+    const int OLD = -1;
+
+#ifdef DEBUG
+    char filename[20];
+    sprintf (filename, "move_data%03d.log\0", myid);
+    FILE * fp = fopen (filename, "a+");
+    for (i = 0; i < nump; i++)
+        fprintf (fp, "%8d ", my_comm[i]);
+    fprintf (fp, "\n");
+#endif
+
+    // send_info array
+    int *check_proc = new int[nump];
+    int *send_info = new int[nump];
+    int *recv_info = new int[nump];
+
+    for (i = 0; i < nump; i++)
+    {
+        send_info[i] = 0;
+        recv_info[i] = 0;
+    }
+
+    MPI_Request * reqinfo = new MPI_Request [2*nump];
+    int tag1 = 52251;
+    // post recveives for size info
+    for (i = 0; i < nump; i++)
+        if ( my_comm[i] )
+            ierr = MPI_Irecv ((recv_info + i), 1, MPI_INT, i, tag1,
+                              MPI_COMM_WORLD, (reqinfo + i));
+
+    /* count how many buckets we should send and receive from other procs */
+    HTIterator *itr = new HTIterator (BG_mesh);
+	BriefBucket *buck = NULL;
+	void * tempptr =NULL;
+
+	while ((tempptr=itr->next ()))
+	{
+		buck = (BriefBucket *) tempptr;
+		if (buck->check_brief()) //if is brief bucket, this bucket contains nothing!---> not necessary to communicate at all
+		{
+	        if ((! buck->is_guest ()))
+	        {
+	            const int *neigh_proc = buck->get_neigh_proc ();
+	            for (i = 0; i < nump; i++)
+	                check_proc[i] = 0;
+
+	            // find out number of buckets and particles to send-recv
+	            for (i = 0; i < NEIGH_SIZE; i++)
+	                if ((neigh_proc[i] > -1) &&    //make sure process id is valid
+	                    (neigh_proc[i] != myid) && //do not talk to myself
+	                    (check_proc[neigh_proc[i]] == 0)) //make sure that this process is not checked yet.
+	                {
+	                    check_proc[neigh_proc[i]] = 1;  //turn the value corresponding to neigh_proc[i] to 1;
+	                    send_info[neigh_proc[i]]++; //number of buckets
+	                }
+	        }//end if ...
+		}
+		else
+		{
+			continue;
+		}//end of if bucket is not a brief.
+	} //end of while loop go through all buckets
+
+    send_info[myid] = 0;      // don't need to send info to myself
+
+#ifdef DEBUG
+    for (i = 0; i < nump; i++)
+        fprintf (fp, "%8d ", send_info[2*i]);
+    fprintf (fp, "\n");
+    fclose (fp);
+#endif
+
+
+    /* send out size information */
+    for (i = 0; i < nump; i++)
+        if ( my_comm[i] )
+            ierr = MPI_Isend ((send_info + i), 1, MPI_INT, i, tag1,
+                              MPI_COMM_WORLD, (reqinfo + nump + i));
+
+
+    // Wait to receive size info from others
+    MPI_Status status1;
+    for (i = 0; i < nump; i++)
+        if ( my_comm[i] )
+            MPI_Wait ((reqinfo + i), & status1);
+
+    /* post receives */
+    // size of data to be received
+    int recv_count = 0;
+    for (i = 0; i < nump; i++)
+        recv_count += recv_info[i];    //number of buckets
+
+    // allocate space for data to be received
+    MPI_Request *recv_req = new MPI_Request[nump];
+    BriefBucketPack *recv_buckets = new BriefBucketPack[recv_count];
+    int counter_recv = 0;
+    int buck_tag = 226740;       // random tags
+
+    for (i = 0; i < nump; i++)
+    {
+        if (recv_info[i] != 0)
+        {
+            j = MPI_Irecv ((recv_buckets + counter_recv), recv_info[i],
+            		BRIEF_BUCKET_TYPE, i, buck_tag, MPI_COMM_WORLD,
+                   (recv_req + i));
+            counter_recv += recv_info[ i];
+        }
+    }    /* done with receives */
+
+    /* put (GHOST) elements to be moved in the proper arrays */
+    // size of data to be sent
+    int send_count = 0;
+    for (i = 0; i < nump; i++)
+        send_count += send_info[i];
+    // Allocate space for send data
+    BriefBucketPack *send_buckets = new BriefBucketPack[send_count];
+    int *counter_send_proc = new int[nump];
+
+    counter_send_proc[0] = 0;
+    for (i = 1; i < nump; i++)
+    {
+        counter_send_proc[i] =
+        counter_send_proc[(i - 1)] + send_info[(i - 1)];
+     }
+
+    /* Pack buckets and particles that are being sent over to other procs */
+    itr->reset ();
+    while ((tempptr=itr->next ()))
+	{
+		buck = (BriefBucket *) tempptr;
+		if (buck->check_brief()) //if is brief bucket, this bucket contains nothing!---> not necessary to communicate at all
+		{
+	        if ((! buck->is_guest ()))
+	        {
+	            const int *neigh_proc = buck->get_neigh_proc ();
+
+	            // set check proc to zero
+	            for (i = 0; i < nump; i++)
+	                check_proc[i] = 0;
+
+	            // pack data to be sent over to neighs
+	            for (i = 0; i < NEIGH_SIZE; i++)
+	                if ((neigh_proc[i] > -1) &&
+	                    (neigh_proc[i] != myid) &&
+	                    (check_proc[neigh_proc[i]] == 0))//to make sure that data will not be send repeatedly
+	                {
+	                    check_proc[neigh_proc[i]] = 1;
+	                    pack_bucket ((send_buckets +
+	                                 counter_send_proc[neigh_proc[i]]),
+	                                      buck, myid);
+	                    counter_send_proc[neigh_proc[i]]++;
+	                }
+	        }//end of if bucket is not guest!
+		}
+		else
+		{
+			continue;
+		}//end of if bucket is not brief
+	}//end of while loop go through all buckets
+
+    //first nump is for buckets, 2nd nump is for particles
+    MPI_Request *send_req = new MPI_Request[nump];
+    int counter =0;
+    for (i = 0; i < nump; i++)
+    {
+        if (send_info[i] != 0)
+        {
+            j = MPI_Isend ((send_buckets + counter), send_info[i],
+                           BUCKET_TYPE, i, buck_tag, MPI_COMM_WORLD,
+                           (send_req + i));
+            counter += send_info[ i];
+        }
+    }
+
+    int add_counter = 0, update_counter = 0;
+    int count = 0;
+    MPI_Status status;
+
+    // unpack buckets
+    // All the particle-packets from proc (i) should arrive before we start
+    // unpacking buckets-packets from proc (i), otherwise there will an extra
+    // overhead of deleting and re-creating particles that existed already
+    count = 0;
+    for (i = 0; i < nump; i++)
+        if (recv_info[i] != 0)
+        {
+            ierr = MPI_Wait ((recv_req + i), &status);
+            for (j = 0; j < recv_info[i]; j++)
+            {
+                BriefBucket *bcurr =
+                    (BriefBucket *) (BG_mesh->lookup ((recv_buckets + count)->key));
+                if (!bcurr)
+                {
+                    // this brief bucket doesn't exist on this proc
+                    BriefBucket *new_buck = new BriefBucket ();
+                    unpack_bucket ((recv_buckets + count), new_buck,
+                                   (recv_buckets + count)->myprocess);
+                    BG_mesh->add (new_buck->getKey (), new_buck);
+                    new_buck->put_guest_flag (true);
+                    add_counter++;
+                }
+                else
+                {
+                    unpack_bucket ((recv_buckets + count), bcurr,
+                                   (recv_buckets + count)->myprocess);
+                    update_counter++;
+                }
+                count++;
+            }
+        }
+
+    // make sure all the sends are completed
+    // first check info sends
+    for (i = 0; i < nump; i++)
+        if ( my_comm[i] )
+            ierr = MPI_Wait ((reqinfo + nump + i), & status1);
+
+    // now check data sends
+    for (i = 0; i < nump; i++)
+        if (send_info[i] != 0)
+            ierr = MPI_Wait ((send_req + i), &status);
+
+    // clean up
+    delete [] reqinfo;
+    delete [] check_proc;
+    delete [] recv_buckets;
+    delete [] recv_info;
+    delete [] recv_req;
+
+    delete [] send_req;
+    delete [] send_buckets;
     delete [] send_info;
     delete [] counter_send_proc;
     delete itr;
