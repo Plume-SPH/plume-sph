@@ -82,6 +82,18 @@ bool find_bucket (
 		);
 
 
+//function that used to go through all buckets to check whether some buckets in the BG_mesh table is wired or not.
+void BG_mesh_check (
+		HashTable *  //BG_mesh
+		);
+
+//function that used to check mesh error
+void BG_mesh_err_check(
+		HashTable * , // BG_mesh
+		int           // myid
+		);
+
+
 /*find particle by the range of particle position
  *
  */

@@ -54,6 +54,8 @@ BriefBucket::BriefBucket (unsigned *keyi, double *minx, int myid, int *nproc)
     neigh_proc[i] = nproc[i];
 
   is_brief = true;
+  guest_flag = false;
+  return;
 } // end constuctor
 
 void
@@ -74,6 +76,29 @@ BriefBucket::which_neigh_proc (int dir[]) const
   j = dir[1];
   k = dir[2];
   return neigh_proc[ineigh[i][j][k]];
+}
+
+bool
+BriefBucket::find_neigh_dir (Key keyin, Key * neighbor_key, int dir[])
+{
+  int i, j, k;
+  Key neigh_keys[NEIGH_SIZE];
+  for (i=0; i<NEIGH_SIZE; i++)
+	  neigh_keys[i] = *(neighbor_key+i);
+
+  for (i = 0; i < 3; i++)
+    for (j = 0; j < 3; j++)
+      for (k = 0; k < 3; k++)
+      {
+        if (neigh_keys[ineigh[i][j][k]] == keyin)
+        {
+          dir[0] = i;
+          dir[1] = j;
+          dir[2] = k;
+          return true;
+        }
+      }
+  return false;
 }
 
 // constructors with bucket_index as input

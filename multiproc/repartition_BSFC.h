@@ -63,7 +63,7 @@ BSFC_pow2(int intexp)
 //This is a useless declaration
 void BSFC_update_element_proc(int, int, HashTable *, sfc_vertex_t *);
 
-void BSFC_update_and_send_elements(int, int, THashTable *, HashTable *);
+void BSFC_update_and_send_elements(int, int, double, THashTable *, HashTable *);
 
 int BSFC_find_imbalance
   (float *work_percent,

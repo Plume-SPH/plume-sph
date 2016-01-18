@@ -96,7 +96,7 @@ void check_bucket_bykey (HashTable * BG_mesh)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[KEYLENGTH] = {205661440, 304357968}; //the bucket contain the missing particle
+    unsigned keycheck[KEYLENGTH] = {279233414, 853448706} ; //the bucket contain the missing particle
     //The above bucket is the neighbor of  {202798183, 343262493}
     unsigned keytemp[KEYLENGTH] ;
 
@@ -112,7 +112,11 @@ void check_bucket_bykey (HashTable * BG_mesh)
 		  		keytemp[i] = b_curr->getKey().key[i];
 
 		  	if (find_bucket (keytemp, keycheck))
+		  	{
 		  		cout << "The bucket found!" << endl;
+		  		cout << "particles type in this bucket is :" << b_curr->get_particles_type() <<endl;
+		  		cout << "has involved of this bucket is :" << b_curr->get_has_involved() <<endl;
+		  	}
 		 }
 	 }
 
@@ -143,4 +147,64 @@ void check_bucket_guest (HashTable * BG_mesh)
 		 }
 	 }
 
+}
+
+//function that used to go through all buckets to check whether some buckets in the BG_mesh table is wired or not.
+void BG_mesh_check (HashTable * BG_mesh)
+{
+	HTIterator *itr = new HTIterator(BG_mesh);
+	Bucket *b_curr = NULL;
+
+	while ((b_curr = (Bucket *) itr->next()))
+	{
+		if ((b_curr->getKey()).key[0] == 0)
+		{
+		  	cout << "One wired bucket found!" << endl;
+		}
+	}
+
+}
+
+//function that used to check mesh error
+void BG_mesh_err_check(HashTable * BG_mesh, int myid)
+{
+    int i;
+
+    // visit every bucket
+    HTIterator * itr = new HTIterator (BG_mesh);
+    Bucket *curr_bucket = NULL, *neigh = NULL;
+	BriefBucket *breif_buck = NULL;
+	void * tempptr =NULL;
+
+    while (tempptr=itr->next ())
+    {
+    	breif_buck = (BriefBucket *) tempptr;
+    	if(breif_buck->check_brief()) //Currently, I do not care about the mesh error in brief bucket. But actually I should also check that for brief bucket
+    		continue;
+    	else
+    	{
+    		curr_bucket = (Bucket*) tempptr;
+
+            // if any neighbor has any particle, mark current bucket active
+            const int * neigh_proc = curr_bucket->get_neigh_proc ();
+            Key * neighbors = curr_bucket->get_neighbors ();
+
+            for (i = 0; i < NEIGH_SIZE; i++)
+                if (neigh_proc[i] > -1)
+                {
+                    // some neighs may not of available on current process
+
+                    neigh = (Bucket *) BG_mesh->lookup (neighbors[i]); //The neighbor bucket might be brief bucket. but we do not care about that, we can set a pointer for bucket point to brief bucket
+                    // check for mesh errors
+                    if ((! neigh) && (neigh_proc[i] == myid))
+                    {
+                        fprintf (stderr,"Error: neigh-bucket missing on %d\n",
+                                 myid);
+                        fprintf (stderr,"trace: %s:%d\n", __FILE__, __LINE__);
+                        return ;
+                    }
+                }
+
+    	} //end of if bucket is not brief bucket
+    }//end of while loop go through all buckets
 }

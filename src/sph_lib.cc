@@ -1081,7 +1081,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 }
 
 //function that switch brief bucket to a bucket
-void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, double * mindom_o, double * maxdom_o, double bucket_size, double len_scale, Bucket * buck)
+void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, double * mindom_o, double * maxdom_o, double bucket_size, double len_scale, Bucket ** buck)
 {
 	unsigned btkey[KEYLENGTH];
 	Key tempbtkey;
@@ -1138,14 +1138,17 @@ void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, d
 				    for ( l=0; l<DIMENSION; l++)
 				        normc[l]=(neigh_crd[l]- *(mindom+l))/(*(maxdom+l)- *(mindom+l));
 				    HSFC3d (normc, &keylen, btkey);
-				    neigh_btkeys[count] = btkey;
+
+				    for (l=0; l<KEYLENGTH; l++)
+				    	neigh_btkeys[count].key[l] = btkey[l];
+
 				    count ++;
 				}
 				else
 				{
-					tempbtkey.key[0]=0;
-					tempbtkey.key[1]=0;
-					neigh_btkeys[count] = btkey;
+				    for (l=0; l<KEYLENGTH; l++)
+						neigh_btkeys[count].key[l] = 0;
+				    count ++;
 				}
 			}
 		}
@@ -1188,10 +1191,10 @@ void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, d
 	    btkey[j] = tempbtkey.key[j];
 
 	int myid = breif_neigh->get_myprocess();
-	buck = new Bucket(btkey, min_crd, max_crd, btflag, elev,
+	*buck = new Bucket(btkey, min_crd, max_crd, btflag, elev,
 	                myid, neigh_proc, neigh_btkeys, bk_index, flat);
-	buck->mark_active();
-	buck->set_has_potential_involved ((bool) has_involved); //Initially, all buckets "contains" the initial domain should be has_potential_involved.
+	(*buck)->mark_active();
+	(*buck)->set_has_potential_involved ((bool) has_involved); //Initially, all buckets "contains" the initial domain should be has_potential_involved.
 }
 
 

@@ -73,6 +73,7 @@ main(int argc, char **argv)
   int  id;
   bool find = false;
   bool check_buck = false;
+  bool check_mesh_err = false;
   bool check_part_tp =false;
   bool check_bypos = false;
   bool find_large_density = false;
@@ -106,13 +107,13 @@ main(int argc, char **argv)
 	  check_bucket_bykey (BG_mesh);
 #endif
 
-  //add air particles and put particles into bucket, bc_type is determined in this process
-  add_air (P_table, BG_mesh, matprops, numprocs, myid);
-
 #ifdef DEBUG
-  if (check_bucket)
-	  check_bucket_guest (BG_mesh);
+  if (check_mesh_err)
+	  BG_mesh_err_check (BG_mesh, myid);
 #endif
+
+  //add air particles and put particles into bucket, bc_type is determined in this process
+  add_air(P_table, BG_mesh, matprops, numprocs, myid);
 
 
   // scan mesh and mark buckets active/inactive
@@ -142,10 +143,13 @@ main(int argc, char **argv)
   delete_guest_buckets (BG_mesh, P_table);
 
   // Initial repartition
-  repartition (partition_table, P_table, BG_mesh, my_comm);
+  repartition (partition_table, P_table, BG_mesh, matprops, my_comm);
 
-  // move data
+  // send new guests -->non-brief bucket
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+  // send new guests -->brief bucket
+//  move_brief_buck (numprocs, myid, my_comm, BG_mesh);
 #endif
 
   // search and update neighbors ---> can I use a send neighbor here? --> not, I do not think it is necessary!
@@ -224,17 +228,14 @@ main(int argc, char **argv)
       // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
+      //after adding pressure ghost, shift the adhered layer of brief bucket to be bucket.
+      shift_brief_buck (BG_mesh, matprops, timeprops, myid);
+
       //add wall ghost
       add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
 
       // sync data again
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
-
-#ifdef DEBUG
-  if (check_buck)
-	  check_bucket_bykey (BG_mesh);
-#endif
-
 
 #ifdef DEBUG
   if (check_part)
@@ -245,6 +246,7 @@ main(int argc, char **argv)
 	     cout <<"its new_old is : " << id << endl;
   }
 #endif
+
       // scan buckets and make them active / inactive
       update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -260,8 +262,6 @@ main(int argc, char **argv)
       // apply boundary conditions--> as some new wall ghost added, the boundary condition need to be updated!
       ierr += apply_bcond (myid, P_table, BG_mesh, matprops, Image_table);
 
-//      //set up initial outside bucket layer list
-//      update_out_layer (P_table,BG_mesh, outside_table, numproc, myid);
     }
 #endif
     ierr = 0;  // reset error code
@@ -326,13 +326,13 @@ main(int argc, char **argv)
     /* DYNAMIC LOAD BALANCING */
     if ((numprocs > 1) && (timeprops->is_int_time()) &&( ((int) timeprops->timesec()) % 5 == 0))
     {
-      // remove guest buckets and particles
+      // remove guest buckets and particles --->This is necessary for repartition
       delete_guest_buckets (BG_mesh, P_table);
 
       // repartition the domain
-      i = repartition (partition_table, P_table, BG_mesh, my_comm);
+      i = repartition (partition_table, P_table, BG_mesh, matprops, my_comm);
 
-      // send new guests
+      // send new guests -->non-brief bucket
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
       // make buckets active / inactive, if needed
@@ -346,7 +346,6 @@ main(int argc, char **argv)
 
       // send reflections that belong to other procs
       send_foreign_images (myid, numprocs, BG_mesh, Image_table, my_comm);
-
 //      // remove ghosts not needed anymore
 //      delete_unused_ghosts (P_table, BG_mesh, myid);
     }

@@ -421,6 +421,6 @@ void switch_brief(
 		double * ,       //maxdom_o,
 		double ,         //bucket_size,
 		double ,         //len_scale
-		Bucket *         //buck
+		Bucket **         //buck
 		);
 #endif  //SPH_HEADER_H_

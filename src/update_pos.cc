@@ -41,7 +41,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 #ifdef DEBUG
    bool do_search = false;
-   bool check_contain = false;
+   bool check_contain = true;
    unsigned keycheck[TKEYLENGTH] = {69562537, 292385725, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif

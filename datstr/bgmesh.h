@@ -43,6 +43,14 @@ int update_bgmesh (
     //! array of switches to communicate with other procs
     int *);
 
+//void
+//delete_unused_ghosts (
+//		THashTable * , //P_table,
+//		HashTable * ,  //BG_mesh,
+//		int            //myid
+//		);
+
+
 void search_bnd_images (
     //! ProcessID
     int,

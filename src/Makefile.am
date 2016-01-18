@@ -34,6 +34,7 @@ particler_SOURCES = add_air.cc \
                     setup_erupt.cc\
                     setup_ini.cc\
                     smooth_velocity.cc \
+                    shift_brief_buck.cc \
                     timestep.cc \
                     update_out_layer.cc \
                     update_pos.cc \

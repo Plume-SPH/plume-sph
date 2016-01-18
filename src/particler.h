@@ -233,6 +233,16 @@ scan_outside_layer
 		int            //myid
 		);
 
+//function that shif the layer outside the pressure ghost boundary from brief bucket to bucket
+void
+shift_brief_buck (
+		HashTable *, // BG_mesh,
+		MatProps *,  // matprops,
+		TimeProps *, //timeprops,
+		int          //myid
+		);
+
+
 ////This function is useless should be removed.
 //int
 //put_ghost_particles (

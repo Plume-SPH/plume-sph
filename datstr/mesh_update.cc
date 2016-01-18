@@ -27,7 +27,7 @@ using namespace std;
 /*
  * Scan mesh and mark buckets active and inactive
  */
-//It would be better if the inactive bucket will be turn to brief bucket.
+//It would be better if the inactive bucket will be turn to brief bucket. ---> For more complicated application, currently the domain is expanding, so this should not be a problem.
 //This will help to save memory!
 int
 update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
@@ -44,7 +44,7 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
     while (tempptr=itr->next ())
     {
     	breif_buck = (BriefBucket *) tempptr;
-    	if(breif_buck->check_brief())
+    	if(breif_buck->check_brief()) //Brief buckets are default inactive
     		continue;
     	else
     	{
@@ -60,9 +60,9 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
             for (i = 0; i < NEIGH_SIZE; i++)
                 if (neigh_proc[i] > -1)
                 {
-                    // some neighs may not of available on current process--> if that happens, what should I do? ---> Almost impossible for no-guest buckets, but if it happens? what should I do?
-                	// No, it is not possible!
-                    neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
+                    // some neighs may not of available on current process
+
+                    neigh = (Bucket *) BG_mesh->lookup (neighbors[i]); //The neighbor bucket might be brief bucket. but we do not care about that, we can set a pointer for bucket point to brief bucket
                     if ( neigh && (neigh->get_plist ().size () > 0)) //It is not necessary to check whether neighbor bucket is brief bucket or not, if it is brief bucket, it will return a empty particle list
                     {
                         curr_bucket->mark_active ();

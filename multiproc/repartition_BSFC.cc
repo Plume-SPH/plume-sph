@@ -40,6 +40,12 @@ using namespace std;
 #include "buckhead.h"
 #include "repartition_BSFC.h"
 
+#include <properties.h>
+
+#ifdef DEBUG
+#  include <debug_header.h>
+#endif
+
 /* decent values for this partitioning scheme, the user can
  * set them in the as parameters to tune for better performance 
  */
@@ -61,7 +67,7 @@ using namespace std;
 
 int
 repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
-             HashTable * BG_mesh, int * my_comm)
+             HashTable * BG_mesh, MatProps * matprops, int * my_comm)
 {
   int i, j, k;                  /* local variables */
   int num_local_objects;        /* the number of objects this processor owns */
@@ -74,6 +80,8 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
   unsigned sfc_key[2];
   unsigned buck_key[KEYLENGTH];
   double xx[2];
+
+  double bucket_size = PARTICLE_DENSITY * (matprops->smoothing_length);
 
   // direction vectors for neighbors
   int Up[DIMENSION] = { 0, 0, 2 };
@@ -90,6 +98,10 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
   char filename[20];
   sprintf (filename, "debug%02d.txt", myid);
   FILE * fp = fopen (filename, "w");
+#endif
+
+#ifdef DEBUG
+   bool do_check = false;
 #endif
 
   Bucket * buck = NULL;
@@ -358,11 +370,19 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
 //  	      cout << "negative sound speed shows up before this point!" << endl;
 //    }
 //#endif
+#ifdef DEBUG
+	if (do_check)
+	   BG_mesh_check(BG_mesh);
+#endif
 
   // a name can't be more self-explanatory
   MPI_Barrier (MPI_COMM_WORLD);
-  BSFC_update_and_send_elements (myid, numprocs, P_table, BG_mesh);
+  BSFC_update_and_send_elements (myid, numprocs, bucket_size, P_table, BG_mesh);
 
+#ifdef DEBUG
+	if (do_check)
+	   BG_mesh_check(BG_mesh);
+#endif
 //#ifdef DEBUG
 //   bool check_sndspd =true;
 //   bool ng_sndspd =false ;
@@ -385,8 +405,44 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
   const double * maxdom = BG_mesh->get_maxDom();
   unsigned keylen = KEYLENGTH;
   double normc[2];
+
+//  while ((tempptr=itr->next ()))
+//  {
+//	  breif_buck = (BriefBucket *) tempptr;
+//	  if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+//	  {
+//		  const int * neigh_proc = breif_buck->get_neigh_proc ();
+//		  for (i = 0; i < NEIGH_SIZE; i++)
+//		  if (neigh_proc[i] > -1)
+//		      my_comm[neigh_proc[i]] = 1;
+//
+//		  Key bkey = breif_buck->getKey ();
+//		  BucketHead bhead (bkey.key, bkey.key);
+//		  PartitionTable.push_back (bhead);
+//	  }
+//	  else
+//	  {
+//		  buck = (Bucket*) tempptr;
+//		  const int * neigh_proc = buck->get_neigh_proc ();
+//		  for (i = 0; i < NEIGH_SIZE; i++)
+//		  if (neigh_proc[i] > -1)
+//		      my_comm[neigh_proc[i]] = 1;
+//
+//		  Key bkey = buck->getKey ();
+//		  BucketHead bhead (bkey.key, bkey.key);
+//		  PartitionTable.push_back (bhead);
+//	  }
+//  }
+
+#ifdef DEBUG
+	if (do_check)
+	   BG_mesh_check(BG_mesh);
+#endif
+
+  itr->reset ();
   while ((breif_buck = (BriefBucket *) itr->next ())) //Whether this works? ---> need test!
   {
+	assert(breif_buck);
     // find out communication buddies of this prcess
     const int * neigh_proc = breif_buck->get_neigh_proc ();
     for (i = 0; i < NEIGH_SIZE; i++)
@@ -408,7 +464,7 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
       BucketHead bhead (bkey.key, bkey.key);
       PartitionTable.push_back (bhead);
 //    }
-  }
+  }//end of while loop
 
   // no self communication
   my_comm[myid] = 0;

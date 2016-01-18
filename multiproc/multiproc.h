@@ -33,6 +33,8 @@ using namespace std;
 
 #include "buckhead.h"
 
+#include <properties.h>
+
 //! register MPI_structs 
 void GMFG_new_MPI_Datatype();
 
@@ -97,6 +99,8 @@ int repartition(
     THashTable *,
     //! Hash-Table of Buckets
     HashTable *,
+	//MatProps
+	MatProps *,
     //! communication yes/ no flag
     int *);
 

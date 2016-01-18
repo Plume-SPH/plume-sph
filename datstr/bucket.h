@@ -102,13 +102,13 @@ public:
 	    return mincrd;
 	  }
 	  //! mark bucket as guest, i.e. belongs to different proc
-	  void put_guest_flag (int fl)
+	  void put_guest_flag (bool fl)
 	  {
 	    guest_flag = fl;
 	  }
 
 	  //! check if bucket belongs to different proc
-	  int is_guest () const
+	  bool is_guest () const
 	  {
 	    return guest_flag;
 	  }
@@ -138,11 +138,11 @@ public:
 	    return BREIF;
 	  }
 
-	  //! check if bucket belongs to different proc
-	  virtual int is_guest ()
-	  {
-	    return false;
-	  }
+//	  //! check if bucket belongs to different proc
+//	  virtual int is_guest ()
+//	  {
+//	    return false;
+//	  }
 
 	  //! Check is the bucket is active/inactive
 	  virtual bool is_active ()
@@ -198,6 +198,12 @@ public:
 	  {
 		  return false;
 	  }
+
+	  virtual bool find_neigh_dir (
+			  Key ,  //keyin,
+			  Key* , //neighbor_key,
+			  int dir[] //direction
+				);
 
 };
 
@@ -424,6 +430,12 @@ public:
   double get_lb_weight () const
   {
     return lb_weight;
+  }
+
+  //! get particles type:
+  int get_particles_type() const
+  {
+	  return particles_type;
   }
 
   //! Value of elevation z(x,y) using linear interpolation, it will be only called by Mixed Buckets

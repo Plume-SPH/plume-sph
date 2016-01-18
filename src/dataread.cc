@@ -221,11 +221,12 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   maxdom_i[1]=simprops->Idom_y_max;
   maxdom_i[2]=simprops->Idom_z_max;
 
-  //The initial domain is extended to have a layer of empty non-brief buckets ---> for adding of
+  //The initial domain is extended to have a layer of empty non-brief buckets ---> for adding of pressure ghost,
+  //And another layer of empty active bucket for adding of pressure ghost at the time of domain adjusting
   for (i = 0; i < DIMENSION; i++)
   {
-    mindom_new[i] = mindom_i[i] - bucket_size;
-    maxdom_new[i] = maxdom_i[i] + bucket_size;
+    mindom_new[i] = mindom_i[i] - 2.*bucket_size;
+    maxdom_new[i] = maxdom_i[i] + 2.*bucket_size;
   }
 
   // create hash-table for back-ground mesh
@@ -347,10 +348,11 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
     } //end of if bucket is active
     else
     {
-    	// create a new bucket
+    	// create a new brief bucket
     	BriefBucket * briefbuck = new BriefBucket(btkey, min_crd, myid, neigh_proc);
  	    (*BG_mesh)->add(btkey, briefbuck);
     }
+
   } //end of go through all buckets, loop index: i
 
   // please don't talk to yourself

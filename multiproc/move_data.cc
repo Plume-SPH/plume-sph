@@ -55,7 +55,7 @@ move_data (int nump, int myid, int * my_comm,
 
 #ifdef DEBUG
    bool do_search = false;
-   unsigned keycheck[TKEYLENGTH] = {270983364, 16481501, 0}; //key of its neighbor which is missing
+   unsigned keycheck[TKEYLENGTH] =  {94658487, 280062087, 0}; //key of its neighbor which is missing
    unsigned keytemp[TKEYLENGTH] ;
 #endif
 
@@ -143,7 +143,7 @@ move_data (int nump, int myid, int * my_comm,
     /* send out size information */
     for (i = 0; i < nump; i++)
         if ( my_comm[i] )
-            ierr = MPI_Isend ((send_info + 2*i), 2, MPI_INT, i, tag1,
+           ierr = MPI_Isend ((send_info + 2*i), 2, MPI_INT, i, tag1,
                               MPI_COMM_WORLD, (reqinfo + nump + i));
 
     /* Mark particles in guest-buckets "old" (if present) */
@@ -691,26 +691,45 @@ delete_guest_buckets (HashTable * BG_mesh, THashTable * P_table)
     int delete_counter = 0;
     HTIterator *itr = new HTIterator (BG_mesh);
     Bucket *buck;
+	BriefBucket *breif_buck = NULL;
+	void * tempptr =NULL;
 
-    while ((buck = (Bucket *) itr->next ()))
-        if (buck->is_guest ())
-        {
-            vector < TKey > plist = buck->get_plist ();
-            vector < TKey >::iterator ip;
-            // delete particles in the bucket
-            for (ip = plist.begin (); ip != plist.end (); ip++)
-            {
-                Particle *pdel = (Particle *) P_table->lookup (*ip);
-                P_table->remove (*ip);
-                delete pdel;
-            }
+    while ((tempptr=itr->next ()))
+    {
+    	breif_buck = (BriefBucket *) tempptr;
+    	if (breif_buck->check_brief())
+    	{
+    		if (breif_buck->is_guest ())
+    		{
+        		BG_mesh->remove (breif_buck->getKey ());
+        		delete breif_buck;
+        		delete_counter++;
+    		}
+    		continue;
+    	}//end of if bucket is brief bucket
+    	else
+    	{
+    		buck = (Bucket*) tempptr;
+    		if (buck->is_guest ())
+	        {
+	            vector < TKey > plist = buck->get_plist ();
+	            vector < TKey >::iterator ip;
+	            // delete particles in the bucket
+	            for (ip = plist.begin (); ip != plist.end (); ip++)
+	            {
+	                Particle *pdel = (Particle *) P_table->lookup (*ip);
+	                P_table->remove (*ip);
+	                delete pdel;
+	            }
 
-            // now remove the bucket
-            BG_mesh->remove (buck->getKey ());
-            delete buck;
+	            // now remove the bucket
+	            BG_mesh->remove (buck->getKey ());
+	            delete buck;
 
-            delete_counter++;
-        }
+	            delete_counter++;
+	        }
+    	}//end of if bucket is not brief bucket
+    }//end of while loop go through all buckets
 
     delete itr;
     return;
