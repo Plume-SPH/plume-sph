@@ -138,6 +138,7 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, MatProps * matprops
 				  	                  	   p_curr->set_involved_flag (POTENTIAL_INVOLVED); //involved to be 1 (from non-involved to potential involved!)
 				  	                  	}
 				  	                 }// end of if bucket is not MIXED, can not be UNDERGROUND, should be OVERGROUND
+	                                goto next_bnd_buck;
 
 			  	            }// end of if any neigh is has_involved (has_involved = 2)
 
