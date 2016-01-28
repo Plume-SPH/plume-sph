@@ -63,7 +63,7 @@ update_bgmesh (HashTable * BG_mesh, int myid, int numproc, int * my_comm)
                     // some neighs may not of available on current process
 
                     neigh = (Bucket *) BG_mesh->lookup (neighbors[i]); //The neighbor bucket might be brief bucket. but we do not care about that, we can set a pointer for bucket point to brief bucket
-                    if ( neigh && (neigh->get_plist ().size () > 0)) //It is not necessary to check whether neighbor bucket is brief bucket or not, if it is brief bucket, it will return a empty particle list
+                    if ( neigh && (neigh->get_plist ().size () > 0) && !neigh->check_brief()) //It is not necessary to check whether neighbor bucket is brief bucket or not, if it is brief bucket, it will return a empty particle list
                     {
                         curr_bucket->mark_active ();
                         break; // no need to look any further

@@ -122,7 +122,9 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 		              {
 		                  // some neighs may not of available on current process
 		            	  neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
-		                  if ( neigh && neigh->get_has_involved())
+		            	  if (neigh && neigh->check_brief()) //skip if bucket is brief
+		            		  continue;
+		            	  else if ( neigh && neigh->get_has_involved())
 		                	  //sometimes, neigh might be on other processors
 		                	  //--> actually, for guest buckets, it is possible that some of its neighbors can not be found on current process!
 		                	  //--> So syn is necessary after adding of pressure ghost, because, it is possible that some guest buckets that should contain pressure ghost particles will not add pressure ghost particles at this step.
@@ -187,6 +189,9 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 		              		    				   TKey tmpkey(pkey);
 
 		              		    				   Curr_buck->add_pressure_ghost_particle(tmpkey);
+		              		    				 //These are added lately to make sure has_involved indicator of each bucket is correct!
+//		              		    				   Curr_buck->set_has_potential_involved(false);
+//		              		    				   Curr_buck->set_has_involved(false);
 		              	    				   }// make sure it is above ground.
 		              	    				 }// end of if bucket is on ground MIXED
 		              	    				 else //over ground MIXED ---> MIXED on the side of the domain and on the top of the domain
@@ -221,6 +226,9 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 		            		    				TKey tmpkey(pkey);
 
 		            		    				Curr_buck->add_pressure_ghost_particle(tmpkey);
+		            		    				//These are added lately to make sure has_involved indicator of each bucket is correct!
+//		              		    				Curr_buck->set_has_potential_involved(false);
+//		              		    				Curr_buck->set_has_involved(false);
 		              	    				 }// end of else -->is over ground MIXED
 
 		              	    			 }
@@ -277,7 +285,9 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 		           		    				    TKey tmpkey(pkey);
 
 		           		    				    Curr_buck->add_pressure_ghost_particle(tmpkey);
-
+		           		    				    //These are added lately to make sure has_involved indicator of each bucket is correct!
+//		              		    				Curr_buck->set_has_potential_involved(false);
+//		              		    				Curr_buck->set_has_involved(false);
 		              		        		}
 
 		              	      }//finish bucket is overground or pressure_BC

@@ -129,43 +129,48 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
           else
             assert(buck_neigh);
 
-          // search buckets for real particles in 3h neighborhood
-          if (buck_neigh->has_real_particles()  || buck_neigh->has_pressure_ghost_particles())
+          if (buck_neigh->check_brief())
+        	  continue;
+          else
           {
-            plist = buck_neigh->get_plist();
-            for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
-            {
-              Particle *pj = (Particle *) P_table->lookup(*p_itr);
-              assert(pj);
-
-              if (pj->contr_image())
+              // search buckets for real particles in 3h neighborhood
+              if (buck_neigh->has_real_particles()  || buck_neigh->has_pressure_ghost_particles())
               {
-                double h = pj->get_smlen();
-
-                supp = 3 * h;
-                for (j = 0; j < DIMENSION; j++)
-                  dx[j] = refc[j] - *(pj->get_coords() + j);
-
-                // if Particle(j) is in 3-h of reflection ...
-                if (in_support(dx, supp))
+                plist = buck_neigh->get_plist();
+                for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
                 {
-                  for (j = 0; j < DIMENSION; j++)
-                    s[j] = dx[j] / h;
-                  for (j = 0; j < NO_OF_EQNS; j++)
-                    state_vars[j] = *(pj->get_state_vars() + j);
-                  double w = weight(s, h);
-                  double mj = pj->get_mass();
+                  Particle *pj = (Particle *) P_table->lookup(*p_itr);
+                  assert(pj);
 
-                  uvec[0] += mj * w;
-                  uvec[1] += mj * w * state_vars[1] / state_vars[0];
-                  uvec[2] += mj * w * state_vars[2] / state_vars[0];
-                  uvec[3] += mj * w * state_vars[3] / state_vars[0];
-                  uvec[4] += mj * w * state_vars[4] / state_vars[0];//internal energy
-                  wnorm += mj * w / state_vars[0];
-                }
-              }
-            }//go through all particles in that bucket
-          }//if gas real particles or has pressure ghost particles
+                  if (pj->contr_image())
+                  {
+                    double h = pj->get_smlen();
+
+                    supp = 3 * h;
+                    for (j = 0; j < DIMENSION; j++)
+                      dx[j] = refc[j] - *(pj->get_coords() + j);
+
+                    // if Particle(j) is in 3-h of reflection ...
+                    if (in_support(dx, supp))
+                    {
+                      for (j = 0; j < DIMENSION; j++)
+                        s[j] = dx[j] / h;
+                      for (j = 0; j < NO_OF_EQNS; j++)
+                        state_vars[j] = *(pj->get_state_vars() + j);
+                      double w = weight(s, h);
+                      double mj = pj->get_mass();
+
+                      uvec[0] += mj * w;
+                      uvec[1] += mj * w * state_vars[1] / state_vars[0];
+                      uvec[2] += mj * w * state_vars[2] / state_vars[0];
+                      uvec[3] += mj * w * state_vars[3] / state_vars[0];
+                      uvec[4] += mj * w * state_vars[4] / state_vars[0];//internal energy
+                      wnorm += mj * w / state_vars[0];
+                    }
+                  }
+                }//go through all particles in that bucket
+              }//if gas real particles or has pressure ghost particles
+          }//end of if neigh bucket is not brief
         }// end of search all neighbor buckets
 
       // renormalize

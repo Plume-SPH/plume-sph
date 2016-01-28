@@ -92,12 +92,14 @@ int scan_outside_layer (THashTable * P_table, HashTable * BG_mesh, int numproc, 
 		    	    	if (neigh_proc[i] > -1)
 		    	    	{
 		    	    	    neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
+		    	    	    if (neigh && neigh->check_brief())
+		    	    	    	continue;
 		    	    	    /*
 		    	    	    * 1) is not empty
 		    	    	    * 2) has_involved = 0 --> up to now, The only possible are pressure ghost buckets and underground buckets
 		    	    	    * 3) so, need to make sure that bucket is not UNDERGROUND bucket
 		    	    	    */
-		    	    	    if (((neigh->get_plist ()).size()) && !neigh->get_has_involved() && neigh->get_bucket_type () != UNDERGROUND)
+		    	    	    else if (((neigh->get_plist ()).size()) && !neigh->get_has_involved() && neigh->get_bucket_type () != UNDERGROUND)
 		    	    	    {
 		    	    	    	adapt++;
 		    	    	        break; //jump out from the for loop of going through all neighbor --> have already confirmed that Bnd_buck is the most out layer of the

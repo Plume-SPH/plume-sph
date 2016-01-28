@@ -128,25 +128,29 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
                       if (neigh_proc[i] > -1)
                       {
                         buck_neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
-
-                        // skip neighbor if it belongs to foreign process
-                        // but is not synchronized----->Yes, this is a problem.
-                        if (!(buck_neigh) && (neigh_proc[i] != myid))
-                          continue;
-
-                        // involve only if neighbor bucket is a on ground boundary bucket
-                        if ((buck_neigh->get_bucket_type () == MIXED) && (buck_neigh->is_onground ()))
+                        if (buck_neigh && buck_neigh->check_brief())
+                        	continue;
+                        else
                         {
-                          double tmpdist = buck_neigh->get_bnddist (coord, tmpc);
-                          if (tmpdist < bnddist)//What needed is the shortest distance.
-                          {
-                            bnddist = tmpdist;
-                            buck2 = buck_neigh;
-                            img_proc = neigh_proc[i]; //I have question here: how could you make sure that the image is in the neighbor bucket? It is also possible that the image is not in the MIXED bucket.
-                            for (j = 0; j < DIMENSION; j++)
-                              intsct[j] = tmpc[j];
-                          }
-                        }
+                            // skip neighbor if it belongs to foreign process
+                            // but is not synchronized----->Yes, this is a problem.
+                            if (!(buck_neigh) && (neigh_proc[i] != myid))
+                              continue;
+
+                            // involve only if neighbor bucket is a on ground boundary bucket
+                            if ((buck_neigh->get_bucket_type () == MIXED) && (buck_neigh->is_onground ()))
+                            {
+                              double tmpdist = buck_neigh->get_bnddist (coord, tmpc);
+                              if (tmpdist < bnddist)//What needed is the shortest distance.
+                              {
+                                bnddist = tmpdist;
+                                buck2 = buck_neigh;
+                                img_proc = neigh_proc[i]; //I have question here: how could you make sure that the image is in the neighbor bucket? It is also possible that the image is not in the MIXED bucket.
+                                for (j = 0; j < DIMENSION; j++)
+                                  intsct[j] = tmpc[j];
+                              }
+                            }
+                        }//end of if bucket is not brief
                       }//finish check all neighbor buckets, if the process id of neighbor bucket is valid
 
                     // if bnd-distace is too large, then we were unable to

@@ -84,7 +84,9 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, MatProps * matprops
 			  	    	{
 			  	            // some neighs may not of available on current process --> This is true for guest buckets, so we have to syn data after domain adapt
 			  	            neigh = (Bucket *) BG_mesh->lookup (neighbors[i]);
-			  	            if ( neigh && neigh->is_has_involved ())
+			            	if (neigh && neigh->check_brief()) //skip if bucket is brief
+			            		  continue;
+			            	else if ( neigh && neigh->is_has_involved ())
 			  	            {
 				  	               Bnd_buck->set_has_involved (false);
 				  	               Bnd_buck->set_has_potential_involved (true);
