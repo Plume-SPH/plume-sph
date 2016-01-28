@@ -1,13 +1,13 @@
 #!/bin/sh
-#SBATCH --time=00:18:00
+#SBATCH --time=71:30:00
 #SBATCH --nodes=4
 ##SBATCH --cpus-per-task=1
 #SBATCH --tasks-per-node=8
 #SBATCH --mem=24000
-#SBATCH --exclusive
+##SBATCH --exclusive
 #SBATCH --mail-user=zhixuanc@buffalo.edu
 #SBATCH --mail-type=ALL
-#SBATCH --job-name=large_again_7
+#SBATCH --job-name=plume
 #SBATCH --output=output.out
 #SBATCH --error=output.err
 #SBATCH --partition=general-compute
@@ -25,8 +25,8 @@ echo "SLURMTMPDIR         = "$SLURMTMPDIR
 #because CCR is not finish updating yet, I need the following line to make the excutable file works properly.
 export HDF5_DISABLE_VERSION_CHECK=1
 
-module use /projects/abani/modules
-module load dmtcp/2.4.1
+module use /projects/academic/abani/modules
+module load dmtcp/2.4.4
 #module load dmtcp
 #module load openmpi/gcc-4.4.7/1.8.0
 module load intel-mpi/5.0.2
@@ -41,7 +41,7 @@ ulimit -s unlimited
 # Users will typically want to set this to occur a bit before 
 # the job's walltime expires.
 #
-CHECKPOINT_TIME=5m
+CHECKPOINT_TIME=71h
 
 # EXE is the name of the application/executable
 # ARGS is any command-line args
