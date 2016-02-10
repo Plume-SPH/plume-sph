@@ -88,17 +88,23 @@ const double rhov_P = rhov_g_P/ng0_P; //just notice that this equation is exactl
 const double lamda_v_P=rhov_P*Rv_P/Cvv_P; /*A new defined parameter which lamda_P=rho_m*Rm/Cm, where, rho_m: is the density of the mixture, while Rm is gas constant for the mixture, Cm specific heat of at constatnt volume.*/
 const double ev0_P=ng0_P*Cvg_P*Tv0_P+(1-ng0_P)*Cvs_P*Tv0_P; /*energy of erupted material*/
 
-const double Mv_P=3.9811e+07;  /*mass flow rate, it is not directly used in simulation.*/
-//const double Mv_P=1.0;   //for test non-erupt condition
 
-const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
+//This is the old way to give parameters
+//const double Mv_P=3.9811e+07;  /*mass flow rate, it is not directly used in simulation.*/
+////const double Mv_P=1.0;   //for test non-erupt condition
+//
+//const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
+
+//Here is the new way to give parameters --->So it is also OK if sml2 is given as a parameter
+const double rv_P = 140;
+const double Mv_P = rv_P*rv_P*rhov_P*Vv0_P*3.1415926;
 
 const double Pos_v_P[DIMENSION]={0., 0., 0. };  /*position of vent at the origin*/
 
 const int num_erupt = 2; /*this parameter should be used to determine total number */
 
 const int num_erupt_perlayer = 10;
-const int num_erupt_particles = 1400; //number of particle in the initial erupt duct
+const int num_erupt_particles = 1646; //number of particle in the initial erupt duct
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
