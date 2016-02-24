@@ -1,0 +1,334 @@
+
+In particle.h
+
+1) In Dinesh's code, state_vars is essentially the velocity, to make full use of his code, I should do my best to keep his code unchanged. 
+   So, I did not change the name state_vars to velocity, but essentially, it is!
+   
+2) Add more variable in particle class:energy, pressure, mass_fraction[PHASE_NUM], gamma, lamda, sound_speed, 
+   density_phase[PHASE_NUM]
+   It would be good if weight[size depends on number of neighbours], dweight should also be included. But considering that in Dinesh's original
+   code it was not included in the in particle, I did not included it in my particle class.
+   Finally, lamda, density_phase[PHASE_NUM] is not stored.
+   
+3) remove mass friction term 
+
+4) Add bool phase_flag
+
+5) not sure about whether I need to define corresponding new and derivative function---->derivative is not necessary. definitely! new probably
+   also not necessary!
+   
+6) Add corresponding accessor and mutator
+
+7) Add corresponding function to compute non-primitive variables
+
+8) Add a copy constructor, Other constructor does not change, maybe not necessary! ----> it seems that even this 
+   
+
+In  constants.h
+
+1) Add PHASE_NUM=2
+
+2) NO_OF_EQNS=DIMENSION+1;
+
+
+In properties.h
+
+1) turn off these information for add new material
+
+In particle.cc
+
+1)Add new functions for computing non-primitive variables
+
+Note:
+1) density, mass_frach and RHS should be computed together so that weight and derivative
+of weight should be computed only once!
+Another option is that the weight and derivative of that should be defined as a 
+member of particle class.--->the difficulty of doing this is that the number of 
+particles is not changeable.
+
+2) in bcond.cc, there is a statement as following:
+if (buck_neigh->has_real_particles())
+I do not think this is correct!-----> Hopefully it is misunderstanding
+But when computing RHS and density, all nearby particles should be considered:
+even though there are only ghost particles in a bucket, all of these ghost particles
+should be considered in computing of density and RHS!
+I did not change it, should pay attention to this while debugging.
+
+Similarly, while updating density, ghost particles was not considered!
+
+3) I need to replace  ground information from GIS  with a flat ground!---> To
+minimize the modification that I need to do!----> In addition, in the future, when I 
+simulate a real problem, I can use realistic ground information!
+
+4) I should use realistic atmosphere in the future; as a results, the influence of wind on 
+on the development of plume should be considered: Currently, the basic idea is given initial
+wind field and then simulate wind within the computational domain and update atmosphere BC 
+according to change of surrounding wind field.-----> Any way, a dynamic way of imposing 
+atmosphere BC is necessary!
+
+5) I need to put energy into the state_var, it will cause me some trouble in  coding if I store
+it separately!
+
+6) while updating mass fraction in density_massfrac.cc I am using "for loop" to update 
+each phases.----> Actually, if I use "switch case" it should be high efficient! But I need to
+remember that every time extend the model by adding new phases, I need make modification at 
+that part!
+
+7) phase_flag=0: air phase
+   phase_flag=1: eruption material
+   
+8) I need to look at his weighting function: It seems that he was using normalized (xi-xj).
+I need also pay attention to that in my following coding.---->His code is correct!
+
+9) In my particle.h and particle.cc I was assuming that phase_num=2. But in density_massfrac.cc 
+I was assume that phase_num can be any number.
+---> it is not wise to give number of phases totally degree of freedom! It cause too much trouble in coding.
+
+10) In density update function, why density of all particles are updated? It is not necessary 
+to update the state of ghost particles and guest particles. State of ghost particles are 
+updated by imposing boundary condition while state of guest particles are obtained by 
+communication.-----> One possible reason is condition statement would make prefetch difficult.
+
+11) I added a new file for parameters, I need make use of it in pre-process also!
+
+12) Update of particle positions and update of particle list in each bucket is necessary.
+This step should be just after update of energy and moment.
+---> while computing RHS and update density, we do not need to search for neighbor particles
+neighbor should be store in neighbor list.
+
+13) It seems that Dinesh normalized his governing equations. For example, he was using gravity
+as -1 instead of -9.8. 
+
+What should I do? 
+
+Normalize it or not? 
+
+Why need I normalize it?
+--->Most of of his normalization is using coefficient 1, which essentially does not change the value.
+
+14) sph_header.h and sph_lib.cc does not have the same name, does that matter?--->if his code works, that should 
+not matter.
+
+15) The weighting function in Dinesh's code is only for 2D, I need to make it general.
+In addition, the weighting function used in Dinesh's code is the ideal kernel function,
+but only considered particles with 3*h. This will introduce some error. Normally. an
+alternative kernel function with support of 3*h can be used. ---> But it would cause 
+increase in computation cost.
+In addition, the function of w and dw can be combine into one file and as a results, some 
+repeated computing can be avoid.
+
+16) What's wrong with the following:
+
+switch ( DIMENSION )
+{
+  case 3:
+	t1 = 0.179587122125167;    // 1/pi^1.5
+    break;
+  case 2:
+	t1 = 0.318309886183791;    // 1/pi^1
+    break;
+  case 1:
+	t1 = 0.564189583547756;    // 1/pi^0.5
+	break;
+  default:
+    cout<<"Dimension is neither 1, 2 nor 3!\n";
+    break;
+}
+---> nothing wrong.
+17) In Dinesh's weighting function computing, is it necessary to use the following 
+
+  for (i = 0; i < DIMENSION; i++)
+    if (abs (s[i]) > cutoff)
+      return 0;
+      
+18) There are many if condition statement, some of them is unnecessary (eg. the if
+ condition that used to judge wether particle is within support of kernel function). 
+ There are also some assert statements which is used repeatedly.
+
+19) I am wondering on the way he use in_support. the support of kernel function should 
+be circle, instead of a rectangle.----> Any way, considering he cut the kernel function 
+that kind of approximation is acceptable.
+
+
+20) In Dinesh's code he updated density in mom_update.cc. In my opinion, the updated density
+will be wiped and rewritten later in density smooth. 
+-----> I can not see the necessarity of keeping the data. 
+In addition, I did not include divergence of velocity in my particles. It is not necessary to
+add more member to particle just for updating of density. Because adding more member will 
+essentially add more storage burden and computational burden. 
+
+But any way, updating of density in Dinesh is good, because he actually develop a new way of 
+updating density which is different from traditional way of doing that.---> He mixed SPH with 
+finite difference method. 
+
+Dinesh did good work here!
+
+21) While writing code for computing artificial viscosity, I was struggling in make the code 
+to be more general or make the code to be more efficient?
+If I make it more general, I might do some repeat computing and as results, it is not the most
+efficient way of doing that.
+If I want to make it more efficient, then I would like to use some already computed data as input
+as a results, the code might not but code in other circumstance.
+
+The way I overcome that difficulty is to use function overload!
+
+22) Currently, I did not consider the influence of smooth length on accuracy.
+
+23) Forget whether I finished reading update_pos.cc or not.
+Need to read move_data.cc
+
+24) Dinesh's domain decomposion is a 2D decomposition, but for my problem, I need to decompose
+domain in 3 Dimensional.
+
+Modification has to been made in not only one file. 
+ 
+Let us use 2D decomposition at the beginning.
+
+25) Add a new bucket type --->PRESSBC (indicate buckets that near the boundary, in which, 
+ghost particles for pressure BC will be post in.)
+
+26) I intended to remove matpros from my code, But it seems that there are other parameters which might
+be useful.
+GRAVITY_SCALE, LENGTH_SCAL, TINY, ect
+
+27) Add a new bucket type: INTERFACE
+
+28) In bucket generating file, I enlarged the domain, but I should make sure that the enlarged
+domain should not be updated in other files.
+The enlargement here is just for the convenient of generating buckets.
+
+29) Add new code for adding particles for OVERGROUND and INTERFACE bucket type.
+
+30) While imposing BC, I need to add a new section for imposing pressure BC. The corresponding
+bucket type should be PRESS_BC and interface.
+
+31) In properties.h
+There are two members:
+ double pressure (double rho)
+ and
+ double sound_speed (double rho)
+ 
+Pay attention to the usage of these two member function, these two is only for solid, not for
+gas, I need either rewrite new member functions or abandon these two.
+
+32)In add_air
+The pileprops is one of the input but not actually used. Need to be removed in the future!
+
+33) In mesh_update.cc and other file, where bucket type involves, I need to consider what should I
+do for newly generated buckets. 
+Should I write a new file for these newly generated bucket?
+If I can only make some simple modification, it would be very good!
+
+34) In Bucket.cc, I need go through all of these member functions so that newly added bucket type 
+is still valid.
+
+Yes, most of them need to be updated!
+
+35) pack_particles and unpack_particle probably need to be modified as type particles is changed.
+
+36) In  bucket.h, Add a new member variable "bnd_ycrd[PARTICLE_DENSITY]"
+I also added corresponding mutator and accessor. 
+Actually using member function overloading for "get_bndZ"
+Modify construction also
+Other part also need to be modified in other files---> pay attention to this!
+
+37)In constant.h, I set
+const int PRESS_BC    = 0xD;
+const int INTERFACE   = 0xE;
+
+whether this is reasonable or not need to be verified!
+
+38) a new member: sub_type is added to bucket,
+I also added corresponding mutator and accessor.
+
+39) The new bucket type: Interface removed.---> still MIXED.
+---bucketstr.h need to be modified as a result.
+
+40) The constructor for Bucket is also changed: Add sub_mixed as one of input arguments.
+
+41) Change PARTICLE_DENSITY=6; For the convenience of coding. PARTICLE_DENSITY has to be even number!
+Will this cause any Bug?
+---->In the future, I need to make my code more general!
+
+42)I did not modify get_bnd_normal in bucket yet, it seems that I need modify it!
+
+43) IN get_bnd_normal and find_neigh_dir, why norm and dir is not reference?
+They should be reference, otherwise, the results can not be made use of.
+
+44) get_bnd_normal is not changed!, Cause it is only used in calc_fcoef.cc which will not
+be appear in my code!
+
+45) get_bnddist is also not changed. 
+It is not necessary to compute distance for pressure boundary condition. This is based on
+the following simplification:
+    a) density of particles is assumed to be even number
+    b) the real pressure boundary is modified so that it is just at the center of the
+       mixed bucket.
+    d) as a result, updating of parameters for ghost particle at the corner will be just 
+       find its mirror in the ghost region and use it's value.
+       
+46) change NUM_GHOST_ROWS=6;
+I have to set NUM_GHOST_ROWS=6;
+Otherwise, there would be an error!
+
+47) Add new member variable in c pack_data.h
+  double pressure;
+  double mass_frac [PHASE_NUM];
+  double gamma;
+  double sound_speed;
+  int phase_num;
+and
+  double bndz[PARTICLE_DENSITY];
+  int sub_mixed[DIMENSION];
+  Change pack_data.cc correspondly.
+  
+48) Need create a new constructor for air particles! In which, initial pressure, sound speed, 
+   mass fraction, gamma, phase_number, need to be given!
+  
+   These data are given by reading matprops data (not necessary!):
+   As a consequence: Make modification in particle.h, data_read.cc, bucket.cc!
+   It is better to 
+   
+ 49) It is not necessary to read P_CONSTANT from input file.
+ 
+ 50) it seems that his way of calling function calc_intersection is incorrect in his function
+ get_bnddist!
+ ---> not sure, if his code runs well, that should not be a problem.
+ 
+ 51) add a new member function in bucket.h to return whether bucket is on
+ ground or not!
+ 
+ 52) In bucket, Do I really need memeber particle_type? It seems that that is not necessary.
+ 
+ 53) it seems that Dinesh's code in bucket.h the function 
+ 
+ 54) Can not understand why in the pack_particle for communication, Dinesh did not use accessor 
+ and mutator. Could his code works propertly? 
+ Not sure!
+ 
+ 55)in the funtion set_up initial, I was trying to establish a global matrix locally. That 
+ does not match with my petsc solvers and I need to make it works late.
+ 
+ 56)in add_air:
+ Particle * pnew = new Particle(key, pcrd, mass, smlen, ptype, prss, masfrc, gmm, sndspd, phs_num, myid);
+ 
+ should I use &key replace key?
+ 
+ I was using &key in setup_erupt
+ 
+ 
+ 55) in my current model, I was assuming that the volcano is erupting from a flat ground.
+ 
+ 56) Is the following way the correct way to get the coordinate of bucket? Pay attention to
+ this while debugging:
+ 	    for (i = 0; i < DIMENSION; i++)
+	    {
+	        mincrd[i] = *(Bnd_buck->get_mincrd () + i);
+	        maxcrd[i] = *(Bnd_buck->get_maxcrd () + i);
+	     }
+
+
+
+
+
+

@@ -1,0 +1,3 @@
+1. Remove heat conduction term if turbulent model is added.
+
+2. Try another way of density updating.

@@ -1,0 +1,37 @@
+Parameters for the weak plume case:      
+--Vent  elevation:  1500 m   
+-- Duration: 0.2 hours    
+-- Mass Flow Rate: 1.5 X 10^6 kg/s 
+-- Eruption Column Height: 6 km (total column height above vent) 
+-- Exit velocity: 135 m/s 
+-- Exit Temperature: 1273 K 
+-- Exit Water Fraction: 3 wt% 
+-- Particle size distribution: coarse class at Φ=0 with ρ=2200 kg/m3. fine class at Φ=4 with ρ=2700 kg/m3 (in case you need a further discretization consider a  bi-‐Gaussian in  Φ  having the  above  values as  modes  and   σΦ=1.6)  
+
+-- Wind profile: attached file (Meteo_Profiles-‐W.dat)
+ 
+Parameters for the strong plume case: 
+-- Vent elevation: 1500 m   
+-- Duration: 2.5 hours  
+-- Mass Flow Rate: 1.5 X 10^9 kg/s  
+-- Eruption Column Height: 37 km (total column height above vent)   
+-- Exit velocity: 275 m/s  
+-- Exit Temperature: 1053 K   
+-- ExitWater Fraction: 5.0 wt% 
+-- Particle size distribution: coarse class at Φ = 1 with ρ=2500 kg/m3. fine class at Φ = 6  with ρ=2700 kg/m3 (in case you need a further discretization consider a  bi-‐Gaussian in  Φ  having the  above   values as  modes  and   σΦ=1.6)     
+
+-- Wind profile: attached file (Meteo_Profiles-‐S.dat) 
+
+For  all  other  parameters  please  consider:   
+-- Specific heat of solid pyroclasts: 1100 J/(kg K)   
+-- Specific heat of volcanic gas (water) at constant volume: 1348 J/(kg K)   
+-- Specific heat of air at constant volume: 717 J/(kg K)   
+-- Specific heat of volcanic gas (water) at constant pressure: 1810 J/(kg K)                                 -- 
+-- Specific heat of air at constant pressure: 1000 J/(kg K) 
+-- Gas constant of volcanic gas (water): 462 J/(kg K)   
+-- Gas constant of air: 287 J/(kg K)   
+-- Gravitational acceleration: 9.80665 (m/s^2)      
+
+Output variables and file format    
+As output you should produce an ASCII text file containing the following variables as a  function of z (or print only the ones that are available from you model):    z (height in m) on I column  r (plume radius in m) on II column  hp-‐x (x-‐position of plume axis in m) on III column  hp-‐y (y-‐position of plume axis in m) on IV column  rho (plume density in kg/m^3) on V column  temp (plume temperature in oC) on VI column  vel (plume velocity in m/s) on VII column  mf-‐a (entrained air mass fraction) on VIII column  mf-‐g (gas mass fraction) on IX column  mf-‐p (coarse pyroclasts mass fraction) on X column  mf-‐p (fine pyroclasts mass fraction) on X IIcolumn    Beside such a file you should provide Mass Flow Rate (for the exercises where you fix  Column Height) and Column Height (for the exercises where you fix Mass Flow Rate).    Plume radius and related variables need to be calculated perpendicular to the plume  axis.  3D models need to provide cross-‐section averages of  the  same  quantities  considering integrals up  to  distances where  density is  1%  of  the  its  maximum value.                            
+
