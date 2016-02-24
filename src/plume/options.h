@@ -24,6 +24,7 @@
 #define HAVE_TURBULENCE_LANS
 #endif
 
+
 ////Define have physics viscosity
 //#ifndef USE_PHYSICS_VIS
 //#define USE_PHYSICS_VIS
@@ -55,6 +56,15 @@
 #define ATMOSPHERE_TYPE 1 //The default value represents hydro-static atmosphere
 #endif
 
+
+//Define the erupt velocity profile type
+/*
+ * 0: uniform
+ * 1: parabolic
+ */
+#ifndef ERUPT_VELOCITY_PROF
+#define ERUPT_VELOCITY_PROF 1 //The default value represents hydro-static atmosphere
+#endif
 //---------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //--------------------------------OPTIONS FOR DEBUG--------------------------------------------

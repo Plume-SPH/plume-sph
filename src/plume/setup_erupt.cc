@@ -81,7 +81,6 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
    
     double dist;
     double vel;
-    double umax = 2*Vv0_P;
     double rvsq=rv_P*rv_P;
     unsigned add_step = 0;
 
@@ -142,7 +141,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
     			    THSFC3d (normc, add_step, &tkeylen, key);
-    			    vel = parabolic_vel (rv_P, dist, umax);
+    			    vel = parabolic_vel (rv_P, dist, Vv0_P);
     			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
     			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
     			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
@@ -165,7 +164,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
     			    THSFC3d (normc, add_step, &tkeylen, key);
-    			    vel = parabolic_vel (rv_P, dist, umax);
+    			    vel = parabolic_vel (rv_P, dist, Vv0_P);
     			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
     			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
     			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
@@ -195,7 +194,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
     			    THSFC3d (normc, add_step, &tkeylen, key);
-    			    vel = parabolic_vel (rv_P, dist, umax);
+    			    vel = parabolic_vel (rv_P, dist, Vv0_P);
     			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
     			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
     			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
@@ -218,7 +217,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     				    normc[ii] = (crd_p[ii] - mindom[ii]) /(maxdom[ii] - mindom[ii]);
 
     			    THSFC3d (normc, add_step, &tkeylen, key);
-    			    vel = parabolic_vel (rv_P, dist, umax);
+    			    vel = parabolic_vel (rv_P, dist, Vv0_P);
     			    Particle * pnew = new Particle(key, crd_p, mss, sml, myid,
     			    		     vel, ev0_P,   rhov_P,   pv0_P,   gamma_v_P,
     			    		    ng0_P,   Cvs_P,   Cvg_P,   Cva_P,   Rg_P,   Ra_P);
@@ -418,7 +417,6 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double normc[3];
     double dist;
     double vel;
-    double umax = 2*Vv0_P;
     double rvsq=rv_P*rv_P;
 	unsigned key[TKEYLENGTH]; //should be time depend key for particle
     int i, j, k;
@@ -469,7 +467,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		    dist += (crd_p[j]*crd_p[j]);
     		if (dist <= rvsq) // if particle is in the duct
     		{
-    		   vel = parabolic_vel (rv_P, dist, umax); //Velocity depends on dist
+    		   vel = parabolic_vel (rv_P, dist, Vv0_P); //Velocity depends on dist
     		   t_each = sml/vel;
     		   t_add = fmod (t_total, t_each) + dt; // fmod (t_total, t_each) is the balance from previous time_step, the balance should be smaller than t_each
     		   n = floor(t_add/t_each);
@@ -506,7 +504,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		    dist += (crd_p[j]*crd_p[j]);
     		if (dist <= rvsq) // if particle is in the duct
     		{
-    		   vel = parabolic_vel (rv_P, dist, umax);
+    		   vel = parabolic_vel (rv_P, dist, Vv0_P);
     		   t_each = sml/vel;
     		   t_add = fmod (t_total, t_each) + dt;
     		   n = floor(t_add/t_each);
@@ -550,7 +548,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		    dist += (crd_p[j]*crd_p[j]);
     		if (dist <= rvsq) // if particle is in the duct
     		{
-    		   vel = parabolic_vel (rv_P, dist, umax);
+    		   vel = parabolic_vel (rv_P, dist, Vv0_P);
     		   t_each = sml/vel;
     		   t_add = fmod (t_total, t_each) + dt;
     		   n = floor(t_add/t_each);
@@ -587,7 +585,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		    dist += (crd_p[j]*crd_p[j]);
     		if (dist <= rvsq) // if particle is in the duct
     		{
-    		   vel = parabolic_vel (rv_P, dist, umax);
+    		   vel = parabolic_vel (rv_P, dist, Vv0_P);
     		   t_each = sml/vel;
     		   t_add = fmod (t_total, t_each) + dt;
     		   n = floor(t_add/t_each);

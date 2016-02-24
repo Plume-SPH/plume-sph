@@ -373,7 +373,19 @@ exchange_indmap (
 double parabolic_vel(
 		double , //R radius of the pipe
 		double , //rsq square of distance from given point to center
-		double   //umax maximum velocity
+		double   //maximum velocity
+		);
+
+// function that used to determine the velocity based on a uniform velocity profile
+double uniform_vel(
+		double  //average velocity
+		);
+
+//function that determine the velocity profile
+double vel_prof(
+		double , //R radius of the pipe
+		double , //rsq square of distance from given point to center
+		double   //average velocity
 		);
 
 //function that used to determine the value of face by the face's index;

@@ -926,9 +926,26 @@ exchange_indmap (int nump, int myid, int * my_comm,
 
 // function that used to determine the velocity based on a parabolic velocity profile
 
-double parabolic_vel(double R, double rsq, double umax)
+double parabolic_vel(double R, double rsq, double u_avg)
 {
+	double umax=u_avg*2;
 	return umax*(1-(rsq/(R*R)));
+}
+
+// function that used to determine the velocity based on a uniform velocity profile
+double uniform_vel(double u_avg)
+{
+	return u_avg;
+}
+
+//function that determine the velocity profile
+double vel_prof(double R, double rsq, double u_avg)
+{
+#if ERUPT_VELOCITY_PROF==0
+	return uniform_vel(u_avg);
+#elif ERUPT_VELOCITY_PROF==1
+	return parabolic_vel(R, rsq, u_avg);
+#endif
 }
 
 //function that used to determine the value of face by the face's index;
