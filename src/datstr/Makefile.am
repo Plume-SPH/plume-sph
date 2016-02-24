@@ -17,7 +17,7 @@ libbgmesh_a_SOURCES = bgmesh.h \
                       properties.h \
                       Involved_header.h
 
-libbgmesh_a_CPPFLAGS = -I$(top_srcdir)/plume \
-                       -I$(top_srcdir)/multiproc \
-                       -I$(top_srcdir)/debug
+libbgmesh_a_CPPFLAGS = -I$(top_srcdir)/src/plume \
+                       -I$(top_srcdir)/src/multiproc \
+                       -I$(top_srcdir)/src/debug
 

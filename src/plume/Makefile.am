@@ -9,8 +9,8 @@ noinst_LIBRARIES = libgmfgsph.a libgmfghdf5.a
 libgmfgsph_a_SOURCES = sph_header.h sph_lib.cc
 
 libgmfghdf5_a_SOURCES = hdf5calls.cc hdf5calls.h
-libgmfghdf5_a_CPPFLAGS = -I$(top_srcdir)/preproc \
-                         -I$(top_srcdir)/datstr
+libgmfghdf5_a_CPPFLAGS = -I$(top_srcdir)/src/preproc \
+                         -I$(top_srcdir)/src/datstr
 
 bin_PROGRAMS = particler
 
@@ -41,14 +41,14 @@ particler_SOURCES = add_air.cc \
                     write_output.cc \
                     main.cc
 
-INCLUDES = -I$(top_srcdir)/datstr \
-           -I$(top_srcdir)/preproc \
-           -I$(top_srcdir)/multiproc\
-           -I$(top_srcdir)/debug
+INCLUDES = -I$(top_srcdir)/src/datstr \
+           -I$(top_srcdir)/src/preproc \
+           -I$(top_srcdir)/src/multiproc\
+           -I$(top_srcdir)/src/debug
 
-particler_LDADD = $(top_builddir)/datstr/libbgmesh.a \
-                  $(top_builddir)/multiproc/libmultiproc.a \
-                  $(top_builddir)/debug/libdebug.a \
+particler_LDADD = $(top_builddir)/src/datstr/libbgmesh.a \
+                  $(top_builddir)/src/multiproc/libmultiproc.a \
+                  $(top_builddir)/src/debug/libdebug.a \
                   libgmfghdf5.a libgmfgsph.a
 
 

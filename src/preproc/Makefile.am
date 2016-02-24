@@ -12,11 +12,11 @@ preprocess_SOURCES = buckstr.h \
                      preprocess.h preprocess.cc  \
                      gisapi.h inc_plane.cc
 
-INCLUDES = -I$(top_srcdir)/plume \
-           -I$(top_srcdir)/gisapi \
-           -I$(top_srcdir)/datstr 
+INCLUDES = -I$(top_srcdir)/src/plume \
+           -I$(top_srcdir)/src/gisapi \
+           -I$(top_srcdir)/src/datstr 
            
 
-preprocess_LDADD = $(top_builddir)/plume/libgmfghdf5.a \
-                   $(top_builddir)/gisapi/libgisapi.a \
-                   $(top_builddir)/datstr/libbgmesh.a 
+preprocess_LDADD = $(top_builddir)/src/plume/libgmfghdf5.a \
+                   $(top_builddir)/src/gisapi/libgisapi.a \
+                   $(top_builddir)/src/datstr/libbgmesh.a 

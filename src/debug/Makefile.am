@@ -12,7 +12,7 @@ libdebug_a_SOURCES = \
             debug_bucket_lib.cc \
             debug_lib.cc 
 
-libdebug_a_CPPFLAGS = -I$(top_srcdir)/datstr \
-                      -I$(top_srcdir)/plume \
-                      -I$(top_srcdir)/multiproc \
-                      -I$(top_srcdir)/preproc
+libdebug_a_CPPFLAGS = -I$(top_srcdir)/src/datstr \
+                      -I$(top_srcdir)/src/plume \
+                      -I$(top_srcdir)/src/multiproc \
+                      -I$(top_srcdir)/src/preproc

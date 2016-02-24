@@ -19,6 +19,6 @@ libmultiproc_a_SOURCES = \
    repartition_BSFC.h repartition_BSFC.cc \
    send_reflections.cc
 
-libmultiproc_a_CPPFLAGS = -I$(top_srcdir)/datstr \
-                          -I$(top_srcdir)/plume \
-                          -I$(top_srcdir)/debug
+libmultiproc_a_CPPFLAGS = -I$(top_srcdir)/src/datstr \
+                          -I$(top_srcdir)/src/plume \
+                          -I$(top_srcdir)/src/debug

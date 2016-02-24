@@ -59,9 +59,9 @@ particler
 funky*.h5
 move_data*.log
 bin/particler
-src/particler
+src/plume/particler
 bin/preprocess
-preproc/preprocess
+src/preproc/preprocess
 pvplot*.h5part
 
 #Others
@@ -74,6 +74,10 @@ ccr-install.sh
 build.sh
 bin/err
 bin/out
+bin/smlout*
+bin/smlerr*
+bin/output*
+
 *.swp
 
 #gprof files:
