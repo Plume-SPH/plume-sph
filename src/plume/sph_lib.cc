@@ -559,10 +559,6 @@ void initial_air (Particle * pi)
 	  double range[6];
 	  double sml2;
 
-	  // go through particle table
-//	  if (!pi->is_guest())//count number of non-guest particles.
-//	     {
-
 	  	  for (i = 0; i < DIMENSION; i++)
 	  		  xi[i] = *(pi->get_coords() + i);
 
@@ -585,8 +581,6 @@ void initial_air (Particle * pi)
 
 	      //the second variable need to be updated.
 	      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
-
-//	     }//end of go through all particles
 
 	return;
 }

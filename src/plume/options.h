@@ -47,10 +47,11 @@
 
 //Define the atmosphere type
 /*
- * 0: realistic
+ * 0: realistic -->Based on equations
  * 1: hydro-static
  * 2: uniform
  * 3: uniform-temperature, atmosphere stratefied due to gravity
+ * 4: realistic interpolation --->read realistic atmosphere data and do interpolation to determine temperature, pressure, density
  */
 #ifndef ATMOSPHERE_TYPE
 #define ATMOSPHERE_TYPE 1 //The default value represents hydro-static atmosphere
@@ -63,7 +64,7 @@
  * 1: parabolic
  */
 #ifndef ERUPT_VELOCITY_PROF
-#define ERUPT_VELOCITY_PROF 1 //The default value represents hydro-static atmosphere
+#define ERUPT_VELOCITY_PROF 0 //The default value represents hydro-static atmosphere
 #endif
 //---------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
