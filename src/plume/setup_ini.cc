@@ -84,7 +84,7 @@ const double sqrt2 = 1.41421356237310;
 
 int
 setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
-                TimeProps * timeprops, int numprocs, int* my_comm)
+                TimeProps * timeprops, SimProps * simprops, int numprocs, int* my_comm)
 {
   int i, j;
 //  int rid, cid;
@@ -153,7 +153,7 @@ setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
 //      //the second variable need to be updated.
 //      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
       //Replace the old data with an lib function
-	  initial_air(pi);
+	  initial_air(pi, simprops);
       j++;
    }//end of go through all particles
 

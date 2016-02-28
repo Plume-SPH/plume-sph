@@ -90,6 +90,8 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
     matprops->GRAVITY_SCALE = 1.; //not sure why I need scale? It seems that it is not necessary at all!
   }
 
+  //Read in the second input data
+  string line;
   ifstream inD2 ("simulation.data", ios::in);
   if (inD2.fail())
   {
@@ -101,32 +103,167 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
   double len_scale = matprops->LENGTH_SCALE;
 
   double time_scale = 1.;
+
+  string tempString;
+  int foundlast;
   // simulation time properties
-  inD2 >> timeprops->max_time;
-  inD2 >> timeprops->max_steps;
-  inD2 >> timeprops->timeoutput;
-  inD2 >> timeprops->stat_erupt;
-  inD2 >> timeprops->end_erupt;
-  inD2 >> *(format);
+//  inD2 >> timeprops->max_time;
+//  inD2 >> timeprops->max_steps;
+//  inD2 >> timeprops->timeoutput;
+//  inD2 >> timeprops->stat_erupt;
+//  inD2 >> timeprops->end_erupt;
+//  inD2 >> *(format);
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 timeprops->max_time = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 timeprops->max_steps = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 timeprops->timeoutput = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 timeprops->stat_erupt = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 timeprops->end_erupt = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 *(format) = stof(tempString);
+  }
+
   timeprops->TIME_SCALE = time_scale;
   timeprops->ndtimeoutput = timeprops->timeoutput / time_scale;
   timeprops->ndmax_time = timeprops->max_time / time_scale;
 
-  // material properties
-  inD2 >> matprops->P_CONSTANT;
-  inD2 >> matprops->GAMMA; //Gamma should be changeable in my problem.
-  inD2 >> temp;
+//  // material properties
+//  inD2 >> matprops->P_CONSTANT;
+//  inD2 >> matprops->GAMMA; //Gamma should be changeable in my problem.
+//  inD2 >> temp;
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 matprops->P_CONSTANT = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 matprops->GAMMA = stof(tempString);
+  }//Gamma should be changeable in my problem.
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 temp = stof(tempString);
+  }
+
   matprops->smoothing_length = temp / len_scale;
-  matprops->particle_mass = rhoa0_P*pow(matprops->smoothing_length, DIMENSION);//This is incorrect
+  matprops->particle_mass = rhoa0_P*pow(matprops->smoothing_length, DIMENSION); //This is inaccurate---> but while imposing initial condition, the correct value will be given, so does not matter
 
-  //simulation properties
-  inD2 >>simprops->Idom_x_min;
-  inD2 >>simprops->Idom_x_max;
-  inD2 >>simprops->Idom_y_min;
-  inD2 >>simprops->Idom_y_max;
-  inD2 >>simprops->Idom_z_min;
-  inD2 >>simprops->Idom_z_max;
+//  //simulation properties
+//  inD2 >>simprops->Idom_x_min;
+//  inD2 >>simprops->Idom_x_max;
+//  inD2 >>simprops->Idom_y_min;
+//  inD2 >>simprops->Idom_y_max;
+//  inD2 >>simprops->Idom_z_min;
+//  inD2 >>simprops->Idom_z_max;
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 simprops->Idom_x_min = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 simprops->Idom_x_max = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 simprops->Idom_y_min = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 simprops->Idom_y_max = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 simprops->Idom_z_min = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 simprops->Idom_z_max = stof(tempString);
+  }
 
+//If realistic atmosphere data need to be used, need read these data in and keep them
+//Otherwise, the atmosphere will be NULL pointer
+#if ATMOSPHERE_TYPE==4
+  int row;
+  int col;
+  double * mat;
+  string filename;
+
+//  if (getline (inD2,line))
+//	 line >>row;
+//  if (getline (inD2,line))
+//	 line >>col;
+//
+//  if (getline (inD2,filename))
+//	  readFile(filename, &mat, row, col);
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 row = stof(tempString);
+  }
+  if (getline (inD2,line))
+  {
+	 foundlast = line.find_last_of(":");
+	 tempString = line.substr(foundlast+1);
+	 col = stof(tempString);
+  }
+
+  if (getline (inD2,line))
+  {
+	  foundlast = line.find_last_of(":");
+	  filename = line.substr(foundlast+1);
+	  readFile(filename, &mat, row, col);
+      simprops->meteo_data = new Meteo (mat, row, col-1);
+  }
+  else
+	  cout<<"error while read meteo data!"<<endl;
+
+  delete mat;
+#endif
 
   inD2.close();
  

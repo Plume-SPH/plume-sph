@@ -113,7 +113,7 @@ main(int argc, char **argv)
 #endif
 
   //add air particles and put particles into bucket, bc_type is determined in this process
-  add_air(P_table, BG_mesh, matprops, numprocs, myid);
+  add_air(P_table, BG_mesh, matprops, simprops, numprocs, myid);
 
 
   // scan mesh and mark buckets active/inactive
@@ -124,7 +124,7 @@ main(int argc, char **argv)
 
   //The reason why I put the following functions after add air is that adding of pressure_ghost and adding of wall ghost need neighbor info.
   //add pressure ghost
-  add_pressure_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+  add_pressure_ghost(P_table, BG_mesh, simprops, matprops, timeprops, numprocs, myid);
 
   // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
@@ -223,7 +223,7 @@ main(int argc, char **argv)
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
       //add pressure ghost --> will not delete the old pressure ghost, just add pressure ghost where computational domain is "exposed"
-      add_pressure_ghost (P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+      add_pressure_ghost (P_table, BG_mesh, simprops, matprops, timeprops, numprocs, myid);
 
       // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);

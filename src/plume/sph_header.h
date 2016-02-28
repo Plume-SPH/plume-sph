@@ -189,12 +189,13 @@ void air_prop (
 
 //overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
 void air_prop (
-		double *, //coordinate of particle
-		double *, //range of the space which is occupied by the particle [xmin, xmax, ymin, ymax, zmin, zmax]
-		double *, //internal energy of particle
-		double *, //pressure
-		double *, //density
-		double *  //particle mass
+		SimProps *, // simprops,
+		double *,   //coordinate of particle
+		double *,   //range of the space which is occupied by the particle [xmin, xmax, ymin, ymax, zmin, zmax]
+		double *,   //internal energy of particle
+		double *,   //pressure
+		double *,   //density
+		double *    //particle mass
 		);
 
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
@@ -280,6 +281,26 @@ void air_prop_uniformT (
                 double *, //density
                 double *  //particle mass
                 );
+//function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
+//Based on input meteo data, using interpolation
+void air_prop_meteo_based (
+		double *, //coordinate of particle
+		double *, //internal energy of particle
+		double *, //pressure
+		double *  //density
+        );
+
+//Overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
+//Based on input meteo data, using interpolation
+void air_prop_meteo_based (
+		SimProps *, // simprops,
+		double *,   //coordinate of particle
+		double *,   //range of the space which is occupied by the particle [xmin, xmax, ymin, ymax, zmin, zmax]
+		double *,   //internal energy of particle
+		double *,   //pressure
+		double *,   //density
+		double *    //particle mass
+		);
 //function that used to determine only internal energy based on altitude.
 //This function is based on a less realistic model: hydrostatic model
 //This function will be used while imposing wall boundary condition
@@ -409,7 +430,8 @@ void determine_bucket_type (
 
 //function that determines parameters of certain particle
 void initial_air (
-		Particle * //pi
+		Particle *,//pi
+		SimProps * //simprops
 		);
 
 //function that used to compute the additional term in momentum equation if SPH_epsilon turbulence model is adopted
@@ -434,5 +456,13 @@ void switch_brief(
 		double ,         //bucket_size,
 		double ,         //len_scale
 		Bucket **         //buck
+		);
+// Read file to matrix
+// mat is m row n col
+void readFile(
+		string,     // fileName,
+		double **,  // mat,
+		int,        // m,
+		int      // n
 		);
 #endif  //SPH_HEADER_H_

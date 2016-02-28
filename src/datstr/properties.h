@@ -14,6 +14,8 @@ using namespace std;
 #  include <hashtab.h>
 #  include <thashtab.h>
 
+#  include "meteo.h"
+
 struct TimeProps
 {
   //! current non-dimensional time
@@ -183,6 +185,8 @@ struct SimProps
    double mass_of_phase2;
    // smooth length of erupted particle---> sml in Matprops is for air particles
    double sml_of_phase2;
+   //Atmosphere data (including wind field)
+   Meteo * meteo_data;
 
    SimProps()
    {
@@ -196,6 +200,12 @@ struct SimProps
 	   bot = 0.;
 	   mass_of_phase2 =0.;
 	   sml_of_phase2 =0.;
+	   meteo_data  = NULL;
+   }
+
+   ~SimProps()
+   {
+	   delete meteo_data;
    }
 
    // bot is the z coordinate of the lowest layer in the duct

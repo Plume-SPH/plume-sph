@@ -35,7 +35,7 @@ using namespace std;
 
 void
 add_air (THashTable * P_table, HashTable * BG_mesh,
-        MatProps * matprops, int numproc, int myid)
+        MatProps * matprops, SimProps* simprops, int numproc, int myid)
 {
 	  int i, j, k, ii;
 	  int tempid;
@@ -176,7 +176,7 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 							           }
 
 		 					           //determine initial parameter of air
-		 					           initial_air (pnew);
+		 					           initial_air (pnew, simprops);
 
 				    				   // add to hash-table
 				    				   P_table->add(pkey, pnew);
@@ -223,7 +223,7 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 							           }
 
 		 					           //determine initial parameter of air
-		 					           initial_air (pnew);
+		 					           initial_air (pnew, simprops);
 
 				    				   // add to hash-table
 				    				   P_table->add(pkey, pnew);
@@ -308,7 +308,7 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 							         }
 
 							         //determine initial parameter of air
-							         initial_air (pnew);
+							         initial_air (pnew, simprops);
 
 					                // add to hash-table
 					                P_table->add(pkey, pnew);

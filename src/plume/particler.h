@@ -28,6 +28,8 @@ add_air (
 		HashTable * ,
         //Mat property
         MatProps *,
+		// simprops
+		SimProps*,
         //number of processor
         int ,
         //my ID
@@ -41,6 +43,8 @@ add_pressure_ghost(
 		THashTable *,
 		//BG_table
 		HashTable * ,
+		//simprops
+		SimProps *,
         //Mat property
         MatProps *,
         //TimeProps
@@ -211,6 +215,7 @@ setup_ini(
 		  THashTable *, //P_table
 		  HashTable *, //BG_mesh
           TimeProps *, //timeProps
+		  SimProps * , // simpros,
           int          //Number of processor
           );
 

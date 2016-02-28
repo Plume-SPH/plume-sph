@@ -15,7 +15,8 @@ libbgmesh_a_SOURCES = bgmesh.h \
                       mesh_update.cc \
                       particle.h particle.cc \
                       properties.h \
-                      Involved_header.h
+                      Involved_header.h\
+                      meteo.h meteo.cc
 
 libbgmesh_a_CPPFLAGS = -I$(top_srcdir)/src/plume \
                        -I$(top_srcdir)/src/multiproc \

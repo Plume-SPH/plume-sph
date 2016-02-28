@@ -5,7 +5,7 @@ AC_PREREQ([2.63])
 AC_INIT([particler], [2.1.0], [zhixuanc@buffalo.edu])
 AM_INIT_AUTOMAKE
 
-AC_CONFIG_SRCDIR([src/plume/constant.h])
+AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADER([config.h])
 AC_PREFIX_DEFAULT([${PWD}])
 AC_LANG_CPLUSPLUS
@@ -170,6 +170,7 @@ AM_CONDITIONAL(HAVE_GDAL, test -n "$with_gdal" && test "x$with_gdal" != "xno")
 AC_HEADER_STDC
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
+AC_C_INLINE
 AC_C_CONST
 AC_TYPE_OFF_T
 
@@ -179,11 +180,10 @@ AC_CHECK_FUNCS([floor pow sqrt strdup])
 AC_FUNC_MALLOC
 
 AC_CONFIG_FILES([Makefile
-                 src/gisapi/Makefile
                  src/datstr/Makefile
+                 src/debug/Makefile
+                 src/gisapi/Makefile
                  src/multiproc/Makefile
                  src/plume/Makefile
-                 src/preproc/Makefile
-                 src/debug/Makefile
-                ])
+                 src/preproc/Makefile])
 AC_OUTPUT

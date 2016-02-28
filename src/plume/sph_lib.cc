@@ -17,7 +17,16 @@
 #  include <mpi.h>
 #endif
 
+#include <iostream> //for readFile
+#include <fstream>  //for readFile
+#include <string>   //for readFile
+#include <stdlib.h>     /* exit, EXIT_FAILURE */
+
+#include <properties.h> //for atmosphere interpolation
+#include <meteo.h> //for atmosphere interpolation
+
 #include <cmath>
+
 //#include <petsc.h>
 using namespace std;
 
@@ -520,8 +529,54 @@ void air_prop_uniform (double *coord, double *range, double * energy, double *pr
 #endif
 }
 
+//function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
+//Based on input meteo data, using interpolation
+void air_prop_meteo_based (SimProps * simprops, double *coord, double * energy, double *pressure, double * density)
+{
+	double h=coord[2];
+
+	if (h>H3_P)
+		cout << "height of domain exceeds the maximum height of atmosphere, in air_prop_uniform ! \n" <<endl;
+
+	int np = (simprops->meteo_data)->get_number_of_props();
+	double prop[np];
+
+	(simprops->meteo_data)->interpolate (h*0.001, prop); //need to convert meters to kilometers
+	*pressure = prop[1]*100; //because the metric is hPa
+	*density = prop[0] ;
+	*energy = (*pressure) /(*density * (gamma_P-1));
+}
+
+//Overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
+//Based on input meteo data, using interpolation
+void air_prop_meteo_based (SimProps * simprops, double *coord, double *range, double * energy, double *pressure, double * density, double * mass)
+{
+	double h=coord[2];
+
+	if (h>H3_P)
+		cout << "height of domain exceeds the maximum height of atmosphere, in air_prop_uniform ! \n" <<endl;
+
+	int np = (simprops->meteo_data)->get_number_of_props();
+	double prop[np];
+
+	(simprops->meteo_data)->interpolate (h*0.001, prop);
+	*pressure = prop[1]*100; //because the metric is hPa
+	*density = prop[0] ;
+	*energy = (*pressure) /(*density * (gamma_P-1));
+
+	//integration is based on interpolation of order 2 (three points)
+	double h1=range[4];
+	double h2=range[5];
+	double d1 = (simprops->meteo_data)->interpolate(h1*0.001, 0);
+	double d2 = (simprops->meteo_data)->interpolate(h2*0.001, 0);
+	double d = *density;
+
+	//The following code is based on numerical integration, coefficient are 1/6, 4/6 1/6
+	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*(0.1666667*d1+0.6666666*d+0.1666667*d2);
+}
+
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
-void air_prop(double *coord, double * energy, double *pressure, double * density)
+void air_prop(SimProps * simprops, double *coord, double * energy, double *pressure, double * density)
 {
 #if ATMOSPHERE_TYPE==0
 	air_prop_realistic(coord, energy, pressure, density);
@@ -530,12 +585,14 @@ void air_prop(double *coord, double * energy, double *pressure, double * density
 #elif ATMOSPHERE_TYPE==2
 	air_prop_uniform(coord, energy, pressure, density);
 #elif ATMOSPHERE_TYPE==3
-        air_prop_uniformT(coord, energy, pressure, density);
+    air_prop_uniformT(coord, energy, pressure, density);
+#elif ATMOSPHERE_TYPE==4
+    air_prop_meteo_based(simprops, coord, energy, pressure, density);
 #endif
 }
 
 //overloading of function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy and mass of particles
-void air_prop(double *coord, double *range, double * energy, double *pressure, double * density, double * mass)
+void air_prop(SimProps * simprops, double *coord, double *range, double * energy, double *pressure, double * density, double * mass)
 {
 #if ATMOSPHERE_TYPE==0
 	air_prop_realistic(coord, range, energy, pressure, density, mass);
@@ -544,12 +601,14 @@ void air_prop(double *coord, double *range, double * energy, double *pressure, d
 #elif ATMOSPHERE_TYPE==2
 	air_prop_uniform(coord, range, energy, pressure, density, mass);
 #elif ATMOSPHERE_TYPE==3
-        air_prop_uniformT(coord, range, energy, pressure, density, mass);
+    air_prop_uniformT(coord, range, energy, pressure, density, mass);
+#elif ATMOSPHERE_TYPE==4
+    air_prop_meteo_based(simprops, coord, range, energy, pressure, density, mass);
 #endif
 }
 
 //function that determines parameters of certain particle
-void initial_air (Particle * pi)
+void initial_air (Particle * pi, SimProps * simprops)
 {
 	  int i;
 
@@ -570,7 +629,7 @@ void initial_air (Particle * pi)
 	  	  range[4]=xi[2]-sml2;
 	  	  range[5]=xi[2]+sml2;
 
-	  	  air_prop(xi, range, &erg, &prss, &dens, &mss);
+	  	  air_prop(simprops, xi, range, &erg, &prss, &dens, &mss);
 
 	      //put data back into particle:
 	      pi->put_density(dens);
@@ -1208,5 +1267,39 @@ void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, d
 	(*buck)->set_has_potential_involved ((bool) has_involved); //Initially, all buckets "contains" the initial domain should be has_potential_involved.
 }
 
+// Read file to matrix
+// mat is m row n col
+void readFile(string fileName, double ** mat, int m, int n)
+{
+    // Create streamobject
+    ifstream infile;
+    infile.open(fileName);
+
+    // Exit if file opening failed
+    if (!infile.is_open())
+    {
+        cerr<<"Opening failed"<<endl;
+        exit(1);
+    }
+
+    string line;
+    *mat = new double[m*n];
+    string temp, val;
+    int find;
+    int i=0;
+    while( getline (infile,line) && i<m)
+    {
+        temp = line;
+        for(int j=0; j<n; j++)
+        {
+            find= temp.find_first_of(" ");
+            val = temp.substr(0, find);
+            temp = temp.substr(find+1);
+            (*mat)[i*n+j] = stof(val);
+        }
+        i++;
+    }
+    infile.close();
+}
 
 

@@ -192,7 +192,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 		        		/* there is potential problem that the particles cross the boundary and goes to other other buckets which is next to the MIXED buckets.
 		        		 * ---> Hopefully this will not happen!
 		        		 */
-		//        		if (curr_bucket->get_bucket_type() == MIXED && (curr_bucket->get_bucket_index())[4] == -1) // only happens for underground MIXED bucket---> The old code, should also happens at the top and side of the domain.
+		            //if (curr_bucket->get_bucket_type() == MIXED && (curr_bucket->get_bucket_index())[4] == -1) // only happens for underground MIXED bucket---> The old code, should also happens at the top and side of the domain.
 		    			if (curr_bucket->get_bucket_type() == MIXED)
 		    			   los = curr_bucket->determine_escape(pos);
 		             }// end of if particles is real ---> to delete particles which crossed the boundary!

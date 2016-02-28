@@ -34,7 +34,7 @@ using namespace std;
 #endif
 
 void
-add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
+add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps *simprops,
         MatProps * matprops, TimeProps *timeprops, int numproc, int myid)
 {
 	  int i, j, k, ii;
@@ -181,7 +181,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 		             					           }
 
 		             					           //determine initial parameter of air
-		             					          initial_air (pnew);
+		             					          initial_air (pnew, simprops);
 
 		              		    				   // add to hash-table
 		              		    				   P_table->add(pkey, pnew);
@@ -218,7 +218,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 		          					           }
 
 		         					          //determine initial parameter of air
-		         					          initial_air (pnew);
+		         					          initial_air (pnew, simprops);
 
 		            		    				// add to hash-table
 		            		    				P_table->add(pkey, pnew);
@@ -277,7 +277,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh,
 		          					           }
 
 		         					           //determine initial parameter of air
-		         					           initial_air (pnew);
+		         					           initial_air (pnew, simprops);
 
 		           		    				    // add to hash-table
 		           		    				    P_table->add(pkey, pnew);
