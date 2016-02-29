@@ -106,13 +106,6 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
 
   string tempString;
   int foundlast;
-  // simulation time properties
-//  inD2 >> timeprops->max_time;
-//  inD2 >> timeprops->max_steps;
-//  inD2 >> timeprops->timeoutput;
-//  inD2 >> timeprops->stat_erupt;
-//  inD2 >> timeprops->end_erupt;
-//  inD2 >> *(format);
   if (getline (inD2,line))
   {
 	 foundlast = line.find_last_of(":");
@@ -154,10 +147,6 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
   timeprops->ndtimeoutput = timeprops->timeoutput / time_scale;
   timeprops->ndmax_time = timeprops->max_time / time_scale;
 
-//  // material properties
-//  inD2 >> matprops->P_CONSTANT;
-//  inD2 >> matprops->GAMMA; //Gamma should be changeable in my problem.
-//  inD2 >> temp;
   if (getline (inD2,line))
   {
 	 foundlast = line.find_last_of(":");
@@ -180,13 +169,6 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
   matprops->smoothing_length = temp / len_scale;
   matprops->particle_mass = rhoa0_P*pow(matprops->smoothing_length, DIMENSION); //This is inaccurate---> but while imposing initial condition, the correct value will be given, so does not matter
 
-//  //simulation properties
-//  inD2 >>simprops->Idom_x_min;
-//  inD2 >>simprops->Idom_x_max;
-//  inD2 >>simprops->Idom_y_min;
-//  inD2 >>simprops->Idom_y_max;
-//  inD2 >>simprops->Idom_z_min;
-//  inD2 >>simprops->Idom_z_max;
   if (getline (inD2,line))
   {
 	 foundlast = line.find_last_of(":");
@@ -231,14 +213,6 @@ Read_Data (MatProps * matprops, TimeProps * timeprops, SimProps * simprops, int 
   int col;
   double * mat;
   string filename;
-
-//  if (getline (inD2,line))
-//	 line >>row;
-//  if (getline (inD2,line))
-//	 line >>col;
-//
-//  if (getline (inD2,filename))
-//	  readFile(filename, &mat, row, col);
   if (getline (inD2,line))
   {
 	 foundlast = line.find_last_of(":");

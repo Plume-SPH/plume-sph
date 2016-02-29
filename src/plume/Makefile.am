@@ -7,6 +7,7 @@
 noinst_LIBRARIES = libgmfgsph.a libgmfghdf5.a
 
 libgmfgsph_a_SOURCES = sph_header.h sph_lib.cc
+libgmfgsph_a_CPPFLAGS = -I$(top_srcdir)/src/datstr
 
 libgmfghdf5_a_SOURCES = hdf5calls.cc hdf5calls.h
 libgmfghdf5_a_CPPFLAGS = -I$(top_srcdir)/src/preproc \

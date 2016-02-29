@@ -21,10 +21,6 @@
 #include <fstream>  //for readFile
 #include <string>   //for readFile
 #include <stdlib.h>     /* exit, EXIT_FAILURE */
-
-#include <properties.h> //for atmosphere interpolation
-#include <meteo.h> //for atmosphere interpolation
-
 #include <cmath>
 
 //#include <petsc.h>
@@ -35,6 +31,10 @@ using namespace std;
 #include <constant.h>
 #  include <IndMap.h>
 #include <parameters.h>
+
+#include <properties.h> //for atmosphere interpolation
+#include "meteo.h" //for atmosphere interpolation
+#include "options.h"
 
 MPI_Datatype MPI_TKEY, MPI_IndMap;
 
@@ -529,6 +529,7 @@ void air_prop_uniform (double *coord, double *range, double * energy, double *pr
 #endif
 }
 
+#if ATMOSPHERE_TYPE==4
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
 //Based on input meteo data, using interpolation
 void air_prop_meteo_based (SimProps * simprops, double *coord, double * energy, double *pressure, double * density)
@@ -574,6 +575,7 @@ void air_prop_meteo_based (SimProps * simprops, double *coord, double *range, do
 	//The following code is based on numerical integration, coefficient are 1/6, 4/6 1/6
 	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*(0.1666667*d1+0.6666666*d+0.1666667*d2);
 }
+#endif
 
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
 void air_prop(SimProps * simprops, double *coord, double * energy, double *pressure, double * density)

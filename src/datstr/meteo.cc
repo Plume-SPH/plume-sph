@@ -15,6 +15,7 @@ Meteo::Meteo()
 {
    number_of_data = 0;
    number_of_props = 0;
+   data = NULL;
 }
 
 //The *input_mat should be pointer to a pointer

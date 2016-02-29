@@ -14,10 +14,13 @@
 using namespace std;
 
 #  include <hashtab.h>
-#  include <properties.h>
 #  include <particle.h>
 #  include <IndMap.h>
 #  include "constant.h"
+
+#include <properties.h> //for atmosphere interpolation
+#include "meteo.h" //for atmosphere interpolation
+
 
 /*
  *  Walltime
@@ -281,6 +284,8 @@ void air_prop_uniformT (
                 double *, //density
                 double *  //particle mass
                 );
+
+#if ATMOSPHERE_TYPE==4
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) , internal energy
 //Based on input meteo data, using interpolation
 void air_prop_meteo_based (
@@ -301,6 +306,8 @@ void air_prop_meteo_based (
 		double *,   //density
 		double *    //particle mass
 		);
+#endif
+
 //function that used to determine only internal energy based on altitude.
 //This function is based on a less realistic model: hydrostatic model
 //This function will be used while imposing wall boundary condition

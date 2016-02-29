@@ -34,7 +34,7 @@ aclocal
 autoconf
 automake --add-missing
 
-./configure --without-gdal --with-hdf5 --enable-debug --enable-parallel CC=mpicc CXX=mpicxx FC=mpifort | tee myconfig.out
+./configure --without-gdal --with-hdf5 --enable-debug --enable-parallel CC=mpicc CXX=mpicxx FC=mpifort CXXFLAGS="-std=c++x0"| tee myconfig.out
 
 make | tee mymake.out
 make install | tee mymakeinstall.out
