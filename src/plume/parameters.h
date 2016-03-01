@@ -209,11 +209,24 @@ const double Atf_P = -g_P/(Ra_P*Ta0_P);
 // %parameter at vent, used to impose eruption condition
 // %v: vent
 const double Rg_P=462.; /*%gas constant for volcanic gases*/
+
+//for strong
 const double ng0_P=0.05; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
+////for weak
+//const double ng0_P=0.03; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
+
 const double Uv0_P=0.0; /* velocity in horizontal direction*/
+
+//for strong
 const double Vv0_P=275; /* velocity in verticle direction*/
-//const double Vv0_P=0.00015;  /* velocity in verticle direction, this velocity is used for testing non-eruption*/
+//for weak
+//const double Vv0_P=135; /* velocity in verticle direction*/
+
+//for strong
 const double Tv0_P=1053;
+////for weak
+//const double Tv0_P=1273;
+
 const double pv0_P=84363.4; //assuming pressure-balanced jet
 
 const double Rv_P=ng0_P*Rg_P;  /*as constant for erupted material*/
@@ -235,7 +248,11 @@ const double ev0_P=ng0_P*Cvg_P*Tv0_P+(1-ng0_P)*Cvs_P*Tv0_P; /*energy of erupted 
 
 
 //This is the old way to give parameters
+//for strong
 const double Mv_P=1.5e+09;  /*mass flow rate, it is not directly used in simulation.*/
+////for weak
+//const double Mv_P=1.5e+06;  /*mass flow rate, it is not directly used in simulation.*/
+
 //const double Mv_P=1.0;   //for test non-erupt condition
 
 const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
@@ -249,7 +266,11 @@ const double Pos_v_P[DIMENSION]={0., 0., Lz_P[0] };  /*position of vent at the o
 const int num_erupt = 2; /*this parameter should be used to determine total number */
 
 const int num_erupt_perlayer = 10;
-const int num_erupt_particles = 5238; //4963 for sml2=5.44//number of particle in the initial erupt duct
+
+//for strong
+const int num_erupt_particles = 5238; //number of particle in the initial erupt duct
+////for weak
+//const int num_erupt_particles = 2541; //4963 for sml2=5.44//number of particle in the initial erupt duct
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
