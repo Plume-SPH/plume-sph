@@ -214,6 +214,7 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
                         {
                           fprintf (stderr, "leaving bucket  behind myid = %d, neigh_proc = %d\n",
                                    myid, img_proc);
+                          cout << "One possible cause of this issue is: too many process or too less buckets, try with a larger initial domain!" <<endl;
                           fprintf (stderr, "%f, %f, %f\n", *(buck->get_mincrd()),
                                   *(buck->get_mincrd()+1), *(buck->get_mincrd()+2));
                           fprintf (stderr, "coord : = {%f, %f, %f}\n", coord[0], coord[1], coord[2]);

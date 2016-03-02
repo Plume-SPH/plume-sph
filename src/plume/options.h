@@ -64,7 +64,7 @@
  * 1: parabolic
  */
 #ifndef ERUPT_VELOCITY_PROF
-#define ERUPT_VELOCITY_PROF 0 //The default value represents hydro-static atmosphere
+#define ERUPT_VELOCITY_PROF 1 //The default value represents hydro-static atmosphere
 #endif
 //---------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------

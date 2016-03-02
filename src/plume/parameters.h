@@ -154,7 +154,7 @@
 //for strong
 const double Lx_P[2]={-28800,28800};
 const double Ly_P[2]={-28800,28800};
-const double Lz_P[2]={1500, 50000};
+const double Lz_P[2]={1500,50000};
 
 const int N_total_P=2700;  // This one is actually not used in current code!
 
@@ -253,7 +253,6 @@ const double Mv_P=1.5e+09;  /*mass flow rate, it is not directly used in simulat
 ////for weak
 //const double Mv_P=1.5e+06;  /*mass flow rate, it is not directly used in simulation.*/
 
-//const double Mv_P=1.0;   //for test non-erupt condition
 
 const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
 

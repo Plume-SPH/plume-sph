@@ -178,7 +178,7 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
     poly_surf (xcrd, ycrd, elev, poly);//How could I make sure that this ploy_surf also works for flat ground.
 
     for (i=0; i<4; i++)
-      if (isnan (poly[i]))
+      if (std::isnan (poly[i])) //It is not necessary to have std:: in front of isnan, but due to some issues in c++11, have std will get rid of some compile issues.
         exit (51);
   }
 

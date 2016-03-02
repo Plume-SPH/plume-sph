@@ -103,7 +103,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 	range_x[1] = rv_P;
 	range_y[0] = -rv_P;
 	range_y[1] = rv_P;
-    range_z[1] = 0.; // not exact, should use ground height
+    range_z[1] = Lz_P[0]; // not exact, should use ground height
     range_z[0] = range_z[1]-(matprops->smoothing_length)*1.5*PARTICLE_DENSITY;
 
 
@@ -448,7 +448,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     range_x[1] = rv_P;
     range_y[0] = -rv_P;
     range_y[1] = rv_P;
-    range_z[1] = 0.; // not exact, should use ground height
+    range_z[1] = Lz_P[0]; // not exact, should use ground height
     range_z[0] = range_z[1]-(matprops->smoothing_length)*1.5*PARTICLE_DENSITY;
 
     t_total -= dt; //get t_total of the previous time step
