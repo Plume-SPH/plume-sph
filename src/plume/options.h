@@ -66,11 +66,19 @@
 #ifndef ERUPT_VELOCITY_PROF
 #define ERUPT_VELOCITY_PROF 1 //The default value represents hydro-static atmosphere
 #endif
+
+//Turn on and turn off domain adjusting ---> might be useful for performance analysis
+// if define ADJUST_DOMAIN, will enable the feature of domain adjusting
+// if domain adjusting feature is turned off, the initial domain (parameters giving in input file) should be consistent with computational domain
+//#ifndef ADJUST_DOMAIN
+//#define ADJUST_DOMAIN
+//#endif
 //---------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //--------------------------------OPTIONS FOR DEBUG--------------------------------------------
 #ifdef DEBUG
 
+//output accumulative execute time, this might be helpful for performance analysis
 #ifndef OUT_PUT_EXCUT_TIME
 #define OUT_PUT_EXCUT_TIME
 #endif
@@ -85,7 +93,7 @@
 #define WRITE_PID
 #endif
 
-#endif
+#endif //DEBUG
 //----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------
 #endif /* OPTIONS_H */

@@ -32,7 +32,7 @@ export HDF5_DISABLE_VERSION_CHECK=1
 export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
 
 #for MPI debug, the larger the value, the more details will given
-export I_MPI_DEBUG=99
+export I_MPI_DEBUG=1
 
 echo "srun with $SLURM_NNODES nodes, each node has 8 processors"
 srun ./particler 1>out 2>err

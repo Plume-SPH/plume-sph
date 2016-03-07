@@ -202,13 +202,14 @@ main(int argc, char **argv)
     	walltime = finish - start;
     	cout << "Computation time up to now is: " << walltime << " seconds" << endl;
     }
-#endif
-#endif
+#endif //DEBUG
+#endif //OUT_PUT_EXCUT_TIME
 
     ierr = (int) round (global_data[1]);
     if ( ierr )
       MPI_Abort(MPI_COMM_WORLD, ierr);
 
+#ifdef ADJUST_DOMAIN
     // update mesh
     adapt = (int) round (global_data[2]);
     if (adapt)
@@ -237,16 +238,6 @@ main(int argc, char **argv)
       // sync data again
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
-#ifdef DEBUG
-  if (check_part)
-  {
-	  find = false;
-	  find = check_particle_bykey (P_table, &id);
-	  if (find)
-	     cout <<"its new_old is : " << id << endl;
-  }
-#endif
-
       // scan buckets and make them active / inactive
       update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -263,7 +254,9 @@ main(int argc, char **argv)
       ierr += apply_bcond (myid, P_table, BG_mesh, matprops, Image_table);
 
     }
-#endif
+#endif  //ADJUST_DOMAIN
+#endif  //MULTI_PROC
+
     ierr = 0;  // reset error code
     adapt = 0; // and adapt flag
 
@@ -319,12 +312,14 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
+#ifdef ADJUST_DOMAIN
     //scan most outside layer of has_potential_involved buckets
     adapt = scan_outside_layer (P_table, BG_mesh, numprocs, myid);
+#endif
 
 #ifdef MULTI_PROC
     /* DYNAMIC LOAD BALANCING */
-    if ((numprocs > 1) && (timeprops->is_int_time()) &&( ((int) timeprops->timesec()) % 5 == 0))
+    if ((numprocs > 1) && (timeprops->is_int_time()) &&( ((int) timeprops->timesec()) % 3 == 0))
     {
       // remove guest buckets and particles --->This is necessary for repartition
       delete_guest_buckets (BG_mesh, P_table);
