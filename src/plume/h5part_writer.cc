@@ -43,8 +43,12 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   vector < int > involved;
 #endif
 
-#ifdef DEBUG
+#ifdef WRITE_PID
   vector < int > myprocess;
+#endif
+
+#ifdef WRITE_PMASS
+  vector < double > mymass;
 #endif
 
   char filename[18];
@@ -94,6 +98,10 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 
 #ifdef WRITE_PID
       myprocess.push_back(myid);
+#endif
+
+#ifdef WRITE_PMASS
+      mymass.push_back(pi->get_mass ());
 #endif
 
 #ifndef WRITE_GHOSTS
@@ -163,9 +171,15 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 #endif
 
   //myprocess
-#ifdef DEBUG
+#ifdef WRITE_PID
   copy(myprocess.begin(), myprocess.end(), ibuf);
   ierr = GH5_Write(gid, "myprocess", dims, (void *) ibuf, start, my_count, INTTYPE);
+#endif
+
+  //mymass
+#ifdef WRITE_PMASS
+  copy(mymass.begin(), mymass.end(), buf);
+  ierr = GH5_Write(gid, "mymass", dims, (void *) buf, start, my_count,  DOUBLETYPE);
 #endif
 
   // x-coordinates

@@ -70,9 +70,9 @@
 //Turn on and turn off domain adjusting ---> might be useful for performance analysis
 // if define ADJUST_DOMAIN, will enable the feature of domain adjusting
 // if domain adjusting feature is turned off, the initial domain (parameters giving in input file) should be consistent with computational domain
-//#ifndef ADJUST_DOMAIN
-//#define ADJUST_DOMAIN
-//#endif
+#ifndef ADJUST_DOMAIN
+#define ADJUST_DOMAIN
+#endif
 //---------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //--------------------------------OPTIONS FOR DEBUG--------------------------------------------
@@ -91,6 +91,11 @@
 //output PID
 #ifndef WRITE_PID
 #define WRITE_PID
+#endif
+
+//output particle mass ---> particle mass is necessary in post process
+#ifndef WRITE_PMASS
+#define WRITE_PMASS
 #endif
 
 #endif //DEBUG
