@@ -166,6 +166,9 @@ main(int argc, char **argv)
   // apply boundary conditions
   apply_bcond(myid, P_table, BG_mesh, matprops, Image_table);
 
+  //It is necessary, properties of wall ghost particle will change after applying wall boundary conditions
+  move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
   // Write inital configuration
   write_output (myid, numprocs, P_table, BG_mesh,
                 partition_table, timeprops, format);
@@ -252,6 +255,9 @@ main(int argc, char **argv)
 
       // apply boundary conditions--> as some new wall ghost added, the boundary condition need to be updated!
       ierr += apply_bcond (myid, P_table, BG_mesh, matprops, Image_table);
+
+      //It is necessary, properties of wall ghost particle will change after applying wall boundary conditions
+      move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
     }
 #endif  //ADJUST_DOMAIN
@@ -348,6 +354,9 @@ main(int argc, char **argv)
 
     // apply boundary conditions
     ierr += apply_bcond (myid, P_table, BG_mesh, matprops, Image_table);
+
+    //It is necessary, properties of wall ghost particle will change after applying wall boundary conditions
+    move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
     // write output if needed
     if (timeprops->ifoutput())
