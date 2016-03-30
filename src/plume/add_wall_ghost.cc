@@ -228,7 +228,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
  		     		    				num_particle++;
  		     		    				TKey tmpkey(pkey);
 
- 		     		    				Curr_buck->add_pressure_ghost_particle(tmpkey);
+ 		     		    				Curr_buck->add_wall_ghost_particle(tmpkey);
  		        		         }
  		    	    }//end of if bnd_bucket is guest
  			  }//end of if bucket is .....
