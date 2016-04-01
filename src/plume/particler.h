@@ -189,6 +189,17 @@ void write_output(
                   int     //! file format, {\it i.e.} hdf5, tecplot etc
                  );
 
+//! Write output, in specified format ---> output data without ghost or guest particles, clean for show the results.
+void write_output_show(
+                  int ,        //! my process id
+                  int ,        //! total number of procs
+                  THashTable *, //! HashTable of SPH particles
+                  HashTable *, //! HashTable of Background Cells
+                  vector<BucketHead> &, //! table of partitioned keys
+                  TimeProps *, //! Structure time properties
+                  int     //! file format, {\it i.e.} hdf5, tecplot etc
+                 );
+
 //set up eruption particles
 int setup_erupt(
 		        int, //myid

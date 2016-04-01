@@ -13,6 +13,8 @@
 
 void write_h5part (int, int, THashTable *, TimeProps *);
 
+void write_h5part_show (int, int, THashTable *, TimeProps *);
+
 void write_matlab (int, THashTable *, HashTable *, TimeProps *, vector<BucketHead> &);
 
 

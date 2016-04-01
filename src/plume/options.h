@@ -84,9 +84,9 @@
 #endif
 
 //Output ghost particles
-//#ifndef WRITE_GHOSTS
-//#define WRITE_GHOSTS
-//#endif
+#ifndef WRITE_GHOSTS
+#define WRITE_GHOSTS
+#endif
 
 //output PID
 #ifndef WRITE_PID

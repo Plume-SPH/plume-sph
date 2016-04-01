@@ -175,6 +175,13 @@ main(int argc, char **argv)
   write_output (myid, numprocs, P_table, BG_mesh,
                 partition_table, timeprops, format);
 
+  //Output this piece of code is to output results without ghost particles ----> will be useful
+  #ifdef WRITE_GHOSTS
+  // Write inital configuration
+  write_output_show (myid, numprocs, P_table, BG_mesh,
+                partition_table, timeprops, format);
+  #endif
+
   /*
    *
    * The time-stepping loop
@@ -362,8 +369,17 @@ main(int argc, char **argv)
 
     // write output if needed
     if (timeprops->ifoutput())
+    {
        write_output (myid, numprocs, P_table, BG_mesh,
                     partition_table, timeprops, format);
+
+    //Output this piece of code is to output results without ghost particles ----> will be useful
+    #ifdef WRITE_GHOSTS
+    // Write inital configuration
+    write_output_show (myid, numprocs, P_table, BG_mesh,
+                  partition_table, timeprops, format);
+    #endif
+    }
   }
 
 #ifdef MULTI_PROC

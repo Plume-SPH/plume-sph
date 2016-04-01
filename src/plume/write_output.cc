@@ -44,6 +44,22 @@ write_output(int myid, int numprocs,
 }
 
 void
+write_output_show(int myid, int numprocs,
+             THashTable * P_table, HashTable * BG_mesh,
+             vector <BucketHead> & partition_table,
+             TimeProps * timeprops, int format)
+{
+
+  if (format & 1)
+    write_h5part_show(myid, numprocs, P_table, timeprops);
+
+  if (format & 2)
+    write_matlab(myid, P_table, BG_mesh, timeprops, partition_table);
+
+  return;
+}
+
+void
 write_debug_info(int myid, THashTable * P_table, int index)
 {
 
