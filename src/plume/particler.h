@@ -62,6 +62,8 @@ add_wall_ghost(
 		THashTable *,
 		//BG_table
 		HashTable * ,
+		//simprops,
+		 SimProps* ,
         //Mat property
         MatProps *,
         //TimeProps

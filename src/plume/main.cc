@@ -130,7 +130,7 @@ main(int argc, char **argv)
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
   //add wall ghost
-  add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+  add_wall_ghost(P_table, BG_mesh, simprops, matprops, timeprops, numprocs, myid);
 
   //Adding eruption boundary condition
   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
@@ -238,7 +238,7 @@ main(int argc, char **argv)
       shift_brief_buck (BG_mesh, matprops, timeprops, myid);
 
       //add wall ghost
-      add_wall_ghost(P_table, BG_mesh, matprops, timeprops, numprocs, myid);
+      add_wall_ghost(P_table, BG_mesh, simprops, matprops, timeprops, numprocs, myid);
 
       // sync data again
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);

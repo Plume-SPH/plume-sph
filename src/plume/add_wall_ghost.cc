@@ -41,7 +41,7 @@ using namespace std;
 #endif
 
 void
-add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
+add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
         MatProps * matprops, TimeProps *timeprops, int numproc, int myid)
 {
 	  int i, j, k, ii;
@@ -152,6 +152,13 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
  		    		    				 }
  		    		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
 
+ 		    		    				//After creating these new particles, gave each particle a initial status
+ 		    		    				//The purpose is if the state of these wall ghost particles did not get updated, a "static" wall ghost particle will be added instead
+ 		    		    				//Which is not accurate, but will help make the code more stable
+ 		    		    				//In addition, in current version, only particle in the "On-ground MIXED" bucket will be updated based on image
+ 		    		    				//These particles in underground buckets will not been updated!
+ 		 					           initial_air (pnew, simprops);
+
  		    		    				//default involved is zero
  		 					           if (Bnd_buck->is_guest())
  		 					           {
@@ -213,6 +220,13 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
  		     		    				}
  		     		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
 
+ 		    		    				//After creating these new particles, gave each particle a initial status
+ 		    		    				//The purpose is if the state of these wall ghost particles did not get updated, a "static" wall ghost particle will be added instead
+ 		    		    				//Which is not accurate, but will help make the code more stable
+ 		    		    				//In addition, in current version, only particle in the "On-ground MIXED" bucket will be updated based on image
+ 		    		    				//These particles in underground buckets will not been updated!
+ 		 					            initial_air (pnew, simprops);
+
  		     		    				//default involved is zero
  		     					        if (Down_buck->is_guest())
  		    					        {
@@ -220,8 +234,6 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh,
  		    					            tempid = Down_buck->get_myprocess();
  		    					            pnew->put_my_processor(tempid);
  		    					        }
-
-
 
  		     		    				// add to hash-table
  		     		    				P_table->add(pkey, pnew);

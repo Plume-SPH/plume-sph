@@ -30,8 +30,8 @@ using namespace std;
 #include <exvar.h>
 
 int
-move_bnd_images (int myid, int nump, THashTable * P_table,
-                 HashTable * BG_mesh, list < BndImage > & Image_table)
+move_bnd_images (int myid, int nump, THashTable * P_table, HashTable * BG_mesh,
+                 list < BndImage > & Image_table)
 {
 
   if (nump < 2)

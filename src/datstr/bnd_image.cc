@@ -91,7 +91,8 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
 
   while ((buck = (Bucket *) itr->next ()))//go through all buckets
     if ((buck->has_wall_ghost_particles ()) &&  //bucket has wall ghost particle and is not guest
-        (!buck->is_guest ()))
+        (!buck->is_guest ()) &&    //bucket is not guest
+		(buck->get_bucket_type ()==MIXED)) //This means I am not going to update state of wall ghost particles in underground buckets --> Actually, I should ---> But to do this, I need to combine
     {
       vector < TKey > plist = buck->get_plist ();
       vector < TKey >::iterator p_itr;
