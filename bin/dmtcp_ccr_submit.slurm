@@ -11,6 +11,7 @@
 #SBATCH --output=output.out
 #SBATCH --error=output.err
 #SBATCH --partition=general-compute
+#SBATCH --constraint=CPU-E5645
 ##SBATCH --requeue
 
 # spit out some basic SLURM information
