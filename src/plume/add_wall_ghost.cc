@@ -55,6 +55,12 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 //	  double poly[DIMENSION + 1];
 	  double bnd[2*DIMENSION], index[2*DIMENSION];
 
+#ifdef DEBUG
+      bool do_search = true;
+      unsigned keycheck[TKEYLENGTH] = {71898628, 982285492, 0};
+      unsigned keytemp[TKEYLENGTH] ;
+#endif
+
 	  Bucket *Curr_buck = NULL;
 	  int num_particle = 0;
 
@@ -151,6 +157,17 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
  		    		    				    exit(1);
  		    		    				 }
  		    		    				Particle * pnew = new Particle(pkey, pcrd, mass, smlen, prss, masfrc, gmm, sndspd, phs_num, myid, bctp);
+
+#ifdef DEBUG
+ 		    		    				if (do_search)
+ 		    		    				{
+ 		    		    					for (ii = 0; ii < TKEYLENGTH; ii++)
+ 		    		    						keytemp[ii] = pnew->getKey ().key[ii];
+
+ 		    		    					if (find_particle (keytemp, keycheck))
+ 		    		    						cout << "The particle found!" << endl;
+ 		    		    				}
+#endif
 
  		    		    				//After creating these new particles, gave each particle a initial status
  		    		    				//The purpose is if the state of these wall ghost particles did not get updated, a "static" wall ghost particle will be added instead

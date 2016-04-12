@@ -403,7 +403,7 @@ void air_prop_hydro (double *coord, double *range, double * energy, double *pres
 	T2 = Ta0_P *(h2 < 0) + (Ta0_P-miu1_P*h2)*((h2>=0)&&(h2<H1_P))+(Ta0_P-miu1_P*H1_P)*((h2>=H1_P)&&(h2<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h2-H2_P))*((h2>=H2_P)&&(h2<H3_P));
 	double p1 = pa0_P *(h1 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h1, Ate1_p))*((h1>=0)&&(h1<H1_P))+(Ata2_p*exp(Atb2_p*h1))*((h1>=H1_P)&&(h1<H2_P))+(AtC3_p*pow(Atb3_p*h1+Ata3_p,Ate3_p))*((h1>=H2_P)&&(h1<H3_P));
 	double d1 = p1/(Ra_P*T1);
-	double p2 = pa0_P *(h1 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h1, Ate1_p))*((h1>=0)&&(h1<H1_P))+(Ata2_p*exp(Atb2_p*h1))*((h1>=H1_P)&&(h1<H2_P))+(AtC3_p*pow(Atb3_p*h1+Ata3_p,Ate3_p))*((h1>=H2_P)&&(h1<H3_P));
+	double p2 = pa0_P *(h2 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h2, Ate1_p))*((h2>=0)&&(h2<H1_P))+(Ata2_p*exp(Atb2_p*h2))*((h2>=H1_P)&&(h2<H2_P))+(AtC3_p*pow(Atb3_p*h2+Ata3_p,Ate3_p))*((h2>=H2_P)&&(h2<H3_P));
 	double d2 = p2/(Ra_P*T2);
 	double d = *density;
 

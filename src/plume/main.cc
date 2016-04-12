@@ -69,7 +69,7 @@ main(int argc, char **argv)
 #endif
 
 #ifdef DEBUG
-  bool check_part = false;
+  bool check_part = true;
   int  id;
   bool find = false;
   bool check_buck = false;
@@ -115,7 +115,6 @@ main(int argc, char **argv)
   //add air particles and put particles into bucket, bc_type is determined in this process
   add_air(P_table, BG_mesh, matprops, simprops, numprocs, myid);
 
-
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -131,6 +130,11 @@ main(int argc, char **argv)
 
   //add wall ghost
   add_wall_ghost(P_table, BG_mesh, simprops, matprops, timeprops, numprocs, myid);
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
 
   //Adding eruption boundary condition
   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
@@ -167,6 +171,11 @@ main(int argc, char **argv)
 
   // apply boundary conditions
   apply_bcond(myid, P_table, BG_mesh, matprops, Image_table);
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
 
   //It is necessary, properties of wall ghost particle will change after applying wall boundary conditions
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
@@ -283,6 +292,11 @@ main(int argc, char **argv)
     move_bnd_images (myid, numprocs, P_table, BG_mesh, Image_table);
 #endif
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
     // update momentum and energy
     int err2 = mom_engr_update (myid, P_table, BG_mesh, timeprops);
     if ( err2 )
@@ -292,6 +306,11 @@ main(int argc, char **argv)
       cerr << "Check outfile for proc " << myid << " for errors." << endl;
       ierr += err2;
     }
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
 
 #ifdef MULTI_PROC
     // update guests on all procs
@@ -304,6 +323,11 @@ main(int argc, char **argv)
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
+#endif
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
 #endif
 
 #ifdef HAVE_TURBULENCE_LANS
