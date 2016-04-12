@@ -358,6 +358,35 @@ void air_prop_realistic (double *coord, double *range, double * energy, double *
 #endif
 }
 
+//function that will determine pressure based hydro-static equation
+double determine_pressure (double h)
+{
+	if (h < 0)
+		return pa0_P;
+	else if ((h>=0)&&(h<H1_P))
+		return (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p));
+	else if ((h>=H1_P)&&(h<H2_P))
+		return (Ata2_p*exp(Atb2_p*h));
+	else if ((h>=H2_P)&&(h<H3_P))
+		return (AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p));
+	else
+		cout << "input height makes nonsense!" <<endl;
+}
+
+//function that will determine temperature based hydro-static equation
+double determine_temperature (double h)
+{
+	if (h < 0)
+		return Ta0_P;
+	else if ((h>=0)&&(h<H1_P))
+		return (Ta0_P-miu1_P*h);
+	else if ((h>=H1_P)&&(h<H2_P))
+		return (Ta0_P-miu1_P*H1_P);
+	else if ((h>=H2_P)&&(h<H3_P))
+		return (Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P));
+	else
+		cout << "input height makes nonsense!" <<endl;
+}
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
 //Based on hydro-static equation dp/dz=-rho*g ---> This will give a less realistic initial atmosphere, but more consistent with current model.
 void air_prop_hydro (double *coord, double * energy, double *pressure, double * density)
@@ -368,8 +397,11 @@ void air_prop_hydro (double *coord, double * energy, double *pressure, double * 
 		cout << "height of domain exceeds the maximum height of atmosphere, in air_prop! \n" <<endl;
 
 	double T;
-	T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
-	*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
+	//T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
+	T= determine_temperature (h);
+	//*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
+	*pressure = determine_pressure(h);
+
 	*density = (*pressure) /(Ra_P*T) ;
 	*energy = (*pressure) /(*density * (gamma_P-1));
 
@@ -390,8 +422,12 @@ void air_prop_hydro (double *coord, double *range, double * energy, double *pres
 		cout << "height of domain exceeds the maximum height of atmosphere, in air_prop! \n" <<endl;
 
 	double T;
-	T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
-	*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
+	//T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
+	T= determine_temperature (h);
+
+	//*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
+	*pressure = determine_pressure(h);
+
 	*density = (*pressure) /(Ra_P*T) ;
 	*energy = (*pressure) /(*density * (gamma_P-1));
 
@@ -399,11 +435,15 @@ void air_prop_hydro (double *coord, double *range, double * energy, double *pres
 	double h1=range[4];
 	double h2=range[5];
 	double T1, T2;
-	T1 = Ta0_P *(h1 < 0) + (Ta0_P-miu1_P*h1)*((h1>=0)&&(h1<H1_P))+(Ta0_P-miu1_P*H1_P)*((h1>=H1_P)&&(h1<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h1-H2_P))*((h1>=H2_P)&&(h1<H3_P));
-	T2 = Ta0_P *(h2 < 0) + (Ta0_P-miu1_P*h2)*((h2>=0)&&(h2<H1_P))+(Ta0_P-miu1_P*H1_P)*((h2>=H1_P)&&(h2<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h2-H2_P))*((h2>=H2_P)&&(h2<H3_P));
-	double p1 = pa0_P *(h1 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h1, Ate1_p))*((h1>=0)&&(h1<H1_P))+(Ata2_p*exp(Atb2_p*h1))*((h1>=H1_P)&&(h1<H2_P))+(AtC3_p*pow(Atb3_p*h1+Ata3_p,Ate3_p))*((h1>=H2_P)&&(h1<H3_P));
+//	T1 = Ta0_P *(h1 < 0) + (Ta0_P-miu1_P*h1)*((h1>=0)&&(h1<H1_P))+(Ta0_P-miu1_P*H1_P)*((h1>=H1_P)&&(h1<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h1-H2_P))*((h1>=H2_P)&&(h1<H3_P));
+//	T2 = Ta0_P *(h2 < 0) + (Ta0_P-miu1_P*h2)*((h2>=0)&&(h2<H1_P))+(Ta0_P-miu1_P*H1_P)*((h2>=H1_P)&&(h2<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h2-H2_P))*((h2>=H2_P)&&(h2<H3_P));
+	T1= determine_temperature (h1);
+	T2= determine_temperature (h2);
+	//double p1 = pa0_P *(h1 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h1, Ate1_p))*((h1>=0)&&(h1<H1_P))+(Ata2_p*exp(Atb2_p*h1))*((h1>=H1_P)&&(h1<H2_P))+(AtC3_p*pow(Atb3_p*h1+Ata3_p,Ate3_p))*((h1>=H2_P)&&(h1<H3_P));
+	double p1 = determine_pressure(h1);
 	double d1 = p1/(Ra_P*T1);
-	double p2 = pa0_P *(h2 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h2, Ate1_p))*((h2>=0)&&(h2<H1_P))+(Ata2_p*exp(Atb2_p*h2))*((h2>=H1_P)&&(h2<H2_P))+(AtC3_p*pow(Atb3_p*h2+Ata3_p,Ate3_p))*((h2>=H2_P)&&(h2<H3_P));
+	//double p2 = pa0_P *(h2 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h2, Ate1_p))*((h2>=0)&&(h2<H1_P))+(Ata2_p*exp(Atb2_p*h2))*((h2>=H1_P)&&(h2<H2_P))+(AtC3_p*pow(Atb3_p*h2+Ata3_p,Ate3_p))*((h2>=H2_P)&&(h2<H3_P));
+	double p2 = determine_pressure(h2);
 	double d2 = p2/(Ra_P*T2);
 	double d = *density;
 

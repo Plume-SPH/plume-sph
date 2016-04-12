@@ -55,7 +55,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 
 #ifdef DEBUG
-   bool do_search = true;
+   bool do_search = false;
    unsigned keycheck[TKEYLENGTH] = {71888048, 253371, 0};
    unsigned keytemp[TKEYLENGTH] ;
 

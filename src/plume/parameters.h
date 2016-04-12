@@ -137,7 +137,7 @@ const double wallp_load = 0.75;
 const double pressp_load = 0.;
 const double eruptp_load = 0.02;
 
-
+#endif /* PARAMETERS_H_ */
 ///*
 // * These parameters are for repeat the most recent excise!
 // *
@@ -298,4 +298,4 @@ const double eruptp_load = 0.02;
 //const double pressp_load = 0.;
 //const double eruptp_load = 0.02;
 //
-#endif /* PARAMETERS_H_ */
+//#endif /* PARAMETERS_H_ */

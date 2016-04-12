@@ -56,7 +56,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 	  double bnd[2*DIMENSION], index[2*DIMENSION];
 
 #ifdef DEBUG
-      bool do_search = true;
+      bool do_search = false;
       unsigned keycheck[TKEYLENGTH] = {71898628, 982285492, 0};
       unsigned keytemp[TKEYLENGTH] ;
 #endif
