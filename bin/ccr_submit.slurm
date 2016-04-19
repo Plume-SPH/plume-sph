@@ -2,18 +2,19 @@
 #SBATCH --partition=general-compute
 #SBATCH --time=71:30:00 
 #SBATCH --nodes=4
-#SBATCH --ntasks-per-node=8
-##SBATCH --mem=12000 
+#SBATCH --ntasks-per-node=12
+#SBATCH --mem=24000 
 ##SBATCH --account=mae610s15
 ##Memory per node specification is in MB. It is optional. # The default limit is 3GB per core. 
 #SBATCH --mail-user=zhixuanc@buffalo.edu 
 #SBATCH --mail-type=ALL 
-##SBATCH --constraint=CPU-E5645
-#SBATCH --constraint=IB
+#SBATCH --constraint=IB&CPU-E5645
+##SBATCH --exclusive
 #SBATCH --requeue 
 #SBATCH --job-name="sml100" 
 #SBATCH --output=sml100.out
 #SBATCH --error=sml100.err
+#SBATCH --qos=supporters
 #
 echo "SLURM_JOBID="$SLURM_JOBID 
 echo "SLURM_JOB_NODELIST"=$SLURM_JOB_NODELIST 

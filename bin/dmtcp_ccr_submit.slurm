@@ -1,18 +1,19 @@
 #!/bin/sh
-#SBATCH --time=71:30:00
-#SBATCH --nodes=4
+#SBATCH --time=00:05:00
+#SBATCH --nodes=2
 ##SBATCH --cpus-per-task=1
-#SBATCH --tasks-per-node=8
+#SBATCH --tasks-per-node=12
 #SBATCH --mem=24000
-##SBATCH --exclusive
 #SBATCH --mail-user=zhixuanc@buffalo.edu
 #SBATCH --mail-type=ALL
-#SBATCH --job-name=plume
+#SBATCH --job-name=try_qos
 #SBATCH --output=output.out
 #SBATCH --error=output.err
 #SBATCH --partition=general-compute
 #SBATCH --constraint=IB&CPU-E5645
-##SBATCH --requeue
+##SBATCH --exclusive
+#SBATCH --qos=supporters
+#SBATCH --requeue
 
 # spit out some basic SLURM information
 echo "SLURM_JOBID         = "$SLURM_JOB_ID
@@ -23,7 +24,7 @@ echo "SLURM_NNODES        = "$SLURM_NNODES
 echo "SLURM_CPUS_PER_TASK = "$SLURM_CPUS_PER_TASK
 echo "SLURMTMPDIR         = "$SLURMTMPDIR 
 
-#because CCR is not finish updating yet, I need the following line to make the excutable file works properly.
+#because CCR is not finish updating yet, I need the following line to make the excutable file works properly. ---> Maybe not necessary now
 export HDF5_DISABLE_VERSION_CHECK=1
 
 module use /projects/academic/abani/modules
@@ -42,15 +43,18 @@ ulimit -s unlimited
 # Users will typically want to set this to occur a bit before 
 # the job's walltime expires.
 #
-CHECKPOINT_TIME=71h
+CHECKPOINT_TIME=2m
 
 # EXE is the name of the application/executable
 # ARGS is any command-line args
 # OUTFILE is the file where stdout will be redirected
 # ERRFILE if the file where stderr will be redirected
 EXE=$SLURM_SUBMIT_DIR/particler
+
+#I do not have command arguments 
 #ARGS="1200000000 0 8"
 #ARGS="-n 4"
+
 OUTFILE=sml100.out
 ERRFILE=sml100.err
 
@@ -67,13 +71,13 @@ FORCE_CHECKPOINT=No
 # *************************************************************************************************
 export DMTCP_TMPDIR=$SLURM_SUBMIT_DIR
 
-# configure openmpi environment to use tcp   --> I'd like to use infiniband
-export OMPI_MCA_mtl=^psm
-export OMPI_MCA_btl=self,tcp
+# configure openmpi environment to use tcp   -->This is for openmpi --->This is not necessary for intel-mpi
+#export OMPI_MCA_mtl=^psm
+#export OMPI_MCA_btl=self,ofa
 
 
 export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
-export I_MPI_FABRICS_LIST=tcp
+export I_MPI_FABRICS_LIST=dapl,tcp  #dmtcp does not support tmi
 
 # =================================================================================================
 # start_coordinator() 
@@ -90,9 +94,6 @@ start_coordinator()
     fname=dmtcp_command.$SLURM_JOBID
     h=`hostname`
     echo "dmtcp_coordinator --daemon --exit-on-last -p 0 --port-file $fname $@ 1>/dev/null 2>&1"
-#The following works well for dmtcp/2.4.0, but will cause trouble for 2.4.1
-#    dmtcp_coordinator --daemon --exit-on-last -p 0 --port-file $fname $@ 1>/dev/null 2>&1
-#The following works well for dmtcp/2.4.1
     dmtcp_coordinator --daemon -p 0 --port-file $fname $@ 1>/dev/null 2>&1   
 
     while true; do 
@@ -112,16 +113,12 @@ start_coordinator()
     echo >> $fname
     echo "export PATH=$PATH" >> $fname
     echo "export DMTCP_HOST=$h" >> $fname
-   # echo "export DMTCP_COORD_PORT=$p" >> $fname
     echo "export DMTCP_PORT=$p" >> $fname
     echo "dmtcp_command \$@" >> $fname
 
     # Setup local environment for DMTCP
     export DMTCP_COORD_HOST=$h
     export DMTCP_COORD_PORT=$p
-   
-    #export DMTCP_HOST=$h
-    #export DMTCP_PORT=$p
 }
 
 echo "Launching dmtcp coordintor daemon"
@@ -141,10 +138,8 @@ echo "Checkpointing will commence after $nTics seconds"
 tic=`date +%s`
 if [[ -f ./dmtcp_restart_script.sh ]] && [[ "${FORCE_CHECKPOINT}" == "No" ]]; then
   echo "Restarting application under dmtcp control"
-  echo "./dmtcp_restart_script.sh -h $DMTCP_COORD_HOST -p $DMTCP_COORD_PORT -i $nTics 1>>$OUTFILE 2>>$ERRFILE"
- # ./dmtcp_restart_script.sh -h $DMTCP_COORD_HOST -p $DMTCP_COORD_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}
-#./dmtcp_restart_script.sh -h $DMTCP_HOST -p $DMTCP_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}
-./dmtcp_restart_script.sh -h $DMTCP_COORD_HOST -p $DMTCP_COORD_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}
+  echo "./dmtcp_restart_script.sh -h $DMTCP_COORD_HOST -p $DMTCP_COORD_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}"
+  ./dmtcp_restart_script.sh -h $DMTCP_COORD_HOST -p $DMTCP_COORD_PORT -i $nTics 1>>${OUTFILE}.${SLURM_JOB_ID} 2>>${ERRFILE}.${SLURM_JOB_ID}
   cat ${OUTFILE}.${SLURM_JOB_ID} >> ${OUTFILE}
   rm -f ${OUTFILE}.${SLURM_JOB_ID}
   cat ${ERRFILE}.${SLURM_JOB_ID} >> ${ERRFILE}
@@ -154,10 +149,8 @@ else
   echo "" > ${OUTFILE}
   echo "" > ${ERRFILE}
   echo "Launching application under dmtcp control"
-  echo "dmtcp_launch --quiet --rm -i $nTics mpirun $ARGS $EXE 1>${OUTFILE} 2>${ERRFILE}"
-  #dmtcp_launch --quiet --rm -i $nTics $ARGS $EXE 1>${OUTFILE} 2>${ERRFILE}
-  #srun dmtcp_launch --rm $EXE $ARGS 1>${OUTFILE} 2>${ERRFILE}
-  srun dmtcp_launch --quiet --rm -i $nTics $EXE 1>${OUTFILE} 2>${ERRFILE}
+  echo "srun dmtcp_launch --quiet --rm --ib -i $nTics $EXE 1>${OUTFILE} 2>${ERRFILE}"
+  srun dmtcp_launch --quiet --rm --ib -i $nTics $EXE 1>${OUTFILE} 2>${ERRFILE}
 fi
 toc=`date +%s`
 
