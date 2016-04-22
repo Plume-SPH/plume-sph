@@ -156,10 +156,21 @@
 //const double Ly_P[2]={-28800,28800};
 //const double Lz_P[2]={1500,50000};
 
-////for strong coarse resolution
-const double Lx_P[2]={-30000,30000};
-const double Ly_P[2]={-30000,30000};
+////for strong coarse resolution sml1=400
+const double Lx_P[2]={-27900,27900};
+const double Ly_P[2]={-27900,27900};
 const double Lz_P[2]={1500,50000};
+
+////for strong coarse resolution sml1=500
+//const double Lx_P[2]={-30000,30000};
+//const double Ly_P[2]={-30000,30000};
+//const double Lz_P[2]={1500,50000};
+
+//////for strong coarse resolution sml1=600
+//const double Lx_P[2]={-29100,29100};
+//const double Ly_P[2]={-29100,29100};
+//const double Lz_P[2]={1500,50000};
+
 
 const int N_total_P=2700;  // This one is actually not used in current code!
 
@@ -274,7 +285,7 @@ const int num_erupt_perlayer = 10;
 ////for strong
 //const int num_erupt_particles = 5238; //number of particle in the initial erupt duct
 //for strong coarse resolution
-const int num_erupt_particles = 1628; //number of particle in the initial erupt duct
+const int num_erupt_particles = 2544; //number of particle in the initial erupt duct ---> 2544 for 10 each direction, 825 for 6 each direction, 1628 for 8 each direction
 ////for weak
 //const int num_erupt_particles = 2541; //4963 for sml2=5.44//number of particle in the initial erupt duct
 
