@@ -151,10 +151,10 @@
 //const double Ly_P[2]={-2430,2430};
 //const double Lz_P[2]={1500, 14000};
 
-////for strong sml1=300
-//const double Lx_P[2]={-28800,28800};
-//const double Ly_P[2]={-28800,28800};
-//const double Lz_P[2]={1500,50000};
+//for strong sml1=300
+const double Lx_P[2]={-28800,28800};
+const double Ly_P[2]={-28800,28800};
+const double Lz_P[2]={1500,50000};
 
 ////for strong coarse resolution sml1=400
 //const double Lx_P[2]={-31200,31200};
