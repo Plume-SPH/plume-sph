@@ -82,7 +82,6 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 
 	  //Initial particle property
 	  int bctp =2; //wall condition ghost particle type.
-//	  int ptype = 0; //real particle
 	  double prss = 0.;
 	  double masfrc = 0.;
 	  double gmm = 1.4;
@@ -279,7 +278,10 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 	  	range_x[1] = rv_P;
 	  	range_y[0] = -rv_P;
 	  	range_y[1] = rv_P;
-	    range_z[1] = 0.; // not exact, should use ground height
+	  	//The old code is
+//	    range_z[1] = 0.; // not exact, should use ground height
+	  	//should be
+	    range_z[1] = Lz_P[1];
 	    range_z[0] = range_z[1]-(matprops->smoothing_length)*1.5*PARTICLE_DENSITY;
 	    unsigned tempkey[TKEYLENGTH];
 	    double dist;
