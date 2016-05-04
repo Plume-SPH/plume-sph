@@ -59,10 +59,10 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 	  double dx2 = 0.5 * dx;
 
 #ifdef DEBUG
-     bool do_search = false;
+     bool do_search = true;
      bool search_by_coor=false;
      double check[DIMENSION] = {-250, -250, 4250};
-     unsigned keycheck[TKEYLENGTH] = {70540343, 676583194, 0};
+     unsigned keycheck[TKEYLENGTH] = {268485399, 978591, 0};
      unsigned keytemp[TKEYLENGTH];
 #endif
 
@@ -79,7 +79,13 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 	  double prss = 0.;
 	  double masfrc = 0.;
 	  double gmm = 1.4;
+
+#if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
 	  double sndspd = 340.;
+#elif FLUID_COMPRESSIBILITY==1
+	  double sndspd = 1482.;
+#endif
+
 	  int phs_num = 1; //phase 1, air particle
 	  unsigned add_step = 0; // eruption particle adding step
 	  int involved = 1; //potential involved

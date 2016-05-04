@@ -52,6 +52,10 @@ move_bnd_images (int myid, int nump, THashTable * P_table, HashTable * BG_mesh,
     recv_info2[i] = 0;
   }
 
+#if FLUID_COMPRESSIBILITY==1 //sound speed is need for secondary variable update if a weakly compressible EOS is adopted here.
+	  double sndspd = 1482.;
+#endif
+
   /* if the bucket that contains reflected image belongs to 
    * foreing process, current proc needs to receive data from
    * that proc
@@ -160,7 +164,12 @@ move_bnd_images (int myid, int nump, THashTable * P_table, HashTable * BG_mesh,
         for (int i2 = 0; i2 < NO_OF_EQNS; i2++)
           uvec[i2] = recv_buf[j][k].state_vars[i2];
         pghost->put_state_vars (uvec);
-        pghost->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P); //This is added later, there was a bug in old code as the secondary variable is not updated after imposing of boundary condition.
+
+#if FLUID_COMPRESSIBILITY==1 //sound speed is need for secondary variable update if a weakly compressible EOS is adopted here.
+        pghost->put_sound_speed (sndspd);
+#endif
+
+        pghost->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P); //This is added later, there was a bug in old code as the secondary variable is not updated after imposing of boundary condition.
         pghost->put_update_delayed(false); //This also added later, but I do not think this mistake is a big deal in the old code.
       }
     }

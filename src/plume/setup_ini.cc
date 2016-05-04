@@ -151,7 +151,7 @@ setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
 //      pi->put_mass(mss);
 //
 //      //the second variable need to be updated.
-//      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+//      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
       //Replace the old data with an lib function
 	  initial_air(pi, simprops);
       j++;

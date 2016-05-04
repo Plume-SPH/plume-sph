@@ -41,7 +41,7 @@ timestep(THashTable * P_table, TimeProps* timeprops)
 //  {
 //        if (p_curr->need_neigh())
 //        {
-//        	p_curr->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+//        	p_curr->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
 //        }
 //  }//end of go through all particles
 //

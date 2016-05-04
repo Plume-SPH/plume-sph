@@ -199,7 +199,7 @@ smooth_density(THashTable * P_table)
           pi->set_involved_flag(INVOLVED);
 
        pi->update_density();
-       pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P); //The secondary varible was not updated after updating density and mass fraction.
+       pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P); //The secondary varible was not updated after updating density and mass fraction.
      }
 
   // clean up stuff

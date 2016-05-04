@@ -172,7 +172,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
     engr = ev0;
     state_vars[NO_OF_EQNS-1] = engr;
 
-    update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+    update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
     pressure = pv0; //Why I have this? --> I need double check this!
 
 //    gamma=gamma_v;
@@ -192,17 +192,20 @@ bool Particle::operator== (const Particle & rhs) const
 }
 
 //member function that used to update second variables based on give primitive variables.
-void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, double Cva_P, double Rg_P, double Ra_P)
+void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, double Cva_P, double Rg_P, double Ra_P, double rho_0)
 {
 	//desm should be density of mixture of erupt material and air
 	double desm = state_vars[0];
-	double engr = state_vars[NO_OF_EQNS-1];
 
+	double na=1-mass_frac;
+	double engr = state_vars[NO_OF_EQNS-1];
 	double ng=ng0_P*mass_frac;
 	double ns=mass_frac-ng;
-	double na=1-mass_frac;
 
 	double Cvm=ns*Cvs_P+ng*Cvg_P+na*Cva_P;
+
+	//implement EOS to get pressure
+#if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
 	//In the old code, I am using EOS for idea gas for mixture of gas and solid
 	//Now, I am using EOS for gas mixture
 	double Rm=ng*Rg_P+na*Ra_P;
@@ -210,21 +213,26 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 
 	gamma=1+Rm/Cvm; // gamma for mixture
 
-//	double lmd=desm*Rm/Cvm; not necessary
-	// for gas mixture
-//	//The following way of density computing is not correct -->The reason is na and ng is density with respect to mixture of solid and gas, In third equation, I was assuming that na is mass fraction with respect to phase1 and ng is with respect to pahse2
-//	double des1=(1-mass_frac)*desm;//density of phase1 : air
-//	double des2=mass_frac*desm;    //density of phase2 : erupted material
-//	double desmg=des1*na+des2*ng;     //density of mixture of erupted gas and air
+	//	double lmd=desm*Rm/Cvm; not necessary
+		// for gas mixture
+	//	//The following way of density computing is not correct -->The reason is na and ng is density with respect to mixture of solid and gas, In third equation, I was assuming that na is mass fraction with respect to phase1 and ng is with respect to pahse2
+	//	double des1=(1-mass_frac)*desm;//density of phase1 : air
+	//	double des2=mass_frac*desm;    //density of phase2 : erupted material
+	//	double desmg=des1*na+des2*ng;     //density of mixture of erupted gas and air
 	//The correct way:
 	// double desmg=des1+des2*ng/mass_frac;
-   //The computational efficient way is:
+	//The computational efficient way is:
 	double desmg=desm*(na+ng);
-
-	//implement EOS for idea gas on gas phase (mixture of air and gas)
 	pressure = Rmg*desmg*engr/Cvm; //attention: engr/Cvm is temperature of mixture, also temperature of gas mixture
+#elif FLUID_COMPRESSIBILITY==1
+	double gama=7.0;
+	double B;
+	B=rho_0*sound_speed*sound_speed/gama;  //sound speed used here is sound speed from previous time step.
+    pressure=B*(pow((desm/rho_0), gama)-1) + pa0_P; //rho_0 should be the density when pressure is zero, here, the pressure refers to pressure due to hydrostatic. Atmosphere pressure should be added
+#endif
 
-	//This is the old way of computing Cvmg --> The mistake that I made here is again using mass fraction with respect to mixture of gas and solid to compute property for gas mixture.
+#if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
+//This is the old way of computing Cvmg --> The mistake that I made here is again using mass fraction with respect to mixture of gas and solid to compute property for gas mixture.
 //	double Cvmg=ng*Cvg_P+na*Cva_P;
 
 	//The correct way of computing Cvmg
@@ -235,8 +243,11 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 //	sound_speed=pow((Rm*(press/desmg+engrg)/Cvmg),0.5);  //sound speed is assumed to only depends on gas phase---> definitely not exact, but in SPH, sound speed is only useful when determine the time steps.
 //	sound_speed=pow((Rmg*(pressure/desmg+engrg)/Cvmg),0.5);  //sound speed is assumed to only depends on gas phase---> definitely not exact, but in SPH, sound speed is only useful when determine the time steps.
 
-//	//The new way
-	sound_speed=pow((1+Rmg/Cvmg)*pressure/desmg, 0.5); //use sound speed of only gas phase, that will make sound speed larger than the real value, but safe in determine time steps.
+    //The new way
+    sound_speed=pow((1+Rmg/Cvmg)*pressure/desmg, 0.5); //use sound speed of only gas phase, that will make sound speed larger than the real value, but safe in determine time steps.
+#elif FLUID_COMPRESSIBILITY==1
+	sound_speed=pow(gama*(pressure+B-pa0_P)/desm, 0.5); //The equation of sound_speed comes from paper: "Historical Review of Real-Fluid Isentropio Flow Models" by D. A. Sullivan
+#endif
 
 //Updating single phase density
 	phase_density[0]=state_vars[0]*na;
@@ -250,5 +261,3 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 	specific_heat_p=Cvm;
 #endif
 }
-
-

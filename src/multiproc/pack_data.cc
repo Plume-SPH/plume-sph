@@ -235,7 +235,7 @@ void unpack_particle (ParticlePack *packet, Particle *part)
   part->mass_frac = packet->mass_frac;
 
   //update second variable every time after communication as secondary variable is not been send and receive while communication.
-  part->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+  part->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
 
   return;
 }

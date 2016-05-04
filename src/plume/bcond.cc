@@ -40,6 +40,10 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
   vector < TKey >::iterator p_itr;
   list < BndImage >::iterator i_img;
 
+#if FLUID_COMPRESSIBILITY==1 //sound speed is need for secondary variable update if a weakly compressible EOS is adopted here.
+	  double sndspd = 1482.;
+#endif
+
   for (i_img = Image_table.begin(); i_img != Image_table.end(); i_img++)
     if (i_img->buckproc == myid)
     {
@@ -202,7 +206,12 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
 //        for (i = 0; i < DIMENSION; i++)
 //          uvec[i+1] = velrot[i];
         p_ghost->put_state_vars(uvec);
-        p_ghost->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P); //This is added later, there was a bug in old code as the secondary variable is not updated after imposing of boundary condition.
+
+#if FLUID_COMPRESSIBILITY==1 //sound speed is need for secondary variable update if a weakly compressible EOS is adopted here.
+        p_ghost->put_sound_speed (sndspd);
+#endif
+
+        p_ghost->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P); //This is added later, there was a bug in old code as the secondary variable is not updated after imposing of boundary condition.
         p_ghost->put_update_delayed(false);
       }
       // else store the values to snyc at appropriate time--> The late snyc will be done in move_bnd_img.cc

@@ -264,7 +264,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
     if (pi->need_neigh())
     {
       pi->update_state_vars();// Maybe I only need to update it for once
-      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
     }
 
   // clean up

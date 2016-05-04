@@ -529,8 +529,18 @@ void air_prop_uniform (double *coord, double * energy, double *pressure, double 
 	double T;
 	T = Ta0_P;
 	*pressure = pa0_P;
+
+#if FLUID_COMPRESSIBILITY==0
 	*density = (*pressure) /(Ra_P*T) ;
 	*energy = (*pressure) /(*density * (gamma_P-1));
+#elif FLUID_COMPRESSIBILITY==1
+	//Here I am using a constant for water sound speed, need to figure out a more genereal way
+	double gama=7.0;
+	double water_sndspd = 1482;
+	double B=rhoa0_P*water_sndspd*water_sndspd/gama;
+	*density = rhoa0_P*pow((B/(*pressure)+1),1/gama);
+	*energy = T*Cva_P;
+#endif
 
 #ifdef DEBUG
 	bool print = false;
@@ -553,15 +563,27 @@ void air_prop_uniform (double *coord, double *range, double * energy, double *pr
 	double T;
 	T = Ta0_P;
 	*pressure = pa0_P;
+
+#if FLUID_COMPRESSIBILITY==0
 	*density = (*pressure) /(Ra_P*T) ;
 	*energy = (*pressure) /(*density * (gamma_P-1));
 
 	double d = *density;
 
 	//The following code is based on numerical integration, coefficient are 1/6, 4/6 1/6
-//	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*(0.1666667*d1+0.6666666*d+0.1666667*d2);
+    //	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*(0.1666667*d1+0.6666666*d+0.1666667*d2);
 
 	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])*d;
+#elif FLUID_COMPRESSIBILITY==1
+	//Here I am using a constant for water sound speed, need to figure out a more genereal way
+	double gama=7.0;
+	double water_sndspd = 1482;
+	double B=rhoa0_P*water_sndspd*water_sndspd/gama;
+	*density = rhoa0_P*pow(((*pressure - pa0_P)/B+1),1/gama);
+	*energy = T*Cva_P;
+
+	*mass = (range[1]-range[0])*(range[3]-range[2])*(range[5]-range[4])* (*density);
+#endif
 
 #ifdef DEBUG
 	bool print = false;
@@ -682,7 +704,7 @@ void initial_air (Particle * pi, SimProps * simprops)
 	      pi->put_mass(mss);
 
 	      //the second variable need to be updated.
-	      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P);
+	      pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
 
 	return;
 }

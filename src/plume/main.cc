@@ -69,7 +69,7 @@ main(int argc, char **argv)
 #endif
 
 #ifdef DEBUG
-  bool check_part = false;
+  bool check_part = true;
   int  id;
   bool find = false;
   bool check_buck = false;
@@ -115,6 +115,11 @@ main(int argc, char **argv)
   //add air particles and put particles into bucket, bc_type is determined in this process
   add_air(P_table, BG_mesh, matprops, simprops, numprocs, myid);
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -139,6 +144,11 @@ main(int argc, char **argv)
   //Adding eruption boundary condition
   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
 #ifdef MULTI_PROC
   // wait till initialization has finished
   MPI_Barrier (MPI_COMM_WORLD);
@@ -156,6 +166,11 @@ main(int argc, char **argv)
 //  move_brief_buck (numprocs, myid, my_comm, BG_mesh);
 #endif
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
   // search and update neighbors ---> can I use a send neighbor here? --> not, I do not think it is necessary!
   search_neighs_consth (myid, P_table, BG_mesh);
 
@@ -171,11 +186,6 @@ main(int argc, char **argv)
 
   // apply boundary conditions
   apply_bcond(myid, P_table, BG_mesh, matprops, Image_table);
-
-#ifdef DEBUG
-  if (check_part)
-	  check_particle_bykey (P_table);
-#endif
 
   //It is necessary, properties of wall ghost particle will change after applying wall boundary conditions
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);

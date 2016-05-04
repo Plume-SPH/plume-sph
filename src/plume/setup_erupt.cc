@@ -84,6 +84,12 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double rvsq=rv_P*rv_P;
     unsigned add_step = 0;
 
+#if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
+	  double sndspd = 340.;
+#elif FLUID_COMPRESSIBILITY==1
+	  double sndspd = 1482.;
+#endif
+
     double mindom[DIMENSION], maxdom[DIMENSION];
 
 	// get min-max domain from hashtable, for key generation
@@ -423,6 +429,13 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 //    int ii;
     int num_particle=0;
     unsigned tkeylen = TKEYLENGTH;
+
+#if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
+	  double sndspd = 340.;
+#elif FLUID_COMPRESSIBILITY==1
+	  double sndspd = 1482.;
+#endif
+
     double mindom[DIMENSION], maxdom[DIMENSION];
 
 	// get min-max domain from hashtable, for key generation

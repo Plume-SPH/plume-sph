@@ -203,6 +203,8 @@ public:
 		  //Rg_P
 		  double,
 		  //Ra_P
+		  double,
+		  //rho_0
 		  double
 		                 );
 

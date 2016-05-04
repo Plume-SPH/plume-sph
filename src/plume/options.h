@@ -54,7 +54,7 @@
  * 4: realistic interpolation --->read realistic atmosphere data and do interpolation to determine temperature, pressure, density
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 4 //The default value represents hydro-static atmosphere
+#define ATMOSPHERE_TYPE 2 //The default value represents hydro-static atmosphere
 #endif
 
 
@@ -73,6 +73,21 @@
 #ifndef ADJUST_DOMAIN
 #define ADJUST_DOMAIN
 #endif
+
+//define different EOS
+/*
+ * 0: ideal gas
+ * 1: weakly compressible ---> based on equation in "Weakly compressible SPH for free surface flows" by Markus Becker
+ *                             The sound speed should be computed accordingly
+ *                             In this case, energy equation is essentially decoupled from the other equations
+ *                             If the flow is multiple phase flow, should be careful while use this EOS
+ *              CAUTIOn: Atmosphere should be uniform when choose FLUID_COMPRESSIBILITY=1
+ *                       Because when the fluid is water, the gradient of temperature and density is almost vanish
+ */
+#ifndef FLUID_COMPRESSIBILITY
+#define FLUID_COMPRESSIBILITY 1
+#endif
+
 //---------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //--------------------------------OPTIONS FOR DEBUG--------------------------------------------
