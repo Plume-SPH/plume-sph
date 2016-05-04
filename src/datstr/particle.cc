@@ -33,7 +33,7 @@ Particle::Particle ()
   new_old = 0; //default new_old for non-guest particles is 0.
                  //for guest particles: -1: old, 1: new
   bc_type = 100;
-  involved = 0;
+  involved = 0; //default value
 
   for (i = 0; i < DIMENSION; i++)
     coord[i] = 0.;
@@ -121,7 +121,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 //overloading
 //Constructor for adding eruption initial condition: all parameters come from input
 Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
-		double Vv0, double ev0, double rhov, double pv0, double gamma_v,
+		double Vv0, double ev0, double rhov, double pv0, double gamma_v, double sndspd,
 		double ng0_P, double Cvs_P, double Cvg_P, double Cva_P, double Rg_P, double Ra_P )
 {
   int i;
@@ -176,7 +176,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
     pressure = pv0; //Why I have this? --> I need double check this!
 
 //    gamma=gamma_v;
-//    sound_speed=sndspd;
+    sound_speed=sndspd;
 
   return;
 

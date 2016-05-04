@@ -116,6 +116,7 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   pack_array->mass  = psend->mass;
   pack_array->smlen = psend->smlen;
   pack_array->mass_frac = psend->mass_frac;
+  pack_array->sound_speed = psend->sound_speed;
   pack_array->myprocess = psend->myprocess;
    
   for (j=0; j < TKEYLENGTH; j++)
@@ -233,6 +234,8 @@ void unpack_particle (ParticlePack *packet, Particle *part)
     part->state_vars[i] = packet->state_vars[i];
 
   part->mass_frac = packet->mass_frac;
+
+  part->sound_speed = packet->sound_speed;
 
   //update second variable every time after communication as secondary variable is not been send and receive while communication.
   part->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);

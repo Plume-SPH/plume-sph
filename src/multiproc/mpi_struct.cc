@@ -100,7 +100,7 @@ GMFG_new_MPI_Datatype ()
 
   blockcounts2[0] = 5;
   blockcounts2[1] = TKEYLENGTH;
-  blockcounts2[2] = 3 + 2*DIMENSION + NO_OF_EQNS;
+  blockcounts2[2] = 4 + 2*DIMENSION + NO_OF_EQNS;
 
   MPI_Address (&(particlePack->bc_type), &displs2[0]);
   MPI_Address (&(particlePack->key), &displs2[1]);

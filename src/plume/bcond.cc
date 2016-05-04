@@ -219,6 +219,7 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
       {
         for (i = 0; i < NO_OF_EQNS; i++)
           i_img->state_vars[i] = uvec[i];
+          p_ghost->put_update_delayed(true); //This was missing in old code, added later.
       }
     }//end of go through all wall ghost particles
   return 0;

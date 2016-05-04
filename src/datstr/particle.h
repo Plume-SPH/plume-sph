@@ -176,6 +176,8 @@ public:
 		      double,
 		      // gamma
 		      double,
+			  //sound speed
+			  double,
 			  //Initial mass fraction of solid in erupted material ng0_P
 			  double,
 			  //Cvs_P

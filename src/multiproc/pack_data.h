@@ -42,6 +42,7 @@ struct ParticlePack
   double mass;
   double smlen;
   double mass_frac;
+  double sound_speed; //actually sound speed is not primary variable, but is needed when computing pressure (When the fluid is weakly compressible flow)
   double coords[DIMENSION];
   double smoothed_v[DIMENSION];
   double state_vars[NO_OF_EQNS];// rho, v , e
