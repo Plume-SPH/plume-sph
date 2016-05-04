@@ -12,7 +12,7 @@ maximum x coordinate of initial domain:6000
 minimun y coordinate of initial domain:-6000
 maximum y coordinate of initial domain:6000
 minimum z coordinate of initial domain:1500
-maximum z coordinate of initial domain:9000
+maximum z coordinate of initial domain:6000
 number of rows in meteo data:41
 number of columns in meteo data:6
 the directory and name of meteo data:../Meteo_data/Meteo_Profiles-S-V.dat
