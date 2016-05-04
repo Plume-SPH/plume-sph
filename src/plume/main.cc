@@ -69,7 +69,7 @@ main(int argc, char **argv)
 #endif
 
 #ifdef DEBUG
-  bool check_part = true;
+  bool check_part = false;
   int  id;
   bool find = false;
   bool check_buck = false;
@@ -227,7 +227,7 @@ main(int argc, char **argv)
 
 #ifdef DEBUG
 #ifdef OUT_PUT_EXCUT_TIME
-    if (myid == 0 && (timeprops->is_int_time()) &&(((int) timeprops->timesec()) % 3 == 0) )
+    if (myid == 0 && (timeprops->is_int_time()) &&(((int) timeprops->timesec()) % 10 == 0) )
     {
     	finish = MPI_Wtime();
     	walltime = finish - start;

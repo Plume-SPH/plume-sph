@@ -59,7 +59,7 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 	  double dx2 = 0.5 * dx;
 
 #ifdef DEBUG
-     bool do_search = true;
+     bool do_search = false;
      bool search_by_coor=false;
      double check[DIMENSION] = {-250, -250, 4250};
      unsigned keycheck[TKEYLENGTH] = {268485399, 978591, 0};
