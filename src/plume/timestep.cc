@@ -74,6 +74,6 @@ timestep(THashTable * P_table, TimeProps* timeprops)
 //  t_each = (timeprops->TIME_SCALE)*(timeprops->t_each);
 //  double t_each = timeprops->t_each;
 //  t= std::min (t_each, 0.2 * dt);
-  t=0.2*dt;
+  t=CFL_P*dt;
   return t;
 }

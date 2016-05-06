@@ -48,13 +48,13 @@
 //Define the atmosphere type
 /*
  * 0: realistic -->Based on equations
- * 1: hydro-static
- * 2: uniform
+ * 1: hydro-static --->With temperature gradient (Described in Suzuki's 2005 plume modeling paper), based on pure hydro-static relation
+ * 2: uniform    ---> No gravity, no temperature gradient, no density gradient
  * 3: uniform-temperature, atmosphere stratefied due to gravity
  * 4: realistic interpolation --->read realistic atmosphere data and do interpolation to determine temperature, pressure, density
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 4 //The default value represents hydro-static atmosphere
+#define ATMOSPHERE_TYPE 2 //The default value represents hydro-static atmosphere
 #endif
 
 
@@ -85,7 +85,7 @@
  *                       Because when the fluid is water, the gradient of temperature and density is almost vanish
  */
 #ifndef FLUID_COMPRESSIBILITY
-#define FLUID_COMPRESSIBILITY 0
+#define FLUID_COMPRESSIBILITY 1
 #endif
 
 //---------------------------------------------------------------------------
