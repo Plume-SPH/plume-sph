@@ -426,6 +426,7 @@ const double eta_smooth_P = 1.2;
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
 const double CFL_P=0.25;
+const double CFL_BC_P=0.17; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------
 //Heat transfer coefficient

@@ -17,6 +17,7 @@ using namespace std;
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 
 #include <hashtab.h>
 #include <particler.h>
@@ -26,8 +27,69 @@ using namespace std;
 #include "constant.h"
 #include "parameters.h"
 
+using namespace std;
+
 double
-timestep(THashTable * P_table, TimeProps* timeprops)
+pressure_bc_step(HashTable * BG_mesh, THashTable * P_table)
+{
+	double dt, temp;
+    dt = 1.0E+10;
+
+	double p_spd_u, p_spd_v, p_spd_w, p_spd;
+
+	HTIterator * itr = new HTIterator (BG_mesh);
+	Bucket * Bnd_buck;
+	BriefBucket *breif_buck = NULL;
+	void * tempptr =NULL;
+
+	vector < TKey > plist;
+	vector < TKey >::iterator p_itr;
+
+	while ((tempptr=itr->next ()))
+	{
+		breif_buck = (BriefBucket *) tempptr;
+		if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+			  continue;
+		else
+		{
+			Bnd_buck = (Bucket*) tempptr;
+			// 1) Bnd_buck has involved flag = 1 --->Only has potential involved particles
+			// 2) is not guest
+		    if ((Bnd_buck->get_has_involved()==1) && !Bnd_buck->is_guest())
+			{
+		    	plist = Bnd_buck->get_plist();
+		    	assert(plist.size()>0); //make sure Bnd_buck is not empty
+		    	for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+		    	{
+		    		 Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
+		    		 assert(p_curr);
+#ifdef HAVE_TURBULENCE_LANS
+		    		 p_spd_u = *(p_curr->get_smoothed_velocity());
+		    		 p_spd_v = *(p_curr->get_smoothed_velocity()+1);
+		    		 p_spd_w = *(p_curr->get_smoothed_velocity()+2);
+#else
+		    		 p_spd_u = *(p_curr->get_vel());
+		    		 p_spd_v = *(p_curr->get_vel()+1);
+		    		 p_spd_w = *(p_curr->get_vel()+2);
+#endif
+		    		 p_spd = max((abs(p_spd_u)>abs(p_spd_v)) ? abs(p_spd_u):abs(p_spd_v), abs(p_spd_w));
+
+		    		 temp = p_curr->get_smlen()/p_spd;
+
+		    		 if (temp < dt)
+		    		    dt = temp;
+		    	}// loop go through all particles in the bucket
+
+			}//end of if bucket only contains potential involved particles
+		}
+	}//end of go through all buckets
+
+	return dt;
+}
+
+
+double
+timestep(HashTable * BG_mesh, THashTable * P_table, TimeProps* timeprops)
 {
 //  int i, j, k;
   double dt, temp;
@@ -36,16 +98,6 @@ timestep(THashTable * P_table, TimeProps* timeprops)
   THTIterator *itr = new THTIterator(P_table);
   Particle *p_curr = NULL;
 
-//  //before computing time step, second variables need to be updated, because of repartition.
-//  while ((p_curr = (Particle *) itr->next ()))
-//  {
-//        if (p_curr->need_neigh())
-//        {
-//        	p_curr->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
-//        }
-//  }//end of go through all particles
-//
-//  itr->reset();
   while ((p_curr = (Particle *) itr->next()))
     if (p_curr->need_neigh())
     {
@@ -66,6 +118,7 @@ timestep(THashTable * P_table, TimeProps* timeprops)
         dt = temp;
     }
 
+  double dt_bc = pressure_bc_step (BG_mesh, P_table);
   // delete HT Iterator
   delete itr;
 
@@ -74,6 +127,6 @@ timestep(THashTable * P_table, TimeProps* timeprops)
 //  t_each = (timeprops->TIME_SCALE)*(timeprops->t_each);
 //  double t_each = timeprops->t_each;
 //  t= std::min (t_each, 0.2 * dt);
-  t=CFL_P*dt;
+  t = min (CFL_P*dt, dt_bc*CFL_BC_P);
   return t;
 }

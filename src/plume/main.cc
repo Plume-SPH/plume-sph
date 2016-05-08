@@ -209,7 +209,7 @@ main(int argc, char **argv)
   while (!timeprops->ifend())
   {
     // calculate time-step
-    dt = timestep(P_table, timeprops);
+    dt = timestep(BG_mesh, P_table, timeprops);
 
 #ifdef MULTI_PROC
     // get-minimum time-step for multiproc run

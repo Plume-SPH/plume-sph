@@ -162,12 +162,6 @@ void smooth_velocity (
                      THashTable * //! HashTable of SPH partilces
                     );
 
-//! Calculate time increment, depending upon CFL condition
-double timestep(
-                THashTable *,    //! HashTable of SPH partilces
-                MatProps *      //! Structure of material properties
-               );
-
 //! Update particle positions and their relationship with background Mesh
 void update_pos(
                int ,         //! my proc id
@@ -235,9 +229,18 @@ setup_ini(
 //determine time step
 double
 timestep (
+
+		  HashTable *, //BG_mesh
 		  THashTable *, //particle table
 		  TimeProps *    //timeprops
          );
+
+//determine time step that can stable fluctuation near the boundary
+double
+pressure_bc_step(
+		HashTable *, // BG_mesh,
+		THashTable * //P_table
+		);
 
 //scan the most outside layer of buckets satisfy has_involved>0,
 //if they have any involved particles (involved = 2), then make the most_out_side layer to be has_involved.
