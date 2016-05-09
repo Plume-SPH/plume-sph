@@ -84,14 +84,15 @@ pressure_bc_step(HashTable * BG_mesh, THashTable * P_table)
 		}
 	}//end of go through all buckets
 
+	delete itr;
+
 	return dt;
 }
 
-
+//main function determines the time step
 double
 timestep(HashTable * BG_mesh, THashTable * P_table, TimeProps* timeprops)
 {
-//  int i, j, k;
   double dt, temp;
 
   dt = 1.0E+10;                 // Initialize to very high value
@@ -117,8 +118,6 @@ timestep(HashTable * BG_mesh, THashTable * P_table, TimeProps* timeprops)
       if (temp < dt)
         dt = temp;
     }
-
-  double dt_bc = pressure_bc_step (BG_mesh, P_table);
   // delete HT Iterator
   delete itr;
 
@@ -127,6 +126,12 @@ timestep(HashTable * BG_mesh, THashTable * P_table, TimeProps* timeprops)
 //  t_each = (timeprops->TIME_SCALE)*(timeprops->t_each);
 //  double t_each = timeprops->t_each;
 //  t= std::min (t_each, 0.2 * dt);
+#if TIME_STEP_CONSTRAIN ==1
+  double dt_bc = pressure_bc_step (BG_mesh, P_table);
   t = min (CFL_P*dt, dt_bc*CFL_BC_P);
+#elif TIME_STEP_CONSTRAIN ==0
+  t = CFL_P*dt;
+#endif
+
   return t;
 }
