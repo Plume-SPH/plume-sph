@@ -124,6 +124,7 @@
 ////----------------------------------------------------------------------------------------
 ////CFL coefficient for time step update
 //const double CFL_P=0.25;
+//const double CFL_BC_P=0.17; //CLF number to stable fluctuation near the boundary, 1/6.
 //
 ////----------------------------------------------------------------------------------------
 ////Heat transfer coefficient
@@ -306,6 +307,7 @@
 ////----------------------------------------------------------------------------------------
 ////CFL coefficient for time step update
 //const double CFL_P=0.25;
+//const double CFL_BC_P=0.17; //CLF number to stable fluctuation near the boundary, 1/6.
 //
 ////----------------------------------------------------------------------------------------
 ////Heat transfer coefficient
@@ -530,7 +532,7 @@ const double Pos_v_P[DIMENSION]={0., 0., 0. };  /*position of vent at the origin
 const int num_erupt = 2; /*this parameter should be used to determine total number */
 
 const int num_erupt_perlayer = 10;
-const int num_erupt_particles = 1400; //number of particle in the initial erupt duct
+const int num_erupt_particles = 1800; // 1800 for sml1 =200, 3600 for sml1=400 number of particle in the initial erupt duct
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
@@ -546,12 +548,11 @@ const double eta_smooth_P = 1.2;
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.25;
-const double CFL_BC_P=0.17; //CLF number to stable fluctuation near the boundary, 1/6.
+const double CFL_P=0.20;
+const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 //----------------------------------------------------------------------------------------
 //Heat transfer coefficient
 const double lamda_P = 0.03; //using a constant heat conduction coefficient... That for air is 0.024
-
 
 //----------------------------------------------------------------------------------------
 //Work load for each type of particles ----> the data is obtained by profiling

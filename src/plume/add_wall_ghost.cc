@@ -195,7 +195,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
  		    		    				TKey tmpkey(pkey);
 
  		    		    				Curr_buck->add_wall_ghost_particle(tmpkey);
- 		    	    				}
+ 		    	    				}//end if the particle is below the ground
  		    	    		}
 
  		    	    // add wall ghost on under ground bucket
