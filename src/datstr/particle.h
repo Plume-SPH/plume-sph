@@ -52,7 +52,9 @@ protected:
    * 1) updating of momentum and energy use larger smoothing length. ---> conserve energy and momentum
    * 2) updating of density based on summation expression and use its original smoothing length --> The normalized summation expression will always guarantee conservation of mass
    */
+#if DENSITY_UPDATE_SML==0
   double smlen_original;
+#endif
 
   //! pressure
   double pressure;
@@ -240,11 +242,14 @@ public:
     return smlen;
   }
 
+#if DENSITY_UPDATE_SML==0
   //! get original smoothing length of current paricle
   double get_original_smlen () const
   {
     return smlen_original;
   }
+#endif
+
 
   //!get coordinates
   const double *get_coords () const

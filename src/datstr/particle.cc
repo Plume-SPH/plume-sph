@@ -24,7 +24,10 @@ Particle::Particle ()
 
   mass = 0.;
   smlen = 0.;
+#if DENSITY_UPDATE_SML==0
   smlen_original = 0.;
+#endif
+
 
   specific_heat_p = 0.;
 
@@ -77,7 +80,9 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 
   mass = m;
   smlen = h;
+#if DENSITY_UPDATE_SML==0
   smlen_original = h;
+#endif
 
   specific_heat_p = 0.;
 
@@ -130,7 +135,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
   myprocess = id;
   mass = m;
   smlen = h;
+#if DENSITY_UPDATE_SML==0
   smlen_original = h;
+#endif
+
 
   specific_heat_p = 0.;
 

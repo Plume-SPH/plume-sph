@@ -111,9 +111,15 @@ smooth_density(THashTable * P_table)
 						    s[k] = ds[k] / hi;
 						wght = weight(s, hi);
 						tmprho[phs_i-1] += wght * (pj->get_mass());
-
+#if DENSITY_UPDATE_SPH == 1
 						//View multiple phase SPH as one set of discretized point
 						wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
+#elif DENSITY_UPDATE_SPH == 2
+						//View multiple phase SPH as two independent sets of discretized point
+						double phase_des=*(pj->get_phase_density ()+ phs_i -1);
+						if (phase_des>0)
+						    wnorm[phs_i-1] += wght * (pj->get_mass())/phase_des;
+#endif
 
 					 }
 				  }//end of if pj->which_phase()==phs_i
@@ -127,32 +133,33 @@ smooth_density(THashTable * P_table)
  * There are three ways to normalize SPH kernel summation
  * 1)based on the concept that each phase in SPH is essentially independent set of discretized points
  * 2)Another is based on the concept that different types of particles for different phases are essentially the equivalent as discretized points
- * I prefer the former, so the following is commentted out
+ * It seems that the former one will smear out density
+ * While the second one have some troubles to compute density at the interface.
  */
       for (phs_i = 2; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
       {
     	  wnorm[0] += wnorm [phs_i-1];
       }
 
-//      density=0.0;
-//      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-//      {
-//           assert (wnorm[0] > 0);
-//    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
-//    	   density +=phaserho[phs_i-1];
-//      }
+      density=0.0;
+#if DENSITY_UPDATE_SPH == 1
+      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+      {
+           assert (wnorm[0] > 0);
+    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
+    	   density +=phaserho[phs_i-1];
+      }
+#elif DENSITY_UPDATE_SPH == 2
+	 for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+	 {
+	    if (wnorm[phs_i-1] > 0)
+		   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
+	    else
+		   phaserho[phs_i-1]=0;
 
- //Here is the new way of ---> however the new way has some issues while capturing the interface, so I turned to the old way. ---->But I did not give up the second method yet.
-            density=0.0;
-            for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-            {
-               if (wnorm[phs_i-1] > 0)
-          	       phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
-          	   else
-          		   phaserho[phs_i-1]=0;
-
-          	   density +=phaserho[phs_i-1];
-            }
+	    density +=phaserho[phs_i-1];
+	 }
+#endif
 
 #ifdef DEBUG
       if (check_den)
@@ -163,8 +170,6 @@ smooth_density(THashTable * P_table)
 #endif
 
 	  assert(density > 0);
-	  //In the old code, I was using
-	  //pi->put_density(density);
       pi->put_new_density(density);
 
       mssfrc=phaserho[1]/density;
@@ -190,8 +195,10 @@ smooth_density(THashTable * P_table)
 //      if (mssfrc >= MSFRC_THRESH && !pi->is_involved())
 //          pi->set_involved_flag(INVOLVED);
 
+
     }//end of if --> if the density of that particle need to be updated based summation
   }//end of loop -->go through all particle
+
 
   //In the old code, mass fraction is updated while computing, put it separately after density updating done
    THTIterator *it2 = new THTIterator(P_table);

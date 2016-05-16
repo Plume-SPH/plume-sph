@@ -27,6 +27,15 @@
 #define DENSITY_UPDATE_SML 0
 #endif
 
+/*
+ * There are two ways to view particles of two phases in multiphase SPH method:
+ * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
+ * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
+ */
+#ifndef DENSITY_UPDATE_SPH
+#define DENSITY_UPDATE_SPH 2
+#endif
+
 #endif
 
 
