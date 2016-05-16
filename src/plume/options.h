@@ -54,7 +54,7 @@
  * 4: realistic interpolation --->read realistic atmosphere data and do interpolation to determine temperature, pressure, density
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 1
+#define ATMOSPHERE_TYPE 4
 //The default value represents hydro-static atmosphere
 #endif
 

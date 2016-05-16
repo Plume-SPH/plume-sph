@@ -66,7 +66,7 @@ smooth_density(THashTable * P_table)
 
       double hi = pi->get_smlen ();
       double supp = 3.0 * hi;
-      TKey ki = pi->getKey ();
+//      TKey ki = pi->getKey ();
 
       for (i = 0; i < PHASE_NUM; i++)
     	  tmprho[i] = 0.;
@@ -83,38 +83,40 @@ smooth_density(THashTable * P_table)
       //go through all neighbors
       for (p_itr = neighs.begin (); p_itr != neighs.end (); p_itr++)
       {
-          // Transfer key into particle #
           Particle *pj = (Particle *) P_table->lookup (*p_itr);
           assert (pj);
+
+          if (pj->contr_dens()) //In my old code, I did not have this so I will get very large density at the very beginning of the eruption.
           //update density for each phase
           //Probably, a switch case is better than for loop in terms of efficiency!
-          for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-          {
-              //for each phase
-      	      if (pj->which_phase()==phs_i)
-      	      {
-      		    // guests are included ghosts are not,
-      	    	// the wall effect is handled by wnorm!
-      		    if (pj->contr_dens())
-      		    {
-      		        for (i = 0; i < DIMENSION; i++)
-      		            ds[i] = xi[i] - *(pj->get_coords() + i);
+			  for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+			  {
+				  //for each phase
+				  if (pj->which_phase()==phs_i)
+				  {
+					// guests are included ghosts are not,
+					// the boundary deficiency and interface deficiency is handled by wnorm!
+					if (pj->contr_dens())
+					{
+						for (i = 0; i < DIMENSION; i++)
+							ds[i] = xi[i] - *(pj->get_coords() + i);
 
-      		        if (in_support(ds, supp))
-      		        {
-      		            for (k = 0; k < DIMENSION; k++)
-      		            s[k] = ds[k] / hi;
-      		            wght = weight(s, hi);
-      		            tmprho[phs_i-1] += wght * (pj->get_mass());
+						if (in_support(ds, supp))
+						{
+							for (k = 0; k < DIMENSION; k++)
+							s[k] = ds[k] / hi;
+							wght = weight(s, hi);
+							tmprho[phs_i-1] += wght * (pj->get_mass());
 
-      		            //View multiple phase SPH as one set of discretized point
-    		            wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
+							//View multiple phase SPH as one set of discretized point
+							wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
 
-      		         }
-      		     }
-      	      }//end of if
+						 }
+					 }
+				  }//end of if pj->which_phase()==phs_i
 
-          }//end of loop for phase
+			  }//end of loop for phase
+          //end of if particle will contribute to the density.
 
       }//end of go through all neighbors
 
@@ -129,25 +131,25 @@ smooth_density(THashTable * P_table)
     	  wnorm[0] += wnorm [phs_i-1];
       }
 
-      density=0.0;
-      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-      {
-           assert (wnorm[0] > 0);
-    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
-    	   density +=phaserho[phs_i-1];
-      }
+//      density=0.0;
+//      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+//      {
+//           assert (wnorm[0] > 0);
+//    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
+//    	   density +=phaserho[phs_i-1];
+//      }
 
  //Here is the new way of ---> however the new way has some issues while capturing the interface, so I turned to the old way. ---->But I did not give up the second method yet.
-//            density=0.0;
-//            for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-//            {
-//               if (wnorm[phs_i-1] > 0)
-//          	       phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
-//          	 else
-//          		   phaserho[phs_i-1]=0;
-//
-//          	   density +=phaserho[phs_i-1];
-//            }
+            density=0.0;
+            for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+            {
+               if (wnorm[phs_i-1] > 0)
+          	       phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
+          	 else
+          		   phaserho[phs_i-1]=0;
+
+          	 density +=phaserho[phs_i-1];
+            }
 
 #ifdef DEBUG
       if (check_den)

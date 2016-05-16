@@ -42,6 +42,13 @@ protected:
   //! support of each particle
   double smlen;
 
+  //! original smoothing length
+  /*
+   * When dealing with multiple phase, each phase might have different smoothing length for computational efficiency purpose
+   *
+   */
+//  double smlen_original;
+
   //! pressure
   double pressure;
 
