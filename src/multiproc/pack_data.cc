@@ -115,6 +115,9 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
 
   pack_array->mass  = psend->mass;
   pack_array->smlen = psend->smlen;
+#if DENSITY_UPDATE_SML==0
+  pack_array->smlen_original = psend->smlen_original;
+#endif
   pack_array->mass_frac = psend->mass_frac;
   pack_array->sound_speed = psend->sound_speed;
   pack_array->myprocess = psend->myprocess;
@@ -222,6 +225,9 @@ void unpack_particle (ParticlePack *packet, Particle *part)
   
   part->mass  = packet->mass;
   part->smlen = packet->smlen;
+#if DENSITY_UPDATE_SML==0
+  part->smlen_original = packet->smlen_original;
+#endif
   part->myprocess = packet->myprocess;
   
   for ( i=0; i < DIMENSION; i++ )

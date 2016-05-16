@@ -45,9 +45,14 @@ protected:
   //! original smoothing length
   /*
    * When dealing with multiple phase, each phase might have different smoothing length for computational efficiency purpose
+   * However, to conserve momentum and energy, the same smoothing length should be used ---> So smlen of phase2 will be changed to equal to that of phase1 as soon as it erupted out.
+   * Then in density updating, too large smoothing length will smear out the density and will lead to non-physics results --> for example, density of the plume near the vent should be almost equals to that in the vent, but when very large smoothing length is used, density near the vent will be much smaller than that in the vent
    *
+   * The strategy to get rid of this issue is:
+   * 1) updating of momentum and energy use larger smoothing length. ---> conserve energy and momentum
+   * 2) updating of density based on summation expression and use its original smoothing length --> The normalized summation expression will always guarantee conservation of mass
    */
-//  double smlen_original;
+  double smlen_original;
 
   //! pressure
   double pressure;
@@ -233,6 +238,12 @@ public:
   double get_smlen () const
   {
     return smlen;
+  }
+
+  //! get original smoothing length of current paricle
+  double get_original_smlen () const
+  {
+    return smlen_original;
   }
 
   //!get coordinates

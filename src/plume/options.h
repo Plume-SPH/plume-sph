@@ -16,7 +16,19 @@
 //define use summation method to update density
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
+
+/*
+ * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
+ * 0 : use original smoothing length
+ * 1 : use current smoothing length
+ * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
+ */
+#ifndef DENSITY_UPDATE_SML
+#define DENSITY_UPDATE_SML 0
 #endif
+
+#endif
+
 
 //Define have LANS turbulent model in the code
 //--> it is a stupid idea to do module management in C++ in this way, I should make use of the template, inherit, overloading as much as possible
@@ -35,15 +47,6 @@
 //#define HAVE_HEAT_TRANSFER
 //#endif
 
-////Define a situation where erupted material is pure air
-//#ifndef ERUPT_PURE_AIR
-//#define ERUPT_PURE_AIR 1
-//#endif
-
-////Define a situation where erupted material is the at the same temperature as air
-//#ifndef ERUPT_COOL_MATERIAL
-//#define ERUPT_COOL_MATERIAL 1
-//#endif
 
 //Define the atmosphere type
 /*

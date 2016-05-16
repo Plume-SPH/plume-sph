@@ -41,6 +41,9 @@ struct ParticlePack
   //doubles
   double mass;
   double smlen;
+#if DENSITY_UPDATE_SML==0
+  double smlen_original;
+#endif
   double mass_frac;
   double sound_speed; //actually sound speed is not primary variable, but is needed when computing pressure (When the fluid is weakly compressible flow)
   double coords[DIMENSION];

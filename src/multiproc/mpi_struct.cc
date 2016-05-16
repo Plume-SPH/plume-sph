@@ -99,6 +99,9 @@ GMFG_new_MPI_Datatype ()
   ParticlePack * particlePack = new ParticlePack;
 
   blockcounts2[0] = 5;
+#if DENSITY_UPDATE_SML==0
+  blockcounts2[0]++;
+#endif
   blockcounts2[1] = TKEYLENGTH;
   blockcounts2[2] = 4 + 2*DIMENSION + NO_OF_EQNS;
 

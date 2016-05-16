@@ -24,6 +24,7 @@ Particle::Particle ()
 
   mass = 0.;
   smlen = 0.;
+  smlen_original = 0.;
 
   specific_heat_p = 0.;
 
@@ -76,6 +77,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 
   mass = m;
   smlen = h;
+  smlen_original = h;
 
   specific_heat_p = 0.;
 
@@ -128,6 +130,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
   myprocess = id;
   mass = m;
   smlen = h;
+  smlen_original = h;
 
   specific_heat_p = 0.;
 

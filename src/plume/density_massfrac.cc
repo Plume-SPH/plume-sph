@@ -26,7 +26,7 @@ void
 smooth_density(THashTable * P_table)
 {
   int i, k;
-  double xi[DIMENSION], ds[DIMENSION], s[DIMENSION];
+  double xi[DIMENSION], ds[DIMENSION], s[DIMENSION], hi;
   double wght, density=0.0;
   TKey tmpkey;
   int phs_i;
@@ -64,7 +64,12 @@ smooth_density(THashTable * P_table)
       for (i = 0; i < DIMENSION; i++)
         xi[i] = (*(pi->get_coords () + i));
 
-      double hi = pi->get_smlen ();
+#if DENSITY_UPDATE_SML==0
+      hi = pi->get_original_smlen ();
+#elif DENSITY_UPDATE_SML==1
+      hi = pi->get_smlen ();
+#endif
+
       double supp = 3.0 * hi;
 //      TKey ki = pi->getKey ();
 
@@ -86,6 +91,7 @@ smooth_density(THashTable * P_table)
           Particle *pj = (Particle *) P_table->lookup (*p_itr);
           assert (pj);
 
+          // guests are included ghosts are not,
           if (pj->contr_dens()) //In my old code, I did not have this so I will get very large density at the very beginning of the eruption.
           //update density for each phase
           //Probably, a switch case is better than for loop in terms of efficiency!
@@ -94,24 +100,21 @@ smooth_density(THashTable * P_table)
 				  //for each phase
 				  if (pj->which_phase()==phs_i)
 				  {
-					// guests are included ghosts are not,
+
 					// the boundary deficiency and interface deficiency is handled by wnorm!
-					if (pj->contr_dens())
+					for (i = 0; i < DIMENSION; i++)
+						ds[i] = xi[i] - *(pj->get_coords() + i);
+
+					if (in_support(ds, supp))
 					{
-						for (i = 0; i < DIMENSION; i++)
-							ds[i] = xi[i] - *(pj->get_coords() + i);
+						for (k = 0; k < DIMENSION; k++)
+						    s[k] = ds[k] / hi;
+						wght = weight(s, hi);
+						tmprho[phs_i-1] += wght * (pj->get_mass());
 
-						if (in_support(ds, supp))
-						{
-							for (k = 0; k < DIMENSION; k++)
-							s[k] = ds[k] / hi;
-							wght = weight(s, hi);
-							tmprho[phs_i-1] += wght * (pj->get_mass());
+						//View multiple phase SPH as one set of discretized point
+						wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
 
-							//View multiple phase SPH as one set of discretized point
-							wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
-
-						 }
 					 }
 				  }//end of if pj->which_phase()==phs_i
 
@@ -121,7 +124,7 @@ smooth_density(THashTable * P_table)
       }//end of go through all neighbors
 
 /*
- * There are two ways to normalize SPH kernel summation
+ * There are three ways to normalize SPH kernel summation
  * 1)based on the concept that each phase in SPH is essentially independent set of discretized points
  * 2)Another is based on the concept that different types of particles for different phases are essentially the equivalent as discretized points
  * I prefer the former, so the following is commentted out
@@ -145,10 +148,10 @@ smooth_density(THashTable * P_table)
             {
                if (wnorm[phs_i-1] > 0)
           	       phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[phs_i-1];
-          	 else
+          	   else
           		   phaserho[phs_i-1]=0;
 
-          	 density +=phaserho[phs_i-1];
+          	   density +=phaserho[phs_i-1];
             }
 
 #ifdef DEBUG
