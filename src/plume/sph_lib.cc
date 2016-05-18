@@ -1215,6 +1215,49 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 	}
 }
 
+//function that used to compute turbulent heat conductivity in energy equation if SPH_epsilon turbulence model is adopted
+// In JJ Monagha's paper, turbulence is defined as alf*h*c
+// h and c should be divided here ---> As the physics viscosity should be independent of h and c
+double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, double dab, double hab, double cab)
+{
+	int i;
+	double dotvv=0., dotvr=0., dotrr=0.;
+	double kab;
+
+	/*
+	 * when ds=[-577.7861  577.7746  -74.8549], vab=[-5.8261    5.9188   90.6049]  ds*vab is very small, this is not reasonable
+	 */
+
+	for (i=0; i<DIMENSION; i++)
+		dotvr += abs((*(vab+i)) * (*(ds+i)));
+	if(dotvr==0.) //To be consistent with artificial viscosity --> But in my opinion, it is not really reasonable!
+		return 0.;
+	else
+	{
+
+	  for (i=0; i<DIMENSION; i++)
+		dotrr += (*(ds+i)) * (*(ds+i));
+
+	  for (i=0; i<DIMENSION; i++)
+	  	dotvv += (*(vab+i)) * (*(vab+i));
+
+      if (DIMENSION==3)
+	    kab=6.0*EPSILON*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 3D shear viscosity is 1/6 of h*alf*soundspeed
+      else if (DIMENSION==2)
+        kab=4.8*EPSILON*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 5/24 of h*alf*soundspeed
+      else
+    	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
+
+#ifdef DEBUG
+	bool print = true;
+	if (print && kab<0)
+        cout << "You got a negative heat conductivity, something is wrong!" << endl;
+#endif
+
+	  return kab/(hab*cab);
+	}//end of else
+}
+
 //function that switch brief bucket to a bucket
 void switch_brief(BriefBucket * breif_neigh, double * mindom, double * maxdom, double * mindom_o, double * maxdom_o, double bucket_size, double len_scale, Bucket ** buck)
 {

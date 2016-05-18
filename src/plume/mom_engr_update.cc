@@ -212,7 +212,9 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          heat_tran = 0.; //This line is for the situation when we do not have turbulence in our model
 #ifdef HAVE_TURBULENCE_LANS
 		          Cp_ij = 0.5* (pj->get_specific_heat_p() + Cp_i);
-		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
+//		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
+		          double hab=0.5*(hi+pj->get_smlen());
+		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij, rhoab, hab, sndspdab);
 		          Fij=compute_F(dwdx,dx);
 		          heat_tran =mj*Vj* kij*(tempi- pj->get_temperature ())* Fij;
 #endif

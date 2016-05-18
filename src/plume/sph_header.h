@@ -453,6 +453,17 @@ double SPH_epsilon_heat_conductivity(
 		double*,  //ds,
 		double *  //vab
 		);
+//function that used to compute turbulent heat conductivity in energy equation if SPH_epsilon turbulence model is adopted
+// In JJ Monagha's paper, turbulence is defined as alf*h*c
+// h and c should be divided here ---> As the physics viscosity should be independent of h and c
+double SPH_epsilon_heat_conductivity(
+		double ,  //Cp_ab,
+		double*,  //ds,
+		double *,  //vab
+		double ,   //dab,
+		double ,   //hab,
+		double   //cab
+		);
 //function that switch brief bucket to a bucket
 void switch_brief(
 		BriefBucket *,   // breif_neigh,

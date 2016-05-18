@@ -22,18 +22,20 @@
  * 0 : use original smoothing length
  * 1 : use current smoothing length
  * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
+ * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 0
+#define DENSITY_UPDATE_SML 1
 #endif
 
 /*
  * There are two ways to view particles of two phases in multiphase SPH method:
+ * 0: update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
  * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
  * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
  */
 #ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 2
+#define DENSITY_UPDATE_SPH 1  //It seems that only DENSITY_UPDATE_SPH=1 works well
 #endif
 
 #endif
