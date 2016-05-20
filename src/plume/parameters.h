@@ -74,6 +74,13 @@
 //const double Tv0_P=1000;
 //const double pv0_P=pa0_P;
 //
+////Additional properties
+//const double Cpg_P=Cpg_P+Rg_P;
+//const double Cpa_P=Ra_P+Cva_P;
+//const double Cps_P=Cvs_P;
+//// newly added:
+//const double Cpv_P=Cps_P*ng0_P + (1-ng0_P)*Cpg_P; /*specific heat of erupted material under constant pressure*/
+//
 //const double Rv_P=ng0_P*Rg_P;  /*as constant for erupted material*/
 //const double Cvv_P=ng0_P*Cvg_P+(1-ng0_P)*Cvs_P; /*specific heat of erupted material*/
 //const double gamma_v_P=1+Rv_P/Cvv_P; /*gamma of the mixture, using equation (6) in main reference paper*/
@@ -190,9 +197,12 @@ const double g_P=9.80665;
 #endif
 
 //the following 4 parameters are not independent!, they should satisfy the EOS
-const double Ta0_P=273; //this will not been used if temperature
-const double pa0_P=1.013e5; //This will not been used also
-const double rhoa0_P=1.29;  //This will not been used also
+//const double Ta0_P=273; //this will not been used if temperature
+//const double pa0_P=1.013e5; //This will not been used also
+//const double rhoa0_P=1.29;  //This will not been used also
+const double Ta0_P=268.;
+const double pa0_P= 0.852321e5;
+const double rhoa0_P=1.104;
 const double Ra_P=287;
 
 const double Cvs_P=1100;/*specific heat*/
@@ -254,6 +264,8 @@ const double pv0_P=84363.4; //assuming pressure-balanced jet
 
 const double Rv_P=ng0_P*Rg_P;  /*as constant for erupted material*/
 const double Cvv_P=ng0_P*Cvg_P+(1-ng0_P)*Cvs_P; /*specific heat of erupted material*/
+// newly added:
+const double Cpv_P=Cps_P*ng0_P + (1-ng0_P)*Cpg_P; /*specific heat of erupted material under constant pressure*/
 const double gamma_v_P=1+Rv_P/Cvv_P; /*gamma of the mixture, using equation (6) in main reference paper   ----> double check this to make sure they are consistent*/
 
 //const double rhov_P=pv0_P/(Rv_P*Tv0_P); //This is incorrect, I am using EOS of idea gas for mixture of solid and gas with gas mass fraction is only 0.05
@@ -386,6 +398,13 @@ const double eruptp_load = 0.02;
 //const double Tv0_P=273;
 //const double pv0_P=pa0_P;
 //
+////Additional properties
+//const double Cpg_P=Cpg_P+Rg_P;
+//const double Cpa_P=Ra_P+Cva_P;
+//const double Cps_P=Cvs_P;
+//// newly added:
+//const double Cpv_P=Cps_P*ng0_P + (1-ng0_P)*Cpg_P; /*specific heat of erupted material under constant pressure*/
+//
 //const double Rv_P=ng0_P*Rg_P;  /*as constant for erupted material*/
 //const double Cvv_P=ng0_P*Cvg_P+(1-ng0_P)*Cvs_P; /*specific heat of erupted material*/
 //const double gamma_v_P=1+Rv_P/Cvv_P; /*gamma of the mixture, using equation (6) in main reference paper*/
@@ -509,6 +528,13 @@ const double eruptp_load = 0.02;
 ////const double Vv0_P=0.00015;  /* velocity in verticle direction, this velocity is used for testing non-eruption*/
 //const double Tv0_P=1000;
 //const double pv0_P=pa0_P;
+//
+////Additional properties
+//const double Cpg_P=Cpg_P+Rg_P;
+//const double Cpa_P=Ra_P+Cva_P;
+//const double Cps_P=Cvs_P;
+//// newly added:
+//const double Cpv_P=Cps_P*ng0_P + (1-ng0_P)*Cpg_P; /*specific heat of erupted material under constant pressure*/
 //
 //const double Rv_P=ng0_P*Rg_P;  /*as constant for erupted material*/
 //const double Cvv_P=ng0_P*Cvg_P+(1-ng0_P)*Cvs_P; /*specific heat of erupted material*/

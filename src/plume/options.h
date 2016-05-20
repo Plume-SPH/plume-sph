@@ -13,14 +13,14 @@
 #define USE_GAUSSIAN
 #endif
 
-//define use summation method to update density
+//define use summation method to update density  ---> To take advantage of
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
 
 /*
  * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
- * 0 : use original smoothing length
- * 1 : use current smoothing length
+ * 0 : use original smoothing length   ---> It is easier to get negative energy
+ * 1 : use current smoothing length    ----> More stable choice
  * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
@@ -35,7 +35,8 @@
  * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
  */
 #ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 1  //It seems that only DENSITY_UPDATE_SPH=1 works well
+#define DENSITY_UPDATE_SPH 1  //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
+                              //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
 #endif
 
 #endif

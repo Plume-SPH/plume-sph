@@ -119,6 +119,10 @@ smooth_density(THashTable * P_table)
 						double phase_des=*(pj->get_phase_density ()+ phs_i -1);
 						if (phase_des>0)
 						    wnorm[phs_i-1] += wght * (pj->get_mass())/phase_des;
+#elif DENSITY_UPDATE_SPH == 0
+						//View multiple phase SPH as one set of discretized point
+						wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
+
 #endif
 
 					 }
@@ -159,6 +163,22 @@ smooth_density(THashTable * P_table)
 
 	    density +=phaserho[phs_i-1];
 	 }
+#elif DENSITY_UPDATE_SPH == 0
+     for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+     {
+          assert (wnorm[0] > 0);
+   	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
+   	   density +=phaserho[phs_i-1];
+     }
+#endif
+
+     mssfrc=phaserho[1]/density;
+
+#if DENSITY_UPDATE_SPH == 0 //for this case, density will be updated based on equation according to Suzuki's 2005 paper
+     pi->calc_density_suzuki(mssfrc);
+#else
+     assert(density > 0);
+     pi->put_new_density(density);
 #endif
 
 #ifdef DEBUG
@@ -168,11 +188,6 @@ smooth_density(THashTable * P_table)
         	 cout << "density is invalid" << endl;
       }
 #endif
-
-	  assert(density > 0);
-      pi->put_new_density(density);
-
-      mssfrc=phaserho[1]/density;
 
 #ifdef DEBUG
       if (check_mssfrac)

@@ -272,3 +272,13 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 	specific_heat_p=Cvm;
 #endif
 }
+
+//function that calculate the density of mixture base on equation in suzuki's 2005 paper
+void Particle::calc_density_suzuki(double msf)
+{
+	double msf_air = 1 - msf;
+	double Cp_eupt = msf*Cpv_P;
+	double Cp_air = msf_air*Cpa_P;
+    //update density_new  ----> density will be updated later
+	new_state_vars[0] =  rhoa0_P*Ra_P/(msf*ng0_P*Rg_P+msf_air*Ra_P)*(Cp_eupt+Cp_air)/(Cp_eupt*Tv0_P+Cp_air*Ta0_P)*Ta0_P;
+}

@@ -224,6 +224,11 @@ public:
 		  double
 		                 );
 
+  //function that calculate the density of mixture base on equation in suzuki's 2005 paper
+  void calc_density_suzuki(
+		  double // msf
+		  );
+
   //! get hash-table key
   TKey getKey () const
   {
