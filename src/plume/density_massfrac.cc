@@ -31,7 +31,7 @@ smooth_density(THashTable * P_table)
   TKey tmpkey;
   int phs_i;
   double tmprho[PHASE_NUM]={0.0}, phaserho[PHASE_NUM]={0.0}, mssfrc;
-  double wnorm[PHASE_NUM];
+  double wnorm[PHASE_NUM], norm;
   // create a Hash Table iterator instance
   THTIterator * itr = new THTIterator (P_table);
   Particle * pi = NULL;
@@ -111,20 +111,15 @@ smooth_density(THashTable * P_table)
 						    s[k] = ds[k] / hi;
 						wght = weight(s, hi);
 						tmprho[phs_i-1] += wght * (pj->get_mass());
-#if DENSITY_UPDATE_SPH == 1
+#if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 22)
 						//View multiple phase SPH as one set of discretized point
 						wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
-#elif DENSITY_UPDATE_SPH == 2
+#elif (DENSITY_UPDATE_SPH == 2) || (DENSITY_UPDATE_SPH == 12)
 						//View multiple phase SPH as two independent sets of discretized point
 						double phase_des=*(pj->get_phase_density ()+ phs_i -1);
 						if (phase_des>0)
 						    wnorm[phs_i-1] += wght * (pj->get_mass())/phase_des;
-#elif DENSITY_UPDATE_SPH == 0
-						//View multiple phase SPH as one set of discretized point
-						wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
-
 #endif
-
 					 }
 				  }//end of if pj->which_phase()==phs_i
 
@@ -133,27 +128,19 @@ smooth_density(THashTable * P_table)
 
       }//end of go through all neighbors
 
-/*
- * There are three ways to normalize SPH kernel summation
- * 1)based on the concept that each phase in SPH is essentially independent set of discretized points
- * 2)Another is based on the concept that different types of particles for different phases are essentially the equivalent as discretized points
- * It seems that the former one will smear out density
- * While the second one have some troubles to compute density at the interface.
- */
-      for (phs_i = 2; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
-      {
-    	  wnorm[0] += wnorm [phs_i-1];
-      }
-
       density=0.0;
-#if DENSITY_UPDATE_SPH == 1
+      norm = 0.0;
+#if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 12)
+	  for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
+	       norm += wnorm [phs_i-1];
+
       for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
       {
-           assert (wnorm[0] > 0);
-    	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
+           assert (norm > 0);
+    	   phaserho[phs_i-1]= tmprho[phs_i-1]/norm;
     	   density +=phaserho[phs_i-1];
       }
-#elif DENSITY_UPDATE_SPH == 2
+#elif (DENSITY_UPDATE_SPH == 2) || (DENSITY_UPDATE_SPH == 22)
 	 for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
 	 {
 	    if (wnorm[phs_i-1] > 0)
@@ -163,18 +150,26 @@ smooth_density(THashTable * P_table)
 
 	    density +=phaserho[phs_i-1];
 	 }
-#elif DENSITY_UPDATE_SPH == 0
-     for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-     {
-          assert (wnorm[0] > 0);
-   	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
-   	   density +=phaserho[phs_i-1];
-     }
+//#elif DENSITY_UPDATE_SPH == 10
+//	  for (phs_i = 2; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
+//	  {
+//	       wnorm[0] += wnorm [phs_i-1];
+//	  }
+//
+//     for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+//     {
+//       assert (wnorm[0] > 0);
+//   	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
+//   	   density +=phaserho[phs_i-1];
+//     }
+//#elif DENSITY_UPDATE_SPH == 11
+//     for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+//   	   density +=phaserho[phs_i-1];
 #endif
 
      mssfrc=phaserho[1]/density;
 
-#if DENSITY_UPDATE_SPH == 0 //for this case, density will be updated based on equation according to Suzuki's 2005 paper
+#if DENSITY_UPDATE_SPH == 10 //for this case, density will be updated based on equation according to Suzuki's 2005 paper
      pi->calc_density_suzuki(mssfrc);
 #else
      assert(density > 0);

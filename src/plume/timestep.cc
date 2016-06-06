@@ -58,27 +58,28 @@ pressure_bc_step(HashTable * BG_mesh, THashTable * P_table)
 		    if ((Bnd_buck->get_has_involved()==1) && !Bnd_buck->is_guest())
 			{
 		    	plist = Bnd_buck->get_plist();
-		    	assert(plist.size()>0); //make sure Bnd_buck is not empty
-		    	for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
-		    	{
-		    		 Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
-		    		 assert(p_curr);
+                //assert(plist.size()>0); //make sure Bnd_buck is not empty ---> not necessary! Some bucket might be empty due to particle movement
+		    	if (plist.size()>0)
+			    	for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+			    	{
+			    		 Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
+			    		 assert(p_curr);
 #ifdef HAVE_TURBULENCE_LANS
-		    		 p_spd_u = *(p_curr->get_smoothed_velocity());
-		    		 p_spd_v = *(p_curr->get_smoothed_velocity()+1);
-		    		 p_spd_w = *(p_curr->get_smoothed_velocity()+2);
+			    		 p_spd_u = *(p_curr->get_smoothed_velocity());
+			    		 p_spd_v = *(p_curr->get_smoothed_velocity()+1);
+			    		 p_spd_w = *(p_curr->get_smoothed_velocity()+2);
 #else
-		    		 p_spd_u = *(p_curr->get_vel());
-		    		 p_spd_v = *(p_curr->get_vel()+1);
-		    		 p_spd_w = *(p_curr->get_vel()+2);
+			    		 p_spd_u = *(p_curr->get_vel());
+			    		 p_spd_v = *(p_curr->get_vel()+1);
+			    		 p_spd_w = *(p_curr->get_vel()+2);
 #endif
-		    		 p_spd = max((abs(p_spd_u)>abs(p_spd_v)) ? abs(p_spd_u):abs(p_spd_v), abs(p_spd_w));
+			    		 p_spd = max((abs(p_spd_u)>abs(p_spd_v)) ? abs(p_spd_u):abs(p_spd_v), abs(p_spd_w));
 
-		    		 temp = p_curr->get_smlen()/p_spd;
+			    		 temp = p_curr->get_smlen()/p_spd;
 
-		    		 if (temp < dt)
-		    		    dt = temp;
-		    	}// loop go through all particles in the bucket
+			    		 if (temp < dt)
+			    		    dt = temp;
+			    	}// loop go through all particles in the bucket
 
 			}//end of if bucket only contains potential involved particles
 		}

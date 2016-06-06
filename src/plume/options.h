@@ -30,12 +30,15 @@
 
 /*
  * There are two ways to view particles of two phases in multiphase SPH method:
- * 0: update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
  * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
+// * 10: The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
+// * 11: The same as option 1 , except that does not do normalization. ---> Original smoothing length should be used.
+ * 12 : The same as option 1, the only difference is that use phase density instead of total density in computing normalization.
  * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
+ * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
  */
 #ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 1  //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
+#define DENSITY_UPDATE_SPH 1 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
                               //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
 #endif
 
