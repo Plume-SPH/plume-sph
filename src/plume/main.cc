@@ -174,8 +174,6 @@ main(int argc, char **argv)
   // search and update neighbors ---> can I use a send neighbor here? --> not, I do not think it is necessary!
   search_neighs_consth (myid, P_table, BG_mesh);
 
-  Image_table.resize(400);
-  Image_table.clear();
   // search mirror imgaes of ghost particles into boundary
   search_bnd_images(myid, P_table, BG_mesh, Image_table, 1);
 

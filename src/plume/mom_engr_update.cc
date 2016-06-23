@@ -112,7 +112,6 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
           // velocity veli
           for (k = 0; k < DIMENSION; k++)
-               veli[k] = uvec[k+1];
 #ifdef HAVE_TURBULENCE_LANS
 		  for (k = 0; k < DIMENSION; k++)
 		      veli[k] = *(pi->get_smoothed_velocity()+k);
