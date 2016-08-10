@@ -241,6 +241,10 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		   // energy
 //		   unew[4] = uvec[4] + dt * (rhs_e + veli[2] * gravity[2]); //the variable is only internal energy, it has nnothing to do with mechanical energy, so gravity should not appear here!
 		   unew[4] = uvec[4] + dt * rhs_e;
+#if HAVE_ENERGY_CUT==1
+		   if (unew[4]<=0)
+			   unew[4] = ENERGY_CUT;
+#endif
 
 #ifdef DEBUG
 		  if (check_engr)

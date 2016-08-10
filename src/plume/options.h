@@ -115,6 +115,22 @@
 #ifndef TIME_STEP_CONSTRAIN
 #define TIME_STEP_CONSTRAIN 1 //The default value represents hydro-static atmosphere
 #endif
+
+/*
+ * Define whether use cut method to avoid negative energy
+ * The purpose of this is to avoid negative energy which is not physical
+ * Why I will have negative energy is not clear yet, ---> Need more analysis on SPH method
+ * The cut method is a very natural way to avoid negative energy. ---> At least one paper reports they are using this method.
+ * "An SPH model for multiphase flows with complex interface and large density difference" by Z. Chen
+ *
+ * 0: No, do not use energy cut
+ * 1: yes, use energy cut
+ */
+#ifndef HAVE_ENERGY_CUT
+#define HAVE_ENERGY_CUT 1
+#endif
+
+
 //---------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //--------------------------------OPTIONS FOR DEBUG--------------------------------------------

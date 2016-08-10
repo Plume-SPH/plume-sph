@@ -67,4 +67,9 @@ const double EPSILON = 0.8;
 const double EPSILON_HALF = 0.4; //For the efficiency of computation EPSILON_HALF = EPSILON/2
 const double PRANDTL_NUM = 0.85; //Prandtl number
 
+#if HAVE_ENERGY_CUT==1
+ //Constant for cut energy method ---> a simple way to avoid negative pressure (or negative energy)
+const double ENERGY_CUT = 1.0;
+#endif
+
 #endif /* CONSTANT_H_ */

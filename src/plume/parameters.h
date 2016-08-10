@@ -160,10 +160,10 @@
 //const double Ly_P[2]={-2430,2430};
 //const double Lz_P[2]={1500, 14000};
 
-//for strong sml1=50
-const double Lx_P[2]={-3600,3600};
-const double Ly_P[2]={-3600,3600};
-const double Lz_P[2]={1500,9000};
+////for strong sml1=50
+//const double Lx_P[2]={-3600,3600};
+//const double Ly_P[2]={-3600,3600};
+//const double Lz_P[2]={1500,9000};
 
 
 //for strong sml1=100
@@ -176,10 +176,14 @@ const double Lz_P[2]={1500,9000};
 //const double Ly_P[2]={-5850,5850};
 //const double Lz_P[2]={1500,8000};
 
-////for strong sml1=300
+//for strong sml1=300
 //const double Lx_P[2]={-28800,28800};
 //const double Ly_P[2]={-28800,28800};
 //const double Lz_P[2]={1500,50000};
+//larger domain
+const double Lx_P[2]={-100800,100800};
+const double Ly_P[2]={-100800,100800};
+const double Lz_P[2]={1500,42000};
 
 ////for strong coarse resolution sml1=400
 //const double Lx_P[2]={-31200,31200};
@@ -315,7 +319,7 @@ const int num_erupt_perlayer = 10;
 ////for strong
 //const int num_erupt_particles = 5238; //number of particle in the initial erupt duct
 //for strong coarse resolution
-//--> 2544 for 10 each direction sml1=400, 825 for 6 each direction, sml1=600, 1628 for 8 each direction sml1=500, 1908 for sml1=300, 10 each direction,  900 for sml1=141.5=sml2, 1764 for sml1 =100, sml2 =101.4
+//--> 2544 for 10 each direction sml1=400, 825 for 6 each direction, sml1=600, 1628 for 8 each direction sml1=500, 1908 for sml1=300, 10 each direction (sml2=141.5),  900 for sml1=141.5=sml2, 1764 for sml1 =100, sml2 =101.4
 //----> 7056 for sml1=50, sml2=50.5
 const int num_erupt_particles = 1908; //number of particle in the initial erupt duct
 ////for weak
