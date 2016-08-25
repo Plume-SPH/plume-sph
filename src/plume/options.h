@@ -39,10 +39,10 @@
  */
 #ifndef DENSITY_UPDATE_SPH
 #define DENSITY_UPDATE_SPH 1 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
-                              //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
+                           //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
 #endif
 
-#endif
+#endif // end of USE_SUMMATION
 
 
 //Define have LANS turbulent model in the code
@@ -72,7 +72,7 @@
  * 4: realistic interpolation --->read realistic atmosphere data and do interpolation to determine temperature, pressure, density
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 4
+#define ATMOSPHERE_TYPE 2
 //The default value represents hydro-static atmosphere
 #endif
 
@@ -104,7 +104,7 @@
  *                       Because when the fluid is water, the gradient of temperature and density is almost vanish
  */
 #ifndef FLUID_COMPRESSIBILITY
-#define FLUID_COMPRESSIBILITY 0
+#define FLUID_COMPRESSIBILITY 1
 #endif
 
 //Define the time step constrain
@@ -113,7 +113,7 @@
  * 1: CFL + boundary stablization
  */
 #ifndef TIME_STEP_CONSTRAIN
-#define TIME_STEP_CONSTRAIN 1 //The default value represents hydro-static atmosphere
+#define TIME_STEP_CONSTRAIN 0 //The default value represents hydro-static atmosphere
 #endif
 
 /*
@@ -142,9 +142,9 @@
 #endif
 
 //Output ghost particles
-#ifndef WRITE_GHOSTS
-#define WRITE_GHOSTS
-#endif
+//#ifndef WRITE_GHOSTS
+//#define WRITE_GHOSTS
+//#endif
 
 //output PID
 #ifndef WRITE_PID
