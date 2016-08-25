@@ -144,7 +144,9 @@
 //const double wallp_load = 0.75;
 //const double pressp_load = 0.;
 //const double eruptp_load = 0.02;
-//
+
+////work load check interval, this value should be optimized to get good balance, for problems with different time scale, this value should be different
+//const int balancing_check_int_P = 3;
 
 
 ///*
@@ -353,6 +355,10 @@
 //const double pressp_load = 0.;
 //const double eruptp_load = 0.02;
 
+
+////work load check interval, this value should be optimized to get good balance, for problems with different time scale, this value should be different
+//const int balancing_check_int_P = 3;
+
 ///*
 // * These parameters are for JPUE of incompressible flow
 // *
@@ -481,6 +487,9 @@ const double wallp_load = 0.75;
 const double pressp_load = 0.;
 const double eruptp_load = 0.02;
 
+//work load check interval, this value should be optimized to get good balance, for problems with different time scale, this value should be different
+const int balancing_check_int_P = 1;
+
 /*
  * Parameters for running RP1 with sml1=200
  * In this simulation, there was fluctuation near the boundary
@@ -607,5 +616,8 @@ const double eruptp_load = 0.02;
 //const double wallp_load = 0.75;
 //const double pressp_load = 0.;
 //const double eruptp_load = 0.02;
+
+////work load check interval, this value should be optimized to get good balance, for problems with different time scale, this value should be different
+//const int balancing_check_int_P = 3;
 
 #endif /* PARAMETERS_H_ */
