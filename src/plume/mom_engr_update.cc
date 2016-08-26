@@ -28,7 +28,7 @@ const double two_k = 2*lamda_P; //this is the coefficient that in front of
 
 int
 mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
-                TimeProps * timeprops)
+                TimeProps * timeprops, SimProps *simprops)
 {
   int i, k;
 
@@ -108,7 +108,13 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		  // density must always be positive
 		  assert(uvec[0] > 0);
 		  double Vi = 1.0 / uvec[0];
+
+#if MOMENTUM_DISCRETIZE ==1
+		  double p_external=determine_pressure(simprops, *(pi->get_coords ()+2));
+		  double pvsqi=(pressi-p_external)*Vi*Vi;//p*v^2
+#else
           double pvsqi=pressi*Vi*Vi;//p*v^2
+#endif
 
           // velocity veli
           for (k = 0; k < DIMENSION; k++)
@@ -196,7 +202,11 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          }
 #endif
 
-		          //pre-computing
+#if MOMENTUM_DISCRETIZE ==1
+		          mpvsqij = mj*((pressj-p_external) * Vj * Vj + pvsqi + vis);
+#else
+		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
+#endif
 		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
 		          // pre-compute weight function derivatives
 		          for (k = 0; k < DIMENSION; k++)
@@ -229,7 +239,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		   // density keep unchange, will be updated later!
 		   unew[0] = uvec[0];
 
-           //  x-velocity
+           // x-velocity
            unew[1] = uvec[1] + dt * (rhs_v[0]);
 
 		   // y-velocity

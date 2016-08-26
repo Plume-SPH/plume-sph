@@ -306,7 +306,7 @@ main(int argc, char **argv)
 #endif
 
     // update momentum and energy
-    int err2 = mom_engr_update (myid, P_table, BG_mesh, timeprops);
+    int err2 = mom_engr_update (myid, P_table, BG_mesh, timeprops, simprops);
     if ( err2 )
     {
       cerr << "Momentum update failed on proc" << myid <<

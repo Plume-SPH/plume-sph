@@ -359,7 +359,7 @@ void air_prop_realistic (double *coord, double *range, double * energy, double *
 }
 
 //function that will determine pressure based hydro-static equation
-double determine_pressure (double h)
+double determine_pressure_hydro (double h)
 {
 	if (h < 0)
 		return pa0_P;
@@ -374,7 +374,7 @@ double determine_pressure (double h)
 }
 
 //function that will determine temperature based hydro-static equation
-double determine_temperature (double h)
+double determine_temperature_hydro (double h)
 {
 	if (h < 0)
 		return Ta0_P;
@@ -398,9 +398,9 @@ void air_prop_hydro (double *coord, double * energy, double *pressure, double * 
 
 	double T;
 	//T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
-	T= determine_temperature (h);
+	T= determine_temperature_hydro (h);
 	//*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
-	*pressure = determine_pressure(h);
+	*pressure = determine_pressure_hydro(h);
 
 	*density = (*pressure) /(Ra_P*T) ;
 	*energy = (*pressure) /(*density * (gamma_P-1));
@@ -423,10 +423,10 @@ void air_prop_hydro (double *coord, double *range, double * energy, double *pres
 
 	double T;
 	//T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
-	T= determine_temperature (h);
+	T= determine_temperature_hydro (h);
 
 	//*pressure = pa0_P *(h < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h, Ate1_p))*((h>=0)&&(h<H1_P))+(Ata2_p*exp(Atb2_p*h))*((h>=H1_P)&&(h<H2_P))+(AtC3_p*pow(Atb3_p*h+Ata3_p,Ate3_p))*((h>=H2_P)&&(h<H3_P));
-	*pressure = determine_pressure(h);
+	*pressure = determine_pressure_hydro(h);
 
 	*density = (*pressure) /(Ra_P*T) ;
 	*energy = (*pressure) /(*density * (gamma_P-1));
@@ -437,14 +437,14 @@ void air_prop_hydro (double *coord, double *range, double * energy, double *pres
 	double T1, T2;
 //	T1 = Ta0_P *(h1 < 0) + (Ta0_P-miu1_P*h1)*((h1>=0)&&(h1<H1_P))+(Ta0_P-miu1_P*H1_P)*((h1>=H1_P)&&(h1<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h1-H2_P))*((h1>=H2_P)&&(h1<H3_P));
 //	T2 = Ta0_P *(h2 < 0) + (Ta0_P-miu1_P*h2)*((h2>=0)&&(h2<H1_P))+(Ta0_P-miu1_P*H1_P)*((h2>=H1_P)&&(h2<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h2-H2_P))*((h2>=H2_P)&&(h2<H3_P));
-	T1= determine_temperature (h1);
-	T2= determine_temperature (h2);
+	T1= determine_temperature_hydro (h1);
+	T2= determine_temperature_hydro (h2);
 	//double p1 = pa0_P *(h1 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h1, Ate1_p))*((h1>=0)&&(h1<H1_P))+(Ata2_p*exp(Atb2_p*h1))*((h1>=H1_P)&&(h1<H2_P))+(AtC3_p*pow(Atb3_p*h1+Ata3_p,Ate3_p))*((h1>=H2_P)&&(h1<H3_P));
-	double p1 = determine_pressure(h1);
+	double p1 = determine_pressure_hydro(h1);
 	double d1 = p1/(Ra_P*T1);
 	//There was a bug here, h1 was used for computing of p2----> a stupid mistake
 	//double p2 = pa0_P *(h2 < 0) + (Ata1_p*pow(Ta0_P-miu1_P*h2, Ate1_p))*((h2>=0)&&(h2<H1_P))+(Ata2_p*exp(Atb2_p*h2))*((h2>=H1_P)&&(h2<H2_P))+(AtC3_p*pow(Atb3_p*h2+Ata3_p,Ate3_p))*((h2>=H2_P)&&(h2<H3_P));
-	double p2 = determine_pressure(h2);
+	double p2 = determine_pressure_hydro(h2);
 	double d2 = p2/(Ra_P*T2);
 	double d = *density;
 
@@ -670,6 +670,34 @@ void air_prop(SimProps * simprops, double *coord, double *range, double * energy
 #elif ATMOSPHERE_TYPE==4
     air_prop_meteo_based(simprops, coord, range, energy, pressure, density, mass);
 #endif
+}
+
+//function that used to determine the pressure of atmosphere
+double determine_pressure(SimProps * simprops, double h)
+{
+    if (h>H3_P)
+    	cout << "height of domain exceeds the maximum height of atmosphere, in air_prop_uniform ! \n" <<endl;
+
+	double pressure;
+
+#if ATMOSPHERE_TYPE==0
+	double C0 = -0.034193145144839; //coefficient in expression of pressure: C0=-28.97*g/(6.02*1000*1.3806448)
+	pressure = pa0_P*exp(C0*h/T)*(h>=0)+pa0_P*(h<0);
+#elif ATMOSPHERE_TYPE==1
+	pressure = determine_pressure_hydro(h);
+#elif ATMOSPHERE_TYPE==2
+	pressure = pa0_P;
+#elif ATMOSPHERE_TYPE==3
+	pressure = pa0_P*exp(Atf_P * h);
+#elif ATMOSPHERE_TYPE==4
+
+    int np = (simprops->meteo_data)->get_number_of_props();
+    double prop[np];
+
+    (simprops->meteo_data)->interpolate (h*0.001, prop);
+    pressure = prop[1]*100; //because the metric is hPa
+#endif
+    return pressure;
 }
 
 //function that determines parameters of certain particle

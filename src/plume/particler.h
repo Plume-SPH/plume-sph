@@ -101,7 +101,8 @@ int mom_engr_update(
                int ,           //! my Proc ID
                THashTable *,    //! HashTable of SPH partilces
                HashTable *,    //! HashTable of Mesh elements
-               TimeProps *     //! struct for simulation props
+               TimeProps *,    //! struct for simulation props
+			   SimProps *      //simprops
               );
 
 //! Read simulation data \f${\it i.e.}\f$ simulation time, output format, pile pros etc

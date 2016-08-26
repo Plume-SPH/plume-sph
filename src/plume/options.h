@@ -45,6 +45,16 @@
 #endif // end of USE_SUMMATION
 
 
+
+//Define which format of to use for discretized momentum equation
+/*
+ * 0: The basic symmetric format which can conserve momentum, without any further modification
+ * 1: Based on 0, an external pressure is deduce by every pressure in 0, the external pressure the pressure of atmosphere at corresponding height of particle a. ---> The purpose of this is to make sure when pressure gradient vanish the acceleration will be zero.
+ */
+#ifndef MOMENTUM_DISCRETIZE
+#define MOMENTUM_DISCRETIZE 1
+#endif
+
 //Define have LANS turbulent model in the code
 //--> it is a stupid idea to do module management in C++ in this way, I should make use of the template, inherit, overloading as much as possible
 #ifndef HAVE_TURBULENCE_LANS

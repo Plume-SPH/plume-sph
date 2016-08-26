@@ -182,6 +182,12 @@ double art_vis (
 		double
 		);
 
+//function that used to determine the pressure of atmosphere
+double determine_pressure(
+		SimProps *, // simprops,
+		double      //h
+		);
+
 //function that used to determine the property of air: density, pressure, (temperature not explicitly output) and internal energy
 void air_prop (
 		double *, //coordinate of particle
