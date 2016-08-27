@@ -8,7 +8,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-////using Gaussian Kernel
+////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef USE_GAUSSIAN
 #define USE_GAUSSIAN
 #endif
@@ -82,7 +82,7 @@
  * 4: realistic interpolation --->read realistic atmosphere data and do interpolation to determine temperature, pressure, density
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 2
+#define ATMOSPHERE_TYPE 4
 //The default value represents hydro-static atmosphere
 #endif
 
@@ -114,7 +114,7 @@
  *                       Because when the fluid is water, the gradient of temperature and density is almost vanish
  */
 #ifndef FLUID_COMPRESSIBILITY
-#define FLUID_COMPRESSIBILITY 1
+#define FLUID_COMPRESSIBILITY 0
 #endif
 
 //Define the time step constrain
