@@ -1218,9 +1218,9 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 	  	dotvv += (*(vab+i)) * (*(vab+i));
 
       if (DIMENSION==3)
-	    kab=6.0*EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 3D shear viscosity is 1/6 of h*alf*soundspeed
+	    kab=6.0*EPSILON_HALF*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 3D shear viscosity is 1/6 of h*alf*soundspeed
       else if (DIMENSION==2)
-        kab=4.8*EPSILON*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 5/24 of h*alf*soundspeed
+        kab=4.8*EPSILON_HALF*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 5/24 of h*alf*soundspeed
       else
     	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
 
@@ -1244,7 +1244,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
 }
 
 //function that used to compute turbulent heat conductivity in energy equation if SPH_epsilon turbulence model is adopted
-// In JJ Monagha's paper, turbulence is defined as alf*h*c
+// In JJ Monagha's paper, viscosity is defined as alf*h*c
 // h and c should be divided here ---> As the physics viscosity should be independent of h and c
 double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, double dab, double hab, double cab)
 {
@@ -1270,9 +1270,9 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, dou
 	  	dotvv += (*(vab+i)) * (*(vab+i));
 
       if (DIMENSION==3)
-	    kab=6.0*EPSILON*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 3D shear viscosity is 1/6 of h*alf*soundspeed
+	    kab=6.0*EPSILON_HALF*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 3D shear viscosity is 1/6 of h*alf*soundspeed
       else if (DIMENSION==2)
-        kab=4.8*EPSILON*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 5/24 of h*alf*soundspeed
+        kab=4.8*EPSILON_HALF*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 5/24 of h*alf*soundspeed
       else
     	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
 
