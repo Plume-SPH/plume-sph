@@ -1282,7 +1282,9 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, dou
         cout << "You got a negative heat conductivity, something is wrong!" << endl;
 #endif
 
-	  return kab/(hab*cab);
+	  //return kab;
+	  return kab/hab; //viscosity should be independent of smoothing length
+	  //return kab/(hab*cab);
 	}//end of else
 }
 
