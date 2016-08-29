@@ -1283,8 +1283,12 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, dou
 #endif
 
 	  //return kab;
-	  return kab/hab; //viscosity should be independent of smoothing length
-	  //return kab/(hab*cab);
+#if MOMENTUM_DISCRETIZE ==1
+	 return kab/hab; //viscosity should be independent of smoothing length ---> Probably will work well for the new form of momentum discretization form.
+#else
+	 return kab/(hab*cab); //viscosity should be independent of smoothing length and sound speed, this one works well when use classical momentum discretization.
+#endif
+
 	}//end of else
 }
 
