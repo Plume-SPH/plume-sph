@@ -229,7 +229,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          double hab=0.5*(hi+pj->get_smlen());
 		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij, rhoab, hab, sndspdab);
 		          Fij=compute_F(dwdx,dx);
-		          heat_tran =mj*Vj* kij*(tempi- pj->get_temperature ())* Fij;
+		          heat_tran =mj*Vj*Vi* kij*(tempi- pj->get_temperature ())* Fij;
 #endif
 		          deltae = 0.;
 		          for (k = 0; k < DIMENSION; k++)
