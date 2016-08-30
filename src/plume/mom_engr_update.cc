@@ -110,10 +110,11 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		  double Vi = 1.0 / uvec[0];
 
 #if MOMENTUM_DISCRETIZE ==1
-          if (pi->which_phase() != 1) //Because when I added the external pressure in the momentum equation, the fluctuation in atmosphere become larger, so use two different forms for two phases here.
-        	  double p_external=0.0;
+		  double p_external;
+          if (pi->which_phase() == 1) //Because when I added the external pressure in the momentum equation, the fluctuation in atmosphere become larger, so use two different forms for two phases here.
+        	  p_external=0.0;
           else
-        	  double p_external=determine_pressure(simprops, *(pi->get_coords ()+2));
+        	  p_external=determine_pressure(simprops, *(pi->get_coords()+2));
 
 		  double pvsqi=(pressi-p_external)*Vi*Vi;//p*v^2
 #else

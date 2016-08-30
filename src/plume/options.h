@@ -52,7 +52,7 @@
  * 1: Based on 0, an external pressure is deduce by every pressure in 0, the external pressure the pressure of atmosphere at corresponding height of particle a. ---> The purpose of this is to make sure when pressure gradient vanish the acceleration will be zero.
  */
 #ifndef MOMENTUM_DISCRETIZE
-#define MOMENTUM_DISCRETIZE 1
+#define MOMENTUM_DISCRETIZE 0
 #endif
 
 //Define have LANS turbulent model in the code
