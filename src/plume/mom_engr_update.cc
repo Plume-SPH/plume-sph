@@ -35,7 +35,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
   vector < TKey > pneighs;
   double dx[DIMENSION], xi[DIMENSION], si[DIMENSION];
   double rhs_v[DIMENSION], unew[NO_OF_EQNS], rhs_e;
-  double dwdx[DIMENSION];
+  double dwdx[DIMENSION], dwdx_heat[DIMENSION];
   double veli[DIMENSION], velj[DIMENSION], velij[DIMENSION];
   double vis;
   double Fij, Cp_ij, kij, Cp_i;
@@ -215,7 +215,10 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
 		          // pre-compute weight function derivatives
 		          for (k = 0; k < DIMENSION; k++)
+		          {
 		              dwdx[k] = d_weight (si, hi, k);
+		              dwdx_heat[k] = d_weight (si, hi/HEAT_TRANS_SCALE_RATIO, k);
+		          }
 
 		          // Velocity rhs
 		          for (k = 0; k < DIMENSION; k++)
@@ -229,7 +232,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 //		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
 		          double hab=0.5*(hi+pj->get_smlen());
 		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij, rhoab, hab, sndspdab);
-		          Fij=compute_F(dwdx,dx);
+		          Fij=compute_F(dwdx_heat,dx);
 		          heat_tran =mj*Vj*Vi* kij*(tempi- pj->get_temperature ())* Fij;
 #endif
 		          deltae = 0.;

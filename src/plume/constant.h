@@ -72,4 +72,8 @@ const double PRANDTL_NUM = 0.85; //Prandtl number
 const double ENERGY_CUT = 1.0;
 #endif
 
+//heat transfer spatial ratio to momentum exchange
+const double HEAT_TRANS_SCALE_RATIO = 3.;
+
+
 #endif /* CONSTANT_H_ */
