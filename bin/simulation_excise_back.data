@@ -1,18 +1,18 @@
 maximum simulation time(s):100000.0
 maximum simulation time step:100000000
-output time interval(s):1.0
+output time interval(s):3.0
 start eruption time(s):0.0
-end eruption time(s):7200.0
+end eruption time(s):72000.0
 output format indicator, 0 for matlab readable data, 1 for h5part data:1
 P_CONSTANT, the constant in equation of state for ideal gas:2587463
 the ratio between specific heat of constant pressure and that of constant volume:1.4
 smoothing length for air particles:300
-minimun x coordinate of initial domain:-6000
-maximum x coordinate of initial domain:6000
-minimun y coordinate of initial domain:-6000
-maximum y coordinate of initial domain:6000
+minimun x coordinate of initial domain:-7000
+maximum x coordinate of initial domain:7000
+minimun y coordinate of initial domain:-7000
+maximum y coordinate of initial domain:7000
 minimum z coordinate of initial domain:1500
-maximum z coordinate of initial domain:6000
+maximum z coordinate of initial domain:6500
 number of rows in meteo data:41
 number of columns in meteo data:6
 the directory and name of meteo data:../Meteo_data/Meteo_Profiles-S-V.dat

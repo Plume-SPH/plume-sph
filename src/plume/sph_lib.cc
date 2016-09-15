@@ -682,6 +682,7 @@ double determine_pressure(SimProps * simprops, double h)
 
 #if ATMOSPHERE_TYPE==0
 	double C0 = -0.034193145144839; //coefficient in expression of pressure: C0=-28.97*g/(6.02*1000*1.3806448)
+	double T = Ta0_P *(h < 0) + (Ta0_P-miu1_P*h)*((h>=0)&&(h<H1_P))+(Ta0_P-miu1_P*H1_P)*((h>=H1_P)&&(h<H2_P))+(Ta0_P-miu1_P*H1_P+miu2_P*(h-H2_P))*((h>=H2_P)&&(h<H3_P));
 	pressure = pa0_P*exp(C0*h/T)*(h>=0)+pa0_P*(h<0);
 #elif ATMOSPHERE_TYPE==1
 	pressure = determine_pressure_hydro(h);
@@ -1286,7 +1287,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, dou
 #if MOMENTUM_DISCRETIZE ==1
 	 return kab/hab; //viscosity should be independent of smoothing length ---> Probably will work well for the new form of momentum discretization form.
 #else
-	 return kab/(hab*cab); //viscosity should be independent of smoothing length and sound speed, this one works well when use classical momentum discretization.
+	 return kab/hab; //viscosity should be independent of smoothing length and sound speed, this one works well when use classical momentum discretization.
 #endif
 
 	}//end of else

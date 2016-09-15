@@ -137,7 +137,7 @@
  * 1: yes, use energy cut
  */
 #ifndef HAVE_ENERGY_CUT
-#define HAVE_ENERGY_CUT 1
+#define HAVE_ENERGY_CUT 0
 #endif
 
 //---------------------------------------------------------------------------
@@ -151,9 +151,9 @@
 #endif
 
 //Output ghost particles
-//#ifndef WRITE_GHOSTS
-//#define WRITE_GHOSTS
-//#endif
+#ifndef WRITE_GHOSTS
+#define WRITE_GHOSTS
+#endif
 
 //output PID
 #ifndef WRITE_PID

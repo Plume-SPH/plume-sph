@@ -178,7 +178,7 @@
 //const double Ly_P[2]={-5850,5850};
 //const double Lz_P[2]={1500,8000};
 
-//for strong sml1=300 and sml1=200
+//for strong sml1=300 or sml1=200
 const double Lx_P[2]={-28800,28800};
 const double Ly_P[2]={-28800,28800};
 const double Lz_P[2]={1500,50000};
@@ -323,7 +323,7 @@ const int num_erupt_perlayer = 10;
 //for strong coarse resolution
 //--> 2544 for 10 each direction sml1=400, 825 for 6 each direction, sml1=600, 1628 for 8 each direction sml1=500, 1908 for sml1=300, 10 each direction (sml2=141.5),  900 for sml1=141.5=sml2, 1764 for sml1 =100, sml2 =101.4
 //----> 7056 for sml1=50, sml2=50.5, 3493 for sml1=200, sml2=101
-const int num_erupt_particles = 3493; //number of particle in the initial erupt duct
+const int num_erupt_particles = 1908; //number of particle in the initial erupt duct
 ////for weak
 //const int num_erupt_particles = 2541; //4963 for sml2=5.44//number of particle in the initial erupt duct
 
@@ -359,12 +359,11 @@ const double eruptp_load = 0.02;
 //work load check interval, this value should be optimized to get good balance, for problems with different time scale, this value should be different
 const int balancing_check_int_P = 3;
 
-///*
-// * These parameters are for JPUE of incompressible flow
-// *
-// */
-//---------------------------------------------------------------Incompressible--------------
-//% parameter for domain definition
+/*
+ * These parameters are for JPUE of incompressible flow
+ *
+ */
+// parameter for domain definition
 
 //const double Lx_P[2]={-528,528};
 //const double Ly_P[2]={-528,528};
