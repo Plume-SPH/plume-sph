@@ -1271,9 +1271,9 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, dou
 	  	dotvv += (*(vab+i)) * (*(vab+i));
 
       if (DIMENSION==3)
-	    kab=6.0*EPSILON_HALF*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 3D shear viscosity is 1/6 of h*alf*soundspeed
+	    kab=6.0*EPSILON*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 3D shear viscosity is 1/6 of h*alf*soundspeed
       else if (DIMENSION==2)
-        kab=4.8*EPSILON_HALF*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 5/24 of h*alf*soundspeed
+        kab=4.8*EPSILON*Cp_ab*dab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 5/24 of h*alf*soundspeed
       else
     	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
 
@@ -1283,12 +1283,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, dou
         cout << "You got a negative heat conductivity, something is wrong!" << endl;
 #endif
 
-	  //return kab;
-#if MOMENTUM_DISCRETIZE ==1
-	 return kab/hab; //viscosity should be independent of smoothing length ---> Probably will work well for the new form of momentum discretization form.
-#else
-	 return kab/hab; //viscosity should be independent of smoothing length and sound speed, this one works well when use classical momentum discretization.
-#endif
+	 return kab/(hab*cab); //viscosity should be independent of smoothing length and sound speed, this one works well when use classical momentum discretization.
 
 	}//end of else
 }

@@ -73,7 +73,7 @@ const double ENERGY_CUT = 1.0;
 #endif
 
 //heat transfer spatial ratio to momentum exchange
-const double HEAT_TRANS_SCALE_RATIO = 7.;
+const double HEAT_TRANS_SCALE_RATIO = 3.;
 
 
 #endif /* CONSTANT_H_ */
