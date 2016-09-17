@@ -32,6 +32,13 @@ smooth_density(THashTable * P_table)
   int phs_i;
   double tmprho[PHASE_NUM]={0.0}, phaserho[PHASE_NUM]={0.0}, mssfrc;
   double wnorm[PHASE_NUM], norm;
+  double wm;
+
+#if HAVE_ENERGY_SMOOTH ==1
+  double engr, wm_e, wnorm_e, s_e[DIMENSION];
+#elif HAVE_ENERGY_SMOOTH ==2
+  double engr, wm_e, s_e[DIMENSION];
+#endif
   // create a Hash Table iterator instance
   THTIterator * itr = new THTIterator (P_table);
   Particle * pi = NULL;
@@ -82,6 +89,13 @@ smooth_density(THashTable * P_table)
       for (i = 0; i < PHASE_NUM; i++)
     	  wnorm [i] = 0.;
 
+#if HAVE_ENERGY_SMOOTH == 1
+      wnorm_e = 0.0;
+      engr = 0.0;
+#elif HAVE_ENERGY_SMOOTH == 2
+      engr = 0.0;
+#endif
+
       vector <TKey> neighs = pi->get_neighs ();
       vector <TKey> :: iterator p_itr;
 
@@ -109,16 +123,30 @@ smooth_density(THashTable * P_table)
 					{
 						for (k = 0; k < DIMENSION; k++)
 						    s[k] = ds[k] / hi;
+
+#if HAVE_ENERGY_SMOOTH==1
+						for (k = 0; k < DIMENSION; k++)
+							s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
+						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * (pj->get_mass());
+						wnorm_e +=wm_e/pj->get_density();
+						engr +=wm_e*pj->get_energy()/pj->get_density();
+#elif HAVE_ENERGY_SMOOTH==2
+						for (k = 0; k < DIMENSION; k++)
+							s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
+						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * (pj->get_mass());
+						engr +=wm_e*pj->get_energy()/pj->get_density();
+#endif
 						wght = weight(s, hi);
-						tmprho[phs_i-1] += wght * (pj->get_mass());
+						wm = wght * (pj->get_mass());
+						tmprho[phs_i-1] += wm;
 #if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 22)
 						//View multiple phase SPH as one set of discretized point
-						wnorm[phs_i-1] += wght * (pj->get_mass()) / pj->get_density();
+						wnorm[phs_i-1] += wm / pj->get_density();
 #elif (DENSITY_UPDATE_SPH == 2) || (DENSITY_UPDATE_SPH == 12)
 						//View multiple phase SPH as two independent sets of discretized point
 						double phase_des=*(pj->get_phase_density ()+ phs_i -1);
 						if (phase_des>0)
-						    wnorm[phs_i-1] += wght * (pj->get_mass())/phase_des;
+						    wnorm[phs_i-1] += wm /phase_des;
 #endif
 					 }
 				  }//end of if pj->which_phase()==phs_i
@@ -130,6 +158,15 @@ smooth_density(THashTable * P_table)
 
       density=0.0;
       norm = 0.0;
+
+#if HAVE_ENERGY_SMOOTH==1
+      assert (wnorm_e > 0);
+      engr = engr/wnorm_e;
+      pi->put_new_energy(engr);
+#elif HAVE_ENERGY_SMOOTH==2
+      pi->put_new_energy(engr);
+#endif
+
 #if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 12)
 	  for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
 	       norm += wnorm [phs_i-1];
@@ -221,6 +258,12 @@ smooth_density(THashTable * P_table)
           pi->set_involved_flag(INVOLVED);
 
        pi->update_density();
+#if HAVE_ENERGY_SMOOTH==1
+       pi->update_energy();
+#elif HAVE_ENERGY_SMOOTH==2
+       pi->update_energy();
+#endif
+
        pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P); //The secondary varible was not updated after updating density and mass fraction.
      }
 

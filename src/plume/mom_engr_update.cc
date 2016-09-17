@@ -33,7 +33,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
   int i, k;
 
   vector < TKey > pneighs;
-  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION];
+  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION], s_heat[DIMENSION];
   double rhs_v[DIMENSION], unew[NO_OF_EQNS], rhs_e;
   double dwdx[DIMENSION], dwdx_heat[DIMENSION];
   double veli[DIMENSION], velj[DIMENSION], velij[DIMENSION];
@@ -217,7 +217,9 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          for (k = 0; k < DIMENSION; k++)
 		          {
 		              dwdx[k] = d_weight (si, hi, k);
-		              dwdx_heat[k] = d_weight (si, hi/HEAT_TRANS_SCALE_RATIO, k);
+		              for (int ii=0; ii<DIMENSION; ii++)
+		            	  s_heat[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
+		              dwdx_heat[k] = d_weight (s_heat, hi/HEAT_TRANS_SCALE_RATIO, k);
 		          }
 
 		          // Velocity rhs

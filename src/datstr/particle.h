@@ -619,6 +619,12 @@ public:
 	  state_vars[0]=new_state_vars[0];
   }
 
+  //! update density
+  void update_energy ()
+  {
+	  state_vars[NO_OF_EQNS-1]=new_state_vars[NO_OF_EQNS-1];
+  }
+
   //! update mass_frac
   void put_mass_frac (double mssfrc)
   {

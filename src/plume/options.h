@@ -29,6 +29,16 @@
 #endif
 
 /*
+ * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true
+ * 0: do not use energy smooth
+ * 1: use energy smooth with normalization
+ * 2: use energy smooth without normalization
+ */
+#ifndef HAVE_ENERGY_SMOOTH
+#define HAVE_ENERGY_SMOOTH 1
+#endif
+
+/*
  * There are two ways to view particles of two phases in multiphase SPH method:
  * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
 // * 10: The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
