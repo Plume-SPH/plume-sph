@@ -213,12 +213,13 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
 #endif
 		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
+
+	              for (int ii=0; ii<DIMENSION; ii++)
+	            	  s_heat[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
 		          // pre-compute weight function derivatives
 		          for (k = 0; k < DIMENSION; k++)
 		          {
 		              dwdx[k] = d_weight (si, hi, k);
-		              for (int ii=0; ii<DIMENSION; ii++)
-		            	  s_heat[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
 		              dwdx_heat[k] = d_weight (s_heat, hi/HEAT_TRANS_SCALE_RATIO, k);
 		          }
 

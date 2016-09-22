@@ -36,6 +36,7 @@ const double EXT_DOM_COF_BOT = 1.5;//Coefficient that used to extend  -z directi
                                    //This number can be different from EXT_DOM_COF, usually take 1.6 for PARTICLE_DENSITY=5
 // Number of particles per cell per dimension EXT_DOM_COF, to avoid placing particles on the boundary-->placing of particles on the boundary will cause instability of simulation.
 const int PARTICLE_DENSITY=6;
+const double CUTOFF = 5.0;
 
 // Bucket TYPES
 const int BREIF = 0x0;  //Brief bucket which is totally empty
@@ -53,10 +54,12 @@ const int HAS_BOTH = 3; //has both involved and potential involved particles for
 const int HAS_POTENTIAL_INVOLVED = 1; // has only potential involved for bucket
 const int HAS_NON_INVOLVED = 0; //has not involved for bucket
 
+//Load balance
 const float  LOAD_BALANCE_TOLERANCE = 1.001;
 const double PI = 3.14159265358979;
 const double TINY = 1.0E-08;
 
+//For domain adjusting
 const double MSFRC_THRESH = 1.0E-06; //Threshold for determine whether air particle is involved in or not.
 
 //For adding newly erupted particles, that hash table is a temporiry hash table
@@ -73,8 +76,7 @@ const double ENERGY_CUT = 1.0;
 #endif
 
 //heat transfer spatial ratio to momentum exchange
-const double HEAT_TRANS_SCALE_RATIO = 3.;
-const double E_SMOOTH_RATIO = 6.;
-
+const double HEAT_TRANS_SCALE_RATIO = 1.4;
+const double E_SMOOTH_RATIO = 5.;
 
 #endif /* CONSTANT_H_ */

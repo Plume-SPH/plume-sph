@@ -81,7 +81,6 @@ reflect (double * ui, double * ur, double * n)
  * h is the smoothing length
  * the weight extends up to 3*h in all directions
  ***************************************************/
-const double cutoff = 3.0;
 const double t1 = 0.564189583547756;    // 1/sqrt(pi)
 
 // weight function
@@ -91,8 +90,9 @@ weight(double *s, double h)
   int i;
   double norm, expt, w;
 
+
   for (i = 0; i < DIMENSION; i++)
-    if (abs(s[i]) > cutoff)
+    if (abs(s[i]) > CUTOFF)
       return 0;
 
   norm = 1;
@@ -121,7 +121,7 @@ d_weight (double *s, double h, int dir)
   double dw, tmp;
 
   for (i = 0; i < DIMENSION; i++)
-    if (abs (s[i]) > cutoff)
+    if (abs (s[i]) > CUTOFF)
       return 0;
 
   tmp = -2 * s[dir] / h;
