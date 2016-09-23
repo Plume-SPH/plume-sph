@@ -155,7 +155,9 @@
  * 1) Consider the weak plume
  */
 ////----------------------------------------------------------------------------------------
-//% parameter for domain definition
+//% parameter for domain definition: Lx_P the lower and up boundary in x direction
+//                                   Ly_p the lower and up boundary in y direction
+//                                   Lz_p the lower and up boundary in z direction
 
 //for weak
 //const double Lx_P[2]={-2430,2430};
@@ -203,7 +205,7 @@ const double Lz_P[2]={1500,50000};
 //const double Lz_P[2]={1500,50000};
 
 
-const int N_total_P=2700;  // This one is actually not used in current code!
+//const int N_total_P=2700;  // This one is actually not used in current code!
 
 //----------------------------------------------------------------------------------------
 //% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -214,9 +216,6 @@ const double g_P=9.80665;
 #endif
 
 //the following 4 parameters are not independent!, they should satisfy the EOS
-//const double Ta0_P=273; //this will not been used if temperature
-//const double pa0_P=1.013e5; //This will not been used also
-//const double rhoa0_P=1.29;  //This will not been used also
 const double Ta0_P=268.;
 const double pa0_P= 0.852321e5;
 const double rhoa0_P=1.104;
@@ -240,10 +239,9 @@ const double H2_P=20000;/*height of straightpause-->will not been used!*/
 const double H3_P=100000;/*height of atmosphere-->will not been used!*/
 const double miu1_P=6.5/1000; /* per meter, in original paper, it is per kilometer, any way, divided by 1000 is for unit convert -->will not been used!*/
 const double miu2_P= 2./1000; //-->will not been used!*/
-const double m_ratio_P=1.3;/*ratio between particles mass of phase2 to that of phase1*/
+//const double m_ratio_P=1.3;/*ratio between particles mass of phase2 to that of phase1*/
 
 //parameter for pressure approximation--->these parameters are obtained by solving hydro static equation togehter with EOS and atmosphere temperature
-//#if ATMOSPHERE_TYPE==1
 const double Ata1_p =1.561024741e-8;
 const double Ate1_p =5.258643795;
 const double Ata2_p = 1.321758528e+5;
@@ -252,7 +250,6 @@ const double Ata3_p = 4.7248e+03;
 const double Atb3_p = 58.5117;
 const double AtC3_p = 5642.519912;
 const double Ate3_p = -0.1709059897e-1;
-//#elif ATMOSPHERE_TYPE==3
 const double Atf_P = -g_P/(Ra_P*Ta0_P);
 //#endif
 //----------------------------------------------------------------------------------------
@@ -323,7 +320,7 @@ const int num_erupt_perlayer = 10;
 //for strong coarse resolution
 //--> 2544 for 10 each direction sml1=400, 825 for 6 each direction, sml1=600, 1628 for 8 each direction sml1=500, 1908 for sml1=300, 10 each direction (sml2=141.5),  900 for sml1=141.5=sml2, 1764 for sml1 =100, sml2 =101.4
 //----> 7056 for sml1=50, sml2=50.5, 3493 for sml1=200, sml2=101
-const int num_erupt_particles = 1908; //number of particle in the initial erupt duct
+const int num_erupt_particles = 3493; //number of particle in the initial erupt duct
 ////for weak
 //const int num_erupt_particles = 2541; //4963 for sml2=5.44//number of particle in the initial erupt duct
 
@@ -358,6 +355,7 @@ const double eruptp_load = 0.02;
 
 //work load check interval, this value should be optimized to get good balance, for problems with different time scale, this value should be different
 const int balancing_check_int_P = 3;
+
 
 /*
  * These parameters are for JPUE of incompressible flow

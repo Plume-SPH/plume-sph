@@ -1231,7 +1231,7 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
         cout << "You got a negative heat conductivity, something is wrong!" << endl;
 #endif
 
-	  return 0.02*kab; //This 0.02 is not justified, but simulation experiment shows that heat transfer is too faster and I just want to make it slower
+	  return 0.02*kab; //This 0.02 is not justified, but simulation experiment shows that heat transfer is too faster and I just want to make it slower ----> This is old way, not correct! ---> See the following for the correct way
 	                  //Some thing that not sure currently is
 	                  //1) JJ Monaghan's SPH discretize of second order derivative for 2D/3D is based on 1D Talor's series expansion...
 	                  //2) He transfer from using grad (w_ab) to F_ab is not justified, maybe he is correct, but I am still suspecting...
