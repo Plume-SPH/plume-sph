@@ -180,7 +180,7 @@ search_bnd_images (int myid, THashTable * P_table, HashTable * BG_mesh,
                      * 1) image is in a local bucket
                      * 2) image is in a guest bucket
                      * 3) image is not in neith a local bucket nor a guest bucket on current processors.
-                     * The third situation will cause some trouble for me, the only thing that I can is to pray that this will happen.
+                     * The third situation will cause some trouble for me, the only thing that I can is to pray that this will not happen.
                      * If this happens, what should I do? ---> there are some ways to overcome this issue, but up to now, I did not encountered any situation likes this---> it is not necessary to worry about this.
                      *
                      * */

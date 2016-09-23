@@ -1,24 +1,9 @@
 
-/*******************************************************************
- * Copyright (C) 2003 University at Buffalo
+/*
+ * repartition_BSFC.cc
  *
- * This software can be redistributed free of charge.  See COPYING
- * file in the top distribution directory for more details.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Author: 
- * Description:  
- *   14th of March 2011:
- *      Patition table is added as an after-thought. It is a STL
- *      vector of Hash-Table keys of buckets with z = zmin. Hence
- *      instead of partitioning the whole domain, we partition its
- *      projection along x-y plane.
- *
- *******************************************************************
- * $Id: repartition_BSFC.C,v 1.2 2003/11/25 22:13:04 kdalbey Exp $ 
+ *  Created on: Oct 18, 2015
+ *      Author: zhixuanc
  */
 
 #ifdef HAVE_CONFIG_H
@@ -128,8 +113,7 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
 	    curr_buck = (Bucket *) tempptr;
 	    assert (curr_buck);
 	    wght = 0.;
-	//    do
-	//    {
+
 	    vector < TKey > particles = curr_buck->get_plist ();
 	    vector < TKey >::iterator p_itr;
 	    for (p_itr = particles.begin (); p_itr != particles.end (); p_itr++)
@@ -151,13 +135,7 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
 	        		wght +=pressp_load;
 	        		break;
 	        	}
-
-	//          wght += 1.;
 	     }//go through all particles in the bucket
-	//      curr_buck = (Bucket *) BG_mesh->lookup (curr_buck->which_neigh (Up));
-	//      assert (curr_buck);
-	//    }//end of go from bottom to top
-	//    while ((curr_buck->which_neigh_proc (Up)) != -1);
 	}//end of if bucket is not brief bucket
     weights.push_back (wght);
     total_weight += wght;
@@ -360,16 +338,17 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
   delete [] global_load;
 #endif
 
-//#ifdef DEBUG
-//    bool check_sndspd =true;
-//    bool ng_sndspd =false ;
-//    if (check_sndspd)
-//    {
-//        ng_sndspd = check_particles_sndspd (P_table);
-//        if (ng_sndspd)
-//  	      cout << "negative sound speed shows up before this point!" << endl;
-//    }
-//#endif
+#ifdef DEBUG
+    bool check_sndspd =false;
+    bool ng_sndspd =false ;
+    if (check_sndspd)
+    {
+        ng_sndspd = check_particles_sndspd (P_table);
+        if (ng_sndspd)
+  	      cout << "negative sound speed shows up before this point!" << endl;
+    }
+#endif
+
 #ifdef DEBUG
 	if (do_check)
 	   BG_mesh_check(BG_mesh);
@@ -383,16 +362,15 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
 	if (do_check)
 	   BG_mesh_check(BG_mesh);
 #endif
-//#ifdef DEBUG
-//   bool check_sndspd =true;
-//   bool ng_sndspd =false ;
-//    if (check_sndspd)
-//    {
-//        ng_sndspd = check_particles_sndspd (P_table);
-//        if (ng_sndspd)
-//  	      cout << "negative sound speed shows up before this point!" << endl;
-//    }
-//#endif
+
+#ifdef DEBUG
+    if (check_sndspd)
+    {
+        ng_sndspd = check_particles_sndspd (P_table);
+        if (ng_sndspd)
+  	      cout << "negative sound speed shows up before this point!" << endl;
+    }
+#endif
 
   // reset communication flags 
   for (i = 0; i < numprocs; i++)

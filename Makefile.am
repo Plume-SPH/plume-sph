@@ -7,9 +7,9 @@
 #EXTRA_DIST =
 
 if PARALLEL_BUILD
-    SUBDIRS = ./src/gisapi ./src/datstr ./src/multiproc ./src/debug ./src/plume ./src/preproc 
+    SUBDIRS = ./src/datstr ./src/multiproc ./src/debug ./src/plume ./src/preproc 
 else
-    SUBDIRS = ./src/gisapi ./src/datstr ./src/debug ./src/plume ./src/preproc
+    SUBDIRS = ./src/datstr ./src/debug ./src/plume ./src/preproc
 endif
 
 if BUILD_DOCS

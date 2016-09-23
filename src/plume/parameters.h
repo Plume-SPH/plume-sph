@@ -14,7 +14,7 @@
 #define PARAMETERS_H
 
 /*
- * These parameters are for running jobs in the 2005 paper.
+ * These parameters are for running jobs in the 2005 paper of SK-3D.
  */
 //----------------------------------------------------------------------------------------
 ////% parameter for domain definition

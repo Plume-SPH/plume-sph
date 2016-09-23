@@ -45,29 +45,6 @@ THashTable::THashTable (int size, int prime, double minR[], double maxR[])
   }
 }
 
-////overloading of constructor
-//THashTable::THashTable (int size, int prime, double minR[], double maxR[], int maxn)
-//{
-//  int i;
-//  NBUCKETS = size;
-//  PRIME = prime;
-//  SIZE02 = NBUCKETS / 10;
-//  SIZE01 = NBUCKETS - SIZE02;
-//  umax = (double) IScale;
-////  MAX_ADD = maxn;
-//
-//  // allocate table-size
-//  bucket = new THashEntryPtr [NBUCKETS];
-//  for (i = 0; i < NBUCKETS; i++)
-//    bucket[i] = NULL;
-//
-//  for (i = 0; i < DIMENSION; i++)
-//  {
-//    minDom[i] = minR[i];
-//    maxDom[i] = maxR[i];
-//  }
-//}
-
 THashTable::~THashTable ()        //evacuate the table
 {
   for (int i = 0; i < NBUCKETS; i++)

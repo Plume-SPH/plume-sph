@@ -26,7 +26,6 @@ using namespace std;
 
 #include <unistd.h>
 #include <hilbert.h>
-#include <GisApi.h>
 
 #include "buckstr.h"
 #include "preprocess.h"

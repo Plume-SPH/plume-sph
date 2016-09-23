@@ -40,8 +40,6 @@ send_foreign_images (int myid, int numprocs, HashTable * BG_mesh,
     return;
 
   int i, j;
-//  int dir[DIMENSION];
-//  double coord[DIMENSION], tmpc[DIMENSION];
   double intsct[DIMENSION];
 //  unsigned ghst_key[KEYLENGTH], buck_key[KEYLENGTH];
 

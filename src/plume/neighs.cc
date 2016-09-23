@@ -200,9 +200,6 @@ search_neighs_consth (int myid, THashTable * P_table, HashTable * BG_mesh)
 
   // delete iterator
   delete igrd;
-//  delete itr;
-//  delete p_itr;
-//  delete it2;
 
   return 0;
 }

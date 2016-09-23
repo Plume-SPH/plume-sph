@@ -194,17 +194,12 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
            uvec[i+1] = velrot[i];
 
       /*In old code, internal energy is not given at the wall, internal energy given---> to force a essentially boundary condition
-       *But actually, the way that I am adopting here to imposing essential boundary is not proper---> to imposing proper essential boundary condition requires solving of system of equations implicitly.
+       *But actually, the way that I am adopting here to imposing essential boundary is a static way ---> to imposing dynamic accurate essential boundary condition requires solving of system of equations implicitly.
        */
-//      engr=air_engr_hydro(pcoord);
-//      uvec[NO_OF_EQNS-1]=engr;
+
       // if ghost belongs to my proc, update it
       if (i_img->partproc == myid)
       {
-    	  /*In old code, the following part is inside if, actually, they should be at outside of if*/
-//        reflect (&uvec[1], velrot, normal);//change the direction of image velocity according to norm of wall.
-//        for (i = 0; i < DIMENSION; i++)
-//          uvec[i+1] = velrot[i];
         p_ghost->put_state_vars(uvec);
 
 #if FLUID_COMPRESSIBILITY==1 //sound speed is need for secondary variable update if a weakly compressible EOS is adopted here.

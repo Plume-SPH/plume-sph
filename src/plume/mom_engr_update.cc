@@ -281,7 +281,6 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 	  } //end of if particle need to up date particle momentum and energy
   }//end of go through all particles
 
-  //pi = (Particle *) P_table->lookup(*ip); // seem useless pointer
 
   // iterate over hashtable to update state_variables,
   //what need to note is that density was not updated up to this step.

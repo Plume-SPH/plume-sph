@@ -42,27 +42,6 @@ using namespace std;
 #include "hdf5calls.h"
 
 
-
-///*find particle by the key
-// * keyin is input particle key
-// * keycheck is the key that is given and all keyin will be compared with keycheck
-// * pi is the pointer points to the particle corresponding to keyin
-// */
-//Particle* find_particle (unsigned* keyin, unsigned* keycheck, Particle* pi)
-//{
-//	int i;
-//	bool find = true;
-//	for (i=0; i<TKEYLENGTH; i++)
-//		if (keyin[i] != keycheck[i])
-//		{
-//			find = false;
-//			return NULL;
-//		}
-//
-//    return find;
-//}
-
-
 /*find bucket by the key
  * keyin is input particle key
  * keycheck is the key that is given and all keyin will be compared with keycheck

@@ -354,31 +354,6 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 	  }
 	#endif
 
-	  //The following is actually not necessary ---> we have already done this in the read_data
-//	  //  mark all neighbors with real particles active
-//	  Bucket * neigh = NULL;
-//	  itr->reset();
-//	  while ((Curr_buck = (Bucket *) itr->next()))
-//	  {
-//	    Curr_buck->mark_inactive ();
-//	    Key *nkey = Curr_buck->get_neighbors ();
-//	    for (i = 0; i < NEIGH_SIZE; i++)
-//	      // Particle is also added on guest bucket
-//	      // So it is not necessary to check bucket only on current process
-//	      if (*(Curr_buck->get_neigh_proc () + i) == myid )
-//	      {
-//	        neigh = (Bucket *) BG_mesh->lookup (nkey[i]);
-//	        // newly added, make sure neigh exist!
-//	        assert(neigh);
-//
-//	        if (neigh->has_real_particles ())
-//	        {
-//	          Curr_buck->mark_active();
-//	          break;
-//	        }
-//	      }
-//	    }
-
 	  delete itr;
 
 	  return;

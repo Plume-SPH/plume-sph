@@ -124,9 +124,6 @@ timestep(HashTable * BG_mesh, THashTable * P_table, TimeProps* timeprops)
 
   //set up constrain on time step, such that at most one layer of eruption particle will be added
   double t;
-//  t_each = (timeprops->TIME_SCALE)*(timeprops->t_each);
-//  double t_each = timeprops->t_each;
-//  t= std::min (t_each, 0.2 * dt);
 #if TIME_STEP_CONSTRAIN ==1
   double dt_bc = pressure_bc_step (BG_mesh, P_table);
   t = min (CFL_P*dt, dt_bc*CFL_BC_P);

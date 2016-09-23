@@ -78,6 +78,7 @@ bin/smlout*
 bin/smlerr*
 bin/output*
 Meteo_data/wyoming_benchmark.py
+sh/install
 *~
 */*~
 */*/*~

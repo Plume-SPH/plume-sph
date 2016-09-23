@@ -182,7 +182,6 @@ AC_FUNC_MALLOC
 AC_CONFIG_FILES([Makefile
                  src/datstr/Makefile
                  src/debug/Makefile
-                 src/gisapi/Makefile
                  src/multiproc/Makefile
                  src/plume/Makefile
                  src/preproc/Makefile])

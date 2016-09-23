@@ -225,7 +225,7 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 	gamma=1+Rm/Cvm; // gamma for mixture
 
 	//	double lmd=desm*Rm/Cvm; not necessary
-		// for gas mixture
+    // for gas mixture
 	//	//The following way of density computing is not correct -->The reason is na and ng is density with respect to mixture of solid and gas, In third equation, I was assuming that na is mass fraction with respect to phase1 and ng is with respect to pahse2
 	//	double des1=(1-mass_frac)*desm;//density of phase1 : air
 	//	double des2=mass_frac*desm;    //density of phase2 : erupted material
