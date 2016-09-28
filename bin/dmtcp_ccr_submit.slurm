@@ -26,6 +26,9 @@ echo "SLURMTMPDIR         = "$SLURMTMPDIR
 
 #because CCR is not finish updating yet, I need the following line to make the excutable file works properly.
 export HDF5_DISABLE_VERSION_CHECK=1
+#The following is added to solve the MPI error --> hopefully it will work.
+export I_MPI_DYNAMIC_CONNECTION=0
+
 
 module use /projects/academic/abani/modules
 module load dmtcp/2.4.4
