@@ -17,6 +17,17 @@
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
 
+
+//Define whether use adaptive smoothing length or not ---> adaptively adjust sml at a given interval, to avoid sml update at every time step
+/*
+ * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
+ * 1: adaptive      -->DENSITY_UPDATE_SML shold always be 1
+ */
+#ifndef ADAPTIVE_SML
+#define ADAPTIVE_SML 1
+#endif
+
+// only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
 /*
  * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
  * 0 : use original smoothing length   ---> It is easier to get negative energy
@@ -27,6 +38,7 @@
 #ifndef DENSITY_UPDATE_SML
 #define DENSITY_UPDATE_SML 1
 #endif
+
 
 /*
  * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true

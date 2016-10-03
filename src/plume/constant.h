@@ -79,4 +79,7 @@ const double ENERGY_CUT = 1.0;
 const double HEAT_TRANS_SCALE_RATIO = 1.4;
 const double E_SMOOTH_RATIO = 4.;
 
+//Adaptive sml
+const int SML_UPDATE_INT = 50.;
+
 #endif /* CONSTANT_H_ */

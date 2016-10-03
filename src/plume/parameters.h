@@ -159,10 +159,10 @@
 //                                   Ly_p the lower and up boundary in y direction
 //                                   Lz_p the lower and up boundary in z direction
 
-//for weak sml1=15m or sml1=30
-const double Lx_P[2]={-2430,2430};
-const double Ly_P[2]={-2430,2430};
-const double Lz_P[2]={1500, 14000};
+////for weak sml1=15m or sml1=30
+//const double Lx_P[2]={-2430,2430};
+//const double Ly_P[2]={-2430,2430};
+//const double Lz_P[2]={1500, 14000};
 
 ////for strong sml1=50
 //const double Lx_P[2]={-3600,3600};
@@ -181,9 +181,9 @@ const double Lz_P[2]={1500, 14000};
 //const double Lz_P[2]={1500,8000};
 
 //for strong sml1=300 or sml1=200
-//const double Lx_P[2]={-28800,28800};
-//const double Ly_P[2]={-28800,28800};
-//const double Lz_P[2]={1500,50000};
+const double Lx_P[2]={-28800,28800};
+const double Ly_P[2]={-28800,28800};
+const double Lz_P[2]={1500,50000};
 ////larger domain sml1=300
 //const double Lx_P[2]={-100800,100800};
 //const double Ly_P[2]={-100800,100800};
@@ -257,22 +257,22 @@ const double Atf_P = -g_P/(Ra_P*Ta0_P);
 // %v: vent
 const double Rg_P=462.; /*%gas constant for volcanic gases*/
 
-//for strong
-//const double ng0_P=0.05; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
-////for weak
-const double ng0_P=0.03; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
+//for stron
+const double ng0_P=0.05; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
+//////for weak
+//const double ng0_P=0.03; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
 
 const double Uv0_P=0.0; /* velocity in horizontal direction*/
 
-////for strong
-//const double Vv0_P=275; /* velocity in verticle direction*/
-//for weak
-const double Vv0_P=135; /* velocity in verticle direction*/
+//for strong
+const double Vv0_P=275; /* velocity in verticle direction*/
+////for weak
+//const double Vv0_P=135; /* velocity in verticle direction*/
 
-////for strong
-//const double Tv0_P=1053;
-//for weak
-const double Tv0_P=1273;
+//for strong
+const double Tv0_P=1053;
+////for weak
+//const double Tv0_P=1273;
 
 const double pv0_P=84363.4; //assuming pressure-balanced jet
 
@@ -297,10 +297,10 @@ const double ev0_P=ng0_P*Cvg_P*Tv0_P+(1-ng0_P)*Cvs_P*Tv0_P; /*energy of erupted 
 
 
 //This is the old way to give parameters
-////for strong
-//const double Mv_P=1.5e+09;  /*mass flow rate, it is not directly used in simulation.*/
+//for strong
+const double Mv_P=1.5e+09;  /*mass flow rate, it is not directly used in simulation.*/
 //for weak
-const double Mv_P=1.5e+06;  /*mass flow rate, it is not directly used in simulation.*/
+//const double Mv_P=1.5e+06;  /*mass flow rate, it is not directly used in simulation.*/
 
 
 const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
@@ -319,10 +319,10 @@ const int num_erupt_perlayer = 10;
 //for strong coarse resolution
 //--> 2544 for 10 each direction sml1=400, 825 for 6 each direction, sml1=600, 1628 for 8 each direction sml1=500, 1908 for sml1=300, 10 each direction (sml2=141.5),  900 for sml1=141.5=sml2, 1764 for sml1 =100, sml2 =101.4
 //----> 7056 for sml1=50, sml2=50.5, 3493 for sml1=200, sml2=101
-//const int num_erupt_particles = 3493; //number of particle in the initial erupt duct
+const int num_erupt_particles = 3493; //number of particle in the initial erupt duct
 ////for weak
 //4963 for sml1=30, sml2=5.44 ; 1271 for sml1=15, sml2=6.8
-const int num_erupt_particles = 1271; //number of particle in the initial erupt duct
+//const int num_erupt_particles = 1271; //number of particle in the initial erupt duct
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
@@ -354,10 +354,10 @@ const double eruptp_load = 0.02;
 
 
 //work load check interval, this value should be optimized to get good balance, for problems with different time scale, this value should be different
-////For strong
-//const int balancing_check_int_P = 3;
+//For strong
+const int balancing_check_int_P = 3;
 //for weak
-const int balancing_check_int_P = 1;
+//const int balancing_check_int_P = 1;
 
 
 /*

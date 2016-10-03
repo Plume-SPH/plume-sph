@@ -132,6 +132,18 @@ int  search_neighs_consth(
                          HashTable *  //! HashTable of cells of background mesh
                          );
 
+/*
+ * First: search for neighbors --->to guarantee that smooth_update is using the most recent information;
+ * Second: update smooth length --> without loop
+ * Third: search for neighbors;
+ * This will be called in the main loop of SPH update in time;
+ */
+int  search_neighs(
+                         int myid   , //! My processor ID
+                         THashTable *, //! HashTable of SPH partilces
+                         HashTable *  //! HashTable of cells of background mesh
+                         );
+
 //function that used to set up initial atmosphere and determine the mass of air particles
 int setup_ini(
 		int ,          //myid

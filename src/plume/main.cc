@@ -225,7 +225,7 @@ main(int argc, char **argv)
 
 #ifdef DEBUG
 #ifdef OUT_PUT_EXCUT_TIME
-    if (myid == 0 && (timeprops->is_int_time()) &&(((int) timeprops->timesec()) % balancing_check_int_P == 0) )
+    if (myid == 0 && (timeprops->is_int_time()) &&(((int) timeprops->timesec()) % 10 == 0) )
     {
     	finish = MPI_Wtime();
     	walltime = finish - start;
@@ -292,8 +292,18 @@ main(int argc, char **argv)
     ierr = 0;  // reset error code
     adapt = 0; // and adapt flag
 
+#if ADAPTIVE_SML==1
+    if ((timeprops->step) % SML_UPDATE_INT == 0)
+    	// search and update neighbors
+    	search_neighs (myid, P_table, BG_mesh);
+    else
+    	// search and update neighbors
+    	search_neighs_consth (myid, P_table, BG_mesh);
+#else
     // search and update neighbors
     search_neighs_consth (myid, P_table, BG_mesh);
+#endif
+
 
 #ifdef MULTI_PROC
     // ghost need to be updated only before updating momentum
@@ -366,7 +376,7 @@ main(int argc, char **argv)
 
 #ifdef MULTI_PROC
     /* DYNAMIC LOAD BALANCING */
-    if ((numprocs > 1) && (timeprops->is_int_time()) &&( ((int) timeprops->timesec()) % 3 == 0))
+    if ((numprocs > 1) && (timeprops->is_int_time()) &&( ((int) timeprops->timesec()) % balancing_check_int_P == 0))
     {
       // remove guest buckets and particles --->This is necessary for repartition
       delete_guest_buckets (BG_mesh, P_table);
