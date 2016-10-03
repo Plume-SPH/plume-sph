@@ -13,7 +13,7 @@
 #define USE_GAUSSIAN
 #endif
 
-//define use summation method to update density  ---> To take advantage of
+//define use summation method to update density  ---> Another way is based on discretized mass conservation
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
 
@@ -59,7 +59,7 @@
 //Define which format of to use for discretized momentum equation
 /*
  * 0: The basic symmetric format which can conserve momentum, without any further modification
- * 1: Based on 0, an external pressure is deduce by every pressure in 0, the external pressure the pressure of atmosphere at corresponding height of particle a. ---> The purpose of this is to make sure when pressure gradient vanish the acceleration will be zero.
+ * 1: Based on 0, an external pressure is deduce by every pressure, the external pressure the pressure of atmosphere at corresponding height of particle a. ---> The purpose of this is to make sure when pressure gradient vanish the acceleration will be zero.
  */
 #ifndef MOMENTUM_DISCRETIZE
 #define MOMENTUM_DISCRETIZE 0
