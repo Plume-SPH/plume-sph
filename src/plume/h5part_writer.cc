@@ -51,6 +51,10 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   vector < double > mymass;
 #endif
 
+#if defined (WRITE_SML) && (ADAPTIVE_SML ==1)
+  vector < double > mysml;
+#endif
+
   char filename[18];
   static int step = 0;
   hid_t fp;
@@ -102,6 +106,10 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 
 #ifdef WRITE_PMASS
       mymass.push_back(pi->get_mass ());
+#endif
+
+#if defined (WRITE_SML) && (ADAPTIVE_SML ==1)
+      mysml.push_back(pi->get_smlen ());
 #endif
 
 #ifndef WRITE_GHOSTS
@@ -180,6 +188,12 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 #ifdef WRITE_PMASS
   copy(mymass.begin(), mymass.end(), buf);
   ierr = GH5_Write(gid, "mymass", dims, (void *) buf, start, my_count,  DOUBLETYPE);
+#endif
+
+  //mysml
+#if defined (WRITE_SML) && (ADAPTIVE_SML ==1)
+  copy(mysml.begin(), mysml.end(), buf);
+  ierr = GH5_Write(gid, "sml", dims, (void *) buf, start, my_count,  DOUBLETYPE);
 #endif
 
   // x-coordinates

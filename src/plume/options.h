@@ -187,6 +187,11 @@
 #define WRITE_PMASS
 #endif
 
+//output particle smoothing length ---> useful for debug
+#ifndef WRITE_SML
+#define WRITE_SML
+#endif
+
 #endif //DEBUG
 //----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------
