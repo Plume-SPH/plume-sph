@@ -180,7 +180,7 @@
 //const double Ly_P[2]={-5850,5850};
 //const double Lz_P[2]={1500,8000};
 
-//for strong sml1=300 or sml1=200
+//for strong sml1=300 or sml1=200, sml1=150
 const double Lx_P[2]={-28800,28800};
 const double Ly_P[2]={-28800,28800};
 const double Lz_P[2]={1500,50000};
@@ -318,8 +318,8 @@ const int num_erupt_perlayer = 10;
 ////for strong
 //for strong coarse resolution
 //--> 2544 for 10 each direction sml1=400, 825 for 6 each direction, sml1=600, 1628 for 8 each direction sml1=500, 1908 for sml1=300, 10 each direction (sml2=141.5),  900 for sml1=141.5=sml2, 1764 for sml1 =100, sml2 =101.4
-//----> 7056 for sml1=50, sml2=50.5, 3493 for sml1=200, sml2=101
-const int num_erupt_particles = 3493; //number of particle in the initial erupt duct
+//----> 7056 for sml1=50, sml2=50.5, 3493 for sml1=200, sml2=101, 954 for sml1=150, sml2=141.5, 1337 for sml1=150, sml2=101
+const int num_erupt_particles = 954; //number of particle in the initial erupt duct
 ////for weak
 //4963 for sml1=30, sml2=5.44 ; 1271 for sml1=15, sml2=6.8
 //const int num_erupt_particles = 1271; //number of particle in the initial erupt duct
@@ -338,7 +338,7 @@ const double eta_smooth_P = 1.2; //We can try different value to get best result
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.20;
+const double CFL_P=0.70;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------

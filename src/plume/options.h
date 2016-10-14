@@ -24,7 +24,7 @@
  * 1: adaptive      -->DENSITY_UPDATE_SML shold always be 1
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 1
+#define ADAPTIVE_SML 0
 #endif
 
 // only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml

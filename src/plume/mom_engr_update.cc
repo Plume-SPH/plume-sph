@@ -212,7 +212,6 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 #else
 		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
 #endif
-		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
 
 	              for (int ii=0; ii<DIMENSION; ii++)
 	            	  s_heat[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
