@@ -76,8 +76,8 @@ const double ENERGY_CUT = 1.0;
 #endif
 
 //heat transfer spatial ratio to momentum exchange
-const double HEAT_TRANS_SCALE_RATIO = 1.3;
-const double E_SMOOTH_RATIO = 4.5;
+const double HEAT_TRANS_SCALE_RATIO = 1.5;
+const double E_SMOOTH_RATIO = 5.5;
 
 //Adaptive sml
 const int SML_UPDATE_INT = 50.;

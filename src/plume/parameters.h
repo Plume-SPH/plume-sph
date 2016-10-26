@@ -169,6 +169,11 @@
 //const double Ly_P[2]={-29580,29580};
 //const double Lz_P[2]={1500,50000};
 
+////for strong sml1=170 larger domain
+//const double Lx_P[2]={-39780,39780};
+//const double Ly_P[2]={-39780,39780};
+//const double Lz_P[2]={1500,55000};
+
 //for strong sml1=300 or sml1=200, sml1=150
 //const double Lx_P[2]={-28800,28800};
 //const double Ly_P[2]={-28800,28800};
@@ -333,7 +338,7 @@ const double eta_smooth_P = 1.2; //We can try different value to get best result
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.40;
+const double CFL_P=0.3;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------
