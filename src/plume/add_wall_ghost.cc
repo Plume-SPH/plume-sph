@@ -125,7 +125,10 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 	          //But I need to make sure that wall ghost particles will not be added repeatedly ---> !Bnd_buck->has_wall_ghost_particles ()
               //Why do I need to make sure that bucket is non_empty? ---->because MIXED in which wall ghost needed should be active, as some pressure ghost has already been added and the bucket was marked as active.
  			  //Please also notice that I need to make sure the bucket is not eruption bucket
- 			  if (Bnd_buck->is_onground_or_underground() && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles () && !Bnd_buck->is_erupt ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
+ 			  //To be consistent, should also make sure that the Bnd_buck is not guest bucket. ----> Should always followed by syn
+ 			  //Or you can add particle for guest buckets here ---> and not necessary to syn after adding!---> But as we are combining undergeround buckets and ongreound MIXED together, this routine does not work as guest bucket does not have information about its neighbors.
+ 			  //So I need to make sure that Bnd_buck is not guest bucket here.
+ 			  if (!Bnd_buck->is_guest() && Bnd_buck->is_onground_or_underground() && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles () && !Bnd_buck->is_erupt ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
  			  {
  		    	    for (i = 0; i < DIMENSION; i++)
  		    	    {
@@ -201,10 +204,10 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 
  		    	    // add wall ghost on under ground bucket
  		    	    //--> For 3D decomposition, if the Mixed bucket is guest bucket, it DOWN bucket will not be able to find, SO
- 		    	    //1) make sure the current bucket is not guest bucket
+ 		    	    //1) make sure the current bucket is not guest bucket ---> This is not necessary, because I added particles for guest MIXED bucket, I should keep consistent!
  		    	    //2) On the process on which the current bucekt is host, the DOWN bucket (no matter the DOWN bucket is guest or not) can be found and, wall ghost particles can be added there.
  		    	    //3) I just need to point out that the idea that adding particles for ghost bucket to avoid syn still works for 3D decomposition. ---> but need to be more careful to avoid mistake like looking for neighbor for a guest bucket.
- 		    	    if (!Bnd_buck->is_guest())
+ 		    	    if (!Bnd_buck->is_guest()) //I need this because the guest bucket does not have neighbor information and will not be able to find its down bucket. ---> So the idea that adding guest particle to avoid syn is not practical for adding wall ghost particles.
  		    	    {
  		    	        Bucket *Down_buck = (Bucket *) BG_mesh->lookup (Bnd_buck->which_neigh (Down));
  		                assert(Down_buck); //make sure Down_buck exist.

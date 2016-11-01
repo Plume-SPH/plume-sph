@@ -37,4 +37,39 @@ struct InvolvedHead
   }
 };
 
+/*
+ * a structure for adding influx particle position
+ */
+struct InfluxAddingPos
+{
+	//coordinates of adding position
+	double crd[DIMENSION];
+
+	//key of the mother bucket
+	unsigned bucket_key[KEYLENGTH];
+
+	//The default constructor
+	InfluxAddingPos ()
+	{
+		int i;
+		for (i=0; i<DIMENSION; i++)
+			crd[i]=0.0;
+
+		for (i=0; i<KEYLENGTH; i++)
+			bucket_key[i]=0;
+	}
+
+	//overload constructor
+	InfluxAddingPos (double* p_crd, unsigned* mother_key)
+	{
+		int i;
+		for (i=0; i<DIMENSION; i++)
+			crd[i]= *(p_crd+i);
+
+		for (i=0; i<KEYLENGTH; i++)
+			bucket_key[i]= * (mother_key + i) ;
+	}
+
+};
+
 #endif /* INVOLVED_HEADER_H_ */

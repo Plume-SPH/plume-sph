@@ -26,32 +26,6 @@ using namespace std;
 #include "sph_header.h"
 #include "parameters.h"
 
-//function that used to determine the type of bucket
-bool determine_erupt_buket (double *mincrd, double *maxcrd, double *xcrd, double *ycrd, double *zcrd)
-{
-	int flag[DIMENSION];
-//	int sum = 0;
-	int k;
-	bool erpt_flag = true;
-	int bt[6];
-
-    bt[0]=determine_face_type(xcrd[0],maxcrd[0],mincrd[0]);
-    bt[1]=determine_face_type(xcrd[1],maxcrd[0],mincrd[0]);
-    bt[2]=determine_face_type(ycrd[0],maxcrd[1],mincrd[1]);
-    bt[3]=determine_face_type(ycrd[1],maxcrd[1],mincrd[1]);
-    bt[4]=determine_face_type(zcrd[0],maxcrd[2],mincrd[2]);
-    bt[5]=determine_face_type(zcrd[1],maxcrd[2],mincrd[2]);
-
-    for (k=0; k<DIMENSION; k++)
-    	flag[k]=abs(bt[2*k] + bt[2*k+1]);
-
-    for (k=0; k<DIMENSION; k++)
-    	if (flag[k] == 2)
-    		erpt_flag = false;
-
-    return erpt_flag;
-}
-
 /*
  * The strategy for setting up eruption boundary condition and adding new erupted particles is
  * 1) adding guest particle in guest buckets ---> well, actually, not really sure whether this is a good idea or not,

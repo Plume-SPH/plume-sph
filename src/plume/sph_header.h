@@ -489,4 +489,14 @@ void readFile(
 		int,        // m,
 		int      // n
 		);
+
+//function that used to determine the type of bucket
+bool determine_erupt_buket (
+		double *,  //mincrd, defines the dimension of eruption region
+		double *,  //maxcrd, defines the dimension of eruption region
+		double *,  //xcrd, defines the dimension of buckets
+		double *,  //ycrd, defines the dimension of buckets
+		double *   //zcrd, defines the dimension of buckets
+		);
+
 #endif  //SPH_HEADER_H_

@@ -161,7 +161,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps *simprop
 		              	    				 pcrd[1] = mincrd[1] + dx2 + j * dx;
 		              	    				 pcrd[2] = mincrd[2] + dx2 + k * dx;
 
-		              	    				 if (Bnd_buck->is_onground_or_underground ())//on ground MIXED or underground
+		              	    				 if (Bnd_buck->is_onground_or_underground ())//on ground MIXED, It is not possible that the bucket is a underground bucket, because the bucket has to be MIXED bucket first!
 		              	    				 {
 		              	    				   if (pcrd[2]>bnd[4]) //This is only for on-ground MIXED, for Mixed in the air, the bnd[4]=0.1, which does not make any sense. for over-ground MIXED and PRESSURE_BC, pressure ghost need to be full of the bucket.
 		              	    				   {

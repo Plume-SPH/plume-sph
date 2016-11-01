@@ -136,12 +136,16 @@ main(int argc, char **argv)
   //add wall ghost
   add_wall_ghost(P_table, BG_mesh, simprops, matprops, timeprops, numprocs, myid);
 
+  // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
+  move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+
 #ifdef DEBUG
   if (check_part)
 	  check_particle_bykey (P_table);
 #endif
 
-  //Adding eruption boundary condition
+  //Adding eruption boundary condition ---> Here we did not syn because the guest will lately been deleted for re-decomposition.
   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
 
 #ifdef DEBUG
