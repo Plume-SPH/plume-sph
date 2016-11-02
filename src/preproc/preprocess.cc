@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
   int np;
   double xcrd[2],ycrd[2], zcrd[2],cntr[DIMENSION],smlen;
   unsigned keylen=KEYLENGTH;
-  unsigned key[KEYLENGTH], key2[KEYLENGTH];
+  unsigned key[KEYLENGTH], top_key[KEYLENGTH];
   double mindom[DIMENSION], maxdom[DIMENSION];
   double mindom_o[DIMENSION], maxdom_o[DIMENSION];
 //  string gis_db, gis_location, gis_mapname, gis_mapset;
@@ -217,9 +217,32 @@ int main(int argc, char *argv[])
         for (l=0; l<KEYLENGTH; l++)
           bgmesh[i][j][k].key[l] = key[l];
 
-        // find key value for partition bucket
-          PartiHead temp_head (i, j, k, key);
-          partition_table.push_back(temp_head);
+        //Added the following if-else block to make sure that underground bucket and its above are always in the same processor.
+        if (k == 0)
+        {
+            zcrd[0] = mindom[2] + (k+1)*del; //set the coord to be its above bucket
+            zcrd[1] = mindom[2] + (k+2)*del;
+
+            // generate hash-key for bucket
+            double normc[DIMENSION];
+            cntr[0] = (xcrd[0]+xcrd[1])*0.5;
+            cntr[1] = (ycrd[0]+ycrd[1])*0.5;
+            cntr[2] = (zcrd[0]+zcrd[1])*0.5;
+            for ( l=0; l<DIMENSION; l++)
+                normc[l]=(cntr[l]-mindom[l])/(maxdom[l]-mindom[l]);
+           // determine key
+           HSFC3d (normc, & keylen, top_key);
+           // find key value for partition bucket
+           PartiHead temp_head (i, j, k, key, top_key);
+           partition_table.push_back(temp_head);
+        }
+        else
+        {
+           // find key value for partition bucket
+           PartiHead temp_head (i, j, k, key);
+           partition_table.push_back(temp_head);
+        }
+
       }//end of z direction
     }//end of y direction
   }//end of x direction
@@ -242,6 +265,19 @@ int main(int argc, char *argv[])
     else
        bgmesh[i][j][k].myproc = -1;
   }//end of for loop
+
+  //re-set myproc for underground bucket, to make sure that underground bucket have the same proc id as its above.
+  for (ii=0; ii < nxnynz; ii++ )
+  {
+     i = partition_table[ii].xind;
+     j = partition_table[ii].yind;
+     k = partition_table[ii].zind;
+     if (k==0)
+     {
+    	 bgmesh[i][j][k].myproc = bgmesh[i][j][k+1].myproc;
+    	 partition_table[ii].proc = bgmesh[i][j][k+1].myproc;
+     }
+   }//end of for loop
 
   // determine neighbors
   for (i = 0; i < nx; i++)

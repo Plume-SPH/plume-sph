@@ -169,7 +169,7 @@ void check_particle_bypos (THashTable * P_table)
 {
 
     bool do_search = true;
-    double range_x[2]={-1000,1000};
+    double range_x[2]={-10000000,-1000000};
     double range_y[2]={-1000,1000};
     double range_z[2]={3000,7000};
     double pcrd[DIMENSION];

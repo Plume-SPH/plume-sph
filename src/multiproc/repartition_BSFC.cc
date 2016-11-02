@@ -418,7 +418,7 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
 #endif
 
   itr->reset ();
-  while ((breif_buck = (BriefBucket *) itr->next ())) //Whether this works? ---> need test!
+  while ((breif_buck = (BriefBucket *) itr->next ()))
   {
 	assert(breif_buck);
     // find out communication buddies of this prcess

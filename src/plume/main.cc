@@ -75,7 +75,7 @@ main(int argc, char **argv)
   bool check_buck = false;
   bool check_mesh_err = false;
   bool check_part_tp =false;
-  bool check_bypos = false;
+  bool check_bypos = true;
   bool find_large_density = false;
   bool search_byphase = false;
   bool find_maxz = false;
@@ -141,8 +141,8 @@ main(int argc, char **argv)
 
 
 #ifdef DEBUG
-  if (check_part)
-	  check_particle_bykey (P_table);
+  if (check_bypos)
+	  check_particle_bypos (P_table);
 #endif
 
   //Adding eruption boundary condition ---> Here we did not syn because the guest will lately been deleted for re-decomposition.
