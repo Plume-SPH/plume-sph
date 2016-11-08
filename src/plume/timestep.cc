@@ -55,7 +55,7 @@ pressure_bc_step(HashTable * BG_mesh, THashTable * P_table)
 			Bnd_buck = (Bucket*) tempptr;
 			// 1) Bnd_buck has involved flag = 1 --->Only has potential involved particles
 			// 2) is not guest
-		    if ((Bnd_buck->get_has_involved()==1) && !Bnd_buck->is_guest())
+		    if ((Bnd_buck->get_has_involved()>=1) && !Bnd_buck->is_guest()) // should be (Bnd_buck->get_has_involved()>=1), previously it was (Bnd_buck->get_has_involved()==1)
 			{
 		    	plist = Bnd_buck->get_plist();
                 //assert(plist.size()>0); //make sure Bnd_buck is not empty ---> not necessary! Some bucket might be empty due to particle movement
