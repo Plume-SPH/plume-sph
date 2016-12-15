@@ -75,7 +75,7 @@ main(int argc, char **argv)
   bool check_buck = false;
   bool check_mesh_err = false;
   bool check_part_tp =false;
-  bool check_bypos = true;
+  bool check_bypos = false;
   bool find_large_density = false;
   bool search_byphase = false;
   bool find_maxz = false;
@@ -145,8 +145,18 @@ main(int argc, char **argv)
 	  check_particle_bypos (P_table);
 #endif
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
+#ifndef SIMULATE_ASH
   //Adding eruption boundary condition ---> Here we did not syn because the guest will lately been deleted for re-decomposition.
   setup_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
+#else
+  //Adding influx particles ---> Here we did not syn because the guest will lately been deleted for re-decomposition.
+  setup_influx (myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
+#endif
 
 #ifdef DEBUG
   if (check_part)
@@ -364,9 +374,14 @@ main(int argc, char **argv)
     // update particle positions
     update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);
 
+#ifndef SIMULATE_ASH
     // add new layers of particle in the duct
     if (timeprops->iferupt())
        add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
+#else
+    add_new_influx(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
+#endif
+
 
 #ifdef MULTI_PROC
     // update guests as density has changed since last update

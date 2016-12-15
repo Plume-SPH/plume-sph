@@ -168,7 +168,7 @@ void unpack_bucket (BucketPack *recvdBuck, Bucket *buck, int myid)
   buck->bucket_type = recvdBuck->bucket_type;
   buck->particles_type = recvdBuck->particles_type;
   buck->active = (bool) recvdBuck->activeflag;
-  buck->erupt_flag = (bool) recvdBuck->erupt_flag;
+  buck->erupt_flag = (unsigned) recvdBuck->erupt_flag;
   buck->has_involved = recvdBuck->has_involved;
 
   for ( i=0; i < KEYLENGTH; i++ )

@@ -8,6 +8,7 @@
 #ifndef INVOLVED_HEADER_H_
 #define INVOLVED_HEADER_H_
 #  include <constant.h>
+#  include <config.h>
 
 struct InvolvedHead
 {
@@ -37,6 +38,7 @@ struct InvolvedHead
   }
 };
 
+#ifdef SIMULATE_ASH
 /*
  * a structure for adding influx particle position
  */
@@ -71,5 +73,6 @@ struct InfluxAddingPos
 	}
 
 };
+#endif
 
 #endif /* INVOLVED_HEADER_H_ */

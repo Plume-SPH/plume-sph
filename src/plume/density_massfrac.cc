@@ -204,7 +204,11 @@ smooth_density(THashTable * P_table)
 //   	   density +=phaserho[phs_i-1];
 #endif
 
+#ifndef SIMULATE_ASH
      mssfrc=phaserho[1]/density;
+#else
+     mssfrc=phaserho[1]/density*msfc0_P; //mass fraction of erupted material in the mixture. Phase on is mixture of erupted material with initial mass fraction of erupted material of mssfrac0_P;
+#endif
 
 #if DENSITY_UPDATE_SPH == 10 //for this case, density will be updated based on equation according to Suzuki's 2005 paper
      pi->calc_density_suzuki(mssfrc);

@@ -32,7 +32,8 @@ particler_SOURCES = add_air.cc \
                     particler.h \
                     parameters.h \
                     scan_outside_layer.cc \
-                    setup_erupt.cc\
+                    setup_erupt.cc \
+                    setup_influx.cc \
                     setup_ini.cc\
                     smooth_velocity.cc \
                     shift_brief_buck.cc \

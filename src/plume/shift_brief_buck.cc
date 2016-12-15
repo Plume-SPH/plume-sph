@@ -89,7 +89,7 @@ shift_brief_buck (HashTable * BG_mesh, MatProps * matprops, TimeProps *timeprops
 	  	     * Then we need a inverse communicate : send info from guest to no-guest
 	  	     * To avoid this, we added this section.
 	  	     */
-		      if (!(Bnd_buck->get_has_involved()) && Bnd_buck->has_pressure_ghost_particles() && !Bnd_buck->is_erupt ())
+		      if (!(Bnd_buck->get_has_involved()) && Bnd_buck->has_pressure_ghost_particles() && Bnd_buck->get_erupt_flag ()==0)
 			  {
 		        const int * neigh_proc = Bnd_buck->get_neigh_proc ();
 		        Key * neighbors = Bnd_buck->get_neighbors ();

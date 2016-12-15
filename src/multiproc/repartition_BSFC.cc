@@ -86,7 +86,7 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
 #endif
 
 #ifdef DEBUG
-   bool do_check = false;
+   bool do_check = true;
 #endif
 
   Bucket * buck = NULL;
@@ -119,6 +119,12 @@ repartition (vector < BucketHead > & PartitionTable, THashTable * P_table,
 	    for (p_itr = particles.begin (); p_itr != particles.end (); p_itr++)
 	    {
 	        Particle *p_curr = (Particle *) P_table->lookup (*p_itr);
+#ifdef DEBUG
+	        if (do_check)
+	        	if (p_curr==0)
+	        		cout << "The key is: " << *(p_itr->key) << endl;
+#endif
+	        assert (p_curr);
 	        if ((!p_curr->is_guest ()))
 	        	switch (p_curr->get_bc_type ())
 	        	{

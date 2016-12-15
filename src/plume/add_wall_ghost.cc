@@ -128,7 +128,7 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
  			  //To be consistent, should also make sure that the Bnd_buck is not guest bucket. ----> Should always followed by syn
  			  //Or you can add particle for guest buckets here ---> and not necessary to syn after adding!---> But as we are combining undergeround buckets and ongreound MIXED together, this routine does not work as guest bucket does not have information about its neighbors.
  			  //So I need to make sure that Bnd_buck is not guest bucket here.
- 			  if (!Bnd_buck->is_guest() && Bnd_buck->is_onground_or_underground() && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles () && !Bnd_buck->is_erupt ()) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
+ 			  if (!Bnd_buck->is_guest() && Bnd_buck->is_onground_or_underground() && Bnd_buck->get_bucket_type () == MIXED && (Bnd_buck->get_plist ()).size() && !Bnd_buck->has_wall_ghost_particles () && Bnd_buck->get_erupt_flag ()==0 ) //make sure bucket is on-ground mixed, go through all on ground MiXED and then go down to underground buckets
  			  {
  		    	    for (i = 0; i < DIMENSION; i++)
  		    	    {

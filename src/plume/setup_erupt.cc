@@ -5,6 +5,7 @@
  *      Author: zhixuanc
  */
 
+
 #include <vector>
 #include <cmath>
 #include <cassert>
@@ -25,6 +26,8 @@ using namespace std;
 #include "constant.h"
 #include "sph_header.h"
 #include "parameters.h"
+
+#ifndef SIMULATE_ASH
 
 /*
  * The strategy for setting up eruption boundary condition and adding new erupted particles is
@@ -271,7 +274,7 @@ setup_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     		Curr_buck = (Bucket*) tempptr;
     	      if (Curr_buck->is_erupt ())
     	      {
-    	    	  //set particles type to be 0
+    	    	  //set particles type to be 0 ---> Need double check, for these buckets that has real particle, is this correct? ---> Yes, because lately, we re-set the particles_type based on plist
     	    	  Curr_buck->put_particles_type (0);
 
     	    	  //check all particle in the erupt bucket and remove them when necessary!
@@ -394,7 +397,7 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     double range_x[2];
     double range_y[2];
 	double range_z[2];
-    double normc[3];
+    double normc[DIMENSION];
     double dist;
     double vel;
     double rvsq=rv_P*rv_P;
@@ -664,3 +667,5 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
 
     return;
 }
+
+#endif

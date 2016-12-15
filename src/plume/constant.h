@@ -62,7 +62,7 @@ const double TINY = 1.0E-08;
 //For domain adjusting
 const double MSFRC_THRESH = 1.0E-06; //Threshold for determine whether air particle is involved in or not.
 
-//For adding newly erupted particles, that hash table is a temporiry hash table
+//For adding newly erupted/influx particles, that hash table is a temporiry hash table
 const int ERUPT_TABLE_SIZE = 40000;
 
 //For turbulence modeling with SPH-epsilon method
@@ -76,8 +76,8 @@ const double ENERGY_CUT = 1.0;
 #endif
 
 //heat transfer spatial ratio to momentum exchange
-const double HEAT_TRANS_SCALE_RATIO = 1.5;
-const double E_SMOOTH_RATIO = 5.5;
+const double HEAT_TRANS_SCALE_RATIO = 1.0;
+const double E_SMOOTH_RATIO = 1.0;
 
 //Adaptive sml
 const int SML_UPDATE_INT = 50.;

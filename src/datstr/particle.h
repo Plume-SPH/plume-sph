@@ -206,6 +206,30 @@ public:
 			  double
 		      );
 
+   //overloading
+   //Constructor for adding influx particles
+   Particle (
+				    unsigned *, //keyin,
+				    double *,   //crd,
+				    double ,	//m,
+				    double ,	//h,
+				    int , 		//id,
+				    double,		// msfc0,
+					double ,	//Vx,
+					double , 	//Vy,
+					double ,	//ev0,
+					double ,	//rhov,
+					double ,	//pv0,
+					double ,	//gamma_v,
+					double ,	//sndspd,
+					double ,	//ng0_P,
+					double ,	//Cvs_P,
+					double ,	//Cvg_P,
+					double ,	//Cva_P,
+					double ,	//Rg_P,
+					double   	//Ra_P
+		            );
+
   //overload update secondary variables
   void update_second_var(
 		  //Initial mass fraction of solid in erupted material ng0_P
@@ -495,6 +519,14 @@ public:
   void put_mass (double pmss)
   {
     mass = pmss;
+  }
+
+  //! update particles velocity
+  void put_vel (double vel[])
+  {
+    for (int i=0; i<DIMENSION; i++)
+    	state_vars[i+1]=vel[i];
+
   }
 
   //! update density value

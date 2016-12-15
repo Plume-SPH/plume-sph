@@ -34,7 +34,7 @@ using namespace std;
 #endif
 
 /*
- * What happened before this function calling is: scan the most outside potential involved bucket, if any of particles becomes involved (two ways), turn the bucket to be has_involved (has_involved = 3).
+ * What happened before this function calling is: scan the most outside potential involved bucket, if any of particles becomes involved (two ways), turn the bucket to be has_involved (has_involved = 3, means has both involved and potential involved).
  * function which scans these buckets which were originally pressure ghost buckets, if any of its neighbor buckets is has_involved>0, 1) turn it to be a potential_involved_bucket, 2) turn the particle in the bucket to be real particle, 3)particle involved =1 (potential involved);
  * What will happen after this function calling is: add a new layer of pressure ghost bucket as the old pressure ghost bucket become potential_involved.
  */
@@ -136,8 +136,17 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, MatProps * matprops
 				  	                  	   Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
 				  	                  	   assert(p_curr);
 
-				  	                  	   p_curr->put_bc_type (REAL); //turn pressure ghost into real
-				  	                  	   p_curr->set_involved_flag (POTENTIAL_INVOLVED); //involved to be 1 (from non-involved to potential involved!)
+				  	                  	   //need to make sure these particles are not erupt ghost
+				  	                  	   //for ash transportation simulation, should make sure that the particle is not pressure ghost in the eruption area
+#ifdef SIMULATE_ASH
+				  	                  	   if (p_curr->which_phase() == 1)
+				  	                  	   {
+#endif
+				  	                  	      p_curr->put_bc_type (REAL); //turn pressure ghost into real
+				  	                  	      p_curr->set_involved_flag (POTENTIAL_INVOLVED); //involved to be 1 (from non-involved to potential involved!)
+#ifdef SIMULATE_ASH
+				  	                  	   }
+#endif
 				  	                  	}
 				  	                 }// end of if bucket is not MIXED, can not be UNDERGROUND, should be OVERGROUND
 	                                goto next_bnd_buck;

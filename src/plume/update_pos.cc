@@ -94,7 +94,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
     }//end of if particle is real
 
-    //Because updating of erupted particle is based on unsmoothed velocity,
+    //Because updating of erupted particle is based on unsmoothed velocity, ---> Why?
     //SO it is better to do real and erupted separately
     else if (p->is_erupt_ghost()  && timeprops->iferupt() )
     {
@@ -128,6 +128,7 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 
       p->put_coords(pos);
 
+#ifndef SIMULATE_ASH
       //Change ghost to real; change erupt to false
       if ((pos[2]>=Lz_P[0]) ) //need to make it more general!
       {
@@ -135,6 +136,20 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
     	  p->put_smlen(sml_of_phase2);
     	  p->set_involved_flag(INVOLVED); //equivalent to set involved to be true
       }
+#else
+      //Change ghost to real; change erupt to false
+      double routsq=r_out_P*r_out_P;
+      double dist;
+      dist = 0.0;
+      for (i=0; i<2; i++)
+    	  dist += pos[i]*pos[i];
+      if ((dist>=routsq)) //need to make it more general!
+      {
+    	  p->erupt_turn_real();
+    	  p->put_smlen(sml_of_phase2);
+    	  p->set_involved_flag(INVOLVED); //equivalent to set involved to be true
+      }
+#endif
     } //end of if particle is erupted
 
   }//end of go through all particles

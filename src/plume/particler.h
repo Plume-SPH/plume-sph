@@ -196,6 +196,7 @@ void write_output_show(
                   int     //! file format, {\it i.e.} hdf5, tecplot etc
                  );
 
+#ifndef SIMULATE_ASH
 //set up eruption particles
 int setup_erupt(
 		        int, //myid
@@ -217,6 +218,32 @@ void add_new_erupt(
 				  SimProps *,    //simprops
                   double         //Time steps
                   );
+
+#else
+//set up influx particles
+int setup_influx(
+		        int, //myid
+		        THashTable * ,  //P_table
+		        HashTable * ,  //BG_mesh
+                TimeProps * ,  //timeProps
+                MatProps * ,   //matprops
+				SimProps *,    //simprops
+                int            //Number of processor
+                );
+
+//add influx particles
+int add_new_influx(
+		        int, //myid
+		        THashTable * ,  //P_table
+		        HashTable * ,  //BG_mesh
+                TimeProps * ,  //timeProps
+                MatProps * ,   //matprops
+				SimProps *,    //simprops
+                int            //Number of processor
+                );
+
+#endif
+
 //set up initial air
 int
 setup_ini(

@@ -56,7 +56,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 #ifdef DEBUG
    bool do_search = false;
-   unsigned keycheck[TKEYLENGTH] = {71888048, 253371, 0};
+   unsigned keycheck[TKEYLENGTH] = {670833221, 309718877, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
    bool search_bypos = false;
@@ -289,6 +289,19 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
     {
       pi->update_state_vars();// Maybe I only need to update it for once
       pi->update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
+
+  	//For ash transportation, add another criteria for transforming potential involved particles to involved particles: the radial velocity of the particle exceeds 60% of the influx velocity.
+#ifdef SIMULATE_ASH
+  	  double PERCENT_THRESH_VEL=0.8;
+  	  double vel[DIMENSION], vel_sq=0;
+  	  for (i=0; i<2; i++)
+  		vel_sq += (*(pi->get_vel ()+i))*(*(pi->get_vel ()+i));
+
+  	  if ( (vel_sq >= (PERCENT_THRESH_VEL*PERCENT_THRESH_VEL*vel0_P*vel0_P)) && !pi->is_involved())
+  		pi->set_involved_flag(INVOLVED);
+
+
+#endif
     }
 
   // clean up

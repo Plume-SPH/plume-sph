@@ -109,7 +109,7 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
                 double *elev, int myid, int *nproc, Key * neigh, int* bt,
 				double* flat) : BriefBucket (keyi, minx, myid, nproc)
 {
-  erupt_flag = false;
+  erupt_flag = 0;
   int i;
 
   bucket_type = buck_type;
@@ -187,7 +187,7 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
 
 Bucket::Bucket () : BriefBucket()
 {
-  erupt_flag = false;
+  erupt_flag = 0;
 
   int i, j;
 

@@ -906,6 +906,20 @@ void Compute_mass (int np, double *range_x, double *range_y, double *range_z, do
 	*mss = des*volume/np;
 }
 
+/*OVERLOAD FUNCTION
+ * function that get mass
+ * it is suitable for situation where sml is given
+ * for any dimension
+*/
+double Compute_mass (double sml, double des)
+{
+	double volume = 1.0;
+	for (int i=0; i<DIMENSION; i++)
+		volume *= sml;
+
+	return des*volume;
+}
+
 //function that determine whether particle is within bucket or nor
 bool in_bucket(double *bkmax, double *bkmin, double *pcrd)
 {

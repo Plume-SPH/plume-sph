@@ -365,6 +365,16 @@ void Compute_mass (
 		double *sml
 		);
 
+/*OVERLOAD FUNCTION
+ * function that get mass
+ * it is suitable for situation where sml is given
+ * for any dimension
+*/
+double Compute_mass (
+		double ,    // sml,
+		double      //des
+		);
+
 //function that determine whether particle is within bucket or nor
 bool in_bucket(
 		double *, //bucket max coordinate

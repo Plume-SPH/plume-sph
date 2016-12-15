@@ -113,7 +113,7 @@ add_pressure_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps *simprop
 			  // 2) pressure ghost has not been added in Bnd_buck yet
 			  // 3) Bnd_buck is not erupt ghost bucket
 			  // 4) Because the overall work flow is changed slightly, we will not try add pressure ghost for guest bucket, so also need to make sure that : Bnd_buck is not guest.
-		      if (!(Bnd_buck->get_has_involved()) && !Bnd_buck->has_pressure_ghost_particles() && !Bnd_buck->is_erupt () && !Bnd_buck->is_guest())
+		      if (!(Bnd_buck->get_has_involved()) && !Bnd_buck->has_pressure_ghost_particles() && Bnd_buck->get_erupt_flag ()==0 && !Bnd_buck->is_guest())
 			  {
 		        // if any neighbor has_potential_involved or has_involved
 		    	//1) I need to make sure that Bnd_buck is not guest bucket, otherwise, no neighbor info will be available --> So finally, pressure ghost for guest bucket will not be added at this step.

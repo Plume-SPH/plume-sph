@@ -8,16 +8,6 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-//defines which type of simulation for running:
-/*
- * Currently, two options
- * 0: The plume simulation
- * 1: The ash transportation simulation
- */
-#ifndef SIMULATION_TYPE
-#define SIMULATION_TYPE 0
-#endif
-
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef USE_GAUSSIAN
 #define USE_GAUSSIAN
@@ -57,7 +47,7 @@
  * 2: use energy smooth without normalization
  */
 #ifndef HAVE_ENERGY_SMOOTH
-#define HAVE_ENERGY_SMOOTH 1
+#define HAVE_ENERGY_SMOOTH 0
 #endif
 
 /*

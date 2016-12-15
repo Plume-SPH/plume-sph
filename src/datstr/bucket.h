@@ -217,9 +217,10 @@ class Bucket: public BriefBucket
 protected:
   bool active; //active and inactive flag make sense for non brief buckets
                //Active flag should be always false for brief bucket --> not necessary to define it as a member in the class.
-  bool erupt_flag;/*flag that used to indicate the bucket is source bucket or not
-                    * if erupt_flag = true, it is eruption bucket
-                    * if erupt_flag = false, it is not eruption bucket
+  unsigned erupt_flag;/*flag that used to indicate the bucket is inlet source bucket or not
+                    * if erupt_flag = 1, it is eruption bucket for plume
+                    * if erupt_flag = 2, it is influx bucket for umbrella
+                    * if erupt_flag = 0, it is not eruption bucket
                     * */
 
   int has_involved; /*flag that used to determine what kind of particles does the bucekt contain
@@ -230,6 +231,12 @@ protected:
                      */
  //  int newold;
    int particles_type; // used to determine whether bucket has ghost or not.
+                        /*
+                         * 1 bit: real
+                         * 2 bit: wall
+                         * 3 bit: pressure
+                         * 4 bit: erupt/influx
+                         */
    int bucket_type; //mixed, pressure_bc, underground, overground... 0: invalid bucket
 
   double lb_weight;
@@ -329,7 +336,13 @@ public:
   //! mark bucket has eruption
   void mark_erupt ()
   {
-    erupt_flag = true;
+    erupt_flag = 1;
+  }
+
+  //! mark bucket influx bucket
+  void mark_influx ()
+  {
+    erupt_flag = 2;
   }
 
   //! check if point is contained in bucket or not
@@ -394,6 +407,12 @@ public:
     	has_involved &= FIRST_BIT_UP;
   }
 
+  //void set has no involved
+  void set_has_no_involved ()
+  {
+	  has_involved = 0;
+  }
+
   //put particles_type
   void put_particles_type (int in)
    {
@@ -420,6 +439,11 @@ public:
     return has_involved;
   }
 
+  //! get is erupt flag
+  unsigned get_erupt_flag () const
+  {
+	  return erupt_flag;
+  }
   //!get particle list in the buckets
   vector <TKey> get_particle_list () const
   {
@@ -499,7 +523,13 @@ public:
   //! Check is the eruption source or not
   bool is_erupt () const
   {
-    return erupt_flag;
+    return erupt_flag==1;
+  }
+
+  //! Check is the influx source or not
+  bool is_influx () const
+  {
+    return erupt_flag==2;
   }
 
   //! check if bucket has any real particles

@@ -92,7 +92,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   new_old = 0; //default new_old for non-guest particles is 0.
                //for guest particles: -1: old, 1: new
   bc_type = bc;
-  involved = 0;
+  involved = 0; //The default involved for all particles are not involved. When adding air particle, the value will be reset to 1 (potential involved.)
 
   for (i = 0; i < TKEYLENGTH; i++)
     key.key[i] = *(keyin + i);
@@ -176,6 +176,74 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
     state_vars[NO_OF_EQNS - 1]= ev0;
     phase_num= 2;
     mass_frac= 1.; //default is 1
+
+    double des, engr;
+    des = rhov;
+    state_vars[0] = des;
+    engr = ev0;
+    state_vars[NO_OF_EQNS-1] = engr;
+
+    update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
+    pressure = pv0; //Why I have this? --> I need double check this!
+
+//    gamma=gamma_v;
+    sound_speed=sndspd;
+
+  return;
+
+}
+
+
+//overloading
+//Constructor for adding influx particles
+Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, double msfc0,
+		double Vx, double Vy, double ev0, double rhov, double pv0, double gamma_v, double sndspd,
+		double ng0_P, double Cvs_P, double Cvg_P, double Cva_P, double Rg_P, double Ra_P )
+{
+  int i;
+  myprocess = id;
+  mass = m;
+  smlen = h;
+#if DENSITY_UPDATE_SML==0
+  smlen_original = h;
+#endif
+
+  specific_heat_p = 0.;
+
+  update_delayed = false;
+  guest = false;
+  reflection = false;
+  new_old = 0; //default new_old for non-guest particles is 0.
+                 //for guest particles: -1: old, 1: new
+
+  bc_type = 0;
+  involved = 0;
+
+  for (i = 0; i < TKEYLENGTH; i++)
+    key.key[i] = *(keyin + i);
+
+  for (i = 0; i < DIMENSION; i++)
+  {
+    coord[i] = *(crd + i);
+  }
+
+  for (i = 0; i < DIMENSION; i++)
+	  smoothed_v[i] = 0.;
+
+  for (i = 0; i < NO_OF_EQNS; i++)
+      state_vars[i] = 0;//velocity is set to zero
+
+  for (i = 0; i < PHASE_NUM; i++)
+       phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
+                                         //Density will be updated in updating of secondary variable
+
+    state_vars[1] = Vx;//velocity in x direction
+    state_vars[2] = Vy;//velocity in y direction
+
+// The following is newly added
+    state_vars[NO_OF_EQNS - 1]= ev0;
+    phase_num= 2;
+    mass_frac= msfc0;
 
     double des, engr;
     des = rhov;

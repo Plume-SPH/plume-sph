@@ -62,31 +62,6 @@ else
 fi
 
 #-----------------------------------------------------------------------
-#  Check for plume raising up build or ash transportation build
-#-----------------------------------------------------------------------
-AC_MSG_CHECKING([build ash transportation])
-AC_ARG_ENABLE(ash,
-              AS_HELP_STRING([--enable-ash],
-                             [builds ash transportation version]))
-if test "x$enable_ash" != "xno"; then
-  AC_DEFINE([SIMULATE_ASH],[],[build ash transportation code])
-  AC_MSG_RESULT([yes])
-else
-  AC_MSG_RESULT([no])
-fi
-
-# parallel-IO
-AC_ARG_ENABLE([parallel-IO],
-              AS_HELP_STRING([--enable-parallel-IO],
-                       [enables single output file by all procs. Needs hardware support]))
-AC_MSG_CHECKING([enable parallel-IO])
-if test "x$enable_parallel_IO" = "xyes" && test "x$enable_parallel" != "xno"; then
-  AC_DEFINE([PARALLEL_IO], [], [support parallel-IO])
-  AC_MSG_RESULT([yes])
-else
-  AC_MSG_RESULT([no])
-fi
-#-----------------------------------------------------------------------
 #  Check for mpi installation
 #-----------------------------------------------------------------------
 AC_ARG_WITH([mpi],

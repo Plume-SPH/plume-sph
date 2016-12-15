@@ -11,7 +11,7 @@ autoconf
 automake --add-missing
 #remove --enable-debug to turn off debug mode
 #remove --enable-parallel to use serial version : This is not recommended
-./configure --without-gdal --with-hdf5 --enable-debug --enable-parallel CC=mpicc CXX=mpicxx FC=mpifort CXXFLAGS="-std=c++0x" | tee myconfig.out
+./configure --without-gdal --with-hdf5 --enable-debug --enable-parallel --enable-ash CC=mpicc CXX=mpicxx FC=mpifort CXXFLAGS="-std=c++0x" | tee myconfig.out
 
 make | tee mymake.out
 make install | tee mymakeinstall.out
