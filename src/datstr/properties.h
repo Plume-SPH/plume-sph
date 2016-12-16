@@ -189,10 +189,6 @@ struct SimProps
    //Atmosphere data (including wind field)
    Meteo * meteo_data;
 
-#ifdef SIMULATE_ASH
-   list <InfluxAddingPos> AddingL;
-#endif
-
    SimProps()
    {
 	   Idom_x_min = -2000;
@@ -206,10 +202,6 @@ struct SimProps
 	   mass_of_phase2 =0.;
 	   sml_of_phase2 =0.;
 	   meteo_data  = NULL;
-
-#ifdef SIMULATE_ASH
-	   AddingL.clear();
-#endif
 
    }
 

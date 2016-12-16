@@ -91,7 +91,7 @@ setup_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
      * 1) delete all non-erupt ghost particles that within r_out
      * 2) mark bucket as influx
      */
-    vector < TKey > pnew;//particle key
+    vector < TKey > pnew; //particle key
     vector < TKey > plist;
     vector < TKey >::iterator p_itr;
     Particle *pj;
@@ -228,7 +228,6 @@ setup_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
 	    maxdom[i] = *(P_table->get_maxDom() + i);
 	}
 
-	int Nz= ceil((h_top_P - range_z[0])/sml); //it would be better to make sure that (h_bot -Lz[[0])/sml =int and (h_top -h_bot)/sml =int
 	double r_add = r_in_P + 0.99 * sml; //The larger radius of particle adding ring
 	double raddsq=r_add*r_add;
     //adding influx particles
@@ -243,11 +242,6 @@ setup_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
     	else
     	{
     		  Curr_buck = (Bucket*) tempptr;
-
-    		  //Get bucket key
-    		  for (l=0; l<KEYLENGTH; l++)
-    			  buckkey[l]=Curr_buck->getKey().key[l];
-
 
     	      if (Curr_buck->is_influx ())
     	      {
@@ -309,8 +303,8 @@ setup_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
 									  //The next step is for find the particle adding position.
 									  if (dist < raddsq)
 									  {
-										  InfluxAddingPos addpos (crd_p, buckkey);
-										  simprops->AddingL.push_back(addpos);
+										  InfluxAddingPos addpos (crd_p);
+										  Curr_buck->add_adding_pos(addpos);
 									  }
 								   }
 							    }
@@ -339,17 +333,13 @@ add_new_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
 	int i, j, k, l;
 	bool need_add;
 	double crd_p[DIMENSION], crd_n[DIMENSION];
-	unsigned buckkey[KEYLENGTH];
-	int tempid;
-
-	int dir[DIMENSION];
 
 	double normc[DIMENSION];
 	unsigned key[TKEYLENGTH];
     unsigned tkeylen = TKEYLENGTH;
     double dist, dist_sqrt, hsq;
-    double sml = simprops->sml_of_phase2;
-    hsq = sml*sml*0.999; //0.999 is used to make the
+    double sml = simprops->sml_of_phase2; //influx particles are phase 2
+    hsq = sml*sml*0.999; //0.999 is used to avoid repeat adding
 
     Key *neighbors;//bucket key
 
@@ -374,139 +364,146 @@ add_new_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
 
     double velx, vely;
 
-    //Find all buckets as influx buckets
-    HTIterator * itr = new HTIterator (BG_mesh);
-    Bucket * Curr_buck;
-
-	list <InfluxAddingPos> Alist;
-	Alist = simprops->AddingL;
-	list <InfluxAddingPos> :: iterator psit = Alist.begin();
+	vector <InfluxAddingPos>::iterator psit;
 
 	vector < TKey > plist;
 	vector < TKey >::iterator p_itr;
 	Particle *pj;
 
-	need_add =true;
+    //Find all buckets as influx buckets
+    HTIterator * itr = new HTIterator (BG_mesh);
+    Bucket * Curr_buck;
+	BriefBucket *breif_buck = NULL;
+	void * tempptr =NULL;
 
-	for (psit = Alist.begin(); psit != Alist.end(); psit++)
-	{
-		for (l=0; l<DIMENSION; l++)
-			crd_p[l]=psit->crd[l];
+	//We do not add influx particles for guest bucket ---> will syn after adding!
+    itr->reset();
+    while ((tempptr=itr->next ()))
+    {
+    	breif_buck = (BriefBucket *) tempptr;
+    	if (breif_buck->check_brief()) //if is brief bucket, this bucket contains nothing!
+    		continue;
+    	else
+    	{
+    		  Curr_buck = (Bucket*) tempptr;
+    		  if (Curr_buck->has_adding_pos () && ! Curr_buck->is_guest ())
+    		  {
+    			  plist = Curr_buck->get_particle_list ();
+			      neighbors = Curr_buck->get_neighbors();
+			      const int *neigh_proc = Curr_buck->get_neigh_proc();
 
-		for (l=0; l<KEYLENGTH; l++)
-			buckkey[l]=psit->bucket_key[l];
+    			  vector <InfluxAddingPos> Alist =  Curr_buck->get_adding_list ();
+    			  for (psit = Alist.begin(); psit != Alist.end(); psit++)
+    			  {
+    				    need_add =true;
 
-		Curr_buck = (Bucket *) BG_mesh ->lookup(buckkey);
-		plist = Curr_buck->get_particle_list ();
-		for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
-		{
-			  pj = (Particle *) P_table->lookup(*p_itr);
-              if ( ! pj )
-              {
-                  fprintf (stderr, "Particle: {%u, %u, %u} missing on %d.\n",
-                           p_itr->key[0], p_itr->key[1], p_itr->key[2], myid);
-                  fflush (stderr);
-              }
-			  assert (pj);
+    					for (l=0; l<DIMENSION; l++)
+    						crd_p[l]=psit->crd[l];
 
-			  if (pj->is_erupt_ghost ()) // only the erupt ghost particles should be considered
-			  {
-				  for (k=0; k<DIMENSION; k++)
-					  crd_n[k] = *(pj->get_coords() + k);
 
-				  if (crd_p[2] == crd_n[2]) //Because these non involved influx particles move only horizontally, so they are well-layered
-				  {
-					  dist = 0.0;
-					  for (j=0; j<2; j++)
-						  dist += ( (crd_n[j]-crd_p[j])*(crd_n[j]-crd_p[j]) );
+    					for (p_itr = plist.begin(); p_itr != plist.end(); p_itr++)
+    					{
+    						  pj = (Particle *) P_table->lookup(*p_itr);
+    			              if ( ! pj )
+    			              {
+    			                  fprintf (stderr, "Particle: {%u, %u, %u} missing on %d.\n",
+    			                           p_itr->key[0], p_itr->key[1], p_itr->key[2], myid);
+    			                  fflush (stderr);
+    			              }
+    						  assert (pj);
 
-					  if (dist < hsq)
-						  need_add = false;
-				  }
-			  }
+    						  if (pj->is_erupt_ghost ()) // only the erupt ghost particles should be considered
+    						  {
+    							  for (k=0; k<DIMENSION; k++)
+    								  crd_n[k] = *(pj->get_coords() + k);
 
-		}// end of go through all particles in the buckets.
+    							  if (crd_p[2] == crd_n[2]) //Because these non involved influx particles move only horizontally, so they are well-layered
+    							  {
+    								  dist = 0.0;
+    								  for (j=0; j<2; j++)
+    									  dist += ( (crd_n[j]-crd_p[j])*(crd_n[j]-crd_p[j]) );
 
-		//Need also go through neighbor bucket if the adding position are at the most outside layer of Curr_buck
-        neighbors = Curr_buck->get_neighbors();
-        const int *neigh_proc = Curr_buck->get_neigh_proc();
+    								  if (dist < hsq)
+    									  need_add = false;
+    							  }
+    						  }
 
-        for (i = 0; i < NEIGH_SIZE; i++)
-            if (neigh_proc[i] > -1)
-            {
-               Bucket * neigh_buck = (Bucket *) BG_mesh->lookup (neighbors[i]);
+    					}// end of go through all particles in the buckets.
 
-               // if neighbor is not found and it belongs to
-               // different process, it is not needed as it
-               // doesn't have any particles.
-               if ((! neigh_buck) && (neigh_proc[i] != myid))
-                   continue;
-               else
-                   assert(neigh_buck);
+    					//Need also go through neighbor bucket if the adding position are at the most outside layer of Curr_buck
 
-               vector < TKey > plist2 = neigh_buck->get_plist();
-               vector < TKey >::iterator it2;
-               for (it2 = plist2.begin(); it2 != plist2.end(); it2++)
-               {
-                    pj = (Particle *) P_table->lookup(*it2);
-                    if ( ! pj )
-                    {
-                        fprintf (stderr, "Particle: {%u, %u, %u} missing on %d.\n",
-                        it2->key[0], it2->key[1], it2->key[2],myid);
-                        fflush (stderr);
-                    }
-                    assert(pj);
-      			  if (pj->is_erupt_ghost ()) // only the erupt ghost particles should be considered
-      			  {
-      			      for (k=0; k<DIMENSION; k++)
-      				      crd_n[k] = *(pj->get_coords() + k);
+    			        for (i = 0; i < NEIGH_SIZE; i++)
+    			            if (neigh_proc[i] > -1)
+    			            {
+    			               Bucket * neigh_buck = (Bucket *) BG_mesh->lookup (neighbors[i]);
 
-    				  if (crd_p[2] == crd_n[2])
-    				  {
-    					  dist = 0.0;
-    					  for (j=0; j<2; j++)
-    						  dist += ( (crd_n[j]-crd_p[j])*(crd_n[j]-crd_p[j]) );
+    			               // if neighbor is not found and it belongs to
+    			               // different process, it is not needed as it
+    			               // doesn't have any particles.
+    			               if ((! neigh_buck) && (neigh_proc[i] != myid))
+    			                   continue;
+    			               else
+    			                   assert(neigh_buck);
 
-    					  if (dist < hsq)
-    						  need_add = false;
-    				  }
-      			  }
-               }
-            }//end of if bucket is not itself
+    			               vector < TKey > plist2 = neigh_buck->get_plist();
+    			               vector < TKey >::iterator it2;
+    			               for (it2 = plist2.begin(); it2 != plist2.end(); it2++)
+    			               {
+    			                    pj = (Particle *) P_table->lookup(*it2);
+    			                    if ( ! pj )
+    			                    {
+    			                        fprintf (stderr, "Particle: {%u, %u, %u} missing on %d.\n",
+    			                        it2->key[0], it2->key[1], it2->key[2],myid);
+    			                        fflush (stderr);
+    			                    }
+    			                    assert(pj);
+    			      			  if (pj->is_erupt_ghost ()) // only the erupt ghost particles should be considered
+    			      			  {
+    			      			      for (k=0; k<DIMENSION; k++)
+    			      				      crd_n[k] = *(pj->get_coords() + k);
 
-		if (need_add)
-		{
-			  dist_sqrt = sqrt(crd_p[0]*crd_p[0]+crd_p[1]*crd_p[1]);
-			  velx=crd_p[0]/dist_sqrt*vel0_P;
-			  vely=crd_p[1]/dist_sqrt*vel0_P;
-			  for (l = 0; l < DIMENSION; l++)
-				  normc[l] = (crd_p[l] - mindom[l]) /(maxdom[l] - mindom[l]);
+    			    				  if (crd_p[2] == crd_n[2])
+    			    				  {
+    			    					  dist = 0.0;
+    			    					  for (j=0; j<2; j++)
+    			    						  dist += ( (crd_n[j]-crd_p[j])*(crd_n[j]-crd_p[j]) );
 
-			  THSFC3d (normc, add_step, &tkeylen, key);
-			  Particle * pnew = new Particle (key, crd_p, mss, sml, myid, msfc0_P,
-					  velx, vely, ev0_P, rhov_P,  pv0_P,  gamma_v_P,  sndspd,
-					  ng0_P,  Cvs_P,  Cvg_P,  Cva_P,  Rg_P,  Ra_P);
+    			    					  if (dist < hsq)
+    			    						  need_add = false;
+    			    				  }
+    			      			  }
+    			               }
+    			            }//end of if bucket is not itself
 
-			  /*
-			   * Here what I did is only add them into P_table and bucket particle list!
-			   * But the particle in other particles neighbour list is not added!---> will be done in search neighbor (please double check)
-			   * And the particle as guest on other processes is not removed!--->well, all particle on other processes will be added as other processes will execute the same command. ----> you should have already been aware of the fact that no "non_guest" constrain is imposed here.
-			   * And the particle, if it has image, the image should also be added! ---> will be done in search_image and imposing BC (please double check----> yes, I checked that, no problem)
-			   */
-			  // add to hash-table
-			  P_table->add(key, pnew);
-			  TKey pkey (key);
-			  Curr_buck->add_erupt_ghost_particle (pkey);
+    					if (need_add)
+    					{
+    						  dist_sqrt = sqrt(crd_p[0]*crd_p[0]+crd_p[1]*crd_p[1]);
+    						  velx=crd_p[0]/dist_sqrt*vel0_P;
+    						  vely=crd_p[1]/dist_sqrt*vel0_P;
+    						  for (l = 0; l < DIMENSION; l++)
+    							  normc[l] = (crd_p[l] - mindom[l]) /(maxdom[l] - mindom[l]);
 
-		      //default involved is zero---> need to double check what involved should be allocated here-->No problem, should be not involved.
-		      if (Curr_buck->is_guest())
-		      {
-		    	  pnew->put_guest_flag(true);
-				  tempid = Curr_buck->get_myprocess ();
-				  pnew->put_my_processor(tempid);
-		      }
-		}
-	}
+    						  THSFC3d (normc, add_step, &tkeylen, key);
+    						  Particle * pnew = new Particle (key, crd_p, mss, sml, myid, msfc0_P,
+    								  velx, vely, ev0_P, rhov_P,  pv0_P,  gamma_v_P,  sndspd,
+    								  ng0_P,  Cvs_P,  Cvg_P,  Cva_P,  Rg_P,  Ra_P);
+
+    						  /*
+    						   * Here what I did is only add them into P_table and bucket particle list!
+    						   * But the particle in other particles neighbour list is not added!---> will be done in search neighbor (please double check)
+    						   * And the particle as guest on other processes is not removed!--->well, all particle on other processes will be added as other processes will execute the same command. ----> you should have already been aware of the fact that no "non_guest" constrain is imposed here.
+    						   * And the particle, if it has image, the image should also be added! ---> will be done in search_image and imposing BC (please double check----> yes, I checked that, no problem)
+    						   */
+    						  // add to hash-table
+    						  P_table->add(key, pnew);
+    						  TKey pkey (key);
+    						  Curr_buck->add_erupt_ghost_particle (pkey);
+    					}
+    			  }// end of go through the addinglist
+    		  }
+    	}// end of if bucket is not brief
+    }// end of go through all bucket
+
 
     //clear up:
     delete itr;

@@ -379,7 +379,8 @@ main(int argc, char **argv)
     if (timeprops->iferupt())
        add_new_erupt(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
 #else
-    add_new_influx(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
+    if (timeprops->iferupt())// iferupt can also be used for ash transportation, if there is no erupt, the influx will also stop.
+       add_new_influx(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
 #endif
 
 

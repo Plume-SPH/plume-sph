@@ -34,6 +34,7 @@
 #include "repartition_BSFC.h"
 
 MPI_Datatype BRIEF_BUCKET_TYPE;
+MPI_Datatype BUCKET_ADD_TYPE;
 MPI_Datatype BUCKET_TYPE;
 MPI_Datatype PARTICLE_TYPE;
 MPI_Datatype BND_IMAGE_TYPE;
@@ -68,7 +69,30 @@ GMFG_new_MPI_Datatype ()
   MPI_Type_struct (3, blockcounts0, displs0, types0, &BRIEF_BUCKET_TYPE);
   MPI_Type_commit (&BRIEF_BUCKET_TYPE);
 
-  //MPI data structure for bucket
+  //MPI data strucutre for bucketAdd
+    int blockcounts1[3];
+    MPI_Datatype types1[3];
+    MPI_Aint displs1[3];
+    BucketPackAdd * buck_add = new BucketPackAdd;
+
+    blockcounts1[0] = 8 + NEIGH_SIZE + 2*DIMENSION;
+    blockcounts1[1] = KEYLENGTH * (1 + NEIGH_SIZE) + MAX_PARTICLES_PER_BUCKET * TKEYLENGTH ;
+    blockcounts1[2] = (4 * DIMENSION) + 4 + ADDING_NUM*DIMENSION;
+    MPI_Address (&(buck_add->myprocess), &displs1[0]);
+    MPI_Address (&(buck_add->key[0]), &displs1[1]);
+    MPI_Address (&(buck_add->mincrd[0]), &displs1[2]);
+
+    types1[0] = MPI_INT;
+    types1[1] = MPI_UNSIGNED;
+    types1[2] = MPI_DOUBLE;
+
+    for (d = 2; d >= 0; d--)// disp is the relative displacement, what MPI_Address return is absolute disp. That is why we need this step here!
+      displs1[d] -= displs1[0];
+
+    MPI_Type_struct (3, blockcounts1, displs1, types1, &BUCKET_ADD_TYPE);
+    MPI_Type_commit (&BUCKET_ADD_TYPE);
+
+   //MPI data structure for bucket
     int blockcounts[3];
     MPI_Datatype types[3];
     MPI_Aint displs[3];
@@ -90,6 +114,7 @@ GMFG_new_MPI_Datatype ()
 
     MPI_Type_struct (3, blockcounts, displs, types, &BUCKET_TYPE);
     MPI_Type_commit (&BUCKET_TYPE);
+
 
   //MPI data structure for particle
   int blockcounts2[3];
@@ -124,7 +149,6 @@ GMFG_new_MPI_Datatype ()
   MPI_Datatype type3[3] = { MPI_INT, MPI_UNSIGNED, MPI_DOUBLE };
   MPI_Aint displs3[3];
 
-  // get adresses
   BndImage * bndimage = new BndImage ();
 
   MPI_Address (&(bndimage->buckproc), &(displs3[0]));
@@ -137,7 +161,7 @@ GMFG_new_MPI_Datatype ()
   MPI_Type_struct (3, blockcounts3, displs3, type3, &BND_IMAGE_TYPE);
   MPI_Type_commit (&BND_IMAGE_TYPE);
 
-  // create 4th datatype for SFC verticies
+  // create 6th datatype for SFC verticies
   int blockcounts6[3] = {3,KEYLENGTH+1,1};
   MPI_Datatype types6[3] = {MPI_INT, MPI_UNSIGNED, MPI_FLOAT};
   MPI_Aint displs6[3];
@@ -154,7 +178,7 @@ GMFG_new_MPI_Datatype ()
   MPI_Type_struct(3, blockcounts6, displs6, types6, &LB_VERT_TYPE);
   MPI_Type_commit(&LB_VERT_TYPE);
   
-  // create 5th datatype for Boundary Images
+  // create 7th datatype for Boundary Images
   int blockcounts5[2] = { 1, KEYLENGTH };
   MPI_Datatype type5[2] = { MPI_INT, MPI_UNSIGNED};
   MPI_Aint displs5[2];

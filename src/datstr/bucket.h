@@ -16,6 +16,7 @@ using namespace std;
 #  include <constant.h>
 #  include <properties.h>
 #  include <pack_data.h>
+#  include <Involved_header.h>
 
 const int FIRST_BIT_UP = 0x1;
 const int SECND_BIT_UP = 0x2;
@@ -214,6 +215,9 @@ class Bucket: public BriefBucket
   friend void pack_bucket (BucketPack *, Bucket *, int);
   friend void unpack_bucket (BucketPack *, Bucket *, int);
 
+  friend void pack_bucket (BucketPackAdd *, Bucket *, int);
+  friend void unpack_bucket (BucketPackAdd *, Bucket *, int);
+
 protected:
   bool active; //active and inactive flag make sense for non brief buckets
                //Active flag should be always false for brief bucket --> not necessary to define it as a member in the class.
@@ -251,6 +255,8 @@ protected:
 
   vector < TKey > particles;
   vector < TKey > new_plist;
+
+  vector <InfluxAddingPos> velo_inlet_add;
 
 public:
   //! Contructors
@@ -448,6 +454,18 @@ public:
   vector <TKey> get_particle_list () const
   {
 	  return particles;
+  }
+
+  //!get inlet velocity bc particle adding list
+  vector <InfluxAddingPos> get_adding_list () const
+  {
+	  return velo_inlet_add;
+  }
+
+  //! check whethter the bucket has adding position
+  bool has_adding_pos ()
+  {
+	  return velo_inlet_add.size();
   }
 
   //! get repartition weights
@@ -656,6 +674,12 @@ public:
     active = true;
     set_erupt_ghost_particles (true);
     particles.push_back (k);
+  }
+
+  //*! Add velocity inlet bc particle adding position
+  void add_adding_pos (InfluxAddingPos add)
+  {
+	  velo_inlet_add.push_back (add);
   }
 
   //! overloading Add ghost particles to the bucket

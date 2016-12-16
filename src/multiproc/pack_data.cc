@@ -49,7 +49,7 @@ void pack_bucket (BriefBucketPack *buckpack, BriefBucket *sendbuck, int process)
   return;
 }
 
-// pack buck
+// pack buck ---> overload
 void pack_bucket (BucketPack *buckpack, Bucket *sendbuck, int process)
 {
   int j, i;
@@ -104,6 +104,78 @@ void pack_bucket (BucketPack *buckpack, Bucket *sendbuck, int process)
   return;
 }
 
+// pack buck -->Overload
+void pack_bucket (BucketPackAdd *buckpack, Bucket *sendbuck, int process)
+{
+  int j, i;
+  buckpack->myprocess = process;
+  buckpack->bucket_type = sendbuck->bucket_type;
+  buckpack->particles_type = sendbuck->particles_type;
+  buckpack->erupt_flag = (int) sendbuck->erupt_flag;
+  buckpack->activeflag = (int) sendbuck->active;
+  buckpack->has_involved = sendbuck->has_involved;
+  for (j=0; j<KEYLENGTH; j++)
+    buckpack->key[j] = sendbuck->key.key[j];
+
+  for (i = 0; i < NEIGH_SIZE; i++)
+  {
+    buckpack->neigh_proc[i] = sendbuck->neigh_proc[i];
+    for ( j=0; j<KEYLENGTH; j++)
+      buckpack->neighs[i*KEYLENGTH+j] = sendbuck->neighbors[i].key[j];
+  }
+
+//----------------------------------------------------------------------------------------
+  vector<TKey> particles = sendbuck->particles;
+  int psize = (int) particles.size();
+  if ( psize > MAX_PARTICLES_PER_BUCKET)
+  {
+    cerr << "Number of particles exceed Maximum allowable limit." << endl;
+    cerr << "Error at line " << __LINE__ <<" in file " << __FILE__ << endl;
+    exit (1);
+  }
+
+  // pack particle keys within the bucket
+  buckpack->NumParticles = psize;
+  for ( i=0; i < psize; i++ )
+    for ( j=0; j < TKEYLENGTH; j++ )
+      buckpack->particles[i*TKEYLENGTH+j] = particles[i].key[j];
+//----------------------------------------------------------------------------------------
+
+  vector<InfluxAddingPos> add_list = sendbuck->velo_inlet_add;
+  int addsize = (int) add_list.size();
+  if (addsize > ADDING_NUM)
+  {
+    cerr << "Number of adding position exceed Maximum allowable limit." << endl;
+    cerr << "Error at line " << __LINE__ <<" in file " << __FILE__ << endl;
+    exit (1);
+  }
+
+  // pack adding position within the bucket
+  buckpack->NumAdd = addsize;
+  for ( i=0; i < addsize; i++ )
+    for ( j=0; j < DIMENSION; j++ )
+      buckpack->velo_inlet_add[i*DIMENSION+j] = add_list[i].crd[j];
+//--------------------------------------------------------------------------------------------
+
+  // bucket upper and lower limits
+  for (i=0; i < DIMENSION; i++)
+  {
+    buckpack->mincrd[i] = sendbuck->mincrd[i];
+    buckpack->maxcrd[i] = sendbuck->maxcrd[i];
+  }
+
+  // boundary fucntion
+  for (i=0; i<4; i++)
+    buckpack->poly[i] = sendbuck->poly[i];
+
+  for (i=0; i < 2*DIMENSION; i++)
+  {
+    buckpack->bucket_index[i] = sendbuck->bucket_index[i];
+    buckpack->bnd[i] = sendbuck->bnd[i];
+  }
+
+  return;
+}
 
 void pack_particles (Particle *psend, ParticlePack *pack_array)
 {
@@ -211,6 +283,74 @@ void unpack_bucket (BucketPack *recvdBuck, Bucket *buck, int myid)
 
   return;
 }
+
+//unpack bucket
+void unpack_bucket ( BucketPackAdd *recvdBuck, Bucket *buck, int myid)
+{
+
+  int i, j;
+  vector<TKey> plist;
+
+  buck->myprocess = myid;//Why do not use recvdBuck->myprocess? Need double check!
+  buck->bucket_type = recvdBuck->bucket_type;
+  buck->particles_type = recvdBuck->particles_type;
+  buck->active = (bool) recvdBuck->activeflag;
+  buck->erupt_flag = (unsigned) recvdBuck->erupt_flag;
+  buck->has_involved = recvdBuck->has_involved;
+
+  for ( i=0; i < KEYLENGTH; i++ )
+    buck->key.key[i] = recvdBuck->key[i];
+
+  for ( i=0; i < NEIGH_SIZE; i++ )
+  {
+    buck->neigh_proc[i] = recvdBuck->neigh_proc[i];
+    for ( j=0; j < KEYLENGTH; j++ )
+      buck->neighbors[i].key[j]  = recvdBuck->neighs[i*KEYLENGTH+j];
+  }
+
+  for ( i=0; i < DIMENSION; i++ )
+  {
+    buck->mincrd[i] = recvdBuck->mincrd[i];
+    buck->maxcrd[i] = recvdBuck->maxcrd[i];
+  }
+
+  for ( i=0; i < 4; i++ )
+  {
+    buck->poly[i] = recvdBuck->poly[i];
+  }
+
+  // unpack particle keys
+  buck->particles.clear();
+  int psize = recvdBuck->NumParticles;
+  TKey tmpkey;
+  for ( i=0; i < psize; i++ )
+  {
+    for ( j=0; j < TKEYLENGTH; j++ )
+      tmpkey.key[j] = recvdBuck->particles[i*TKEYLENGTH+j];
+    buck->particles.push_back(tmpkey);
+  }
+
+  //unpack adding position
+  buck->velo_inlet_add.clear();
+  int addsize = recvdBuck->NumAdd;
+  InfluxAddingPos tmpAdd;
+  for ( i=0; i < addsize; i++ )
+  {
+    for ( j=0; j < DIMENSION; j++ )
+    	tmpAdd.crd[j] = recvdBuck->velo_inlet_add[i*DIMENSION+j];
+    buck->velo_inlet_add.push_back(tmpAdd);
+  }
+
+  //
+  for (i=0; i < 2*DIMENSION; i++)
+  {
+	  buck->bucket_index[i] = recvdBuck->bucket_index[i];
+	  buck->bnd[i] = recvdBuck->bnd[i];
+  }
+
+  return;
+}
+
 
 void unpack_particle (ParticlePack *packet, Particle *part)
 {

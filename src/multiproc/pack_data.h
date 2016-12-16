@@ -26,6 +26,8 @@
 
 #  include <constant.h>
 
+#  include <Involved_header.h>
+
 struct ParticlePack
 {
   // Integers
@@ -90,6 +92,39 @@ struct BucketPack
   double maxcrd[DIMENSION];
   double poly[4];
   double bnd[2*DIMENSION];
-};
 
+};
+//It is not a good idea to derive BucketPackAdd from BucketPack
+//Because that will change the order of members --> as results, corresponding MPI data structure also need to be changed
+//It will definitely cause trouble in the future
+struct BucketPackAdd
+{
+  // Integers
+  int myprocess;
+  int activeflag; //1 means active, 0 means not active
+  int erupt_flag;/*flag that used to indicate the bucket is source bucket or not
+					* if erupt_flag = 1, it is eruption bucket for plume
+					* if erupt_flag = 2, it is influx bucket for umbrella
+					* if erupt_flag = 0, it is not eruption bucket
+					 * */
+  int bucket_type;//0, 1, 2, 3: Mixed, ect
+  int particles_type; //have real particle or not? have ghost particles or not...
+  int has_involved;//1 means have involved particles, 0 means does not
+  int NumParticles;
+  int NumAdd;
+  int neigh_proc[NEIGH_SIZE];
+  int bucket_index[2*DIMENSION];
+
+  // Unsigned integers
+  unsigned key[KEYLENGTH];
+  unsigned neighs[NEIGH_SIZE * KEYLENGTH];
+  unsigned particles[MAX_PARTICLES_PER_BUCKET * TKEYLENGTH];
+
+  // Doubles
+  double mincrd[DIMENSION];
+  double maxcrd[DIMENSION];
+  double poly[4];
+  double bnd[2*DIMENSION];
+  double velo_inlet_add[ADDING_NUM*DIMENSION];
+};
 #endif // PACK_DATA__H

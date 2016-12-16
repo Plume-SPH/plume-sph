@@ -36,6 +36,7 @@ const double EXT_DOM_COF_BOT = 1.5;//Coefficient that used to extend  -z directi
                                    //This number can be different from EXT_DOM_COF, usually take 1.6 for PARTICLE_DENSITY=5
 // Number of particles per cell per dimension EXT_DOM_COF, to avoid placing particles on the boundary-->placing of particles on the boundary will cause instability of simulation.
 const int PARTICLE_DENSITY=6;
+const int ADDING_NUM= 256; //For 3D is 256
 const double CUTOFF = 5.0;
 
 // Bucket TYPES

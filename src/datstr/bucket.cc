@@ -146,6 +146,9 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
   particles.clear ();
   new_plist.clear ();
 
+  //list of particle adding position in the bucket
+  velo_inlet_add.clear();
+
 //(i,j+1)_________(i+1,j+1)
 //    |           |
 //    |           |
@@ -185,6 +188,8 @@ Bucket::Bucket (unsigned *keyi, double *minx, double *maxx, int buck_type,
   is_brief = false; //The old value true initialized by BriefBucket constructor is over written here
 } // end constuctor
 
+
+//constructor without inputs parameter
 Bucket::Bucket () : BriefBucket()
 {
   erupt_flag = 0;
@@ -208,6 +213,9 @@ Bucket::Bucket () : BriefBucket()
 
   particles.clear ();
   new_plist.clear ();
+
+  //list of particle adding position in the bucket
+  velo_inlet_add.clear();
 
   is_brief = false; //The old value true initialized by BriefBucket constructor is over written here
   return;
