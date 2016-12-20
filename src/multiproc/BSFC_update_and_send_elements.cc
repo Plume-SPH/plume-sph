@@ -227,7 +227,7 @@ BSFC_update_and_send_elements (int myid, int numprocs, double bucket_size,
   int counter_recv[4] = { 0, 0, 0, 0 };
   int blksize = 2 * KEYLENGTH + 1;      // 2 keys + 1 proc
   unsigned *recv_neigh_array = new unsigned[recv_count[0] * blksize];
-  BucketPack *recv_buck_array = new BucketPack[recv_count[1]];
+  BucketPackAdd *recv_buck_array = new BucketPackAdd[recv_count[1]];
   ParticlePack *recv_part_array = new ParticlePack[recv_count[2]];
   BriefBucketPack *recv_briefbuck_array = new BriefBucketPack[recv_count[3]];
   int neigh_tag = 99565, buck_tag = 88476, part_tag = 35262, briefbuck_tag=12347;    // random tag numbers
@@ -246,7 +246,7 @@ BSFC_update_and_send_elements (int myid, int numprocs, double bucket_size,
     {
       j =
         MPI_Irecv ((recv_buck_array + counter_recv[1]),
-                   recv_info[info_num * i + 1], BUCKET_TYPE, i, buck_tag,
+                   recv_info[info_num * i + 1], BUCKET_ADD_TYPE, i, buck_tag,
                    MPI_COMM_WORLD, (recv_request + info_num * i + 1));
       counter_recv[1] += recv_info[info_num * i + 1];
     }
@@ -278,7 +278,7 @@ BSFC_update_and_send_elements (int myid, int numprocs, double bucket_size,
     send_count += send_info[info_num * i]; //send count of neighbor info
 
   //While sending out bucket to other processes,
-  //mykey is send out together with the key of the bucket that is being sent
+  //my key is send out together with the key of the bucket that is being sent --> for the convenience of updating neighbor info
   unsigned *send_neigh_array = new unsigned[send_count * blksize];
   for (i = 0; i < send_count * blksize; i++)
     send_neigh_array[i] = 5; //5=blksize
@@ -665,7 +665,7 @@ BSFC_update_and_send_elements (int myid, int numprocs, double bucket_size,
   for (i = 0; i < numprocs; i++)
     send_count += send_info[info_num * i + 1];
 
-  BucketPack *send_buck_array = new BucketPack[send_count];
+  BucketPackAdd *send_buck_array = new BucketPackAdd [send_count];
 
   counter_send_proc[0] = 0;
   for (i = 1; i < numprocs; i++)
@@ -711,7 +711,7 @@ BSFC_update_and_send_elements (int myid, int numprocs, double bucket_size,
     {
       j =
         MPI_Isend ((send_buck_array + counter), send_info[info_num * i + 1],
-                   BUCKET_TYPE, i, buck_tag, MPI_COMM_WORLD,
+        		BUCKET_ADD_TYPE, i, buck_tag, MPI_COMM_WORLD,
                    (send_request + i));
       counter += send_info[info_num * i + 1];
     }

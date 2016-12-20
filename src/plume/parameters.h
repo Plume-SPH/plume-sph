@@ -764,7 +764,8 @@
 
 
 /*
- * Parameters for umbrella simulation
+ * Parameters for umbrella simulation   ---> based on Pinatubo eruption 1990
+ * These parameter are used for initial test.
  */
 
 

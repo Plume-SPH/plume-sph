@@ -109,7 +109,7 @@
 #endif
 
 
-//Define the erupt velocity profile type
+//Define the erupt velocity profile type --> for plume modeling
 /*
  * 0: uniform
  * 1: parabolic

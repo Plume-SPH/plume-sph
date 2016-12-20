@@ -61,7 +61,11 @@ const double PI = 3.14159265358979;
 const double TINY = 1.0E-08;
 
 //For domain adjusting
+#ifdef SIMULATE_ASH
+const double MSFRC_THRESH = 1.0E-08; //Threshold for determine whether air particle is involved in or not --> use smaller value for ash transportation.
+#else
 const double MSFRC_THRESH = 1.0E-06; //Threshold for determine whether air particle is involved in or not.
+#endif
 
 //For adding newly erupted/influx particles, that hash table is a temporiry hash table
 const int ERUPT_TABLE_SIZE = 40000;
