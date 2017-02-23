@@ -17,6 +17,25 @@
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
 
+//define to use GSPH or not ---> I need move this option to configure after test is done
+/*
+ * USE_GSPH 0 : SPH
+ * USE_GSPH 1 : GSPH
+ */
+
+#ifndef USE_GSPH
+#define USE_GSPH 1
+#endif
+
+//Defines the way to compute derivative. ---> This option only works when USE_GSPH = 1
+/*
+ * NORM_DERIVATIVE 0: derivative is not normalized
+ * NORM_DERIVATIVE 1: derivative is normalized
+ */
+#ifndef NORM_DERIVATIVE
+#define NORM_DERIVATIVE 1
+#endif
+
 
 //Define whether use adaptive smoothing length or not ---> adaptively adjust sml at a given interval, to avoid sml update at every time step
 /*
@@ -45,6 +64,8 @@
  * 0: do not use energy smooth
  * 1: use energy smooth with normalization
  * 2: use energy smooth without normalization
+ *
+ * Note: this option is not available for GSPH yet.
  */
 #ifndef HAVE_ENERGY_SMOOTH
 #define HAVE_ENERGY_SMOOTH 0
@@ -72,6 +93,8 @@
 /*
  * 0: The basic symmetric format which can conserve momentum, without any further modification
  * 1: Based on 0, an external pressure is deduce by every pressure, the external pressure the pressure of atmosphere at corresponding height of particle a. ---> The purpose of this is to make sure when pressure gradient vanish the acceleration will be zero.
+ *    Note: Please note that for GSPH, such tricky is not necessary, as GSPH can guarantee zero RHS of momentum equation when pressure gradient is zero.
+ *    So you should not use this option together with
  */
 #ifndef MOMENTUM_DISCRETIZE
 #define MOMENTUM_DISCRETIZE 0

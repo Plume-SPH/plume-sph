@@ -15,6 +15,7 @@ const int PHASE_NUM=2;
 const int KEYLENGTH=2;
 const int TKEYLENGTH=KEYLENGTH+1;
 const int NO_OF_EQNS=DIMENSION+2;/*For my current model which assumed immediate thermal and dynamic equilibrium!*/
+const int NOEQxDIM=NO_OF_EQNS*DIMENSION; //total number of gradients
 const int DIMSQRD=9;
 const int NEIGH_SIZE=27;
 const int MAX_PARTICLES_PER_BUCKET=6000; // usually 6000 for JPUE, 4500 for plume modelling
@@ -86,5 +87,8 @@ const double E_SMOOTH_RATIO = 1.0;
 
 //Adaptive sml
 const int SML_UPDATE_INT = 50.;
+
+//Parameters for GSPH
+const double C_SHOCK = 3.0; //corresponding to number of particles in shock surface.
 
 #endif /* CONSTANT_H_ */

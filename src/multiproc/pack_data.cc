@@ -206,6 +206,24 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   for (j=0; j < NO_OF_EQNS; j++)
     pack_array->state_vars[j] = psend->state_vars[j];
 
+#if USE_GSPH==1  //Assume 3D
+  for (j = 0; j < DIMENSION; j++)
+	  pack_array->d_rho[j]=psend->d_rho[j];
+
+  for (j = 0; j < DIMENSION; j++)
+	  pack_array->d_u[j]=psend->d_u[j];
+
+  for (j = 0; j < DIMENSION; j++)
+	  pack_array->d_v[j]=psend->d_v[j];
+
+  for (j = 0; j < DIMENSION; j++)
+	  pack_array->d_w[j]=psend->d_w[j];
+
+  for (j = 0; j < DIMENSION; j++)
+	  pack_array->d_p[j]=psend->d_p[j];
+
+#endif
+
   return;
 }
 
@@ -378,6 +396,24 @@ void unpack_particle (ParticlePack *packet, Particle *part)
 
   for ( i=0; i < NO_OF_EQNS; i++ )
     part->state_vars[i] = packet->state_vars[i];
+
+#if USE_GSPH==1  //Assume 3D
+  //derivatives
+  for ( i=0; i < DIMENSION; i++ )
+    part->d_rho[i] = packet->d_rho[i];
+
+  for ( i=0; i < DIMENSION; i++ )
+    part->d_u[i] = packet->d_u[i];
+
+  for ( i=0; i < DIMENSION; i++ )
+    part->d_v[i] = packet->d_v[i];
+
+  for ( i=0; i < DIMENSION; i++ )
+    part->d_w[i] = packet->d_w[i];
+
+  for ( i=0; i < DIMENSION; i++ )
+    part->d_p[i] = packet->d_p[i];
+#endif
 
   part->mass_frac = packet->mass_frac;
 

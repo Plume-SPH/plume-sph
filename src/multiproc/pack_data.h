@@ -51,6 +51,16 @@ struct ParticlePack
   double coords[DIMENSION];
   double smoothed_v[DIMENSION];
   double state_vars[NO_OF_EQNS];// rho, v , e
+
+#if USE_GSPH==1  //Assume 3D
+  //derivatives
+  double d_rho[DIMENSION];
+  double d_u[DIMENSION];
+  double d_v[DIMENSION];
+  double d_w[DIMENSION];
+  double d_p[DIMENSION];
+#endif
+
 };
 
 struct BriefBucketPack

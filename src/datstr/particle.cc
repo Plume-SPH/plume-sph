@@ -60,6 +60,24 @@ Particle::Particle ()
   phase_num = 1;
   myprocess = 10000; //The default process id
 
+#if USE_GSPH==1  //Assume 3D
+  //derivatives
+  for (i = 0; i < DIMENSION; i++)
+	  d_rho[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_u[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_v[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_w[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_p[i]=0.0;
+#endif
+
   return;
 }
 
@@ -106,7 +124,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 	  smoothed_v[i] = 0.;
 
   for (i = 0; i < NO_OF_EQNS; i++)
-    state_vars[i] = 0;
+      state_vars[i] = 0;
 //
 //  for (i = 0; i < PHASE_NUM; i++)
 //  	  phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
@@ -121,6 +139,24 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   sound_speed = sndspd;
   phase_num = phs_num;
   myprocess = id;
+
+#if USE_GSPH==1  //Assume 3D
+  //derivatives
+  for (i = 0; i < DIMENSION; i++)
+	  d_rho[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_u[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_v[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_w[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_p[i]=0.0;
+#endif
 
   return;
 }
@@ -189,6 +225,24 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
 //    gamma=gamma_v;
     sound_speed=sndspd;
 
+#if USE_GSPH==1  //Assume 3D
+  //derivatives
+  for (i = 0; i < DIMENSION; i++)
+	  d_rho[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_u[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_v[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_w[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_p[i]=0.0;
+#endif
+
   return;
 
 }
@@ -256,6 +310,24 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
 
 //    gamma=gamma_v;
     sound_speed=sndspd;
+
+#if USE_GSPH==1  //Assume 3D
+  //derivatives
+  for (i = 0; i < DIMENSION; i++)
+	  d_rho[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_u[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_v[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_w[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_p[i]=0.0;
+#endif
 
   return;
 

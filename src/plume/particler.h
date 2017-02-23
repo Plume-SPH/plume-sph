@@ -292,7 +292,10 @@ shift_brief_buck (
 		int          //myid
 		);
 
-
+//Function for computing gradient of all state variables.
+void calc_gradients(
+		THashTable * //P_table
+		);
 ////This function is useless should be removed.
 //int
 //put_ghost_particles (

@@ -97,6 +97,15 @@ protected:
   //! new_state_vars stores updated state variables
   double new_state_vars[NO_OF_EQNS];
 
+#if USE_GSPH==1  //Assume 3D
+  //derivatives
+  double d_rho[DIMENSION];
+  double d_u[DIMENSION];
+  double d_v[DIMENSION];
+  double d_w[DIMENSION];
+  double d_p[DIMENSION];
+#endif
+
   //!to indicate whether the particle is eruption ghost particle or not
   int bc_type; //bc_type=0: eruption ghost
                //bc_type=1: pressure ghost
@@ -374,6 +383,38 @@ public:
     return temperature;
   }
 
+#if USE_GSPH==1  //Assume 3D
+  //! get density derivative
+  const double * get_density_derivative () const
+  {
+    return d_rho;
+  }
+
+  //! get velocity_x derivative
+  const double * get_velocity_u_derivative () const
+  {
+    return d_u;
+  }
+
+  //! get velocity_y derivative
+  const double * get_velocity_v_derivative () const
+  {
+    return d_v;
+  }
+
+  //! get velocity_z derivative
+  const double * get_velocity_w_derivative () const
+  {
+    return d_w;
+  }
+
+  //! get velocity_x derivative
+  const double * get_pressure_derivative () const
+  {
+    return d_p;
+  }
+#endif
+
 
   //! get my processor
   const int get_my_processor () const
@@ -624,6 +665,43 @@ public:
   {
       new_state_vars[ NO_OF_EQNS-1]=new_engr;
   }
+
+#if USE_GSPH==1  //Assume 3D
+  //! put density derivative
+  void put_density_d (double d[])
+  {
+      for (int i=0; i<DIMENSION; i++)
+    	  d_rho[i]=d[i];
+  }
+
+  //! put velocity u derivative
+  void put_velocity_u_d (double d[])
+  {
+      for (int i=0; i<DIMENSION; i++)
+    	  d_u[i]=d[i];
+  }
+
+  //! put velocity v derivative
+  void put_velocity_v_d (double d[])
+  {
+      for (int i=0; i<DIMENSION; i++)
+    	  d_v[i]=d[i];
+  }
+
+  //! put velocity w derivative
+  void put_velocity_w_d (double d[])
+  {
+      for (int i=0; i<DIMENSION; i++)
+    	  d_w[i]=d[i];
+  }
+
+  //! put pressure derivative
+  void put_pressure_d (double d[])
+  {
+      for (int i=0; i<DIMENSION; i++)
+    	  d_p[i]=d[i];
+  }
+#endif
 
   //! update state_vars
   void update_state_vars ()

@@ -124,18 +124,46 @@ double dot(
             double *);
 
 /*!
- *  Rotation of Vector.
+ *  For very small dimensional matericies
  *  For any higher order multiplication BLAS etc is preferred
  */
-void matrix_vec_mult(
-                      //! Matix A ( assumed square matrix )
-                      double *A,
-                      // matirx leading dim, i.e. N
-                      int N,
-                      //! Vector b
-                      double *b,
-                      //! c = A*b
-                      double *c);
+void matrix_matrix_mult(
+                         //! Matix A ( N x P )
+                         double *A,
+                         //! Matix A leading dim, i.e. N
+                         int N,
+                         //! Matrix A lagging dim i.e. P
+                         int P,
+                         //! Matrix B ( P x M )
+                         double *B,
+                         //! Matrix B lagging dim, i.e. M
+                         int M,
+                         //! C = A*B
+                         double *C);
+
+
+/*!
+ *  Solve Liner equations
+ *  Used to compute velocity gradients
+ */
+void linsolve(
+               //! Matix A (3,3)
+               double * A,
+               //! RHS ( set of vectors, in columns )
+               double * b,
+               //! No of vectors in the set, (N x M)
+               int M,
+               //! solution (N x M)
+               double *d);
+
+void linsolve31 (
+                 //! 3 x 3 Matrix as row-major format (LHS)
+                 double * A,
+                 //! 3 x 1 column vector (RHS)
+                 double * d,
+                 //! 3 x 1 solution vector
+                 double * sol);
+
 
 void lsq_surf3 (
                 //! [x(i), x(i+1)]
@@ -509,4 +537,55 @@ bool determine_erupt_buket (
 		double *   //zcrd, defines the dimension of buckets
 		);
 
+//function for Riemann solver:
+void Riemann_Solver(
+		double rhoi,
+		double rohj,
+		double vi[DIMENSION],
+		double vj[DIMENSION],
+		double pi,
+		double pj,
+		double hi,
+		double hj,
+		double xi[DIMENSION],
+		double xj[DIMENSION],
+		double CSi,
+		double CSj,
+		double gi,
+		double gj,
+		double dt_half,
+		double* p_star,
+		double* v_star
+		);
+
+//Overloading of function for Riemann solver, the derivative is computed in a more accurate way,
+void Riemann_Solver(
+		double rhoi,
+		double rohj,
+		double vi[DIMENSION],
+		double vj[DIMENSION],
+		double pi,
+		double pj,
+		double hi,
+		double hj,
+		double xi[DIMENSION],
+		double xj[DIMENSION],
+		double CSi,
+		double CSj,
+		double gi,
+		double gj,
+		double dt_half,
+		double DDri[DIMENSION],
+		double DDrj[DIMENSION],
+		double DDui[DIMENSION],
+		double DDuj[DIMENSION],
+		double DDvi[DIMENSION],
+		double DDvj[DIMENSION],
+		double DDwi[DIMENSION],
+		double DDwj[DIMENSION],
+		double DDpi[DIMENSION],
+		double DDpj[DIMENSION],
+		double* p_star,
+		double* v_star
+		);
 #endif  //SPH_HEADER_H_

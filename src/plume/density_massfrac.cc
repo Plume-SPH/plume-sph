@@ -32,22 +32,29 @@ smooth_density(THashTable * P_table)
   int phs_i;
   double tmprho[PHASE_NUM]={0.0}, phaserho[PHASE_NUM]={0.0}, mssfrc;
   double wnorm[PHASE_NUM], norm;
-  double wm;
+  double wm, mj, rhoj;
+
+//#if USE_GSPH==1
+//  double pressj;
+//  double dwdx[DIMENSION];
+//  double dr[DIMENSION], du[DIMENSION], dv[DIMENSION], dw[DIMENSION], dp[DIMENSION];
+//#endif
 
 #if HAVE_ENERGY_SMOOTH ==1
   double engr, wm_e, wnorm_e, s_e[DIMENSION];
 #elif HAVE_ENERGY_SMOOTH ==2
   double engr, wm_e, s_e[DIMENSION];
 #endif
+
   // create a Hash Table iterator instance
   THTIterator * itr = new THTIterator (P_table);
   Particle * pi = NULL;
 
 #ifdef DEBUG
    bool check_den = false;
-   bool do_search = false;
+   bool do_search = true;
    bool check_mssfrac = false;
-   unsigned keycheck[TKEYLENGTH] =  {69674717, 3383906357, 0};
+   unsigned keycheck[TKEYLENGTH] = {71865376, 3870289833, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
 
@@ -96,6 +103,18 @@ smooth_density(THashTable * P_table)
       engr = 0.0;
 #endif
 
+//#if USE_GSPH==1
+//      //initialize
+//	 for (k = 0; k < DIMENSION; k++)
+//	 {
+//		 dr[k] = 0.0;
+//		 du[k] = 0.0;
+//		 dv[k] = 0.0;
+//		 dw[k] = 0.0;
+//		 dp[k] = 0.0;
+//	 }
+//#endif
+
       vector <TKey> neighs = pi->get_neighs ();
       vector <TKey> :: iterator p_itr;
 
@@ -109,6 +128,9 @@ smooth_density(THashTable * P_table)
           if (pj->contr_dens()) //In my old code, I did not have this so I will get very large density at the very beginning of the eruption.
           //update density for each phase
           //Probably, a switch case is better than for loop in terms of efficiency!
+          {
+        	  mj=pj->get_mass();
+        	  rhoj=pj->get_density();
 			  for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
 			  {
 				  //for each phase
@@ -127,32 +149,45 @@ smooth_density(THashTable * P_table)
 #if HAVE_ENERGY_SMOOTH==1
 						for (k = 0; k < DIMENSION; k++)
 							s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
-						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * (pj->get_mass());
-						wnorm_e +=wm_e/pj->get_density();
-						engr +=wm_e*pj->get_energy()/pj->get_density();
+						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj);
+						wnorm_e +=wm_e/rhoj;
+						engr +=wm_e*pj->get_energy()/rhoj;
 #elif HAVE_ENERGY_SMOOTH==2
 						for (k = 0; k < DIMENSION; k++)
 							s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
-						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * (pj->get_mass());
-						engr +=wm_e*pj->get_energy()/pj->get_density();
+						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj;
+						engr +=wm_e*pj->get_energy()/rhoj;
 #endif
 						wght = weight(s, hi);
-						wm = wght * (pj->get_mass());
+						wm = wght * mj;
 						tmprho[phs_i-1] += wm;
 #if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 22)
 						//View multiple phase SPH as one set of discretized point
-						wnorm[phs_i-1] += wm / pj->get_density();
+						wnorm[phs_i-1] += wm / rhoj;
 #elif (DENSITY_UPDATE_SPH == 2) || (DENSITY_UPDATE_SPH == 12)
 						//View multiple phase SPH as two independent sets of discretized point
 						double phase_des=*(pj->get_phase_density ()+ phs_i -1);
 						if (phase_des>0)
 						    wnorm[phs_i-1] += wm /phase_des;
 #endif
+//#if USE_GSPH==1
+//						const double * velj = pj->get_vel ();
+//						pressj=pj->get_pressure ();
+//						for (k = 0; k < DIMENSION; k++)
+//						{
+//				            dwdx[k] = d_weight (s, hi, k);
+//							dr[k] += mj*dwdx[k];
+//							du[k] += mj*dwdx[k]*velj[0]/rhoj;
+//							dv[k] += mj*dwdx[k]*velj[1]/rhoj;
+//							dw[k] += mj*dwdx[k]*velj[2]/rhoj;
+//							dp[k] += mj*dwdx[k]*pressj/rhoj;
+//						}
+//#endif
 					 }
 				  }//end of if pj->which_phase()==phs_i
 
 			  }//end of loop for phase
-          //end of if particle will contribute to the density.
+          }//end of if particle will contribute to the density.
 
       }//end of go through all neighbors
 
@@ -234,6 +269,15 @@ smooth_density(THashTable * P_table)
 #endif
       assert(mssfrc <= 1);
       pi->put_new_mass_frac(mssfrc);
+
+//#if USE_GSPH==1
+//      //before updating, normalization might needed: Normalization of derivative in 3D need to be careful!!
+//      pi->put_density_d(dr);
+//      pi->put_velocity_u_d(du);
+//      pi->put_velocity_v_d(dv);
+//      pi->put_velocity_w_d(dw);
+//      pi->put_pressure_d(dp);
+//#endif
 
 //      /*
 //       * the bad thing here is: particle do not have information about its bgmesh, the better way is set adapt +=1 only if the bucket where the particle belong to originally does not have involved particles.

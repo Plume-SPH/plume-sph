@@ -20,6 +20,7 @@ particler_SOURCES = add_air.cc \
                     add_wall_ghost.cc \
                     adapt_domain.cc \
                     bcond.cc \
+                     calculate_gradient.cc \
                     constant.h \
                     dataread.cc \
                     density_massfrac.cc  \

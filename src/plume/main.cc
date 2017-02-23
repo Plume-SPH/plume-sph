@@ -74,7 +74,7 @@ main(int argc, char **argv)
   bool find = false;
   bool check_buck = false;
   bool check_mesh_err = false;
-  bool check_part_tp =false;
+  bool check_part_tp = false;
   bool check_bypos = false;
   bool find_large_density = false;
   bool search_byphase = false;
@@ -352,14 +352,25 @@ main(int argc, char **argv)
     // smooth out density oscillations (if any)
     smooth_density(P_table);
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
-#ifdef DEBUG
-  if (check_part)
-	  check_particle_bykey (P_table);
+#if USE_GSPH==1
+    // smooth out density oscillations (if any)
+    calc_gradients(P_table);
+
+#ifdef MULTI_PROC
+    // update guests on all procs
+    move_data(numprocs, myid, my_comm, P_table, BG_mesh);
+#endif
+
 #endif
 
 #ifdef HAVE_TURBULENCE_LANS
@@ -369,6 +380,11 @@ main(int argc, char **argv)
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
+#endif
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
 #endif
 
     // update particle positions
