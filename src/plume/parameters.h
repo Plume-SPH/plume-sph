@@ -319,7 +319,7 @@ const int num_erupt_perlayer = 10;
 //for strong coarse resolution
 //--> 2544 for 10 each direction sml1=400, 825 for 6 each direction, sml1=600, 1628 for 8 each direction sml1=500, 1908 for sml1=300, 10 each direction (sml2=141.5),  900 for sml1=141.5=sml2, 1764 for sml1 =100, sml2 =101.4
 //----> 7056 for sml1=50, sml2=50.5, 3493 for sml1=200, sml2=101, 954 for sml1=150; sml2=141.5, 1337 for sml1=150, sml2=101; 1515 for sm1=170 sml2=101;
-const int num_erupt_particles = 3493; //number of particle in the initial erupt duct
+const int num_erupt_particles = 1515; //number of particle in the initial erupt duct
 ////for weak
 //4963 for sml1=30, sml2=5.44 ; 1271 for sml1=15, sml2=6.8
 //const int num_erupt_particles = 1271; //number of particle in the initial erupt duct

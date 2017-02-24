@@ -115,7 +115,6 @@
  */
 #ifndef ATMOSPHERE_TYPE
 #define ATMOSPHERE_TYPE 4
-//The default value represents hydro-static atmosphere
 #endif
 
 
