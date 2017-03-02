@@ -27,13 +27,59 @@
 #define USE_GSPH 1
 #endif
 
-//Defines the way to compute derivative. ---> This option only works when USE_GSPH = 1
+
+//define the order that used to approximate specific volume between two particles for GSPH
+/* GSPH_SPECIFIC_VOL_APP 0: zeroth order --> means use fi as fr and fj as fl directly
+ * GSPH_SPECIFIC_VOL_APP 1: linear --> See Shu-ichiro's 2002 paper
+ * GSPH_SPECIFIC_VOL_APP 3: Cubic --> See Shu-ichiro's 2002 paper
+ */
+#if USE_GSPH==1
+#ifndef GSPH_SPECIFIC_VOL_APP
+#define  GSPH_SPECIFIC_VOL_APP 3
+#endif
+#endif
+
+//define wether to apply the minimum derivative condition and how to apply it
+/*
+ * MINI_DERIVATIVE_COND 0: Do not apply
+ * MINI_DERIVATIVE_COND 1: apply to variables one by one and side by side, that is to say, if negative pressure on left side shows up, only apply the minimum derivative condition for pressure on the left side.
+ * MINI_DERIVATIVE_COND 2: apply to variables one by one for both side, that is to say, if negative pressure on left side shows up, only apply the minimum derivative condition for pressure on both sides.
+ * MINI_DERIVATIVE_COND 3: apply to all variables on both sides, that is to say, if negative pressure on one side shows up, apply the minimum derivative condition for all variables (pressure, density and velocity) on both sides.
+ */
+#if USE_GSPH==1
+#ifndef  MINI_DERIVATIVE_COND
+#define  MINI_DERIVATIVE_COND 3
+#endif
+#endif
+
+//define whether to use original monotonicity condition or modified monotonicity condition.
+/* GSPH_MODIFIED_MONOTONICITY 0: original --> See Shu-ichiro's 2002 paper
+ * GSPH_MODIFIED_MONOTONICITY 1: modified --> Based on Shu-ichiro's 2002 paper, the second monotonicity condition is change be to use absolute value of (ul-ur) There is no abs in Shu-ichiro's 2002 paper
+ */
+#if USE_GSPH==1
+#ifndef GSPH_MODIFIED_MONOTONICITY
+#define  GSPH_MODIFIED_MONOTONICITY 1
+#endif
+#endif
+
+//Defines the way to compute derivative. ---> This option will be needed only when USE_GSPH = 1
 /*
  * NORM_DERIVATIVE 0: derivative is not normalized
  * NORM_DERIVATIVE 1: derivative is normalized
  */
+#if USE_GSPH==1
 #ifndef NORM_DERIVATIVE
 #define NORM_DERIVATIVE 1
+#endif
+#endif
+
+//Define whether use nature boundary condition for ks or essentiall boundary ks
+/*
+ * 0: essential
+ * 1: nature
+ */
+#ifndef BC_FOR_KX
+#define BC_FOR_KX 1
 #endif
 
 

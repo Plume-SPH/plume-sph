@@ -40,6 +40,10 @@ move_bnd_images (int myid, int nump, THashTable * P_table, HashTable * BG_mesh,
   int i, j, k;
   double uvec[NO_OF_EQNS];
 
+#if BC_FOR_KX==1
+  double ks;
+#endif
+
   int img_tag = 3152;
   int *send_info = new int[nump];
   int *recv_info = new int[nump];
@@ -164,6 +168,11 @@ move_bnd_images (int myid, int nump, THashTable * P_table, HashTable * BG_mesh,
         for (int i2 = 0; i2 < NO_OF_EQNS; i2++)
           uvec[i2] = recv_buf[j][k].state_vars[i2];
         pghost->put_state_vars (uvec);
+
+#if BC_FOR_KX==1
+        ks=recv_buf[j][k].ks;
+        pghost->put_mass_frac(ks);
+#endif
 
 #if FLUID_COMPRESSIBILITY==1 //sound speed is need for secondary variable update if a weakly compressible EOS is adopted here.
         pghost->put_sound_speed (sndspd);

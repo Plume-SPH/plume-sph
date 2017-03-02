@@ -32,6 +32,10 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
   double uvec[NO_OF_EQNS], state_vars[NO_OF_EQNS];
   double dx[DIMENSION], s[DIMENSION], pcoord[DIMENSION];
   double supp, bnddist, wnorm;
+
+#if BC_FOR_KX==1
+  double ks;
+#endif
 //  double engr;
 
   Key * neighbors;//bucket key
@@ -78,6 +82,10 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
       wnorm = 0.;
       for (i = 0; i < NO_OF_EQNS; i++)
         uvec[i] = 0.;
+
+#if BC_FOR_KX==1
+      ks = 0.0;
+#endif
 
       // get hold of bucket containing the image --> it should be a no brief bucket, so no worries about whether the bucket is brief bucket or not!
       Bucket *buck = (Bucket *) BG_mesh->lookup(i_img->bucket_key);
@@ -169,6 +177,9 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
                       uvec[2] += mj * w * state_vars[2] / state_vars[0];
                       uvec[3] += mj * w * state_vars[3] / state_vars[0];
                       uvec[4] += mj * w * state_vars[4] / state_vars[0];//internal energy
+#if BC_FOR_KX==1
+                      ks += mj * w * pj->get_mass_frac() / state_vars[0];
+#endif
                       wnorm += mj * w / state_vars[0];
                     }
                   }
@@ -179,13 +190,22 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
 
       // renormalize
       if ( wnorm > 0. )
+      {
         for (i = 0; i < NO_OF_EQNS; i++)
           uvec[i] /= wnorm;
+#if BC_FOR_KX==1
+        ks = ks/wnorm;
+#endif
+      }
       else //wnorm might equal to zero only when there is no other particles within kernel support.
       {
         uvec[0] = 1.;
         for (i = 1; i < NO_OF_EQNS; i++)
           uvec[i] = 0.;
+
+#if BC_FOR_KX==1
+        ks = 0.0;
+#endif
       }
 
 //      /*In old code, the following part is inside if statement, actually, they should be at outside of if*/
@@ -202,6 +222,10 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
       {
         p_ghost->put_state_vars(uvec);
 
+#if BC_FOR_KX==1
+        p_ghost->put_mass_frac(ks);
+#endif
+
 #if FLUID_COMPRESSIBILITY==1 //sound speed is need for secondary variable update if a weakly compressible EOS is adopted here.
         p_ghost->put_sound_speed (sndspd);
 #endif
@@ -214,6 +238,10 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
       {
         for (i = 0; i < NO_OF_EQNS; i++)
           i_img->state_vars[i] = uvec[i];
+
+#if BC_FOR_KX==1
+        p_ghost->put_mass_frac(ks);
+#endif
           p_ghost->put_update_delayed(true); //This was missing in old code, added later.
       }
     }//end of go through all wall ghost particles

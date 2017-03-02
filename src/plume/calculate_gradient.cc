@@ -26,20 +26,23 @@ void calc_gradients(THashTable *P_table)
 
 	  double dwdx[DIMENSION], dwm_rho[DIMENSION];
       double AA[DIMENSION][DIMENSION], FF[DIMENSION][NO_OF_EQNS], ff[DIMENSION][NO_OF_EQNS];
+      double gradU[NOEQxDIM];
 
       vector<Key> neighs;
-      static int icount = 0;
 
 	  // create a Hash Table iterator instance
 	  THTIterator * itr = new THTIterator (P_table);
 	  Particle * pi = NULL;
 
 #ifdef DEBUG
-	   bool check_den = false;
-	   bool do_search = false;
-	   bool check_mssfrac = false;
-	   unsigned keycheck[TKEYLENGTH] = {71865376, 3870289833, 0};
+	   bool do_search = true;
+	   unsigned keycheck[TKEYLENGTH] = {268315389, 3363091095, 0};
 	   unsigned keytemp[TKEYLENGTH];
+
+	   bool search_by_pos =false;
+	   double coord_check[DIMENSION]={7350, 8850, 8550};
+	   double coord_temp[DIMENSION];
+
 #endif
 
 	  // iterate over the table
@@ -56,6 +59,15 @@ void calc_gradients(THashTable *P_table)
 				    keytemp[i] = pi->getKey ().key[i];
 
 			    if (find_particle (keytemp, keycheck))
+				    cout << "The particle found!" << endl;
+			}
+
+			if (search_by_pos)
+			{
+			    for (i = 0; i < DIMENSION; i++)
+			    	coord_temp[i] = *(pi->get_coords ()+i);
+
+			    if (find_particle (coord_temp, coord_check))
 				    cout << "The particle found!" << endl;
 			}
 #endif
@@ -78,8 +90,12 @@ void calc_gradients(THashTable *P_table)
 	      {
 	        for (j = 0; j < DIMENSION; j++)
 	          AA[i][j] = 0.0;
+
 	        for (j = 0; j < NO_OF_EQNS; j++)
+	        {
 	          FF[i][j] = 0.0;
+	          ff[i][j] = 0.0; //It is necessary to make initial value of ff to be zero
+	        }
 	      }
 
 	      vector <TKey> neighs = pi->get_neighs ();
@@ -95,48 +111,47 @@ void calc_gradients(THashTable *P_table)
 		      if (*pi == *pj)
 		         continue;
 
-	          // guests are included ghosts are not,
-	          if (pj->contr_dens())
-	          {
-	        	  nreal++;
-	        	  mj=pj->get_mass();
-	        	  rhoj=pj->get_density();
+	          // All particles should be included for updating gradient ..
+	          //if (pj->contr_dens())
+	          //{
 
-				  // the boundary deficiency and interface deficiency is handled by wnorm!
-				  for (i = 0; i < DIMENSION; i++)
-					  dx[i] = xi[i] - *(pj->get_coords() + i);
+			  // the boundary deficiency and interface deficiency is handled by wnorm!
+			  for (i = 0; i < DIMENSION; i++)
+				  dx[i] = xi[i] - *(pj->get_coords() + i);
 
-				  if (in_support(dx, supp))
+			  if (in_support(dx, supp))
+			  {
+
+				  nreal++;
+				  mj=pj->get_mass();
+				  rhoj=pj->get_density();
+
+				  for (k = 0; k < DIMENSION; k++)
+					  s[k] = dx[k] / hi;
+
+				  for (k = 0; k < DIMENSION; k++)
 				  {
-					  //
-					  for (k = 0; k < DIMENSION; k++)
-						  s[k] = dx[k] / hi;
+					  dwdx[k] = d_weight (s, hi, k);
+					  dwm_rho[k] = dwdx[k] * mj/rhoj; //dwdx * mj * rhoj
+				  }
 
-			          for (k = 0; k < DIMENSION; k++)
-			          {
-			              dwdx[k] = d_weight (s, hi, k);
-			              dwm_rho[k] = dwdx[k] * mj/rhoj; //dwdx * mj * rhoj
-			          }
+				  // Get matrix A
+				  for (i = 0; i < DIMENSION; i++)
+					for (j = 0; j < DIMENSION; j++)
+						AA[i][j] -= dx[i]*dwm_rho[j];
 
-			          // Get matrix A
-				      for (i = 0; i < DIMENSION; i++)
-				        for (j = 0; j < DIMENSION; j++)
-				        	AA[i][j] += dx[i]*dwm_rho[j];
-
-				      for (i = 0; i < DIMENSION; i++)
-				      {
-				    	  FF[i][0]=(pi->get_density() - pj->get_density())*dwm_rho[i];
-				    	  FF[i][1]=(*pi->get_vel() - * pj->get_vel())*dwm_rho[i];
-				    	  FF[i][2]=(*(pi->get_vel()+1) - *(pj->get_vel()+1))*dwm_rho[i];
-				    	  FF[i][3]=(*(pi->get_vel()+2) - *(pj->get_vel()+2))*dwm_rho[i];
-				    	  FF[i][4]=(pi->get_pressure() - pj->get_pressure())*dwm_rho[i];
-				      }
-				   }
-	          }//end of if particle will contribute to the density.
+				  for (i = 0; i < DIMENSION; i++)
+				  {
+					  FF[i][0]-=((pi->get_density() - pj->get_density())*dwm_rho[i]);
+					  FF[i][1]-=((*(pi->get_vel()) - *(pj->get_vel()))*dwm_rho[i]);
+					  FF[i][2]-=((*(pi->get_vel()+1) - *(pj->get_vel()+1))*dwm_rho[i]);
+					  FF[i][3]-=((*(pi->get_vel()+2) - *(pj->get_vel()+2))*dwm_rho[i]);
+					  FF[i][4]-=((pi->get_pressure() - pj->get_pressure())*dwm_rho[i]);
+				  }
+			   }
+	          //}//end of if particle will contribute to the density.
 
 	      }//end of go through all neighbors
-
-	      linsolve(&AA[0][0], &FF[0][0], NO_OF_EQNS, &ff[0][0]);
 
 	      if (nreal <= 20)
 	         for (i = 0; i < NOEQxDIM; i++)
@@ -144,23 +159,30 @@ void calc_gradients(THashTable *P_table)
 	      else
 	    	 linsolve(&AA[0][0], &FF[0][0], NO_OF_EQNS, &ff[0][0]);
 
+
+	      //put result in a one dimensional array for the convenience of updating!
+	      // check and save derivatives
+	      for (i = 0; i < NO_OF_EQNS; i++)
+	        for (j = 0; j < DIMENSION; j++)
+	          gradU[i * DIMENSION + j] = ff[j][i];
+
+
 	      //  if there is a problem ... then die a violent death
 	      for (i = 0; i < NOEQxDIM; i++)
-	        if (isnan(**(ff+i)) && (nreal > 20))
+	        if (isnan(gradU[i]) && (nreal > 20))
 	        {
 	          fprintf(stderr,"FATAL ERROR: calc_gradients() failed\n");
-	          fprintf(stderr,".. at (%f, %f), no of neighbors: %d \n",
-	                          xi[0], xi[1], nreal);
+	          fprintf(stderr,".. at (%f, %f, %f), no of neighbors: %d \n",
+	                          xi[0], xi[1], xi[2], nreal);
 
 	          exit (EXIT_FAILURE);
 	        }
 
-
-		  pi->put_density_d(*(ff));
-		  pi->put_velocity_u_d(*(ff+DIMENSION));
-		  pi->put_velocity_v_d(*(ff+2*DIMENSION));
-		  pi->put_velocity_w_d(*(ff+3*DIMENSION));
-		  pi->put_pressure_d(*(ff+4*DIMENSION));
+		  pi->put_density_d(gradU);
+		  pi->put_velocity_u_d(gradU+DIMENSION);
+		  pi->put_velocity_v_d(gradU+2*DIMENSION);
+		  pi->put_velocity_w_d(gradU+3*DIMENSION);
+		  pi->put_pressure_d(gradU+4*DIMENSION);
 
 		}//end of if --> if the density of that particle need to be updated based summation
 	  }//end of loop -->go through all particle

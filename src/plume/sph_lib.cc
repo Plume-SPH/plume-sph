@@ -1615,6 +1615,32 @@ double Compute_sij_star (double hij, double Vi, double Vj, double dist)
     return sij_star;
 }
 
+//Get interface position --> The form from Inutsuka's paper --> With cubic order of accuracy
+double Compute_sij_star (double hij, double Vi, double Vj, double Dri, double Drj, double dist)
+{
+	//first compute DVi and DVj
+	double DVi=-Vi*Vi*Dri;
+	double DVj=-Vj*Vj*Drj;
+
+	double dist_sq=dist* dist;
+	double dist_cub = dist_sq* dist;
+	double dist_1 = 1.0/dist;
+
+	double A=-2.0*(Vi-Vj)/dist_cub + (DVi + DVj)/dist_sq;
+	double B=0.5*(DVi - DVj)/dist;
+	double C=1.5*(Vi-Vj)/dist-0.25*(DVi + DVj);
+	double D=0.5*(Vi+Vj)-0.125*(DVi - DVj)*dist;
+
+	double hsq= hij * hij;
+	double h4= hsq*hsq;
+	double h6=h4*hsq;
+
+	double Vijsq=0.234375*h6*A*A+0.1875*h4*(2.0*A*C+B*B)+0.25*hsq*(2.0*B*D+C*C)+D*D;
+    double sij_star = (0.46875*h6*A*B+0.375*h4*(A*D+B*C)+0.5*hsq*C*D)/Vijsq;
+
+    return sij_star;
+}
+
 ////Get interface position  --> new form --> Will get zero D value and NAN for sstar --> Useless
 //double Compute_sij_star (double hij, double Vi, double Vj, double dist, double si, double sj)
 //{
@@ -1734,17 +1760,7 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     double e[DIMENSION];
     Compute_eij(dx, dist, e);
 
-    double Si, Sj;
-    Si=0.5*dist;
-    Sj=-Si;
-    compute_si_sj(xi, xj, e, &Si, &Sj); //--> a more expensive way of computing, actually get the same results as Si=0.5*dist; Sj=-Si;
-
-    double sij_star=Compute_sij_star(hij, 1/rhoi, 1/rhoj, dist);
-
-    double delta_i = sij_star + CSi * dt_half - Si; //Si = dist/2 is positive
-    double delta_j = sij_star - CSj * dt_half - Sj;
-
-
+    // Now do projection
     double ui=0.0, uj=0.0;
     //need to project ui and uj onto the direction of local coordinate system first, then compute differential.
     for (i=0; i<DIMENSION; i++)
@@ -1757,7 +1773,16 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 //    double drho=(rhoi-rhoj)/dist; //drhoi=drhoj
 //    double du=(ui-uj)/dist;
 //    double dp=(pi-pj)/dist;
+//#if GSPH_SPECIFIC_VOL_APP==0
+//    double drhoi=0.0;
+//    double ddui=0.0;
+//    double dpi =0.0;
+//    double drhoj=0.0;
+//    double dduj=0.0;
+//    double dpj =0.0;
+//#else
 
+    //need project gradient onto the local coordinate system
     double drhoi=0.0, dui=0.0, dvi=0.0, dwi=0.0, dpi=0.0;
     double drhoj=0.0, duj=0.0, dvj=0.0, dwj=0.0, dpj=0.0;
     for (i=0; i<DIMENSION; i++)
@@ -1785,7 +1810,11 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	ddui=0.0;
     	dduj=0.0;
     }
-    if (C_SHOCK*(uj-ui)>min(CSi, CSj))
+#if GSPH_MODIFIED_MONOTONICITY==1
+    if (C_SHOCK*fabs(uj-ui)>min(CSi, CSj))  // this monotonicity condition is modified a little bit  ---> added abs
+#elif GSPH_MODIFIED_MONOTONICITY==0
+    if (C_SHOCK*fabs(uj-ui)>min(CSi, CSj))
+#endif
     {
     	drhoi=0.0;
     	dpi=0.0;
@@ -1794,6 +1823,22 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	dpj=0.0;
     	dduj=0.0;
     }
+//#endif
+
+    //determine the right and left location
+    double Si, Sj;
+    Si=0.5*dist; //should be positive
+    Sj=-Si;      //should be negative
+    //compute_si_sj(xi, xj, e, &Si, &Sj); //--> a more expensive way of computing, actually get the same results as Si=0.5*dist; Sj=-Si;
+    double sij_star=0.0;
+#if GSPH_SPECIFIC_VOL_APP==1
+    sij_star=Compute_sij_star(hij, 1/rhoi, 1/rhoj, dist);
+#elif GSPH_SPECIFIC_VOL_APP==3
+    sij_star=Compute_sij_star(hij, 1/rhoi, 1/rhoj, drhoi, drhoj, dist);
+#endif
+
+    double delta_i = sij_star + CSi * dt_half - Si; //Si = dist/2 is positive
+    double delta_j = sij_star - CSj * dt_half - Sj;
 
 	//compute the right input and left input
     double dr=rhoi+drhoi*delta_i;
@@ -1802,6 +1847,44 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     double dl=rhoj+drhoj*delta_j;
     double ul=uj+dduj*delta_j;
     double pl=pj+dpj*delta_j;
+
+#if MINI_DERIVATIVE_COND == 3
+    //remedy the construction of Riemann problems to 0th order if 2nd order approximation gives non-physical
+    if ((dr<0)||(dl<0)||(pr<0)||(pl<0))
+    {
+        dr=rhoi;
+        ur=ui;
+        pr=pi;
+        dl=rhoj;
+        ul=uj;
+        pl=pj;
+    }
+#elif MINI_DERIVATIVE_COND == 2
+    //remedy the construction of Riemann problems to 0th order if 2nd order approximation gives non-physical
+    if ((dr<0)||(dl<0))
+    {
+        dr=rhoi;
+        dl=rhoj;
+    }
+    if ((pr<0)||(pl<0))
+    {
+        pr=pi;
+        pl=pj;
+    }
+#elif MINI_DERIVATIVE_COND == 1
+    //remedy the construction of Riemann problems to 0th order if 2nd order approximation gives non-physical
+    if ((dr<0))
+        dr=rhoi;
+
+    if ((dl<0))
+        dl=rhoj;
+
+    if ((pr<0))
+        pr=pi;
+
+    if ((pl<0))
+        pl=pj;
+#endif
 
     //Roe Riemann Solver:
     double rdl=sqrt(dl);
@@ -1825,7 +1908,7 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	if (isnan(*p_star)||isnan(u_star)||(*p_star<0))
     	{
     		cout << "Non-physical solution obtained from Riemann Solver!" << endl;
-    		exit(0);
+//    		exit(0);
     	}
 #endif
 

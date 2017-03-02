@@ -23,6 +23,10 @@ struct BndImage
   //!  interpolate values of state_vars
   double state_vars[NO_OF_EQNS];
 
+#if BC_FOR_KX==1
+  double ks; //mass fraction
+#endif
+
   // constructor 1
   BndImage ()
   {
@@ -32,6 +36,10 @@ struct BndImage
     state_vars[0] = 1.0;
     for (i = 1; i < NO_OF_EQNS; i++)
       state_vars[i] = 0;
+
+#if BC_FOR_KX==1
+    ks=0; //mass fraction
+#endif
   }
 
   // constructor 2
@@ -54,6 +62,11 @@ struct BndImage
     state_vars[0] = 1.;
     for (i = 1; i < NO_OF_EQNS; i++)
       state_vars[i] = 0;
+
+#if BC_FOR_KX==1
+    ks=0; //mass fraction
+#endif
+
   }
 };
 

@@ -328,7 +328,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
   double veli[DIMENSION], velj[DIMENSION], velij[DIMENSION];
   double sndspdi, sndspdj, gammai, gammaj;
   double hj, hi;
-  double vsqdwi[DIMENSION], vsqdwj[DIMENSION];//v^2*dwdx
+  double vsqdwi[DIMENSION], vsqdwj[DIMENSION];//V^2*dwdx
   double Fij, Cp_ij, kij, Cp_i;
   double deltae;
   double turb_stress; //turbulent viscosity term
@@ -351,7 +351,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 #ifdef DEBUG
    bool do_search = true;
-   unsigned keycheck[TKEYLENGTH] = {71862445, 869232911, 0};
+   unsigned keycheck[TKEYLENGTH] = {71863351, 347014367, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
    bool search_bypos = false;
@@ -493,6 +493,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
 
 		          //compute turbulent stress
+		          turb_stress=0.0;
 #ifdef HAVE_TURBULENCE_LANS
 		          //velocity difference veli-velj
 		          for (k = 0; k < DIMENSION; k++)
@@ -581,6 +582,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
 
 		          //compute turbulent stress
+				  turb_stress=0.0;
 #ifdef HAVE_TURBULENCE_LANS
 		          //velocity difference veli-velj
 		          for (k = 0; k < DIMENSION; k++)
@@ -607,7 +609,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 		          double x_dot_star[DIMENSION];
 		          for (k = 0; k < DIMENSION; k++)
-		        	  x_dot_star[k]=veli[k]+0.5*dt*rhs_v[k];
+		        	  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]+gravity[k]);//Do not forget gravity
 
 		          for (k=0; k<DIMENSION; k++)
 		          {

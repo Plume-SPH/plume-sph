@@ -73,10 +73,13 @@ search_neighs_consth (int myid, THashTable * P_table, HashTable * BG_mesh)
 	      	     pi = (Particle *) P_table->lookup(*itr);
 	      	     assert(pi);
 
+#if USE_GSPH==0  //If we use GSPH, neighbour info of ghost particles will also be needed for gradient updating
+
 	      	     if (pi->get_bc_type () != 100) //if bc_type is not 100, means if particle is not real particle
 	      	    	 continue;
 	      	     else
 	      	     {
+#endif
 	      	          // 3*sqrt(2) < 4.25
 	      	          hi = 4.25 * pi->get_smlen();
 	      	          for (int k = 0; k < DIMENSION; k++)
@@ -129,7 +132,10 @@ search_neighs_consth (int myid, THashTable * P_table, HashTable * BG_mesh)
 	      	              }
 	      	            }
 	      	          pi->put_neighs(pneighs);
+
+#if USE_GSPH==0  //If we use GSPH, neighbour info of ghost particles will also be needed for gradient updating
 	      	     }
+#endif
 	      	   }// end of for loop, go through all particles in the buckets
 
 	        }
@@ -326,7 +332,7 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
 	  itr2->reset();
 	  while ((pi = (Particle *) itr2->next ()))
 	   {
-	 	  if (pi->need_neigh ())
+	 	  if (pi->need_neigh ())  //real and no-guest
 	 	  {
 
 #ifdef DEBUG
@@ -386,6 +392,7 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
 	   }
 
 
+	  //
 	  igrd->reset();
 	  while ((curr_bucket = (Bucket *) igrd->next()))
 	  {

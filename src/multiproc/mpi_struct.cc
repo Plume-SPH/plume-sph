@@ -151,7 +151,11 @@ GMFG_new_MPI_Datatype ()
   MPI_Type_commit (&PARTICLE_TYPE);
 
   // create datatype for Boundary Images
+#if BC_FOR_KX==1
+  int blockcounts3[3] = { 2, TKEYLENGTH + KEYLENGTH, DIMENSION + NO_OF_EQNS +1};
+#else
   int blockcounts3[3] = { 2, TKEYLENGTH + KEYLENGTH, DIMENSION + NO_OF_EQNS };
+#endif
   MPI_Datatype type3[3] = { MPI_INT, MPI_UNSIGNED, MPI_DOUBLE };
   MPI_Aint displs3[3];
 

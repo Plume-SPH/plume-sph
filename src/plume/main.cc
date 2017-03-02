@@ -324,6 +324,17 @@ main(int argc, char **argv)
     move_bnd_images (myid, numprocs, P_table, BG_mesh, Image_table);
 #endif
 
+#if USE_GSPH==1
+    // calculate gradient, before momentum and energy updating
+    calc_gradients(P_table);
+
+#ifdef MULTI_PROC
+    // update guests on all procs
+    move_data(numprocs, myid, my_comm, P_table, BG_mesh);
+#endif
+
+#endif
+
 #ifdef DEBUG
   if (check_part)
 	  check_particle_bykey (P_table);
@@ -360,17 +371,6 @@ main(int argc, char **argv)
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
-#endif
-
-#if USE_GSPH==1
-    // smooth out density oscillations (if any)
-    calc_gradients(P_table);
-
-#ifdef MULTI_PROC
-    // update guests on all procs
-    move_data(numprocs, myid, my_comm, P_table, BG_mesh);
-#endif
-
 #endif
 
 #ifdef HAVE_TURBULENCE_LANS
