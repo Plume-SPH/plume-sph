@@ -23,6 +23,7 @@
 #include <stdlib.h>     /* exit, EXIT_FAILURE */
 
 #include <cmath>
+//#include <math.h> //fabs
 #include <algorithm>    // std::min
 
 //#include <petsc.h>
@@ -1739,6 +1740,122 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 
 }
 
+// Roe RP solver:
+void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+{
+    //Roe Riemann Solver:
+    double rdl=sqrt(dl);
+    double rdr=sqrt(dr);
+    double denominator = 1.0 / (rdl+rdr);
+
+    double plr=(pl*rdl + pr*rdr)*denominator;
+    double gammalr=(gj*rdl + gi*rdr)*denominator;
+    double dlr=(dl*rdl + dr*rdr)*denominator;
+    double clr= sqrt(gammalr*plr/dlr);
+
+    //solve RP problem with approxiamte Roe RP solver
+    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+
+    *p_star=plr -0.5*clr*(ur-ul);
+    double u_star;
+    u_star= ulr-0.5*(pr-pl)/clr;
+
+#ifdef DEBUG
+    bool check=true;
+    if (check)
+    	if (isnan(*p_star)||isnan(u_star)||(*p_star<0))
+    	{
+    		cout << "Non-physical solution obtained from Riemann Solver!" << endl;
+//    		exit(0);
+    	}
+#endif
+
+    //project u_star to v_star
+    double vlr[DIMENSION];
+    for (int i=0; i<DIMENSION; i++)
+    {
+    	vlr[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+    	*(v_star+i)=e[i]*u_star+ vlr[i] - ulr*e[i];
+    }
+}
+
+//HLLC Riemann Solver
+void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+{
+    //Roe average:
+    double rdl=sqrt(dl);
+    double rdr=sqrt(dr);
+    double denominator = 1.0 / (rdl+rdr);
+
+    double plr=(pl*rdl + pr*rdr)*denominator;
+    double gammalr=(gj*rdl + gi*rdr)*denominator;
+    double dlr=(dl*rdl + dr*rdr)*denominator;
+    double clr= sqrt(gammalr*plr/dlr);
+    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+
+	//Compute approximation of wave speed
+    double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+    double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+// double vlr=(vl*rdl + vr*rdr)*denominator;
+    double cl=sqrt(gj*pl/dl);
+    double cr=sqrt(gi*pr/dr);
+    double Sl=min(vl-cl, -clr);
+    double Sr=max(vr+cr, clr);
+    double Sm=(dr*vr*(Sr-vr)-dl*vl*(Sl-vl)+pl-pr)/(dr*(Sr-vr)-dl*(Sl-vl));
+
+    double p_hat=dl*(vl-Sl)*(vl-Sm)+pl;
+    double Ml=dl*ul; //The momentum, velocity should be ul instead of vl (the relative velocity)
+    double Mr=dr*ur;
+//    double Ml=dl*vl; //The momentum, velocity should be ul instead of vl (the relative velocity)
+//    double Mr=dr*vr;
+    double el=pl/(dl*(gj-1));
+    double er=pr/(dr*(gi-1));
+    double El=dl*(el+0.5*ul*ul); //The velocity should be u instead of v
+    double Er=dr*(er+0.5*ur*ur); //The velocity should be u instead of v
+//    double El=(el+0.5*vl*vl); //The velocity should be u instead of v
+//    double Er=(er+0.5*vr*vr); //The velocity should be u instead of v
+
+    if (Sl>0)
+    	*p_star=pl;
+    else if ((Sl<=0) && (Sm>0))
+    	*p_star=Sm/(Sl-Sm)*((Sl-vl)*Ml+(p_hat-pl))+p_hat;
+    else if ((Sm<=0) && (Sr>0))
+    	*p_star=Sm/(Sr-Sm)*((Sr-vr)*Mr+(p_hat-pr))+p_hat;
+    else if (Sr<=0)
+    	*p_star=pr;
+    else
+    	cout <<"Fatal error in HLLC Riemann Solver"<<endl;
+
+    double u_star;
+    if (Sl>0)
+    	u_star=ul;
+    else if ((Sl<=0) && (Sm>0))
+    	u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
+    else if ((Sm<=0) && (Sr>0))
+    	u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
+    else
+    	u_star=ur;
+
+
+#ifdef DEBUG
+    bool check=true;
+    if (check)
+    	if (isnan(*p_star)||isnan(u_star)||(*p_star<0))
+    	{
+    		cout << "Non-physical solution obtained from Riemann Solver!" << endl;
+//    		exit(0);
+    	}
+#endif
+
+    //project u_star to v_star
+    double vlr_3D[DIMENSION];
+    for (int i=0; i<DIMENSION; i++)
+    {
+    	vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+    	*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
+    }
+}
+
 //Overloading of function for Riemann solver, the derivative is computed in a more accurate way,
 void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DIMENSION], double pi, double pj, double hi,  double hj, double xi[DIMENSION], double xj[DIMENSION],
 		            double CSi, double CSj, double gi, double gj, double dt_half,  double DDri[DIMENSION], double DDrj[DIMENSION], double DDui[DIMENSION], double DDuj[DIMENSION],
@@ -1811,9 +1928,9 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	dduj=0.0;
     }
 #if GSPH_MODIFIED_MONOTONICITY==1
-    if (C_SHOCK*fabs(uj-ui)>min(CSi, CSj))  // this monotonicity condition is modified a little bit  ---> added abs
+    if (C_SHOCK*abs(uj-ui)>min(CSi, CSj))  // this monotonicity condition is modified a little bit  ---> added abs
 #elif GSPH_MODIFIED_MONOTONICITY==0
-    if (C_SHOCK*fabs(uj-ui)>min(CSi, CSj))
+    if (C_SHOCK*(uj-ui)>min(CSi, CSj))
 #endif
     {
     	drhoi=0.0;
@@ -1884,40 +2001,22 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 
     if ((pl<0))
         pl=pj;
+
+    if (1.0*abs(ul-ur)>min(CSi, CSj))
+    {
+    	ul=uj;
+        ur=ui;
+    }
 #endif
 
     //Roe Riemann Solver:
-    double rdl=sqrt(dl);
-    double rdr=sqrt(dr);
-    double denominator = 1.0 / (rdl+rdr);
-
-    double plr=(pl*rdl + pr*rdr)*denominator;
-    double gammalr=(gj*rdl + gi*rdr)*denominator;
-    double dlr=(dl*rdl + dr*rdr)*denominator;
-    double clr= sqrt(gammalr*plr/dlr);
-
-    //solve RP problem with approxiamte Roe RP solver
-    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
-    double u_star;
-    *p_star=plr -0.5*clr*(ur-ul);
-    u_star= ulr-0.5*(pr-pl)/clr;
-
-#ifdef DEBUG
-    bool check=true;
-    if (check)
-    	if (isnan(*p_star)||isnan(u_star)||(*p_star<0))
-    	{
-    		cout << "Non-physical solution obtained from Riemann Solver!" << endl;
-//    		exit(0);
-    	}
+#if RIEMANN_SOLVER == 0
+    Roe_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, v_star, vj, vi, e);
+#elif RIEMANN_SOLVER == 1
+    HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, v_star, vj, vi, e);
 #endif
 
-    //project u_star to v_star
-    double vlr[DIMENSION];
-    for (i=0; i<DIMENSION; i++)
-    {
-    	vlr[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
-    	*(v_star+i)=e[i]*u_star+ vlr[i] - ulr*e[i];
-    }
+    double hh=0.0;
+    return;
 }
 

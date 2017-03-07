@@ -48,7 +48,7 @@
  */
 #if USE_GSPH==1
 #ifndef  MINI_DERIVATIVE_COND
-#define  MINI_DERIVATIVE_COND 3
+#define  MINI_DERIVATIVE_COND 1
 #endif
 #endif
 
@@ -59,6 +59,16 @@
 #if USE_GSPH==1
 #ifndef GSPH_MODIFIED_MONOTONICITY
 #define  GSPH_MODIFIED_MONOTONICITY 1
+#endif
+#endif
+
+//define which kind of Riemann Solver
+/* 0: original --> Roe
+ * 1: modified --> HLLC
+ */
+#if USE_GSPH==1
+#ifndef RIEMANN_SOLVER
+#define  RIEMANN_SOLVER 0
 #endif
 #endif
 
