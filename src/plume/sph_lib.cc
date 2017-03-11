@@ -1642,20 +1642,8 @@ double Compute_sij_star (double hij, double Vi, double Vj, double Dri, double Dr
     return sij_star;
 }
 
-////Get interface position  --> new form --> Will get zero D value and NAN for sstar --> Useless
-//double Compute_sij_star (double hij, double Vi, double Vj, double dist, double si, double sj)
-//{
-//	double C=(Vi-Vj)/dist; //Need double check whether dist = delta s --> Yes!
-//	double D=(si*Vj + sj*Vi)/dist;
-//	double hsq= hij * hij;
-//	double Vijsq=0.25*hsq*C*C+D*D;
-//    double sij_star = 0.5*(hsq*C*D)/Vijsq;
-//
-//    return sij_star;
-//}
 
-
-//function for Riemann solver:
+//function for Riemann solver --->derivative is computed in RP solver
 void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DIMENSION], double pi, double pj, double hi,  double hj, double xi[DIMENSION], double xj[DIMENSION],
 		            double CSi, double CSj, double gi, double gj, double dt_half, double* p_star, double* v_star)
 {
@@ -1763,11 +1751,17 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
 #ifdef DEBUG
     bool check=true;
     if (check)
-    	if (isnan(*p_star)||isnan(u_star)||(*p_star<0))
+    	if (isnan(*p_star)||isnan(u_star))
     	{
-    		cout << "Non-physical solution obtained from Riemann Solver!" << endl;
+    		cout << "NAN solution obtained from Riemann Solver!" << endl;
 //    		exit(0);
     	}
+    bool check_pressure=true;
+	if (*p_star<0)
+	{
+		cout << "negative pressure obtained from Riemann Solver!" << endl;
+//    		exit(0);
+	}
 #endif
 
     //project u_star to v_star
@@ -1779,7 +1773,7 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
     }
 }
 
-//HLLC Riemann Solver
+//HLLC Riemann Solver ---> based on HLLC solver presented in "Approximate Riemann solvers for the Godunov SPH (GSPH)"
 void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
 {
     //Roe average:
@@ -1796,14 +1790,46 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 	//Compute approximation of wave speed
     double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
     double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
-// double vlr=(vl*rdl + vr*rdr)*denominator;
     double cl=sqrt(gj*pl/dl);
     double cr=sqrt(gi*pr/dr);
+
+    double p_hat;
+#if HLL_WAVE_SPEED_EVA==0
     double Sl=min(vl-cl, -clr);
     double Sr=max(vr+cr, clr);
     double Sm=(dr*vr*(Sr-vr)-dl*vl*(Sl-vl)+pl-pr)/(dr*(Sr-vr)-dl*(Sl-vl));
+    p_hat=dl*(vl-Sl)*(vl-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==1 // B. Einfeldt  ---> Turned out to be the same as: Average-State Jacobians
+    double Sl=min(ul-cl, ulr-clr);
+    double Sr=max(ur+cr, ulr+clr);
+    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
+    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==2  //Davis
+    double Sl=min(ul-cl, ur-cr);
+    double Sr=max(ul+cl, ur+cr);
+    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
+    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==3 //Toro's
+    double p_pvrs=0.5*(pl+pr)+0.25*(ul-ur)*(dr+dl)*clr;
+    double p_refs=max(0.0, p_pvrs);
+    double ql=(p_refs<pl ? 1 : sqrt(1+0.5*(gj+1)/gj*(p_refs/pl-1)) );
+    double qr=(p_refs<pr ? 1 : sqrt(1+0.5*(gi+1)/gi*(p_refs/pr-1)) );
+    double Sl=ul-cl*ql;
+    double Sr=ur+cr*qr;
+    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
+    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==4  //P. Batten
+    double Sl=min(ul-cl, ulr-clr);
+    double Sr=max(ur+cr, ulr+clr);
+    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
+    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==5  //A modified version of 0
+    double Sl=min(ul-cl,  -clr);
+    double Sr=max(ur+cr,  clr);
+    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
+    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#endif
 
-    double p_hat=dl*(vl-Sl)*(vl-Sm)+pl;
     double Ml=dl*ul; //The momentum, velocity should be ul instead of vl (the relative velocity)
     double Mr=dr*ur;
 //    double Ml=dl*vl; //The momentum, velocity should be ul instead of vl (the relative velocity)
@@ -1814,6 +1840,11 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     double Er=dr*(er+0.5*ur*ur); //The velocity should be u instead of v
 //    double El=(el+0.5*vl*vl); //The velocity should be u instead of v
 //    double Er=(er+0.5*vr*vr); //The velocity should be u instead of v
+
+#ifdef DEBUG
+    if (Sm<Sl || Sm>Sr || Sl>Sr)
+    	cout <<"Wave speed incorrect!"<<endl;
+#endif
 
     if (Sl>0)
     	*p_star=pl;
@@ -1840,11 +1871,166 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 #ifdef DEBUG
     bool check=true;
     if (check)
-    	if (isnan(*p_star)||isnan(u_star)||(*p_star<0))
+    	if (isnan(*p_star)||isnan(u_star))
     	{
-    		cout << "Non-physical solution obtained from Riemann Solver!" << endl;
+    		cout << "NAN solution obtained from Riemann Solver!" << endl;
 //    		exit(0);
     	}
+    bool check_pressure=true;
+	if (*p_star<0)
+	{
+		cout << "negative pressure obtained from Riemann Solver!" << endl;
+//    		exit(0);
+	}
+#endif
+    //project u_star to v_star
+    double vlr_3D[DIMENSION];
+    for (int i=0; i<DIMENSION; i++)
+    {
+    	vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+    	*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
+    }
+}
+
+//HLLC Riemann Solver----> Based on paper "A robust HLLC-type Riemann solver for strong shock" --> two other new method is proposed
+void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+{
+    //Roe average:
+    double rdl=sqrt(dl);
+    double rdr=sqrt(dr);
+    double denominator = 1.0 / (rdl+rdr);
+
+	double cl=sqrt(gj*pl/dl);
+    double cr=sqrt(gi*pr/dr);
+
+//Different ways to estimate Nonlinear wave speed
+#if HLL_WAVE_SPEED_EVA==0
+    cout<< "In this Riemann, Should not use relative speed!"<< endl;
+    exit(1);
+    double plr=(pl*rdl + pr*rdr)*denominator;
+    double gammalr=(gj*rdl + gi*rdr)*denominator;
+    double dlr=(dl*rdl + dr*rdr)*denominator;
+    double clr= sqrt(gammalr*plr/dlr);
+    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+    double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+    double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+	//Compute approximation of wave speed
+    double Sl=min(vl-cl, -clr);
+    double Sr=max(vr+cr, clr);
+    double alf_l=dl*(Sl-ul);
+    double alf_r=dr*(Sr-ur);
+    double Sm=(ur*alf_r-ul*alf_l+pl-pr)/(alf_r-alf_l);
+//    double p_hat=dl*(vl-Sl)*(vl-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==1 // B. Einfeldt  ---> Turned out to be the same as: Average-State Jacobians
+    double plr=(pl*rdl + pr*rdr)*denominator;
+    double gammalr=(gj*rdl + gi*rdr)*denominator;
+    double dlr=(dl*rdl + dr*rdr)*denominator;
+    double clr= sqrt(gammalr*plr/dlr);
+    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+    //Compute approximation of wave speed
+    double Sl=min(ul-cl, ulr-clr);
+    double Sr=max(ur+cr, ulr+clr);
+    double alf_l=dl*(Sl-ul);
+    double alf_r=dr*(Sr-ur);
+    double Sm=(ur*alf_r-ul*alf_l+pl-pr)/(alf_r-alf_l);
+//    double p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==2  //Davis
+    double Sl=min(ul-cl, ur-cr);
+    double Sr=max(ul+cl, ur+cr);
+    double alf_l=dl*(Sl-ul);
+    double alf_r=dr*(Sr-ur);
+    double Sm=(ur*alf_r-ul*alf_l+pl-pr)/(alf_r-alf_l);
+//    double p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==3 //Toro's
+    double plr=(pl*rdl + pr*rdr)*denominator;
+    double gammalr=(gj*rdl + gi*rdr)*denominator;
+    double dlr=(dl*rdl + dr*rdr)*denominator;
+    double clr= sqrt(gammalr*plr/dlr);
+    //Compute approximation of wave speed
+    double p_pvrs=0.5*(pl+pr)+0.25*(ul-ur)*(dr+dl)*clr;
+    double p_refs=max(0.0, p_pvrs);
+    double ql=(p_refs<pl ? 1 : sqrt(1+0.5*(gj+1)/gj*(p_refs/pl-1)) );
+    double qr=(p_refs<pr ? 1 : sqrt(1+0.5*(gi+1)/gi*(p_refs/pr-1)) );
+    double Sl=ul-cl*ql;
+    double Sr=ur+cr*qr;
+    double alf_l=dl*(Sl-ul);
+    double alf_r=dr*(Sr-ur);
+    double Sm=(ur*alf_r-ul*alf_l+pl-pr)/(alf_r-alf_l);
+//    double p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==4  //P. Batten,  Average-State Jacobians
+    double plr=(pl*rdl + pr*rdr)*denominator;
+    double gammalr=(gj*rdl + gi*rdr)*denominator;
+    double dlr=(dl*rdl + dr*rdr)*denominator;
+    double clr= sqrt(gammalr*plr/dlr);
+    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+    //Compute approximation of wave speed
+    double Sl=min(ul-cl, ulr-clr);
+    double Sr=max(ur+cr, ulr+clr);
+    double alf_l=dl*(Sl-ul);
+    double alf_r=dr*(Sr-ur);
+    double Sm=(ur*alf_r-ul*alf_l+pl-pr)/(alf_r-alf_l);
+//    double p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#elif HLL_WAVE_SPEED_EVA==5  //A modified version of 0
+    double plr=(pl*rdl + pr*rdr)*denominator;
+    double gammalr=(gj*rdl + gi*rdr)*denominator;
+    double dlr=(dl*rdl + dr*rdr)*denominator;
+    double clr= sqrt(gammalr*plr/dlr);
+    //Compute approximation of wave speed
+    double Sl=min(ul-cl,  -clr);
+    double Sr=max(ur+cr,  clr);
+    double alf_l=dl*(Sl-ul);
+    double alf_r=dr*(Sr-ur);
+    double Sm=(ur*alf_r-ul*alf_l+pl-pr)/(alf_r-alf_l);
+//    double p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+#endif
+
+    double p_hllc=(pr*alf_r - pl*alf_l - alf_r*alf_l*(ul-ur))/(alf_r-alf_l);
+    double dl_star=alf_l/(Sl-Sm);
+    double dr_star=alf_r/(Sr-Sm);
+    double el_star=p_hllc/(dl_star*(gj-1)); //gl_star=gj --> You can also use er
+    //double er_star=p_hllc/(dr_star*(gi-1)); //gr_star=gi
+    double el=pl/(dl*(gj-1));
+    double El_star=el+(Sm-ul)*(Sm+pl/alf_l);
+    double u_hllc=sqrt(2.0*(El_star-el_star));
+
+#ifdef DEBUG
+    if (Sm<Sl || Sm>Sr || Sl>Sr)
+    	cout <<"Wave speed incorrect!"<<endl;
+#endif
+
+    double u_star;
+    if (Sl>0)
+    {
+    	*p_star=pl;
+    	 u_star=ul;
+    }
+    else if ((Sl<=0) && (Sr>0))
+    {
+    	*p_star=p_hllc;
+    	 u_star=u_hllc;
+    }
+    else if (Sr<=0)
+    {
+    	*p_star=pr;
+    	 u_star=ur;
+    }
+    else
+    	cout <<"Fatal error in HLLC Riemann Solver"<<endl;
+
+#ifdef DEBUG
+    bool check=true;
+    if (check)
+    	if (isnan(*p_star)||isnan(u_star))
+    	{
+    		cout << "NAN solution obtained from Riemann Solver!" << endl;
+//    		exit(0);
+    	}
+    bool check_pressure=true;
+	if (*p_star<0)
+	{
+		cout << "negative pressure obtained from Riemann Solver!" << endl;
+//    		exit(0);
+	}
 #endif
 
     //project u_star to v_star
@@ -2001,19 +2187,34 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 
     if ((pl<0))
         pl=pj;
+#elif MINI_DERIVATIVE_COND == 10
+    //remedy the construction of Riemann problems to 0th order if 2nd order approximation gives non-physical
+    if ((dr<0))
+        dr=rhoi;
 
-    if (1.0*abs(ul-ur)>min(CSi, CSj))
+    if ((dl<0))
+        dl=rhoj;
+
+    if ((pr<0))
+        pr=pi;
+
+    if ((pl<0))
+        pl=pj;
+
+    if (3.0*abs(ul-ur)>min(CSi, CSj))
     {
     	ul=uj;
         ur=ui;
     }
 #endif
 
-    //Roe Riemann Solver:
+
 #if RIEMANN_SOLVER == 0
     Roe_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, v_star, vj, vi, e);
 #elif RIEMANN_SOLVER == 1
     HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, v_star, vj, vi, e);
+#elif RIEMANN_SOLVER == 2
+    HLLC_RP_Solver_my(dl, dr, pl, pr, ul, ur, gj, gi, p_star, v_star, vj, vi, e);
 #endif
 
     double hh=0.0;

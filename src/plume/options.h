@@ -45,10 +45,11 @@
  * MINI_DERIVATIVE_COND 1: apply to variables one by one and side by side, that is to say, if negative pressure on left side shows up, only apply the minimum derivative condition for pressure on the left side.
  * MINI_DERIVATIVE_COND 2: apply to variables one by one for both side, that is to say, if negative pressure on left side shows up, only apply the minimum derivative condition for pressure on both sides.
  * MINI_DERIVATIVE_COND 3: apply to all variables on both sides, that is to say, if negative pressure on one side shows up, apply the minimum derivative condition for all variables (pressure, density and velocity) on both sides.
+ * MINI_DERIVATIVE_COND 10: based on 1, use piece-wise linear constant if C_SHOCK*abs(ul-ur)>min(CSi, CSj)
  */
 #if USE_GSPH==1
 #ifndef  MINI_DERIVATIVE_COND
-#define  MINI_DERIVATIVE_COND 1
+#define  MINI_DERIVATIVE_COND 10
 #endif
 #endif
 
@@ -63,12 +64,28 @@
 #endif
 
 //define which kind of Riemann Solver
-/* 0: original --> Roe
- * 1: modified --> HLLC
+/* 0: --> Roe
+ * 1: --> HLLC
+ * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock
  */
-#if USE_GSPH==1
+#if USE_GSPH==0
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 0
+#define  RIEMANN_SOLVER 1
+#endif
+#endif
+
+//define Sl and Sr evaluation in HLL and HLLC Riemann Solvers
+/* 0: --> Kunal Puri, Approximate Riemann solvers for the Godunov SPH (GSPH)
+ * 1: --> B. Einfeldt On Godunov-type methods near low density
+ * 2: --> S.F. Davis Simplified second-order Godunov-type methods
+ * 3: --> E.F. Toro Riemann Solvers and Numerical Methods for Fluid Dynamics
+ * 4: --> P. Batten Average-State Jacobians and Implicit Methods for Compressible Viscous and Turbulent Flows
+ * 5: --> A modified version of 0 : us ul and ur instead of vl (=ul-ulr) and vr
+ *
+ */
+#if (RIEMANN_SOLVER==1) || (RIEMANN_SOLVER==2) //Use HLL type of Riemann Solver
+#ifndef HLL_WAVE_SPEED_EVA
+#define  HLL_WAVE_SPEED_EVA 0
 #endif
 #endif
 
@@ -124,7 +141,7 @@
  * Note: this option is not available for GSPH yet.
  */
 #ifndef HAVE_ENERGY_SMOOTH
-#define HAVE_ENERGY_SMOOTH 0
+#define HAVE_ENERGY_SMOOTH 1
 #endif
 
 /*
