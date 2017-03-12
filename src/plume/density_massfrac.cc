@@ -149,7 +149,7 @@ smooth_density(THashTable * P_table)
 #if HAVE_ENERGY_SMOOTH==1
 						for (k = 0; k < DIMENSION; k++)
 							s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
-						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj);
+						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj;
 						wnorm_e +=wm_e/rhoj;
 						engr +=wm_e*pj->get_energy()/rhoj;
 #elif HAVE_ENERGY_SMOOTH==2

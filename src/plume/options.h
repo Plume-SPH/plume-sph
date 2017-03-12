@@ -70,7 +70,7 @@
  */
 #if USE_GSPH==0
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 1
+#define  RIEMANN_SOLVER 0
 #endif
 #endif
 
@@ -278,15 +278,15 @@
 #define WRITE_PID
 #endif
 
-//output particle mass ---> particle mass is necessary in post process
-#ifndef WRITE_PMASS
-#define WRITE_PMASS
-#endif
-
-//output particle smoothing length ---> useful for debug
-#ifndef WRITE_SML
-#define WRITE_SML
-#endif
+////output particle mass ---> particle mass is necessary in post process
+//#ifndef WRITE_PMASS
+//#define WRITE_PMASS
+//#endif
+//
+////output particle smoothing length ---> useful for debug
+//#ifndef WRITE_SML
+//#define WRITE_SML
+//#endif
 
 #endif //DEBUG
 //----------------------------------------------------------------------------------------------------

@@ -168,15 +168,15 @@ void calc_gradients(THashTable *P_table)
 
 
 	      //  if there is a problem ... then die a violent death
-	      for (i = 0; i < NOEQxDIM; i++)
-	        if (isnan(gradU[i]) && (nreal > 20))
-	        {
-	          fprintf(stderr,"FATAL ERROR: calc_gradients() failed\n");
-	          fprintf(stderr,".. at (%f, %f, %f), no of neighbors: %d \n",
-	                          xi[0], xi[1], xi[2], nreal);
-
-	          exit (EXIT_FAILURE);
-	        }
+//	      for (i = 0; i < NOEQxDIM; i++)
+//	        if (isnan(gradU[i]) && (nreal > 20))
+//	        {
+//	          fprintf(stderr,"FATAL ERROR: calc_gradients() failed\n");
+//	          fprintf(stderr,".. at (%f, %f, %f), no of neighbors: %d \n",
+//	                          xi[0], xi[1], xi[2], nreal);
+//
+//	          exit (EXIT_FAILURE);
+//	        }
 
 		  pi->put_density_d(gradU);
 		  pi->put_velocity_u_d(gradU+DIMENSION);

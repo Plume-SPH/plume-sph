@@ -29,8 +29,9 @@ export HDF5_DISABLE_VERSION_CHECK=1
 #The following is added to solve the MPI error --> hopefully it will work.
 export I_MPI_DYNAMIC_CONNECTION=0
 
-module use /projects/academic/abani/modules
-module load dmtcp/2.4.4
+#module use /projects/academic/abani/modules
+#module load dmtcp/2.4.4
+module load dmtcp/2.4.4-beta
 module load intel-mpi/5.0.2
 module load hdf5/1.8.15p1
 

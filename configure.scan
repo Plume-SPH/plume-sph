@@ -18,21 +18,19 @@ AC_PROG_RANLIB
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h limits.h malloc.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_INLINE
-AC_TYPE_OFF_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-AC_CHECK_FUNCS([floor pow sqrt strdup])
+AC_CHECK_FUNCS([floor pow sqrt])
 
 AC_CONFIG_FILES([Makefile
                  src/datstr/Makefile
                  src/debug/Makefile
-                 src/gisapi/Makefile
                  src/multiproc/Makefile
                  src/plume/Makefile
                  src/preproc/Makefile])
