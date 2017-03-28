@@ -1729,7 +1729,8 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 }
 
 // Roe RP solver:
-void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+//void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star)
 {
     //Roe Riemann Solver:
     double rdl=sqrt(dl);
@@ -1745,8 +1746,8 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
 
     *p_star=plr -0.5*clr*(ur-ul);
-    double u_star;
-    u_star= ulr-0.5*(pr-pl)/clr;
+    //double u_star;
+    *u_star= ulr-0.5*(pr-pl)/clr;
 
 #ifdef DEBUG
 //    bool check=true;
@@ -1765,17 +1766,18 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
 		}
 #endif
 
-    //project u_star to v_star
-    double vlr[DIMENSION];
-    for (int i=0; i<DIMENSION; i++)
-    {
-    	vlr[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
-    	*(v_star+i)=e[i]*u_star+ vlr[i] - ulr*e[i];
-    }
+//    //project u_star to v_star
+//    double vlr[DIMENSION];
+//    for (int i=0; i<DIMENSION; i++)
+//    {
+//    	vlr[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+//    	*(v_star+i)=e[i]*u_star+ vlr[i] - ulr*e[i];
+//    }
 }
 
 //HLLC Riemann Solver ---> based on HLLC solver presented in "Approximate Riemann solvers for the Godunov SPH (GSPH)"
-void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+//void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star)
 {
     //Roe average:
     double rdl=sqrt(dl);
@@ -1858,15 +1860,15 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     else
     	cout <<"Fatal error in HLLC Riemann Solver"<<endl;
 
-    double u_star;
+//    double u_star;
     if (Sl>0)
-    	u_star=ul;
+    	*u_star=ul;
     else if ((Sl<=0) && (Sm>0))
-    	u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
+    	*u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
     else if ((Sm<=0) && (Sr>0))
-    	u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
+    	*u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
     else
-    	u_star=ur;
+    	*u_star=ur;
 
 
 #ifdef DEBUG
@@ -1885,17 +1887,20 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 	//    		exit(0);
 		}
 #endif
-    //project u_star to v_star
-    double vlr_3D[DIMENSION];
-    for (int i=0; i<DIMENSION; i++)
-    {
-    	vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
-    	*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
-    }
+
+//    //project u_star to v_star
+//    double vlr_3D[DIMENSION];
+//    for (int i=0; i<DIMENSION; i++)
+//    {
+//    	vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+//    	*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
+//    }
+
 }
 
 //HLLC Riemann Solver----> Based on paper "A robust HLLC-type Riemann solver for strong shock" --> two other new method is proposed
-void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+//void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
+void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star)
 {
     //Roe average:
     double rdl=sqrt(dl);
@@ -2000,21 +2005,21 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
     	cout <<"Wave speed incorrect!"<<endl;
 #endif
 
-    double u_star;
+//    double u_star;
     if (Sl>0)
     {
     	*p_star=pl;
-    	 u_star=ul;
+    	*u_star=ul;
     }
     else if ((Sl<=0) && (Sr>0))
     {
     	*p_star=p_hllc;
-    	 u_star=u_hllc;
+    	*u_star=u_hllc;
     }
     else if (Sr<=0)
     {
     	*p_star=pr;
-    	 u_star=ur;
+    	*u_star=ur;
     }
     else
     	cout <<"Fatal error in HLLC Riemann Solver"<<endl;
@@ -2036,13 +2041,13 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
 		}
 #endif
 
-    //project u_star to v_star
-    double vlr_3D[DIMENSION];
-    for (int i=0; i<DIMENSION; i++)
-    {
-    	vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
-    	*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
-    }
+//    //project u_star to v_star
+//    double vlr_3D[DIMENSION];
+//    for (int i=0; i<DIMENSION; i++)
+//    {
+//    	vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+//    	*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
+//    }
 }
 
 //Overloading of function for Riemann solver, the derivative is computed in a more accurate way,
@@ -2212,15 +2217,26 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 #endif
 
 
+    double u_star;
 #if RIEMANN_SOLVER == 0
-    Roe_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, v_star, vj, vi, e);
+    Roe_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #elif RIEMANN_SOLVER == 1
-    HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, v_star, vj, vi, e);
+    HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #elif RIEMANN_SOLVER == 2
-    HLLC_RP_Solver_my(dl, dr, pl, pr, ul, ur, gj, gi, p_star, v_star, vj, vi, e);
+    HLLC_RP_Solver_my(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #endif
 
-    double hh=0.0;
-    return;
+    //project u_star to v_star  --->The project should be distance weighted!
+    double epson=sij_star/dist;
+    double weighti=0.5+epson;
+    double weightj=0.5-epson;
+
+    double vij_3D, uij;
+    uij=ul*weighti+ur*weightj;
+    for (int i=0; i<DIMENSION; i++)
+    {
+    	vij_3D=vj[i]*weightj + vi[i]*weighti;
+    	*(v_star+i)=e[i]*u_star+ vij_3D - uij*e[i];
+    }
 }
 
