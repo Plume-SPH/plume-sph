@@ -1756,12 +1756,13 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
 //    		cout << "NAN solution obtained from Riemann Solver!" << endl;
 ////    		exit(0);
 //    	}
-    bool check_pressure=true;
-	if (*p_star<0)
-	{
-		cout << "negative pressure obtained from Riemann Solver!" << endl;
-//    		exit(0);
-	}
+    bool check_pressure=false;
+    if (check_pressure)
+		if (*p_star<0)
+		{
+			cout << "negative pressure obtained from Riemann Solver!" << endl;
+	//    		exit(0);
+		}
 #endif
 
     //project u_star to v_star
@@ -1876,12 +1877,13 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 //    		cout << "NAN solution obtained from Riemann Solver!" << endl;
 ////    		exit(0);
 //    	}
-    bool check_pressure=true;
-	if (*p_star<0)
-	{
-		cout << "negative pressure obtained from Riemann Solver!" << endl;
-//    		exit(0);
-	}
+    bool check_pressure=false;
+    if (check_pressure)
+		if (*p_star<0)
+		{
+			cout << "negative pressure obtained from Riemann Solver!" << endl;
+	//    		exit(0);
+		}
 #endif
     //project u_star to v_star
     double vlr_3D[DIMENSION];
@@ -2025,12 +2027,13 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
 //    		cout << "NAN solution obtained from Riemann Solver!" << endl;
 ////    		exit(0);
 //    	}
-    bool check_pressure=true;
-	if (*p_star<0)
-	{
-		cout << "negative pressure obtained from Riemann Solver!" << endl;
-//    		exit(0);
-	}
+    bool check_pressure=false;
+    if (check_pressure)
+		if (*p_star<0)
+		{
+			cout << "negative pressure obtained from Riemann Solver!" << endl;
+	//    		exit(0);
+		}
 #endif
 
     //project u_star to v_star

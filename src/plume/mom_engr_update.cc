@@ -69,6 +69,13 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
    bool check_engr = false;
    double engr_thresh = 400000;
+
+   bool check_ratio=false;
+   double max_mom=0.0;
+   double max_e=0.0;
+   bool find_max_ratio=false;
+   double tobef_mom=0.0;
+   double tobef_e=0.0;
 #endif
 
   while ((pi = (Particle *) itr->next ()))
@@ -222,7 +229,19 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		              dwdx_heat[k] = d_weight (s_heat, hi/HEAT_TRANS_SCALE_RATIO, k);
 		          }
 
-		          // Velocity rhs
+#ifdef DEBUG
+				  if (check_ratio)
+				  {
+
+					  for (k=0; k<DIMENSION; k++)
+					  {
+						  double temp_ratio=turb_stress*dwdxi[k]/(p_star*(vsqdwi[k]+vsqdwj[k]));
+						  if (temp_ratio>max_mom)
+							  max_mom = temp_ratio;
+					  }
+				  }
+#endif
+	          // Velocity rhs
 		          for (k = 0; k < DIMENSION; k++)
 		              rhs_v[k] -= mpvsqij* dwdx[k];
 
@@ -280,6 +299,13 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 	  } //end of if particle need to up date particle momentum and energy
   }//end of go through all particles
 
+#ifdef DEBUG
+  if (check_ratio)
+  {
+	  cout<<"max ratio for momentum is: " << max_mom << endl;
+  }
+
+#endif
 
   // iterate over hashtable to update state_variables,
   //what need to note is that density was not updated up to this step.
@@ -350,7 +376,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 
 #ifdef DEBUG
-   bool do_search = true;
+   bool do_search = false;
    unsigned keycheck[TKEYLENGTH] = {71863351, 347014367, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
@@ -363,6 +389,13 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 
    bool check_engr = false;
    double engr_thresh = 400000;
+
+   bool check_ratio=false;
+   double max_mom=0.0;
+   double max_e=0.0;
+   bool find_max_ratio=false;
+   double tobef_mom=0.0;
+   double tobef_e=0.0;
 #endif
 
   while ((pi = (Particle *) itr->next ()))
@@ -521,6 +554,20 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 		        	  vsqdwj[k]=Vj*Vj*dwdxj[k];
 		          }
 
+#ifdef DEBUG
+		  if (check_ratio)
+		  {
+
+		      for (k=0; k<DIMENSION; k++)
+		      {
+		    	  double temp_ratio=turb_stress*dwdxi[k]/(p_star*(vsqdwi[k]+vsqdwj[k]));
+		    	  if (temp_ratio>max_mom)
+		    		  max_mom = temp_ratio;
+		      }
+		  }
+
+#endif
+
 		          // Velocity rhs
 		          for (k = 0; k < DIMENSION; k++)
 		              rhs_v[k] -= mj*(p_star*(vsqdwi[k]+vsqdwj[k])- turb_stress*dwdxi[k]);
@@ -676,7 +723,13 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 	  } //end of if particle need to up date particle momentum and energy
   }//end of go through all particles
 
+#ifdef DEBUG
+  if (check_ratio)
+  {
+	  cout<<"max ratio for momentum is: " << max_mom << endl;
+  }
 
+#endif
   // iterate over hashtable to update state_variables,
   //what need to note is that density was not updated up to this step.
   THTIterator *it2 = new THTIterator(P_table);

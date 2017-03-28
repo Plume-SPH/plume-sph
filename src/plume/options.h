@@ -268,20 +268,20 @@
 #define OUT_PUT_EXCUT_TIME
 #endif
 
-//Output ghost particles
-#ifndef WRITE_GHOSTS
-#define WRITE_GHOSTS
-#endif
+////Output ghost particles
+//#ifndef WRITE_GHOSTS
+//#define WRITE_GHOSTS
+//#endif
 
 //output PID
 #ifndef WRITE_PID
 #define WRITE_PID
 #endif
 
-////output particle mass ---> particle mass is necessary in post process
-//#ifndef WRITE_PMASS
-//#define WRITE_PMASS
-//#endif
+//output particle mass ---> particle mass is necessary in post process
+#ifndef WRITE_PMASS
+#define WRITE_PMASS
+#endif
 //
 ////output particle smoothing length ---> useful for debug
 //#ifndef WRITE_SML
