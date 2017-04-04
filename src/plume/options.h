@@ -75,7 +75,7 @@
 #endif
 
 //define Sl and Sr evaluation in HLL and HLLC Riemann Solvers
-/* 0: --> Kunal Puri, Approximate Riemann solvers for the Godunov SPH (GSPH)
+/* 0: --> Kunal Puri, Approximate Riemann solvers for the Godunov SPH (GSPH) For HLLC Riemann Solver in Puri's paper --> should always use this one.
  * 1: --> B. Einfeldt On Godunov-type methods near low density
  * 2: --> S.F. Davis Simplified second-order Godunov-type methods
  * 3: --> E.F. Toro Riemann Solvers and Numerical Methods for Fluid Dynamics
@@ -100,6 +100,22 @@
 #endif
 #endif
 
+//Defines the way to approximate shear velocity in GSPH. ---> This option will be needed only when USE_GSPH == 1
+//It is a common practice to approximate the shear velocity to use (weighted) average of shear velocity on both sides.
+//---> It has been shown that distance based average introduces more dissipation than Roe average (Which is essentially a square root of density weighted average).
+//---> The finally solution to this problem is solving shear velocity wave from Riemann Solver.
+
+/*
+ * SHEAR_VEL_APP 0: arithmatical mean
+ * SHEAR_VEL_APP 1: distanced weighted average. --->The same as what did in Shu-ichiro Inutsuka's paper.
+ * SHEAR_VEL_APP 2: Roe average ---> Weighted by square root of density
+ * SHEAR_VEL_APP 10: From solving a Riemann problem taking the shear velocity wave into account.
+ */
+#if USE_GSPH==1
+#ifndef SHEAR_VEL_APP
+#define SHEAR_VEL_APP 1
+#endif
+#endif
 //Define whether use nature boundary condition for ks or essentiall boundary ks
 /*
  * 0: essential

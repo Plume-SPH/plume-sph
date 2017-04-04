@@ -2226,7 +2226,16 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     HLLC_RP_Solver_my(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #endif
 
-    //project u_star to v_star  --->The project should be distance weighted!
+    //project u_star to v_star
+#if SHEAR_VEL_APP==0  //mean
+    double vij_3D, uij;
+    uij=0.5*(ul+ur);
+    for (int i=0; i<DIMENSION; i++)
+    {
+    	vij_3D=0.5*(vj[i] + vi[i]);
+    	*(v_star+i)=e[i]*u_star+ vij_3D - uij*e[i];
+    }
+#elif SHEAR_VEL_APP==1  //distance weighted
     double epson=sij_star/dist;
     double weighti=0.5+epson;
     double weightj=0.5-epson;
@@ -2238,5 +2247,17 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	vij_3D=vj[i]*weightj + vi[i]*weighti;
     	*(v_star+i)=e[i]*u_star+ vij_3D - uij*e[i];
     }
+#elif SHEAR_VEL_APP==2  //Roe average --> square root of density weighted.
+    double rdl=sqrt(dl);
+    double rdr=sqrt(dr);
+    double denominator = 1.0 / (rdl+rdr);
+    double ulr = (ul*rdl + ur*rdr)*denominator;
+	double vlr_3D[DIMENSION];
+	for (int i=0; i<DIMENSION; i++)
+	{
+		vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+		*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
+	}
+#endif
 }
 
