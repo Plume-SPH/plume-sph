@@ -86,8 +86,6 @@ int move_bnd_images(
     int,
     //! HashTable of particles
     THashTable *,
-    //! HashTable of buckets
-    HashTable *,
     //! STL Vector of Images
     list < BndImage > &);
 

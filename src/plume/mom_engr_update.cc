@@ -28,7 +28,7 @@ const double two_k = 2*lamda_P; //this is the coefficient that in front of
 
 # ifndef USE_GSPH
 int
-mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
+mom_engr_update(int myid, THashTable * P_table,
                 TimeProps * timeprops, SimProps *simprops)
 {
   int i, k;
@@ -341,7 +341,7 @@ mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
 #elif USE_GSPH ==1  //Use GSPH method to discretize the momentum and energy equation
 
 int
-mom_engr_update(int myid, THashTable * P_table, HashTable * BG_mesh,
+mom_engr_update(int myid, THashTable * P_table,
                 TimeProps * timeprops, SimProps *simprops)
 {
   int i, k;

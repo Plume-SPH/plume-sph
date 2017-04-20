@@ -24,6 +24,11 @@ using namespace std;
 #  include <iostream>
 #endif
 
+
+//Update position and update particles contained by each bucket.
+//It would be better if separate these two --> it is better in term of code architecture
+//--->Actually a trade off between efficiency and code architecture
+//Now it is clear that good code architecture should always has higher priority
 void
 update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
             TimeProps * timeprops, MatProps * matprops, int *lost)

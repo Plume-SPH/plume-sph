@@ -321,7 +321,7 @@ main(int argc, char **argv)
 
 #ifdef MULTI_PROC
     // ghost need to be updated only before updating momentum
-    move_bnd_images (myid, numprocs, P_table, BG_mesh, Image_table);
+    move_bnd_images (myid, numprocs, P_table, Image_table);
 #endif
 
 #if USE_GSPH==1
@@ -341,7 +341,7 @@ main(int argc, char **argv)
 #endif
 
     // update momentum and energy
-    int err2 = mom_engr_update (myid, P_table, BG_mesh, timeprops, simprops);
+    int err2 = mom_engr_update (myid, P_table, timeprops, simprops);
     if ( err2 )
     {
       cerr << "Momentum update failed on proc" << myid <<

@@ -100,7 +100,6 @@ int apply_bcond (
 int mom_engr_update(
                int ,           //! my Proc ID
                THashTable *,    //! HashTable of SPH partilces
-               HashTable *,    //! HashTable of Mesh elements
                TimeProps *,    //! struct for simulation props
 			   SimProps *      //simprops
               );

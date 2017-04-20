@@ -30,7 +30,7 @@ using namespace std;
 #include <exvar.h>
 
 int
-move_bnd_images (int myid, int nump, THashTable * P_table, HashTable * BG_mesh,
+move_bnd_images (int myid, int nump, THashTable * P_table,
                  list < BndImage > & Image_table)
 {
 
