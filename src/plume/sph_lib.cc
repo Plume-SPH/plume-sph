@@ -2056,21 +2056,35 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 		            double DDvi[DIMENSION], double DDvj[DIMENSION], double DDwi[DIMENSION], double DDwj[DIMENSION], double DDpi[DIMENSION], double DDpj[DIMENSION], double* p_star, double* v_star)
 {
 	//Pre compute:
+	int i;
     //Interpolate global variable to local system to get input for local Riemann Solver:
-    int i;
 	double hij= 0.5*(hi+hj);
     double dx[DIMENSION];
     for (i = 0; i < DIMENSION; i++)
     	dx[i] = xi[i] - xj[i];
 
-    double dist = 0.0;
-    for (i = 0; i < DIMENSION; i++)
-  	   dist += dx[i]*dx[i];
-    dist = sqrt(dist);
+#if SWITCH_OFF_AV_FOR_EXPAN==1
+	double dot_product=0.0;
+	for (i = 0; i < DIMENSION; i++)
+		dot_product += dx[i]*(vi[i] - vj[i]);
 
-    double e[DIMENSION];
-    Compute_eij(dx, dist, e);
+	if (dot_product<=0)
+	{
+		*p_star = 0.5*(pi+pj);
+		for (i = 0; i < DIMENSION; i++)
+			*(v_star+i) = 0.5*(vi[i] + vj[i]);
 
+		return;
+	}
+#endif
+
+	double dist = 0.0;
+	for (i = 0; i < DIMENSION; i++)
+	   dist += dx[i]*dx[i];
+	dist = sqrt(dist);
+
+	double e[DIMENSION];
+	Compute_eij(dx, dist, e);
     // Now do projection
     double ui=0.0, uj=0.0;
     //need to project ui and uj onto the direction of local coordinate system first, then compute differential.
@@ -2259,5 +2273,7 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 		*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
 	}
 #endif
+
+	return;
 }
 

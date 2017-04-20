@@ -1,18 +1,18 @@
 #!/bin/sh
-#SBATCH --time=71:25:00
-#SBATCH --nodes=24
+#SBATCH --time=71:30:00
+#SBATCH --nodes=30
 ##SBATCH --cpus-per-task=1
 #SBATCH --tasks-per-node=12
 #SBATCH --mem=36000
 ##SBATCH --exclusive
 #SBATCH --mail-user=zhixuanc@buffalo.edu
 #SBATCH --mail-type=ALL
-#SBATCH --job-name=Try288
+#SBATCH --job-name=Hr1p5_Er6Roe_pb
 #SBATCH --qos=supporters
 #SBATCH --output=output.out
 #SBATCH --error=output.err
 #SBATCH --partition=general-compute
-#SBATCH --constraint=CPU-E5645
+#SBATCH --constraint=IB&CPU-E5645
 #SBATCH --requeue
 
 # spit out some basic SLURM information

@@ -113,7 +113,18 @@
  */
 #if USE_GSPH==1
 #ifndef SHEAR_VEL_APP
-#define SHEAR_VEL_APP 1
+#define SHEAR_VEL_APP 2
+#endif
+#endif
+
+//The GSPH will also introduce artificial viscosity for expansion ---> To turn this off, one possible way is to use an if-else condition similar to what used in SPH
+/*
+ * SWITCH_OFF_AV_FOR_EXPAN 0: Do not switch off artificial viscosity for expansion
+ * SWITCH_OFF_AV_FOR_EXPAN 1: switch off artificial viscosity for expansion
+ */
+#if USE_GSPH==1
+#ifndef SWITCH_OFF_AV_FOR_EXPAN
+#define SWITCH_OFF_AV_FOR_EXPAN 1
 #endif
 #endif
 //Define whether use nature boundary condition for ks or essentiall boundary ks
@@ -284,10 +295,10 @@
 #define OUT_PUT_EXCUT_TIME
 #endif
 
-////Output ghost particles
-//#ifndef WRITE_GHOSTS
-//#define WRITE_GHOSTS
-//#endif
+//Output ghost particles
+#ifndef WRITE_GHOSTS
+#define WRITE_GHOSTS
+#endif
 
 //output PID
 #ifndef WRITE_PID
