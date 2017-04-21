@@ -953,6 +953,108 @@ main(int argc, char **argv)
 
   return 0;
 }
-#elif CODE_DIMENSION==1 //Otherwise, 1D code is used for code verification.  ---> In current version, 1D code does not use background buckets and is sequential code.
 
+#elif CODE_DIMENSION==1 //Otherwise, 1D code is used for code verification.  ---> In current version, 1D code does not use background buckets and is sequential code.
+int
+main(int argc, char **argv)
+{
+  int i, ierr = 0;
+  double dt;
+  MatProps *matprops = new MatProps();
+  TimeProps *timeprops = new TimeProps();
+  SimProps *simprops = new SimProps();
+  THashTable *P_table;
+
+  int format = 0;
+  int adapt = 0;
+  int lost = 0;
+  int lostsum = 0;
+  double local_data[3], global_data[3];
+  int myid, numprocs;
+
+  numprocs = 1;
+  myid = 0;
+
+  // allocate communcation array
+  int * my_comm = new int [numprocs];
+
+  //Read input data
+  if (Read_Data(matprops, timeprops, simprops, &format) != 0)
+  {
+    cerr << "ERROR: Can't read input data\n";
+    exit(1);
+  }
+
+  //add air particles and put particles into bucket, bc_type is determined in this process
+  add_air(P_table, BG_mesh, matprops, simprops, numprocs, myid);
+
+  // Write inital configuration
+  write_output (myid, numprocs, P_table, BG_mesh,
+                partition_table, timeprops, format);
+
+  /*
+   *
+   * The time-stepping loop
+   *
+   */
+  while (!timeprops->ifend())
+  {
+    // calculate time-step
+    dt = timestep(BG_mesh, P_table, timeprops);
+
+    ierr = 0;  // reset error code
+    adapt = 0; // and adapt flag
+
+
+#if USE_GSPH==1
+    // calculate gradient, before momentum and energy updating
+    calc_gradients(P_table);
+#endif  //USE_GSPH==1
+
+    // update momentum and energy
+    int err2 = mom_engr_update (myid, P_table, timeprops, simprops);
+    if ( err2 )
+    {
+      cerr << "Momentum update failed on proc" << myid <<
+        " at time-step : " << timeprops->step << endl;
+      cerr << "Check outfile for proc " << myid << " for errors." << endl;
+      ierr += err2;
+    }
+
+    // smooth out density oscillations (if any)
+    smooth_density(P_table);
+
+#ifdef HAVE_TURBULENCE_LANS
+    // smooth out velocity
+    smooth_velocity(P_table);
+#endif
+
+    // update particle positions
+    update_pos (P_table, timeprops, matprops);
+
+    // write output if needed
+    if (timeprops->ifoutput())
+    {
+       write_output (myid, numprocs, P_table, BG_mesh,
+                    partition_table, timeprops, format);
+    }
+  }
+
+  // just for the sake of good practice
+  delete [] my_comm;
+
+  if (myid == 0)
+  {
+    printf("A total of %d SPH Particles were lost.\n", lostsum);
+    walltime = finish - start;
+    int hours = (int) (walltime / 3600.);
+    int mins = (int) ((walltime - hours * 3600) / 60);
+    double secs = walltime - (hours * 3600) - (mins * 60);
+
+    printf ("Computation time for a %d proc run was %d:%02d:%f\n",
+           numprocs, hours, mins, secs);
+  }
+
+  return 0;
+}
 #endif

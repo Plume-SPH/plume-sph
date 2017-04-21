@@ -206,7 +206,6 @@
 #define HAVE_TURBULENCE_LANS
 #endif
 
-
 ////Define have physics viscosity
 //#ifndef USE_PHYSICS_VIS
 //#define USE_PHYSICS_VIS
