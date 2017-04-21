@@ -165,13 +165,18 @@ void smooth_velocity (
 
 //! Update particle positions and their relationship with background Mesh
 void update_pos(
-               int ,         //! my proc id
                THashTable *, //! HashTable of SPH particles
-               HashTable *,  //! HashTable of cells of background mesh
                TimeProps *,  //! Time properties struct
-               MatProps * ,  //! Mat properties struct
-               int *         //! Pointer to number of particles removed
+               MatProps *   //! Mat properties struct
               );
+
+//! Update particle positions and their relationship with background Mesh
+void update_particles_in_bucket(
+               	   	   	   	   int ,         //! my proc id
+							   THashTable *, //! HashTable of SPH particles
+							   HashTable *,  //! HashTable of cells of background mesh
+							   int *         //! Pointer to number of particles removed
+              	  	  	  	  );
 
 //! Write output, in specified format
 void write_output(

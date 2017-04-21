@@ -29,24 +29,23 @@ using namespace std;
 //It would be better if separate these two --> it is better in term of code architecture
 //--->Actually a trade off between efficiency and code architecture
 //Now it is clear that good code architecture should always has higher priority
+//Zhixuan separated these two into two different functions  --At 04.20.2017
+
 void
-update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
-            TimeProps * timeprops, MatProps * matprops, int *lost)
+update_pos(THashTable * P_table,
+            TimeProps * timeprops, MatProps * matprops)
 {
-  int dir[DIMENSION];
   double pos[DIMENSION], coord[DIMENSION], vel[DIMENSION];
-  double mincrd[DIMENSION], maxcrd[DIMENSION];
 
   double sml_of_phase2 = matprops->smoothing_length;
 
   int i;
 
   double dt = timeprops->dtime;
-  bool los;
+
 
 #ifdef DEBUG
    bool do_search = false;
-   bool check_contain = true;
    unsigned keycheck[TKEYLENGTH] = {69562537, 292385725, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
@@ -158,6 +157,29 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
     } //end of if particle is erupted
 
   }//end of go through all particles
+
+
+  // clean up
+  delete itr;
+
+  return;
+}
+
+
+void
+update_particles_in_bucket(int myid, THashTable * P_table, HashTable * BG_mesh, int *lost)
+{
+	int i;
+	int dir[DIMENSION];
+	double mincrd[DIMENSION], maxcrd[DIMENSION];
+
+	double pos[DIMENSION];
+
+	bool los;
+
+#ifdef DEBUG
+   bool check_contain = true;
+#endif
 
   // move-in and move out particles from buckets
   vector < TKey > plist;
@@ -432,7 +454,6 @@ update_pos(int myid, THashTable * P_table, HashTable * BG_mesh,
 	  }//end of if curr_bucket is not brief bucket
   }//end of while loop go through all buckets
   // clean up
-  delete itr;
   delete it2;
 
 //  return adapt;

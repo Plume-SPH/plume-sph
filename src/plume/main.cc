@@ -207,11 +207,11 @@ main(int argc, char **argv)
                 partition_table, timeprops, format);
 
   //Output this piece of code is to output results without ghost particles ----> will be useful
-  #ifdef WRITE_GHOSTS
+#ifdef WRITE_GHOSTS
   // Write inital configuration
   write_output_show (myid, numprocs, P_table, BG_mesh,
                 partition_table, timeprops, format);
-  #endif
+#endif
 
   /*
    *
@@ -301,6 +301,7 @@ main(int argc, char **argv)
 
     }
 #endif  //ADJUST_DOMAIN
+
 #endif  //MULTI_PROC
 
     ierr = 0;  // reset error code
@@ -331,9 +332,9 @@ main(int argc, char **argv)
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
-#endif
+#endif  //MULTI_PROC
 
-#endif
+#endif  //USE_GSPH==1
 
 #ifdef DEBUG
   if (check_part)
@@ -388,7 +389,10 @@ main(int argc, char **argv)
 #endif
 
     // update particle positions
-    update_pos (myid, P_table, BG_mesh, timeprops, matprops, &lost);
+    update_pos (P_table, timeprops, matprops);
+
+    // update particles that contained by each bucket
+    update_particles_in_bucket(myid, P_table, BG_mesh, &lost);
 
 #ifndef SIMULATE_ASH
     // add new layers of particle in the duct
