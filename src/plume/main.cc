@@ -33,6 +33,8 @@ using namespace std;
 #include "sph_header.h"
 #include "particler.h"
 
+#if CODE_DIMENSION==3 //Three D code is usually used for real simulation
+
 int
 main(int argc, char **argv)
 {
@@ -491,3 +493,10 @@ main(int argc, char **argv)
 
   return 0;
 }
+
+#elif CODE_DIMENSION==2 //Otherwise, 2D code is used for code verification.  ---> In current version, 2D code does not use background buckets and is sequential code.
+
+#elif CODE_DIMENSION==1 //Otherwise, 1D code is used for code verification.  ---> In current version, 1D code does not use background buckets and is sequential code.
+
+
+#endif

@@ -7,7 +7,7 @@ make clean
 make distclean
 
 aclocal
-autoconf
+autoreconf -i
 automake --add-missing
 #remove --enable-debug to turn off debug mode
 #remove --enable-parallel to use serial version : This is not recommended

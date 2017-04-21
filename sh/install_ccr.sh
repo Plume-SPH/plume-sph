@@ -6,7 +6,7 @@ make distclean
 
 #generate Makefile.in and config.h.in and other necessary files ---> need Makefile.am and configure.ac
 aclocal
-autoconf
+autoreconf -i
 automake --add-missing
 
 

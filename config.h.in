@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* build 1-d code */
+#undef CODE_DIMENSION
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
@@ -114,9 +117,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* build 3-d code */
-#undef THREE_D
 
 /* Version number of package */
 #undef VERSION

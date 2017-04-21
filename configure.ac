@@ -21,18 +21,22 @@ AM_PROG_CC_C_O
 AC_PROG_RANLIB
 
 #-----------------------------------------------------------------------
-#  Check for 2-D or 3-d version
+#  Check for 1-D, 2-D or 3-D version, default is 3D
 #-----------------------------------------------------------------------
-AC_MSG_CHECKING([build 3-D code])
-AC_ARG_ENABLE(3d,
-              AS_HELP_STRING([--disable-3d],
-                             [build 2-d code, instead of default 3-d]))
+AC_MSG_CHECKING([build code dimension])
+AC_ARG_ENABLE(dimension,
+              AS_HELP_STRING([--enable-dimension=n],
+                             [define code dimension as n]))
               
-if test "x$enable_3d" != "xno"; then
-  AC_DEFINE([THREE_D],[],[build 3-d code])
+if test "x$enable_dimension" = "x1"; then
+  AC_DEFINE([CODE_DIMENSION],[1],[build 1-d code])
+  AC_MSG_RESULT([yes])
+elif test "x$enable_dimension" = "x2"; then
+  AC_DEFINE([CODE_DIMENSION],[2],[build 2-d code])
   AC_MSG_RESULT([yes])
 else
-  AC_MSG_RESULT([no])
+  AC_DEFINE([CODE_DIMENSION],[3],[build 1-d code])
+  AC_MSG_RESULT([yes])
 fi
 
 #-----------------------------------------------------------------------
