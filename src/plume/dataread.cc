@@ -356,12 +356,13 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   GH5_read_grid_data(fp, "/Buckets", bucket);
 
   double flat[2*DIMENSION];
-  flat[0]=Lx_P[0];
-  flat[1]=Lx_P[1];
-  flat[2]=Ly_P[0];
-  flat[3]=Ly_P[1];
-  flat[4]=Lz_P[0];
-  flat[5]=Lz_P[1];
+
+  for (i = 0; i < DIMENSION; i++)
+  {
+	 flat[i*2]=Ll_P[i];
+	 flat[i*2+1]=Lu_P[i];
+  }
+
   for (i = 0; i < No_of_Buckets; i++)
   {
 	// hash-table keys

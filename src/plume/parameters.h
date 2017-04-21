@@ -20,10 +20,11 @@
 //----------------------------------------------------------------------------------------
 ////% parameter for domain definition
 //
-//const double Lx_P[2]={-12000,12000};
-//const double Ly_P[2]={-12000,12000};
-//const double Lz_P[2]={0, 26000};
-//
+////const double Lx_P[2]={-12000,12000};
+////const double Ly_P[2]={-12000,12000};
+////const double Lz_P[2]={0, 26000};
+//const double Ll_P[DIMENSION]={-12000,-12000, 0};
+//const double Lu_P[DIMENSION]={12000,12000, 26000};
 //const int N_total_P=2700;  // This one is actually not used in current code!
 //
 ////----------------------------------------------------------------------------------------
@@ -113,7 +114,7 @@
 //const double rv_P = 140;
 //const double Mv_P = rv_P*rv_P*rhov_P*Vv0_P*3.1415926;
 //
-//const double Pos_v_P[DIMENSION]={0., 0., 0. };  /*position of vent at the origin*/
+//const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2] };  /*position of vent at the origin*/
 //
 //const int num_erupt = 2; /*this parameter should be used to determine total number */
 //
@@ -174,9 +175,12 @@
 //const double Lz_P[2]={1500,50000};
 
 ////for strong sml1=170 larger domain
-const double Lx_P[2]={-39780,39780};
-const double Ly_P[2]={-39780,39780};
-const double Lz_P[2]={1500,55000};
+//const double Lx_P[2]={-39780,39780};
+//const double Ly_P[2]={-39780,39780};
+//const double Lz_P[2]={1500,55000};
+
+const double Ll_P[DIMENSION]={-39780,-39780, 1500};
+const double Lu_P[DIMENSION]={39780,39780, 55000};
 
 //for strong sml1=300 or sml1=200, sml1=150
 //const double Lx_P[2]={-28800,28800};
@@ -316,7 +320,7 @@ const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
 //const double rv_P = 140;
 //const double Mv_P = rv_P*rv_P*rhov_P*Vv0_P*3.1415926;
 
-const double Pos_v_P[DIMENSION]={0., 0., Lz_P[0] };  /*position of vent at the origin*/
+const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2] };  /*position of vent at the origin*/
 
 const int num_erupt = 2; /*this parameter should be used to determine total number */
 
@@ -373,9 +377,11 @@ const int balancing_check_int_P = 3;
  */
 // parameter for domain definition
 
-//const double Lx_P[2]={-528,528};
-//const double Ly_P[2]={-528,528};
-//const double Lz_P[2]={0, 6000};
+////const double Lx_P[2]={-528,528};
+////const double Ly_P[2]={-528,528};
+////const double Lz_P[2]={0, 6000};
+//const double Ll_P[DIMENSION]={-528,-528,0};
+//const double Lu_P[DIMENSION]={528,528,6000};
 //
 ////----------------------------------------------------------------------------------------
 ////% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -462,7 +468,7 @@ const int balancing_check_int_P = 3;
 //const double rv_P= 20; /*radius of vent*/
 //const double Mv_P=(rv_P*rv_P*3.1415926)*(rhov_P*Vv0_P); /*mass flow rate, it is not directly used in simulation.*/
 //
-//const double Pos_v_P[DIMENSION]={0., 0., Lz_P[0] };  /*position of vent at the origin*/
+//const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2] };  /*position of vent at the origin*/
 //
 //const int num_erupt = 2; /*this parameter should be used to determine total number */
 //
@@ -512,6 +518,9 @@ const int balancing_check_int_P = 3;
 //const double Lx_P[2]={-12000,12000};
 //const double Ly_P[2]={-12000,12000};
 //const double Lz_P[2]={0, 23000};
+
+//const double Ll_P[DIMENSION]={-12000,-12000, 0};
+//const double Lu_P[DIMENSION]={12000,12000, 23000};
 //
 //const int N_total_P=2700;  // This one is actually not used in current code!
 //
@@ -596,7 +605,7 @@ const int balancing_check_int_P = 3;
 //
 //const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
 //
-//const double Pos_v_P[DIMENSION]={0., 0., 0. };  /*position of vent at the origin*/
+//const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2] };  /*position of vent at the origin*/
 //
 //const int num_erupt = 2; /*this parameter should be used to determine total number */
 //
@@ -643,13 +652,15 @@ const int balancing_check_int_P = 3;
 ////----------------------------------------------------------------------------------------
 ////% parameter for domain definition
 //
-////const double Lx_P[2]={-28800,28800};
-////const double Ly_P[2]={-28800,28800};
+//////const double Lx_P[2]={-28800,28800};
+//////const double Ly_P[2]={-28800,28800};
+//////const double Lz_P[2]={54, 20000};
+//const double Ll_P[DIMENSION]={-28800,-28800, 54};
+//const double Lu_P[DIMENSION]={28800,28800, 20000};
+////
+////const double Lx_P[2]={-8800,8800};
+////const double Ly_P[2]={-8800,8800};
 ////const double Lz_P[2]={54, 20000};
-//
-//const double Lx_P[2]={-8800,8800};
-//const double Ly_P[2]={-8800,8800};
-//const double Lz_P[2]={54, 20000};
 //
 //
 //const int N_total_P=2700;  // This one is actually not used in current code!
@@ -741,7 +752,7 @@ const int balancing_check_int_P = 3;
 //
 //const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
 //
-//const double Pos_v_P[DIMENSION]={0., 0., Lz_P[0]};  /*position of vent at the origin*/
+//const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2]};  /*position of vent at the origin*/
 //
 //const int num_erupt = 2; /*this parameter should be used to determine total number */
 //
@@ -785,9 +796,12 @@ const int balancing_check_int_P = 3;
  */
 
 //larger domain sml1=300 or sml1=200, sml1=150
-const double Lx_P[2]={-109600,109600};
-const double Ly_P[2]={-109600,109600};
-const double Lz_P[2]={1500,50000};
+//const double Lx_P[2]={-109600,109600};
+//const double Ly_P[2]={-109600,109600};
+//const double Lz_P[2]={1500,50000};
+
+const double Ll_P[DIMENSION]={-109600,-109600, 1500};
+const double Lu_P[DIMENSION]={109600,109600, 50000};
 
 //----------------------------------------------------------------------------------------
 //% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -884,7 +898,7 @@ const double h_bot_P= 20000.0; /*bottom height of the plume */
 //const double rv_P = 140;
 //const double Mv_P = rv_P*rv_P*rhov_P*Vv0_P*3.1415926;
 
-const double Pos_v_P[DIMENSION]={0., 0., Lz_P[0] };  /*position of vent at the origin*/
+const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2] };  /*position of vent at the origin*/
 
 //const int num_erupt = 2; /*this parameter should be used to determine total number */
 //

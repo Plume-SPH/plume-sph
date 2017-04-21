@@ -76,7 +76,7 @@ setup_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
 	range_y[0] = -r_out_P;
 	range_y[1] = r_out_P;
     range_z[1] = h_top_P;
-    range_z[0] = Lz_P[0];  //+ PARTICLE_DENSITY*0.5*sml;
+    range_z[0] = Ll_P[2];  //+ PARTICLE_DENSITY*0.5*sml;
 
 
     //Find all buckets as influx buckets

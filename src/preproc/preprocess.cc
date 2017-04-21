@@ -100,13 +100,12 @@ int main(int argc, char *argv[])
 //  double resolution = del;
 
   // get domain limits from GIS
-	  mindom_o[0]= Lx_P[0];  //original domain
-	  mindom_o[1]= Ly_P[0];  //original domain
-	  mindom_o[2]= Lz_P[0];  //original domain
+  for (i=0; i<DIMENSION; i++)
+	  mindom_o[i]= Ll_P[i];  //original domain
 
-	  maxdom_o[0]= Lx_P[1];  //original domain
-	  maxdom_o[1]= Ly_P[1];  //original domain
-	  maxdom_o[2]= Lz_P[1];  //original domain
+  // get domain limits from GIS
+  for (i=0; i<DIMENSION; i++)
+	  maxdom_o[i]= Lu_P[i];  //original domain
 
   //To impose pressure atmosphere and wall bc, expand the domain
   double extend_cof = EXT_DOM_COF;

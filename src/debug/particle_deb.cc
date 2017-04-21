@@ -77,12 +77,12 @@ inline void create_part (double *pcrd, int myid, double prss, int phs_num,
 	   * in SimulProps or parameters.h
 	   * will modify this part later
 	  */
-     bnd[0]=Lx_P[0];
-     bnd[1]=Lx_P[1];
-     bnd[2]=Ly_P[0];
-     bnd[3]=Ly_P[1];
-     bnd[4]=Lz_P[0];
-     bnd[5]=Lz_P[1];
+
+	for (i = 0; i < DIMENSION; i++)
+	{
+     bnd[i*2]=Ll_P[i];
+     bnd[i*2+1]=Lu_P[i];
+	}
 
 	ptype = 0; //is real
 	for (i = 0; i < DIMENSION; i++)

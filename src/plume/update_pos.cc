@@ -134,7 +134,7 @@ update_pos(THashTable * P_table,
 
 #ifndef SIMULATE_ASH
       //Change ghost to real; change erupt to false
-      if ((pos[2]>=Lz_P[0]) ) //need to make it more general!
+      if ((pos[2]>=Ll_P[2]) ) //need to make it more general!
       {
     	  p->erupt_turn_real();
     	  p->put_smlen(sml_of_phase2);
