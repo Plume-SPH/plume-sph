@@ -31,7 +31,7 @@ make clean
 make distclean
 
 aclocal
-autoconf
+autoreconf -i
 automake --add-missing
 
 ./configure --without-gdal --with-hdf5 --enable-debug --enable-parallel CC=mpicc CXX=mpicxx FC=mpifort CXXFLAGS="-std=c++x0"| tee myconfig.out
