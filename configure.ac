@@ -35,7 +35,7 @@ elif test "x$enable_dimension" = "x2"; then
   AC_DEFINE([CODE_DIMENSION],[2],[build 2-d code])
   AC_MSG_RESULT([yes])
 else
-  AC_DEFINE([CODE_DIMENSION],[3],[build 1-d code])
+  AC_DEFINE([CODE_DIMENSION],[3],[build 3-d code])
   AC_MSG_RESULT([yes])
 fi
 

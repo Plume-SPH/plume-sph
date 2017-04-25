@@ -295,11 +295,13 @@ shift_brief_buck (
 		TimeProps *, //timeprops,
 		int          //myid
 		);
-
+#if USE_GSPH==1
 //Function for computing gradient of all state variables.
 void calc_gradients(
 		THashTable * //P_table
 		);
+#endif
+
 ////This function is useless should be removed.
 //int
 //put_ghost_particles (

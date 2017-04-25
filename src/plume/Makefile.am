@@ -47,7 +47,8 @@ particler_SOURCES = add_air.cc \
 INCLUDES = -I$(top_srcdir)/src/datstr \
            -I$(top_srcdir)/src/preproc \
            -I$(top_srcdir)/src/multiproc\
-           -I$(top_srcdir)/src/debug
+           -I$(top_srcdir)/src/debug \
+           -I$(top_srcdir)/src/plume
 
 particler_LDADD = $(top_builddir)/src/datstr/libbgmesh.a \
                   $(top_builddir)/src/multiproc/libmultiproc.a \

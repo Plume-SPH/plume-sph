@@ -1,6 +1,6 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* build 1-d code */
+/* build 3-d code */
 #undef CODE_DIMENSION
 
 /* Define to 1 if you have the <fcntl.h> header file. */

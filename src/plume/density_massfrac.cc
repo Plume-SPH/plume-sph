@@ -150,7 +150,11 @@ smooth_density(THashTable * P_table)
 						for (k = 0; k < DIMENSION; k++)
 							s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
 						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj;
+//						cout<< "wm_e=" << wm_e <<endl;
+//						cout<< "rhoj=" << rhoj<<endl;
 						wnorm_e +=wm_e/rhoj;
+//						if (isnan(wnorm_e))
+//							cout<<"found it!"<<endl;
 						engr +=wm_e*pj->get_energy()/rhoj;
 #elif HAVE_ENERGY_SMOOTH==2
 						for (k = 0; k < DIMENSION; k++)
@@ -195,6 +199,7 @@ smooth_density(THashTable * P_table)
       norm = 0.0;
 
 #if HAVE_ENERGY_SMOOTH==1
+//      cout << wnorm_e << endl;
       assert (wnorm_e > 0);
       engr = engr/wnorm_e;
       pi->put_new_energy(engr);
@@ -249,6 +254,7 @@ smooth_density(THashTable * P_table)
      pi->calc_density_suzuki(mssfrc);
 #else
      assert(density > 0);
+     assert(!isnan(density));
      pi->put_new_density(density);
 #endif
 

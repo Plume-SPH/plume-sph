@@ -24,7 +24,7 @@
  */
 
 #ifndef USE_GSPH
-#define USE_GSPH 1
+#define USE_GSPH 0
 #endif
 
 
@@ -124,7 +124,7 @@
  */
 #if USE_GSPH==1
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
-#define SWITCH_OFF_AV_FOR_EXPAN 1
+#define SWITCH_OFF_AV_FOR_EXPAN 0
 #endif
 #endif
 //Define whether use nature boundary condition for ks or essentiall boundary ks

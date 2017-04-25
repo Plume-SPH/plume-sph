@@ -54,6 +54,7 @@ Particle::Particle ()
   pressure = 0.;
 
   mass_frac = 0.;
+  new_mass_frac = 0.;
   gamma = 0;
   sound_speed = 0.;
   temperature = 0.;
@@ -135,6 +136,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   pressure = prss;
 
   mass_frac = masfrc;
+  new_mass_frac = 0.;
   gamma = gmm;
   sound_speed = sndspd;
   phase_num = phs_num;
@@ -225,6 +227,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
 //    gamma=gamma_v;
     sound_speed=sndspd;
 
+    gamma=gamma_v;
+
 #if USE_GSPH==1  //Assume 3D
   //derivatives
   for (i = 0; i < DIMENSION; i++)
@@ -310,6 +314,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
 
 //    gamma=gamma_v;
     sound_speed=sndspd;
+
+    gamma=gamma_v;
 
 #if USE_GSPH==1  //Assume 3D
   //derivatives

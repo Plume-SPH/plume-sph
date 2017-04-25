@@ -1709,7 +1709,11 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
+#if FLUID_COMPRESSIBILITY==0
     double clr= sqrt(gammalr*plr/dlr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+#endif
 
     //solve RP problem with approxiamte Roe RP solver
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
@@ -1739,7 +1743,11 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
+#if FLUID_COMPRESSIBILITY==0
     double clr= sqrt(gammalr*plr/dlr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+#endif
 
     //solve RP problem with approxiamte Roe RP solver
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
@@ -1786,14 +1794,23 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
+#if FLUID_COMPRESSIBILITY==0
     double clr= sqrt(gammalr*plr/dlr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+#endif
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
 
 	//Compute approximation of wave speed
     double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
     double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+#if FLUID_COMPRESSIBILITY==0
     double cl=sqrt(gj*pl/dl);
     double cr=sqrt(gi*pr/dr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double cl= sqrt(pl*gj/(rhoa0_P*(pow(dl/rhoa0_P, gj)-1.0)));
+    double cr= sqrt(pr*gi/(rhoa0_P*(pow(dr/rhoa0_P, gi)-1.0)));
+#endif
 
     double p_hat;
 #if HLL_WAVE_SPEED_EVA==0
@@ -1906,8 +1923,13 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
     double rdr=sqrt(dr);
     double denominator = 1.0 / (rdl+rdr);
 
-	double cl=sqrt(gj*pl/dl);
+#if FLUID_COMPRESSIBILITY==0
+    double cl=sqrt(gj*pl/dl);
     double cr=sqrt(gi*pr/dr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double cl= sqrt(pl*gj/(rhoa0_P*(pow(dl/rhoa0_P, gj)-1.0)));
+    double cr= sqrt(pr*gi/(rhoa0_P*(pow(dr/rhoa0_P, gi)-1.0)));
+#endif
 
 //Different ways to estimate Nonlinear wave speed
 #if HLL_WAVE_SPEED_EVA==0
@@ -1916,7 +1938,11 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
+#if FLUID_COMPRESSIBILITY==0
     double clr= sqrt(gammalr*plr/dlr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+#endif
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
     double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
     double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
@@ -1931,7 +1957,11 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
+#if FLUID_COMPRESSIBILITY==0
     double clr= sqrt(gammalr*plr/dlr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+#endif
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
     //Compute approximation of wave speed
     double Sl=min(ul-cl, ulr-clr);
@@ -1951,7 +1981,11 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
+#if FLUID_COMPRESSIBILITY==0
     double clr= sqrt(gammalr*plr/dlr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+#endif
     //Compute approximation of wave speed
     double p_pvrs=0.5*(pl+pr)+0.25*(ul-ur)*(dr+dl)*clr;
     double p_refs=max(0.0, p_pvrs);
@@ -1967,7 +2001,11 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
+#if FLUID_COMPRESSIBILITY==0
     double clr= sqrt(gammalr*plr/dlr);
+#elif  FLUID_COMPRESSIBILITY==1
+    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+#endif
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
     //Compute approximation of wave speed
     double Sl=min(ul-cl, ulr-clr);
@@ -1980,7 +2018,11 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
+#if FLUID_COMPRESSIBILITY==0
     double clr= sqrt(gammalr*plr/dlr);
+#elif FLUID_COMPRESSIBILITY==1
+    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+#endif
     //Compute approximation of wave speed
     double Sl=min(ul-cl,  -clr);
     double Sr=max(ur+cr,  clr);

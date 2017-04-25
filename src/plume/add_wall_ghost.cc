@@ -84,12 +84,13 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 	  int bctp =2; //wall condition ghost particle type.
 	  double prss = 0.;
 	  double masfrc = 0.;
-	  double gmm = 1.4;
 
 #if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
 	  double sndspd = 340.;
+	  double gmm = 1.4;
 #elif FLUID_COMPRESSIBILITY==1
 	  double sndspd = 1482.;
+	  double gmm = 7.0;
 #endif
 
 	  int phs_num = 1; //phase 1, air particle

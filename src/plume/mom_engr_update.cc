@@ -26,7 +26,7 @@ using namespace std;
 const double sqrt2 = 1.41421356237310;
 const double two_k = 2*lamda_P; //this is the coefficient that in front of
 
-# ifndef USE_GSPH
+# if USE_GSPH==0
 int
 mom_engr_update(int myid, THashTable * P_table,
                 TimeProps * timeprops, SimProps *simprops)
@@ -229,18 +229,6 @@ mom_engr_update(int myid, THashTable * P_table,
 		              dwdx_heat[k] = d_weight (s_heat, hi/HEAT_TRANS_SCALE_RATIO, k);
 		          }
 
-#ifdef DEBUG
-				  if (check_ratio)
-				  {
-
-					  for (k=0; k<DIMENSION; k++)
-					  {
-						  double temp_ratio=turb_stress*dwdxi[k]/(p_star*(vsqdwi[k]+vsqdwj[k]));
-						  if (temp_ratio>max_mom)
-							  max_mom = temp_ratio;
-					  }
-				  }
-#endif
 	          // Velocity rhs
 		          for (k = 0; k < DIMENSION; k++)
 		              rhs_v[k] -= mpvsqij* dwdx[k];
@@ -694,16 +682,24 @@ mom_engr_update(int myid, THashTable * P_table,
 
            // x-velocity
            unew[1] = uvec[1] + dt * (rhs_v[0]);
+//           if (isnan(unew[1]))
+//        	   cout<<"found it!"<<endl;
+           assert(!isnan(unew[1]));
 
 		   // y-velocity
 		   unew[2] = uvec[2] + dt * (rhs_v[1]);
+		   assert(!isnan(unew[2]));
 
 		   // z-velocity
 		   unew[3] = uvec[3] + dt * (rhs_v[2] + gravity[2]);
+		   assert(!isnan(unew[3]));
 
 		   // energy
 //		   unew[4] = uvec[4] + dt * (rhs_e + veli[2] * gravity[2]); //the variable is only internal energy, it has nnothing to do with mechanical energy, so gravity should not appear here!
 		   unew[4] = uvec[4] + dt * rhs_e;
+		   assert(!isnan(unew[4]));
+
+		   //make sure all new values of quantities
 #if HAVE_ENERGY_CUT==1
 		   if (unew[4]<=0)
 			   unew[4] = ENERGY_CUT;
