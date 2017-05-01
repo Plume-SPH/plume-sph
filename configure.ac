@@ -98,7 +98,7 @@ if test "x$enable_parallel" = "xyes"; then
     fi
 fi
 AC_CHECK_HEADERS([mpi.h])
-AM_CONDITIONAL(PARALLEL_BUILD, test "x$enable_parallel" != "xno")
+AM_CONDITIONAL(PARALLEL_BUILD, test "x$enable_parallel" = "xyes")
 
 # ---------------------------------------------------------------------------
 # Check for --enable-debug

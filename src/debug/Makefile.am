@@ -12,7 +12,13 @@ libdebug_a_SOURCES = \
             debug_bucket_lib.cc \
             debug_lib.cc 
 
+#if PARALLEL_BUILD
 libdebug_a_CPPFLAGS = -I$(top_srcdir)/src/datstr \
                       -I$(top_srcdir)/src/plume \
                       -I$(top_srcdir)/src/multiproc \
                       -I$(top_srcdir)/src/preproc
+#else
+#libdebug_a_CPPFLAGS = -I$(top_srcdir)/src/datstr \
+#                      -I$(top_srcdir)/src/plume \
+#                      -I$(top_srcdir)/src/preproc
+#endif                                        

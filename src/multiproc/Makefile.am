@@ -21,4 +21,4 @@ libmultiproc_a_SOURCES = \
 
 libmultiproc_a_CPPFLAGS = -I$(top_srcdir)/src/datstr \
                           -I$(top_srcdir)/src/plume \
-                          -I$(top_srcdir)/src/debug
+                          -I$(top_srcdir)/src/debug 

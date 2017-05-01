@@ -200,6 +200,32 @@ void write_output_show(
                   int     //! file format, {\it i.e.} hdf5, tecplot etc
                  );
 
+#if CODE_DIMENSION==1
+void write_output(
+                  int ,        //! my process id
+                  int ,        //! total number of procs
+                  THashTable *, //! HashTable of SPH particles
+                  TimeProps * //! Structure time properties
+                 );
+
+void
+set_up_shock_tube (
+		            THashTable * ,  //P_table
+					MatProps * ,    //matprops
+					SimProps *,     //simprops
+					int ,           //Number of processor
+					int             //myid
+					);
+
+//determine time step
+double
+timestep (
+		  THashTable *, //particle table
+		  TimeProps *    //timeprops
+         );
+
+#endif  //CODE_DIMENSION==1
+
 #ifndef SIMULATE_ASH
 //set up eruption particles
 int setup_erupt(
@@ -223,7 +249,7 @@ void add_new_erupt(
                   double         //Time steps
                   );
 
-#else
+#else  //if SIMULATE_ASH is defined
 //set up influx particles
 int setup_influx(
 		        int, //myid
@@ -295,6 +321,7 @@ shift_brief_buck (
 		TimeProps *, //timeprops,
 		int          //myid
 		);
+
 #if USE_GSPH==1
 //Function for computing gradient of all state variables.
 void calc_gradients(
@@ -326,3 +353,4 @@ void calc_gradients(
 //        );
 
 #endif /* PARTICLER_H_ */
+

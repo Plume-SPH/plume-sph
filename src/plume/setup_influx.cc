@@ -26,6 +26,8 @@
 
 using namespace std;
 
+#if CODE_DIMENSION==3
+
 #ifdef SIMULATE_ASH
 
 int
@@ -511,3 +513,5 @@ add_new_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
 
 
 #endif //SIMULATE_ASH
+
+#endif  //#if CODE_DIMENSION==3

@@ -2148,6 +2148,7 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 //    double dpj =0.0;
 //#else
 
+#if CODE_DIMENSION==3
     //need project gradient onto the local coordinate system
     double drhoi=0.0, dui=0.0, dvi=0.0, dwi=0.0, dpi=0.0;
     double drhoj=0.0, duj=0.0, dvj=0.0, dwj=0.0, dpj=0.0;
@@ -2164,10 +2165,44 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	dwi  +=DDwi[i]*e[i];
     	dwj  +=DDwj[i]*e[i];
     }
-
     double ddui=0.0, dduj=0.0;
     ddui = dui*e[0]+dvi*e[1]+dwi*e[2];
     dduj = duj*e[0]+dvj*e[1]+dwj*e[2];
+#elif CODE_DIMENSION==2
+    //need project gradient onto the local coordinate system
+    double drhoi=0.0, dui=0.0, dvi=0.0, dpi=0.0;
+    double drhoj=0.0, duj=0.0, dvj=0.0, dpj=0.0;
+    for (i=0; i<DIMENSION; i++)
+    {
+    	rhoi +=DDri[i]*e[i];
+    	rhoj +=DDrj[i]*e[i];
+    	dpi  +=DDpi[i]*e[i];
+    	dpj  +=DDpj[i]*e[i];
+    	dui  +=DDui[i]*e[i];
+    	duj  +=DDuj[i]*e[i];
+    	dvi  +=DDvi[i]*e[i];
+    	dvj  +=DDvj[i]*e[i];
+    }
+    double ddui=0.0, dduj=0.0;
+    ddui = dui*e[0]+dvi*e[1];
+    dduj = duj*e[0]+dvj*e[1];
+#else
+    //need project gradient onto the local coordinate system
+    double drhoi=0.0, dui=0.0, dpi=0.0;
+    double drhoj=0.0, duj=0.0, dpj=0.0;
+    for (i=0; i<DIMENSION; i++)
+    {
+    	rhoi +=DDri[i]*e[i];
+    	rhoj +=DDrj[i]*e[i];
+    	dpi  +=DDpi[i]*e[i];
+    	dpj  +=DDpj[i]*e[i];
+    	dui  +=DDui[i]*e[i];
+    	duj  +=DDuj[i]*e[i];
+    }
+    double ddui=0.0, dduj=0.0;
+    ddui = dui*e[0];
+    dduj = duj*e[0];
+#endif
 
     //Apply monotonicity
     // dvdxi * dvdxj always non-negative

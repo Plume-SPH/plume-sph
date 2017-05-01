@@ -200,6 +200,12 @@ THashTable::remove (unsigned *key)
   }
 }
 
+#if CODE_DIMENSION==1
+int THashTable::hash (unsigned * key)  //A mask hash table
+{
+  return (key[0]);
+}
+#else
 int THashTable::hash (unsigned * key)
 {
 //  int S03 = MAX_ADD;
@@ -214,6 +220,7 @@ int THashTable::hash (unsigned * key)
 //  return (i1 + i2 +i3);
   return (i1 + i2);
 }
+#endif
 
 
 /***************************************************

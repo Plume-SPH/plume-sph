@@ -75,7 +75,6 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 
 	  //Initial particle property
 	  int bctp = 100; //boundary condition ghost particle type.
-	  int ptype = 0; //real particle
 	  double prss = 0.;
 	  double masfrc = 0.;
 
@@ -139,7 +138,6 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 			    		for (j = 0; j < Ny; j++)
 			    			 for (k = 0; k < Nz; k++)
 			    			 {
-			    				   ptype = 0; // is real
 			    				   pcrd[0] = mincrd[0] + dx2 + i * dx;
 			    				   pcrd[1] = mincrd[1] + dx2 + j * dx;
 			    				   pcrd[2] = mincrd[2] + dx2 + k * dx;
@@ -358,3 +356,163 @@ add_air (THashTable * P_table, HashTable * BG_mesh,
 
 	  return;
 }
+
+#if CODE_DIMENSION==1
+void
+set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops, int numproc, int myid)
+{
+	  int i, j, k, ii;
+	  int tempid;
+	  unsigned pkey[TKEYLENGTH];
+	  unsigned tkeylen = TKEYLENGTH;
+	  double pcrd[DIMENSION], bnd[DIMENSION*2];
+	  vector < TKey > neighs;
+
+	  // direction indices on upper bucket
+	  int num_particle = 0;
+
+	  // start putting pile
+	  double smlen = matprops->smoothing_length;
+	  double dx = smlen;
+	  double dx2 = 0.5 * dx;
+
+	  //Initial particle property
+	  int bctp_real = 100; //boundary condition ghost particle type.
+	  int bctp_prss = 1; //boundary condition ghost particle type.
+
+	  double prss_l = 0.;  //Parameter
+	  double prss_r = 0.;  //Parameter
+	  double des_l = 1.0;  //Parameter
+	  double des_r = 0.5;  //Parameter
+	  double vel_l = 1.0;  //Parameter
+	  double vel_r = 0.2;  //Parameter
+	  double mass_l=des_l*smlen;
+	  double mass_r=des_r*smlen;
+	  double middle_point=0.;
+
+#if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
+	  double sndspd = 340.;
+	  double gmm = 1.4;
+#elif FLUID_COMPRESSIBILITY==1
+	  double sndspd = 1482.;
+	  double gmm = 7.0;
+#endif
+
+	  unsigned add_step = 0; // eruption particle adding step
+	  int involved = 2; //involved
+	  int not_involved = 0; //involved
+
+
+	  /*temporarily use the following way to get bnd, Finally, I will put bnd either
+	   * in SimulProps or parameters.h
+	   * will modify this part later
+	  */
+	  for (i = 0; i < DIMENSION; i++)
+	  {
+	     bnd[i*2]=Ll_P[i];
+	     bnd[i*2+1]=Lu_P[i];
+	  }
+
+	for (k = 0; k < Nb_P; k++)
+	{
+		pcrd[0] = bnd[0] - ( dx2 + (k+Nb_P) * dx);
+		pkey[0]=num_particle;
+		pkey[1]=0;
+		pkey[2]=add_step;
+		// check for duplicates
+		if (P_table->lookup(pkey))
+		{
+		  fprintf(stderr, "ERROR: Trying to add particle "
+						  "twice on same location.\n");
+		  exit(1);
+		}
+
+		Particle * pnew = new Particle(pkey, pcrd, mass_l, smlen , des_l, vel_l, prss_l, gmm, sndspd, bctp_prss, not_involved);
+		// add to hash-table
+		P_table->add(pkey, pnew);
+		num_particle++;
+		neighs.push_back(pkey);
+	}
+
+
+    pcrd[0]=bnd[0]+dx2;
+	while (pcrd[0]<=middle_point)
+	{
+		pkey[0]=num_particle;
+		pkey[1]=0;
+		pkey[2]=add_step;
+		// check for duplicates
+		if (P_table->lookup(pkey))
+		{
+		  fprintf(stderr, "ERROR: Trying to add particle "
+						  "twice on same location.\n");
+		  exit(1);
+		}
+
+		Particle * pnew = new Particle(pkey, pcrd, mass_l, smlen , des_l, vel_l, prss_l, gmm, sndspd, bctp_real, involved);
+		// add to hash-table
+		P_table->add(pkey, pnew);
+		num_particle++;
+		pcrd[0] += dx;
+		neighs.push_back(pkey);
+	}
+
+	while (pcrd[0]<=bnd[1])
+	{
+		pkey[0]=num_particle;
+		pkey[1]=0;
+		pkey[2]=add_step;
+		// check for duplicates
+		if (P_table->lookup(pkey))
+		{
+		  fprintf(stderr, "ERROR: Trying to add particle "
+						  "twice on same location.\n");
+		  exit(1);
+		}
+
+		Particle * pnew = new Particle(pkey, pcrd, mass_r, smlen , des_r, vel_r, prss_r, gmm, sndspd, bctp_real, involved);
+		// add to hash-table
+		P_table->add(pkey, pnew);
+		num_particle++;
+		pcrd[0] += dx;
+		neighs.push_back(pkey);
+	}
+
+	for (k = 0; k < Nb_P; k++)
+	{
+		pkey[0]=num_particle;
+		pkey[1]=0;
+		pkey[2]=add_step;
+		// check for duplicates
+		if (P_table->lookup(pkey))
+		{
+		  fprintf(stderr, "ERROR: Trying to add particle "
+						  "twice on same location.\n");
+		  exit(1);
+		}
+
+		Particle * pnew = new Particle(pkey, pcrd, mass_r, smlen , des_r, vel_r, prss_r, gmm, sndspd, bctp_real, involved);
+		// add to hash-table
+		P_table->add(pkey, pnew);
+		num_particle++;
+		pcrd[0] += dx;
+		neighs.push_back(pkey);
+	}
+
+	// updating neighbor list
+	THTIterator * itr = new THTIterator (P_table);
+	Particle * pi = NULL;
+	while ((pi = (Particle *) itr->next ()))
+	{
+	    if (pi->need_neigh())
+	    {
+	    	pi->put_neighs(neighs);
+	    }
+	}
+
+	//clean up
+	delete itr;
+
+	return;
+}
+#endif

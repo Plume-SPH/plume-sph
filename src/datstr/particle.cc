@@ -339,6 +339,79 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
 
 }
 
+#if CODE_DIMENSION==1
+// constructor for initial condition of Shocktube problem
+Particle::Particle (unsigned *keyin, double *crd, double m, double h , double des, double vel, double prss, double gmm, double sndspd, int bc, int invloved)
+{
+  int i;
+
+  mass = m;
+  smlen = h;
+#if DENSITY_UPDATE_SML==0
+  smlen_original = h;
+#endif
+
+  specific_heat_p = 0.;
+
+  update_delayed = false;
+  guest = false;
+  reflection = false; //The newly added wall ghost will not have image untill search, so need to be false.
+  new_old = 0; //default new_old for non-guest particles is 0.
+               //for guest particles: -1: old, 1: new
+  bc_type = bc;
+  involved = invloved;
+
+  for (i = 0; i < TKEYLENGTH; i++)
+    key.key[i] = *(keyin + i);
+
+  for (i = 0; i < DIMENSION; i++)
+  {
+    coord[i] = *(crd + i);
+  }
+
+  for (i = 0; i < DIMENSION; i++)
+	  smoothed_v[i] = 0.;
+//
+//  for (i = 0; i < PHASE_NUM; i++)
+//  	  phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
+//                                        //Density will be updated in updating of secondary variable
+
+  state_vars[0] = des;//default density is 1.0;
+  state_vars[2] = vel;//default density is 1.0;
+  state_vars[3] = prss/((gmm-1)*des);//default density is 1.0;
+
+  pressure = prss;
+
+  mass_frac = 0.;
+  new_mass_frac = 0.;
+  gamma = gmm;
+  sound_speed = sndspd;
+  phase_num = 1;
+  myprocess = 1;
+
+#if USE_GSPH==1  //Assume 3D
+  //derivatives
+  for (i = 0; i < DIMENSION; i++)
+	  d_rho[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_u[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_v[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_w[i]=0.0;
+
+  for (i = 0; i < DIMENSION; i++)
+	  d_p[i]=0.0;
+#endif
+
+  return;
+}
+
+#endif
+
 //overload the operator ==
 bool Particle::operator== (const Particle & rhs) const
 {

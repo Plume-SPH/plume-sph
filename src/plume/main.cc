@@ -955,6 +955,7 @@ main(int argc, char **argv)
   return 0;
 }
 
+
 #elif CODE_DIMENSION==1 //Otherwise, 1D code is used for code verification.  ---> In current version, 1D code does not use background buckets and is sequential code.
 int
 main(int argc, char **argv)
@@ -987,11 +988,7 @@ main(int argc, char **argv)
   }
 
   //add air particles and put particles into bucket, bc_type is determined in this process
-  add_air(P_table, BG_mesh, matprops, simprops, numprocs, myid);
-
-  // Write inital configuration
-  write_output (myid, numprocs, P_table, BG_mesh,
-                partition_table, timeprops, format);
+  set_up_shock_tube(P_table, matprops, simprops, numprocs, myid);
 
   /*
    *
@@ -1001,7 +998,7 @@ main(int argc, char **argv)
   while (!timeprops->ifend())
   {
     // calculate time-step
-    dt = timestep(BG_mesh, P_table, timeprops);
+    dt = timestep(P_table, timeprops);
 
     ierr = 0;  // reset error code
     adapt = 0; // and adapt flag
@@ -1025,36 +1022,18 @@ main(int argc, char **argv)
     // smooth out density oscillations (if any)
     smooth_density(P_table);
 
-#ifdef HAVE_TURBULENCE_LANS
-    // smooth out velocity
-    smooth_velocity(P_table);
-#endif
-
     // update particle positions
     update_pos (P_table, timeprops, matprops);
+  }
 
-    // write output if needed
-    if (timeprops->ifoutput())
-    {
-       write_output (myid, numprocs, P_table, BG_mesh,
-                    partition_table, timeprops, format);
-    }
+  // write output if needed
+  if (timeprops->ifoutput())
+  {
+     write_output (myid, numprocs, P_table, timeprops);
   }
 
   // just for the sake of good practice
   delete [] my_comm;
-
-  if (myid == 0)
-  {
-    printf("A total of %d SPH Particles were lost.\n", lostsum);
-    walltime = finish - start;
-    int hours = (int) (walltime / 3600.);
-    int mins = (int) ((walltime - hours * 3600) / 60);
-    double secs = walltime - (hours * 3600) - (mins * 60);
-
-    printf ("Computation time for a %d proc run was %d:%02d:%f\n",
-           numprocs, hours, mins, secs);
-  }
 
   return 0;
 }

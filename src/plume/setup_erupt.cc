@@ -27,6 +27,7 @@ using namespace std;
 #include "sph_header.h"
 #include "parameters.h"
 
+#if CODE_DIMENSION==3
 #ifndef SIMULATE_ASH
 
 /*
@@ -668,4 +669,5 @@ add_new_erupt(int myid, THashTable * P_table, HashTable * BG_mesh,
     return;
 }
 
-#endif
+#endif  //#ifndef SIMULATE_ASH
+#endif  //#if CODE_DIMENSION==3

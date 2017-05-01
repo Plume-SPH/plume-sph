@@ -239,6 +239,23 @@ public:
 					double   	//Ra_P
 		            );
 
+#if CODE_DIMENSION==1
+// constructor for initial condition of Shocktube problem
+  Particle (
+		  unsigned*,  // *keyin,
+		  double *,  //crd,
+		  double,    //m,
+		  double ,   //h ,
+		  double ,   //des,
+		  double ,   //vel,
+		  double ,   //prss,
+		  double ,   //gmm,
+		  double ,   //sndspd,
+		  int ,      //bc,
+		  int        //invloved
+		  );
+#endif
+
   //overload update secondary variables
   void update_second_var(
 		  //Initial mass fraction of solid in erupted material ng0_P

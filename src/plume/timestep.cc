@@ -133,3 +133,45 @@ timestep(HashTable * BG_mesh, THashTable * P_table, TimeProps* timeprops)
 
   return t;
 }
+
+#if CODE_DIMENSION==1
+//main function determines the time step
+double
+timestep(THashTable * P_table, TimeProps* timeprops)
+{
+  double dt, temp;
+
+  dt = 1.0E+10;                 // Initialize to very high value
+  THTIterator *itr = new THTIterator(P_table);
+  Particle *p_curr = NULL;
+
+  while ((p_curr = (Particle *) itr->next()))
+    if (p_curr->need_neigh())
+    {
+      // calc speed of sound through the medium
+      double c = p_curr->get_sound_speed();
+
+#ifdef DEBUG
+      bool check_sndspd = true;
+      if (check_sndspd)
+    	  if (!(c>0))
+    		  cout << "sound speed = " << c << endl;
+#endif
+      assert (c>0);
+
+      temp = p_curr->get_smlen() / c;
+
+      if (temp < dt)
+        dt = temp;
+    }
+  // delete HT Iterator
+  delete itr;
+
+  //set up constrain on time step, such that at most one layer of eruption particle will be added
+  double t;
+  t = CFL_P*dt;
+
+
+  return t;
+}
+#endif //CODE_DIMENSION==1

@@ -106,3 +106,14 @@ write_debug_info(int myid, THashTable * P_table, int index)
       fclose(fp);
     }
 }
+
+#if CODE_DIMENSION==1
+void
+write_output(int myid, int numprocs, THashTable * P_table, TimeProps * timeprops)
+{
+
+    write_h5part(myid, numprocs, P_table, timeprops);
+
+  return;
+}
+#endif

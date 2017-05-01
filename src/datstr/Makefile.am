@@ -18,7 +18,11 @@ libbgmesh_a_SOURCES = bgmesh.h \
                       Involved_header.h\
                       meteo.h meteo.cc
 
+#if PARALLEL_BUILD
 libbgmesh_a_CPPFLAGS = -I$(top_srcdir)/src/plume \
                        -I$(top_srcdir)/src/multiproc \
                        -I$(top_srcdir)/src/debug
-
+#else
+#libbgmesh_a_CPPFLAGS = -I$(top_srcdir)/src/plume \
+#                       -I$(top_srcdir)/src/debug
+#endif                       

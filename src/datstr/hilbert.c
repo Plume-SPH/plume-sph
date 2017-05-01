@@ -64,6 +64,18 @@ the SFC
 
 
 /*--------------------------------------------------------------------*/
+/* 1D Hilbert Space-filling curve --> A mask function */
+
+void hsfc1d(
+  unsigned   coord[] , /* IN: Normalized integer coordinates */
+  unsigned * nkey ,    /* IN: Word length of key */
+  unsigned   key[] )   /* OUT: space-filling curve key */
+{
+	return;
+}
+
+
+/*--------------------------------------------------------------------*/
 /* 2D Hilbert Space-filling curve */
 
 void hsfc2d(

@@ -20,7 +20,7 @@ particler_SOURCES = add_air.cc \
                     add_wall_ghost.cc \
                     adapt_domain.cc \
                     bcond.cc \
-                     calculate_gradient.cc \
+                    calculate_gradient.cc \
                     constant.h \
                     dataread.cc \
                     density_massfrac.cc  \
@@ -44,15 +44,28 @@ particler_SOURCES = add_air.cc \
                     write_output.cc \
                     main.cc
 
+if PARALLEL_BUILD
 INCLUDES = -I$(top_srcdir)/src/datstr \
            -I$(top_srcdir)/src/preproc \
            -I$(top_srcdir)/src/multiproc\
            -I$(top_srcdir)/src/debug \
            -I$(top_srcdir)/src/plume
-
+           
 particler_LDADD = $(top_builddir)/src/datstr/libbgmesh.a \
                   $(top_builddir)/src/multiproc/libmultiproc.a \
                   $(top_builddir)/src/debug/libdebug.a \
                   libgmfghdf5.a libgmfgsph.a
+else
+INCLUDES = -I$(top_srcdir)/src/datstr \
+           -I$(top_srcdir)/src/preproc \
+           -I$(top_srcdir)/src/multiproc \
+           -I$(top_srcdir)/src/debug \
+           -I$(top_srcdir)/src/plume  
+           
+particler_LDADD = $(top_builddir)/src/datstr/libbgmesh.a \
+                  $(top_builddir)/src/debug/libdebug.a \
+                  libgmfghdf5.a libgmfgsph.a                    
+endif
+
 
 
