@@ -60,8 +60,11 @@ mom_engr_update(int myid, THashTable * P_table,
    unsigned keycheck[TKEYLENGTH] = {670833221, 309718877, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
+
+#if CODE_DIMENSION==3
    bool search_bypos = false;
    double range[2*DIMENSION] = {-5500., -5000., -5500., -5000, 6000, 6500};
+#endif
 
    bool check_vis = false;
    double vis_2d;
@@ -98,12 +101,14 @@ mom_engr_update(int myid, THashTable * P_table,
 		      }
 		  }
 
+#if CODE_DIMENSION==3
 		  if (search_bypos)
 		  {
 			  if (find_particle_pos_range(xi, range))
 				  cout << "The particle found!" << endl;
 		  }
-#endif
+#endif  //CODE_DIMENSION==3
+#endif  //Debug
 
 		  // expanded smoothing length for Momentum equation
 		  double hi = pi->get_smlen();
@@ -368,8 +373,10 @@ mom_engr_update(int myid, THashTable * P_table,
    unsigned keycheck[TKEYLENGTH] = {71863351, 347014367, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
+#if  CODE_DIMENSION==3
    bool search_bypos = false;
    double range[2*DIMENSION] = {-5500., -5000., -5500., -5000, 6000, 6500};
+#endif //CODE_DIMENSION==3
 
    bool check_vis = false;
    double vis_2d;
@@ -384,7 +391,7 @@ mom_engr_update(int myid, THashTable * P_table,
    bool find_max_ratio=false;
    double tobef_mom=0.0;
    double tobef_e=0.0;
-#endif
+#endif  //DEBUG
 
   while ((pi = (Particle *) itr->next ()))
   {
@@ -405,13 +412,14 @@ mom_engr_update(int myid, THashTable * P_table,
 			      cout << "energy: "<< pi->get_energy() <<endl;
 		      }
 		  }
-
+#if CODE_DIMENSION==3
 		  if (search_bypos)
 		  {
 			  if (find_particle_pos_range(xi, range))
 				  cout << "The particle found!" << endl;
 		  }
-#endif
+#endif //CODE_DIMENSION==3
+#endif //DEBUG
 
 		  // expanded smoothing length for Momentum equation
 		  hi = pi->get_smlen();

@@ -40,6 +40,7 @@ using namespace std;
 #  include <debug_header.h>
 #endif
 
+#if CODE_DIMENSION==3 || CODE_DIMENSION==2
 void
 add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
         MatProps * matprops, TimeProps *timeprops, int numproc, int myid)
@@ -71,7 +72,11 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 	  double dx2 = 0.5 * dx;
 
 	  // direction vectors for neighbors
+#if CODE_DIMENSION==3
 	  int Down[DIMENSION] = { 0, 0, 1 };
+#elif CODE_DIMENSION==2
+	  int Down[DIMENSION] = { 0, 1 };   // in x direction, in the same column, in y direction, the down direction --> need to double check here!
+#endif
 
 	  // get min-max domain from hashtable, for key generation
 	  for (i = 0; i < DIMENSION; i++)
@@ -284,3 +289,5 @@ add_wall_ghost (THashTable * P_table, HashTable * BG_mesh, SimProps* simprops,
 
 	  return;
 }
+
+#endif //CODE_DIMENSION==2 or CODE_DIMENSION=3

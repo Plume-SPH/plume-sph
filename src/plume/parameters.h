@@ -1058,7 +1058,7 @@ const double h_bot_P= 20000.0; /*bottom height of the plume */
 //const double rv_P = 140;
 //const double Mv_P = rv_P*rv_P*rhov_P*Vv0_P*3.1415926;
 
-const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2] };  /*position of vent at the origin*/
+//const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2] };  /*position of vent at the origin*/
 
 //const int num_erupt = 2; /*this parameter should be used to determine total number */
 //
@@ -1087,7 +1087,7 @@ const double eta_smooth_P = 1.2; //We can try different value to get best result
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.3;
+const double CFL_P=0.5;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------

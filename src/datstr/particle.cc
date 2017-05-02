@@ -377,8 +377,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
 //                                        //Density will be updated in updating of secondary variable
 
   state_vars[0] = des;//default density is 1.0;
-  state_vars[2] = vel;//default density is 1.0;
-  state_vars[3] = prss/((gmm-1)*des);//default density is 1.0;
+  state_vars[1] = vel;//default density is 1.0;
+  state_vars[2] = prss/((gmm-1)*des);//default density is 1.0;
 
   pressure = prss;
 

@@ -47,7 +47,7 @@ particler_SOURCES = add_air.cc \
 if PARALLEL_BUILD
 INCLUDES = -I$(top_srcdir)/src/datstr \
            -I$(top_srcdir)/src/preproc \
-           -I$(top_srcdir)/src/multiproc\
+           -I$(top_srcdir)/src/multiproc \
            -I$(top_srcdir)/src/debug \
            -I$(top_srcdir)/src/plume
            

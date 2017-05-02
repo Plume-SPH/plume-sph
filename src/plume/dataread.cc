@@ -309,12 +309,11 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
 
   // Read Hash table constants
   GH5_readdata(fp, "/hashtable_constants", hvars);
-  mindom[0] = hvars[0];         // min x
-  maxdom[0] = hvars[1];         // max x
-  mindom[1] = hvars[2];         // min y
-  maxdom[1] = hvars[3];         // max y
-  mindom[2] = hvars[4];         // min z
-  maxdom[2] = hvars[5];         // max z
+  for (i=0; i<DIMENSION; i++)
+  {
+	  mindom[i]=hvars[i*2];
+      maxdom[i]=hvars[i*2+1];
+  }
 
   // Create two new Hash-tables
   for (i = 0; i < DIMENSION; i++)
@@ -498,3 +497,26 @@ Read_Grid (THashTable ** P_table, HashTable ** BG_mesh,
   *P_table = new THashTable(P_TABLE_SIZE, 2017, mindom, maxdom);
   return 0;
 }
+
+#if CODE_DIMENSION==1
+//a fake grid read function, for 1D simulation, it is not necessary to use grid, so this function only used for initialize P_table.
+int
+Initial_Ptable (THashTable ** P_table)
+{
+  int P_TABLE_SIZE = 10000;
+  double mindom[DIMENSION], maxdom[DIMENSION];
+
+
+  for (int i=0; i<DIMENSION; i++)
+  {
+	  mindom[i]=Ll_P[i];
+      maxdom[i]=Lu_P[i];
+  }
+
+  // Create hash-table for particles
+  *P_table = new THashTable(P_TABLE_SIZE, 2017, mindom, maxdom);
+  return 0;
+}
+
+
+#endif //CODE_DIMESNION==1

@@ -968,9 +968,6 @@ main(int argc, char **argv)
   THashTable *P_table;
 
   int format = 0;
-  int adapt = 0;
-  int lost = 0;
-  int lostsum = 0;
   double local_data[3], global_data[3];
   int myid, numprocs;
 
@@ -987,8 +984,26 @@ main(int argc, char **argv)
     exit(1);
   }
 
+  //Initialize P_table
+  if (Initial_Ptable (&P_table) != 0)
+  {
+    cerr << "ERROR: can not initialize P-table\n";
+    exit(1);
+  }
+
+  //read initial background bucket  distribution
+// Read_Grid (&P_table, myid, numprocs);
+//  {
+//    cerr << "ERROR: Can't read Initial grid\n";
+//    exit(1);
+//  }
+
   //add air particles and put particles into bucket, bc_type is determined in this process
   set_up_shock_tube(P_table, matprops, simprops, numprocs, myid);
+
+
+  // Write inital configuration
+  write_output (myid, numprocs, P_table, timeprops);
 
   /*
    *
@@ -1000,9 +1015,14 @@ main(int argc, char **argv)
     // calculate time-step
     dt = timestep(P_table, timeprops);
 
-    ierr = 0;  // reset error code
-    adapt = 0; // and adapt flag
+    // increment time
+    timeprops->incrtime(&dt);
 
+    if (myid == 0)
+      cout << "Time-step: " << timeprops->step << " dt=" << dt
+        << " time=" << timeprops->timesec() << endl;
+
+    ierr = 0;  // reset error code
 
 #if USE_GSPH==1
     // calculate gradient, before momentum and energy updating
@@ -1024,12 +1044,12 @@ main(int argc, char **argv)
 
     // update particle positions
     update_pos (P_table, timeprops, matprops);
-  }
 
-  // write output if needed
-  if (timeprops->ifoutput())
-  {
-     write_output (myid, numprocs, P_table, timeprops);
+    // write output if needed
+    if (timeprops->ifoutput())
+    {
+       write_output (myid, numprocs, P_table, timeprops);
+    }
   }
 
   // just for the sake of good practice

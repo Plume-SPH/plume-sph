@@ -8,6 +8,10 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
 //##################################################################################################################################################################
 #if CODE_DIMENSION==1
 ////using Gaussian Kernel currently, only one kind of kernel is available

@@ -794,7 +794,9 @@ void initial_air (Particle * pi, SimProps * simprops)
 	  int i;
 
 	  double xi[DIMENSION];
-	  double vel[DIMENSION] = {0., 0., 0.};  //initial velocity need to be set to zero
+	  double vel[DIMENSION];  //initial velocity need to be set to zero
+	  for (i=0; i<DIMENSION; i++)
+		  vel[i]=0.;
 	  double prss, erg, dens, mss;
 	  double range[6];
 	  double sml2;

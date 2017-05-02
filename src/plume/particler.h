@@ -220,9 +220,14 @@ set_up_shock_tube (
 //determine time step
 double
 timestep (
-		  THashTable *, //particle table
+		  THashTable *,   //particle table
 		  TimeProps *    //timeprops
          );
+
+//Initialized P_table
+int Initial_Ptable (
+               THashTable **  //! Ptable
+              );
 
 #endif  //CODE_DIMENSION==1
 
