@@ -23,18 +23,69 @@
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
 
-//define use equal particle mass and different sml
+// only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
+/*
+ * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
+ * 0 : use original smoothing length   ---> It is easier to get negative energy
+ * 1 : use current smoothing length    ----> More stable choice
+ * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
+ * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
+ */
+#ifndef DENSITY_UPDATE_SML
+#define DENSITY_UPDATE_SML 1
+#endif
+
+
+/*
+ * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true
+ * 0: do not use energy smooth
+ * 1: use energy smooth with normalization
+ * 2: use energy smooth without normalization
+ *
+ * Note: this option is not available for GSPH yet.
+ */
+#ifndef HAVE_ENERGY_SMOOTH
+#define HAVE_ENERGY_SMOOTH 0
+#endif
+
+/*
+ * There are two ways to view particles of two phases in multiphase SPH method:
+ * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
+// * 10: The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
+// * 11: The same as option 1 , except that does not do normalization. ---> Original smoothing length should be used.
+ * 12 : The same as option 1, the only difference is that use phase density instead of total density in computing normalization.
+ * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
+ * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
+ */
+#ifndef DENSITY_UPDATE_SPH
+#define DENSITY_UPDATE_SPH 11 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
+                              //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
+#endif
+
+//Define whether should pressure ghost particles should be took into account for density update
+//PGHOST_CONTRIBUTE_DES == 1: yes, take the pressure ghost particles into account
+//PGHOST_CONTRIBUTE_DES == 2: No,  do not take the pressure ghost particles into account
+#ifndef PGHOST_CONTRIBUTE_DES
+#define PGHOST_CONTRIBUTE_DES 1
+#endif
+
+#endif // end of USE_SUMMATION
+//-----------------------------------------------------------------------------------------------------------------------
+
+//if defined, use equal particle mass and different sml
 //Otherwise, use different particle mass to guarantee equal sml
+//This option is only for 1D problem
 #ifndef EQUAL_PART_MASS
 #define EQUAL_PART_MASS
 #endif
+
 //define to use GSPH or not ---> I need move this option to configure after test is done
 /*
  * USE_GSPH 0 : SPH
  * USE_GSPH 1 : GSPH
  */
 #ifndef USE_GSPH
-#define USE_GSPH 0
+#define USE_GSPH 1
 #endif
 
 
@@ -156,47 +207,6 @@
 #ifndef ADAPTIVE_SML
 #define ADAPTIVE_SML 0
 #endif
-
-// only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
-/*
- * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
- * 0 : use original smoothing length   ---> It is easier to get negative energy
- * 1 : use current smoothing length    ----> More stable choice
- * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
- * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
- */
-#ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 1
-#endif
-
-
-/*
- * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true
- * 0: do not use energy smooth
- * 1: use energy smooth with normalization
- * 2: use energy smooth without normalization
- *
- * Note: this option is not available for GSPH yet.
- */
-#ifndef HAVE_ENERGY_SMOOTH
-#define HAVE_ENERGY_SMOOTH 0
-#endif
-
-/*
- * There are two ways to view particles of two phases in multiphase SPH method:
- * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
-// * 10: The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
-// * 11: The same as option 1 , except that does not do normalization. ---> Original smoothing length should be used.
- * 12 : The same as option 1, the only difference is that use phase density instead of total density in computing normalization.
- * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
- * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
- */
-#ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 11 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
-                           //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
-#endif
-
-#endif // end of USE_SUMMATION
 
 
 
@@ -340,6 +350,56 @@
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
 
+
+// only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
+/*
+ * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
+ * 0 : use original smoothing length   ---> It is easier to get negative energy
+ * 1 : use current smoothing length    ----> More stable choice
+ * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
+ * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
+ */
+#ifndef DENSITY_UPDATE_SML
+#define DENSITY_UPDATE_SML 1
+#endif
+
+
+/*
+ * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true
+ * 0: do not use energy smooth
+ * 1: use energy smooth with normalization
+ * 2: use energy smooth without normalization
+ *
+ * Note: this option is not available for GSPH yet.
+ */
+#ifndef HAVE_ENERGY_SMOOTH
+#define HAVE_ENERGY_SMOOTH 1
+#endif
+
+/*
+ * There are two ways to view particles of two phases in multiphase SPH method:
+ * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
+// * 10: The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
+// * 11: The same as option 1 , except that does not do normalization. ---> Original smoothing length should be used.
+ * 12 : The same as option 1, the only difference is that use phase density instead of total density in computing normalization.
+ * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
+ * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
+ */
+#ifndef DENSITY_UPDATE_SPH
+#define DENSITY_UPDATE_SPH 1 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
+                           //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
+#endif
+
+//Define whether should pressure ghost particles should be took into account for density update
+//PGHOST_CONTRIBUTE_DES == 1: yes, take the pressure ghost particles into account
+//PGHOST_CONTRIBUTE_DES == 2: No,  do not take the pressure ghost particles into account
+#ifndef PGHOST_CONTRIBUTE_DES
+#define PGHOST_CONTRIBUTE_DES 1
+#endif
+
+#endif // end of USE_SUMMATION
+
+
 //define to use GSPH or not ---> I need move this option to configure after test is done
 /*
  * USE_GSPH 0 : SPH
@@ -468,48 +528,6 @@
 #ifndef ADAPTIVE_SML
 #define ADAPTIVE_SML 0
 #endif
-
-// only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
-/*
- * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
- * 0 : use original smoothing length   ---> It is easier to get negative energy
- * 1 : use current smoothing length    ----> More stable choice
- * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
- * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
- */
-#ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 1
-#endif
-
-
-/*
- * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true
- * 0: do not use energy smooth
- * 1: use energy smooth with normalization
- * 2: use energy smooth without normalization
- *
- * Note: this option is not available for GSPH yet.
- */
-#ifndef HAVE_ENERGY_SMOOTH
-#define HAVE_ENERGY_SMOOTH 1
-#endif
-
-/*
- * There are two ways to view particles of two phases in multiphase SPH method:
- * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
-// * 10: The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
-// * 11: The same as option 1 , except that does not do normalization. ---> Original smoothing length should be used.
- * 12 : The same as option 1, the only difference is that use phase density instead of total density in computing normalization.
- * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
- * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
- */
-#ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 1 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
-                           //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
-#endif
-
-#endif // end of USE_SUMMATION
-
 
 
 //Define which format of to use for discretized momentum equation
