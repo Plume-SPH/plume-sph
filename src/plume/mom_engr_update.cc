@@ -46,8 +46,13 @@ mom_engr_update(int myid, THashTable * P_table,
   Particle *pi=NULL;
 
   // three point gauss-quadrature points
-  double gravity[3] = { 0., 0., -g_P};
-
+#if CODE_DIMENSION == 3
+  double gravity[DIMENSION] = { 0., 0., -g_P};
+#elif CODE_DIMENSION == 2
+  double gravity[DIMENSION] = { 0., -g_P};
+#elif CODE_DIMENSION==1
+  double gravity[DIMENSION]={-g_P};
+#endif
   // time-step
   double dt = timeprops->dtime;
 
@@ -57,7 +62,7 @@ mom_engr_update(int myid, THashTable * P_table,
 
 #ifdef DEBUG
    bool do_search = false;
-   unsigned keycheck[TKEYLENGTH] = {670833221, 309718877, 0};
+   unsigned keycheck[TKEYLENGTH] = {86, 0, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
 
@@ -127,12 +132,17 @@ mom_engr_update(int myid, THashTable * P_table,
           if (pi->which_phase() == 1) //Because when I added the external pressure in the momentum equation, the fluctuation in atmosphere become larger, so use two different forms for two phases here.
         	  p_external=0.0;
           else
+          {
+#if CODE_DIMENSION==3
         	  p_external=determine_pressure(simprops, *(pi->get_coords()+2));
-
+#elif CODE_DIMENSION==2
+        	  p_external=determine_pressure(simprops, *(pi->get_coords()+1));
+#endif
+          }
 		  double pvsqi=(pressi-p_external)*Vi*Vi;//p*v^2
 #else
           double pvsqi=pressi*Vi*Vi;//p*v^2
-#endif
+#endif // MOMENTUM_DISCRETIZE ==1
 
           // velocity veli
 #ifdef HAVE_TURBULENCE_LANS
@@ -261,27 +271,26 @@ mom_engr_update(int myid, THashTable * P_table,
 		   // density keep unchange, will be updated later!
 		   unew[0] = uvec[0];
 
-           // x-velocity
-           unew[1] = uvec[1] + dt * (rhs_v[0]);
-
-		   // y-velocity
-		   unew[2] = uvec[2] + dt * (rhs_v[1]);
+		   for (i = 0; i < DIMENSION; i++)
+			   unew[i+1] = uvec[i+1] + dt * (rhs_v[i]);
 
 		   // z-velocity
-		   unew[3] = uvec[3] + dt * (rhs_v[2] + gravity[2]);
+//		   unew[3] = uvec[3] + dt * (rhs_v[2] + gravity[2]);
+		   unew[NO_OF_EQNS-2] += dt*gravity[DIMENSION-1];
 
 		   // energy
 //		   unew[4] = uvec[4] + dt * (rhs_e + veli[2] * gravity[2]); //the variable is only internal energy, it has nnothing to do with mechanical energy, so gravity should not appear here!
-		   unew[4] = uvec[4] + dt * rhs_e;
+		   unew[NO_OF_EQNS-1] = uvec[NO_OF_EQNS-1] + dt * (rhs_e + veli[DIMENSION-1] * gravity[DIMENSION-1]);
+
 #if HAVE_ENERGY_CUT==1
-		   if (unew[4]<=0)
-			   unew[4] = ENERGY_CUT;
+		   if (unew[NO_OF_EQNS-1]<=0)
+			   unew[NO_OF_EQNS-1] = ENERGY_CUT;
 #endif
 
 #ifdef DEBUG
 		  if (check_engr)
 		  {
-		      if (unew[4]>= engr_thresh) //find the particle that has large energy
+		      if (unew[NO_OF_EQNS-1]>= engr_thresh) //find the particle that has large energy
 			      cout << "The particle found!" << endl;
 		  }
 
@@ -357,8 +366,13 @@ mom_engr_update(int myid, THashTable * P_table,
 
   Particle *pi=NULL;
 
-  // three point gauss-quadrature points
-  double gravity[3] = { 0., 0., -g_P};
+#if CODE_DIMENSION == 3
+  double gravity[DIMENSION] = { 0., 0., -g_P};
+#elif CODE_DIMENSION == 2
+  double gravity[DIMENSION] = { 0., -g_P};
+#elif CODE_DIMENSION==1
+  double gravity[DIMENSION]={-g_P};
+#endif
 
   // time-step
   double dt = timeprops->dtime;
@@ -688,24 +702,19 @@ mom_engr_update(int myid, THashTable * P_table,
 		   // density keep unchange, will be updated later!
 		   unew[0] = uvec[0];
 
-           // x-velocity
-           unew[1] = uvec[1] + dt * (rhs_v[0]);
-//           if (isnan(unew[1]))
-//        	   cout<<"found it!"<<endl;
-           assert(!isnan(unew[1]));
-
-		   // y-velocity
-		   unew[2] = uvec[2] + dt * (rhs_v[1]);
-		   assert(!isnan(unew[2]));
+//		   // y-velocity
+//		   unew[2] = uvec[2] + dt * (rhs_v[1]);
+//		   assert(!isnan(unew[2]));
+		   for (i = 0; i < DIMENSION; i++)
+			   unew[i+1] = uvec[i+1] + dt * (rhs_v[i]);
 
 		   // z-velocity
-		   unew[3] = uvec[3] + dt * (rhs_v[2] + gravity[2]);
-		   assert(!isnan(unew[3]));
+//		   unew[3] = uvec[3] + dt * (rhs_v[2] + gravity[2]);
+		   unew[NO_OF_EQNS-2] += dt*gravity[DIMENSION-1];
 
 		   // energy
 //		   unew[4] = uvec[4] + dt * (rhs_e + veli[2] * gravity[2]); //the variable is only internal energy, it has nnothing to do with mechanical energy, so gravity should not appear here!
-		   unew[4] = uvec[4] + dt * rhs_e;
-		   assert(!isnan(unew[4]));
+		   unew[NO_OF_EQNS-1] = uvec[NO_OF_EQNS-1] + dt * (rhs_e + veli[DIMENSION-1] * gravity[DIMENSION-1]);
 
 		   //make sure all new values of quantities
 #if HAVE_ENERGY_CUT==1

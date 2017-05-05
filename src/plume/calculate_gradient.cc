@@ -40,9 +40,11 @@ void calc_gradients(THashTable *P_table)
 	   unsigned keycheck[TKEYLENGTH] = {268315389, 3363091095, 0};
 	   unsigned keytemp[TKEYLENGTH];
 
+#if CODE_DIMENSION==3
 	   bool search_by_pos =false;
 	   double coord_check[DIMENSION]={7350, 8850, 8550};
 	   double coord_temp[DIMENSION];
+#endif //#CODE_DIMENSION==3
 
 #endif
 
@@ -63,6 +65,7 @@ void calc_gradients(THashTable *P_table)
 				    cout << "The particle found!" << endl;
 			}
 
+#if CODE_DIMENSION==3
 			if (search_by_pos)
 			{
 			    for (i = 0; i < DIMENSION; i++)
@@ -71,6 +74,7 @@ void calc_gradients(THashTable *P_table)
 			    if (find_particle (coord_temp, coord_check))
 				    cout << "The particle found!" << endl;
 			}
+#endif //#if CODE_DIMENSION==3
 #endif
 
 	      for (i = 0; i < DIMENSION; i++)
@@ -144,10 +148,11 @@ void calc_gradients(THashTable *P_table)
 				  for (i = 0; i < DIMENSION; i++)
 				  {
 					  FF[i][0]-=((pi->get_density() - pj->get_density())*dwm_rho[i]);
-					  FF[i][1]-=((*(pi->get_vel()) - *(pj->get_vel()))*dwm_rho[i]);
-					  FF[i][2]-=((*(pi->get_vel()+1) - *(pj->get_vel()+1))*dwm_rho[i]);
-					  FF[i][3]-=((*(pi->get_vel()+2) - *(pj->get_vel()+2))*dwm_rho[i]);
-					  FF[i][4]-=((pi->get_pressure() - pj->get_pressure())*dwm_rho[i]);
+					  for (j = 0; j < DIMENSION; j++)
+						  FF[i][j+1]-=((*(pi->get_vel()+j) - *(pj->get_vel()+j))*dwm_rho[i]);
+//					  FF[i][2]-=((*(pi->get_vel()+1) - *(pj->get_vel()+1))*dwm_rho[i]);
+//					  FF[i][3]-=((*(pi->get_vel()+2) - *(pj->get_vel()+2))*dwm_rho[i]);
+					  FF[i][NO_OF_EQNS-1]-=((pi->get_pressure() - pj->get_pressure())*dwm_rho[i]);
 				  }
 			   }
 	          //}//end of if particle will contribute to the density.
@@ -180,10 +185,18 @@ void calc_gradients(THashTable *P_table)
 //	        }
 
 		  pi->put_density_d(gradU);
+#if CODE_DIMENSION==3
 		  pi->put_velocity_u_d(gradU+DIMENSION);
 		  pi->put_velocity_v_d(gradU+2*DIMENSION);
 		  pi->put_velocity_w_d(gradU+3*DIMENSION);
-		  pi->put_pressure_d(gradU+4*DIMENSION);
+#elif CODE_DIMENSION==2
+		  pi->put_velocity_u_d(gradU+DIMENSION);
+		  pi->put_velocity_v_d(gradU+2*DIMENSION);
+#else
+		  pi->put_velocity_u_d(gradU+DIMENSION);
+#endif
+
+		  pi->put_pressure_d(gradU+(NO_OF_EQNS-1)*DIMENSION);
 
 		}//end of if --> if the density of that particle need to be updated based summation
 	  }//end of loop -->go through all particle

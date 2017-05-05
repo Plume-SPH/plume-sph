@@ -23,12 +23,16 @@
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
 
+//define use equal particle mass and different sml
+//Otherwise, use different particle mass to guarantee equal sml
+#ifndef EQUAL_PART_MASS
+#define EQUAL_PART_MASS
+#endif
 //define to use GSPH or not ---> I need move this option to configure after test is done
 /*
  * USE_GSPH 0 : SPH
  * USE_GSPH 1 : GSPH
  */
-
 #ifndef USE_GSPH
 #define USE_GSPH 0
 #endif
@@ -188,7 +192,7 @@
  * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
  */
 #ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 1 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
+#define DENSITY_UPDATE_SPH 11 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
                            //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
 #endif
 

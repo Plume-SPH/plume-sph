@@ -486,7 +486,12 @@ public:
   //contr_dens is equivalent to (is_real)
   bool contr_dens() const
   {
+#if PGHOST_CONTRIBUTE_DES==1
+	  return (bc_type == 100 || bc_type == 1);
+#else
 	  return (bc_type == 100);
+#endif //PGHOST_CONTRIBUTE_DES
+
   }
 
   //! check if particle will contribute to the velocity smoothing

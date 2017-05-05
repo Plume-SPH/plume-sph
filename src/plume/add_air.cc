@@ -48,9 +48,8 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  int num_particle = 0;
 
 	  // start putting pile
+
 	  double smlen = matprops->smoothing_length;
-	  double dx = smlen;
-	  double dx2 = 0.5 * dx;
 
 	  //Initial particle property
 	  int bctp_real = 100; //boundary condition ghost particle type.
@@ -62,8 +61,23 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  double des_r = 0.5;  //Parameter
 	  double vel_l = 0.0;  //Parameter
 	  double vel_r = 0.0;  //Parameter
-	  double mass_l=des_l*smlen;
-	  double mass_r=des_r*smlen;
+
+	  double dx_l=smlen;
+
+#ifdef EQUAL_PART_MASS
+	  double dx_r = dx_l*des_l/des_r;
+#else
+	  double dx_r = smlen;
+#endif
+
+	  //When there is no adaptive smoothing length, it it necessary to set the smoothing length to a larger value so that each kernal has enough particles within its support.
+	  smlen=max(dx_r, dx_l);
+
+	  double dx2_l = 0.5 * dx_l;
+	  double dx2_r = 0.5 * dx_r;
+
+	  double mass_l=des_l* dx_l;
+	  double mass_r=des_r* dx_r;
 	  double middle_point=0.;
 
 #if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
@@ -91,7 +105,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 
 	for (k = 0; k < Nb_P; k++)
 	{
-		pcrd[0] = bnd[0] - ( dx2 + (Nb_P-k) * dx);
+		pcrd[0] = bnd[0] - ( dx2_l + k*dx_l);
 		pkey[0]=num_particle;
 		pkey[1]=0;
 		pkey[2]=add_step;
@@ -111,7 +125,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	}
 
 
-    pcrd[0]=bnd[0]+dx2;
+    pcrd[0]=bnd[0]+dx2_l;
 	while (pcrd[0]<=middle_point)
 	{
 		pkey[0]=num_particle;
@@ -129,10 +143,11 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
-		pcrd[0] += dx;
+		pcrd[0] += dx_l;
 		neighs.push_back(pkey);
 	}
 
+	pcrd[0] = pcrd[0] - dx_l+ dx_r;
 	while (pcrd[0]<=bnd[1])
 	{
 		pkey[0]=num_particle;
@@ -146,11 +161,11 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass_r, smlen , des_r, vel_r, prss_r, gmm, sndspd, bctp_real, involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass_r, smlen, des_r, vel_r, prss_r, gmm, sndspd, bctp_real, involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
-		pcrd[0] += dx;
+		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
 	}
 
@@ -171,7 +186,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
-		pcrd[0] += dx;
+		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
 	}
 

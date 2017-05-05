@@ -1644,94 +1644,94 @@ double Compute_sij_star (double hij, double Vi, double Vj, double Dri, double Dr
 }
 
 
-//function for Riemann solver --->derivative is computed in RP solver
-void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DIMENSION], double pi, double pj, double hi,  double hj, double xi[DIMENSION], double xj[DIMENSION],
-		            double CSi, double CSj, double gi, double gj, double dt_half, double* p_star, double* v_star)
-{
-	//Pre compute:
-    //Interpolate global variable to local system to get input for local Riemann Solver:
-    int i;
-	double hij= 0.5*(hi+hj);
-    double dx[DIMENSION];
-    for (i = 0; i < DIMENSION; i++)
-    	dx[i] = xi[i] - xj[i];
-
-    double dist = 0.0;
-    for (i = 0; i < DIMENSION; i++)
-  	   dist += dx[i]*dx[i];
-    dist = sqrt(dist);
-
-    double e[DIMENSION];
-    Compute_eij(dx, dist, e);
-
-    double Si, Sj;
-    Si=0.5*dist;
-    Sj=-Si;
-    compute_si_sj(xi, xj, e, &Si, &Sj); //--> a more expensive way of computing, actually get the same results as Si=0.5*dist; Sj=-Si;
-
-    double sij_star=Compute_sij_star(hij, 1/rhoi, 1/rhoj, dist);
-
-    double delta_i = sij_star + CSi * dt_half - Si; //Si = dist/2 is positive
-    double delta_j = sij_star - CSj * dt_half - Sj;
-
-    //compute derivative:
-    double drho=(rhoi-rhoj)/dist; //drhoi=drhoj
-    double ui=0.0, uj=0.0;
-    //need to project ui and uj onto the direction of local coordinate system first, then compute differential.
-    for (i=0; i<DIMENSION; i++)
-    {
-    	ui += vi[i]*e[i];
-    	uj += vj[i]*e[i];
-    }
-    double du=(ui-uj)/dist;
-    double dp=(pi-pj)/dist;
-
-    //Apply monotonicity
-    // dvdxi * dvdxj always non-negative
-    if (C_SHOCK*(uj-ui)>min(CSi, CSj))
-    {
-    	drho=0.0;
-    	dp=0.0;
-    	du=0.0;
-    }
-
-	//compute the right input and left input
-    double dr=rhoi+drho*delta_i;
-    double ur=ui+du*delta_i;
-    double pr=pi+dp*delta_i;
-    double dl=rhoj+drho*delta_j;
-    double ul=uj+du*delta_j;
-    double pl=pj+dp*delta_j;
-
-    //Roe Riemann Solver:
-    double rdl=sqrt(dl);
-    double rdr=sqrt(dr);
-    double denominator = 1.0 / (rdl+rdr);
-
-    double plr=(pl*rdl + pr*rdr)*denominator;
-    double gammalr=(gj*rdl + gi*rdr)*denominator;
-    double dlr=(dl*rdl + dr*rdr)*denominator;
-#if FLUID_COMPRESSIBILITY==0
-    double clr= sqrt(gammalr*plr/dlr);
-#elif  FLUID_COMPRESSIBILITY==1
-    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
-#endif
-
-    //solve RP problem with approxiamte Roe RP solver
-    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
-    double u_star;
-    *p_star=plr -0.5*clr*(ur-ul);
-    u_star= ulr-0.5*(pr-pl)/clr;
-
-    //project u_star to v_star
-    double vlr[DIMENSION];
-    for (i=0; i<DIMENSION; i++)
-    {
-    	vlr[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
-    	*(v_star+i)=e[i]*u_star+ vlr[i] - ulr*e[i];
-    }
-
-}
+////function for Riemann solver --->derivative is computed in RP solver
+//void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DIMENSION], double pi, double pj, double hi,  double hj, double xi[DIMENSION], double xj[DIMENSION],
+//		            double CSi, double CSj, double gi, double gj, double dt_half, double* p_star, double* v_star)
+//{
+//	//Pre compute:
+//    //Interpolate global variable to local system to get input for local Riemann Solver:
+//    int i;
+//	double hij= 0.5*(hi+hj);
+//    double dx[DIMENSION];
+//    for (i = 0; i < DIMENSION; i++)
+//    	dx[i] = xi[i] - xj[i];
+//
+//    double dist = 0.0;
+//    for (i = 0; i < DIMENSION; i++)
+//  	   dist += dx[i]*dx[i];
+//    dist = sqrt(dist);
+//
+//    double e[DIMENSION];
+//    Compute_eij(dx, dist, e);
+//
+//    double Si, Sj;
+//    Si=0.5*dist;
+//    Sj=-Si;
+//    compute_si_sj(xi, xj, e, &Si, &Sj); //--> a more expensive way of computing, actually get the same results as Si=0.5*dist; Sj=-Si;
+//
+//    double sij_star=Compute_sij_star(hij, 1/rhoi, 1/rhoj, dist);
+//
+//    double delta_i = sij_star + CSi * dt_half - Si; //Si = dist/2 is positive
+//    double delta_j = sij_star - CSj * dt_half - Sj;
+//
+//    //compute derivative:
+//    double drho=(rhoi-rhoj)/dist; //drhoi=drhoj
+//    double ui=0.0, uj=0.0;
+//    //need to project ui and uj onto the direction of local coordinate system first, then compute differential.
+//    for (i=0; i<DIMENSION; i++)
+//    {
+//    	ui += vi[i]*e[i];
+//    	uj += vj[i]*e[i];
+//    }
+//    double du=(ui-uj)/dist;
+//    double dp=(pi-pj)/dist;
+//
+//    //Apply monotonicity
+//    // dvdxi * dvdxj always non-negative
+//    if (C_SHOCK*(uj-ui)>min(CSi, CSj))
+//    {
+//    	drho=0.0;
+//    	dp=0.0;
+//    	du=0.0;
+//    }
+//
+//	//compute the right input and left input
+//    double dr=rhoi+drho*delta_i;
+//    double ur=ui+du*delta_i;
+//    double pr=pi+dp*delta_i;
+//    double dl=rhoj+drho*delta_j;
+//    double ul=uj+du*delta_j;
+//    double pl=pj+dp*delta_j;
+//
+//    //for Roe Average:
+//    double rdl=sqrt(dl);
+//    double rdr=sqrt(dr);
+//    double denominator = 1.0 / (rdl+rdr);
+//
+//    double plr=(pl*rdl + pr*rdr)*denominator;
+//    double gammalr=(gj*rdl + gi*rdr)*denominator;
+//    double dlr=(dl*rdl + dr*rdr)*denominator;
+//#if FLUID_COMPRESSIBILITY==0
+//    double clr= sqrt(gammalr*plr/dlr);
+//#elif  FLUID_COMPRESSIBILITY==1
+//    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
+//#endif
+//
+//    //solve RP problem with approxiamte Roe RP solver
+//    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+//    double u_star;
+//    *p_star=plr -0.5*clr*(ur-ul);
+//    u_star= ulr-0.5*(pr-pl)/clr;
+//
+//    //project u_star to v_star
+//    double vlr[DIMENSION];
+//    for (i=0; i<DIMENSION; i++)
+//    {
+//    	vlr[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+//    	*(v_star+i)=e[i]*u_star+ vlr[i] - ulr*e[i];
+//    }
+//
+//}
 
 // Roe RP solver:
 //void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)

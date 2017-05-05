@@ -960,8 +960,8 @@ const int balancing_check_int_P = 3;
  *
  */
 const int Nb_P=10;
-const double Ll_P[DIMENSION]={-1.0};
-const double Lu_P[DIMENSION]={1.0};
+const double Ll_P[DIMENSION]={-0.4};
+const double Lu_P[DIMENSION]={0.4};
 
 //----------------------------------------------------------------------------------------
 //% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -1075,8 +1075,8 @@ const double h_bot_P= 20000.0; /*bottom height of the plume */
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
-const double alf_P=0.3;
-const double beta_P=0.6;
+const double alf_P=1.0;
+const double beta_P=2.0;
 const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length
@@ -1087,7 +1087,7 @@ const double eta_smooth_P = 1.2; //We can try different value to get best result
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.5;
+const double CFL_P=0.5*0.01;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------

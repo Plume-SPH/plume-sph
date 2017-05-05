@@ -12,7 +12,7 @@
 #if CODE_DIMENSION==1
 
 const int DIMENSION=1;
-const int PHASE_NUM=1;
+const int PHASE_NUM=2;
 const int KEYLENGTH=2;
 const int TKEYLENGTH=KEYLENGTH+1;
 const int NO_OF_EQNS=DIMENSION+2;/*For my current model which assumed immediate thermal and dynamic equilibrium!*/
@@ -79,8 +79,8 @@ const double ENERGY_CUT = 1.0;
 #endif
 
 //heat transfer spatial ratio to momentum exchange
-const double HEAT_TRANS_SCALE_RATIO = 1.45;
-const double E_SMOOTH_RATIO = 5.0;
+const double HEAT_TRANS_SCALE_RATIO = 1.0;
+const double E_SMOOTH_RATIO = 1.0;
 
 //Adaptive sml
 const int SML_UPDATE_INT = 50.;

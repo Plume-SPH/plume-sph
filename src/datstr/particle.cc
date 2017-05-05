@@ -477,7 +477,7 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
     sound_speed=pow((1+Rmg/Cvmg)*pressure/desmg, 0.5); //use sound speed of only gas phase, that will make sound speed larger than the real value, but safe in determine time steps.
 #elif FLUID_COMPRESSIBILITY==1
 	sound_speed=pow(gama*(pressure+B-pa0_P)/desm, 0.5); //The equation of sound_speed comes from paper: "Historical Review of Real-Fluid Isentropio Flow Models" by D. A. Sullivan
-#endif
+#endif //FLUID_COMPRESSIBILIT
 
 //Updating single phase density
 	phase_density[0]=state_vars[0]*na;

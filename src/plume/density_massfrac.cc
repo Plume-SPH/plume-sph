@@ -34,12 +34,6 @@ smooth_density(THashTable * P_table)
   double wnorm[PHASE_NUM], norm;
   double wm, mj, rhoj;
 
-//#if USE_GSPH==1
-//  double pressj;
-//  double dwdx[DIMENSION];
-//  double dr[DIMENSION], du[DIMENSION], dv[DIMENSION], dw[DIMENSION], dp[DIMENSION];
-//#endif
-
 #if HAVE_ENERGY_SMOOTH ==1
   double engr, wm_e, wnorm_e, s_e[DIMENSION];
 #elif HAVE_ENERGY_SMOOTH ==2
@@ -54,7 +48,7 @@ smooth_density(THashTable * P_table)
    bool check_den = false;
    bool do_search = true;
    bool check_mssfrac = false;
-   unsigned keycheck[TKEYLENGTH] = {71865376, 3870289833, 0};
+   unsigned keycheck[TKEYLENGTH] = {77, 0, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
 
@@ -84,7 +78,7 @@ smooth_density(THashTable * P_table)
       hi = pi->get_smlen ();
 #endif
 
-      double supp = 3.0 * hi;
+      double supp = 4.0 * hi;
 //      TKey ki = pi->getKey ();
 
       for (i = 0; i < PHASE_NUM; i++)
@@ -102,18 +96,6 @@ smooth_density(THashTable * P_table)
 #elif HAVE_ENERGY_SMOOTH == 2
       engr = 0.0;
 #endif
-
-//#if USE_GSPH==1
-//      //initialize
-//	 for (k = 0; k < DIMENSION; k++)
-//	 {
-//		 dr[k] = 0.0;
-//		 du[k] = 0.0;
-//		 dv[k] = 0.0;
-//		 dw[k] = 0.0;
-//		 dp[k] = 0.0;
-//	 }
-//#endif
 
       vector <TKey> neighs = pi->get_neighs ();
       vector <TKey> :: iterator p_itr;
@@ -162,9 +144,11 @@ smooth_density(THashTable * P_table)
 						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj;
 						engr +=wm_e*pj->get_energy()/rhoj;
 #endif
+
 						wght = weight(s, hi);
 						wm = wght * mj;
 						tmprho[phs_i-1] += wm;
+
 #if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 22)
 						//View multiple phase SPH as one set of discretized point
 						wnorm[phs_i-1] += wm / rhoj;
@@ -174,19 +158,6 @@ smooth_density(THashTable * P_table)
 						if (phase_des>0)
 						    wnorm[phs_i-1] += wm /phase_des;
 #endif
-//#if USE_GSPH==1
-//						const double * velj = pj->get_vel ();
-//						pressj=pj->get_pressure ();
-//						for (k = 0; k < DIMENSION; k++)
-//						{
-//				            dwdx[k] = d_weight (s, hi, k);
-//							dr[k] += mj*dwdx[k];
-//							du[k] += mj*dwdx[k]*velj[0]/rhoj;
-//							dv[k] += mj*dwdx[k]*velj[1]/rhoj;
-//							dw[k] += mj*dwdx[k]*velj[2]/rhoj;
-//							dp[k] += mj*dwdx[k]*pressj/rhoj;
-//						}
-//#endif
 					 }
 				  }//end of if pj->which_phase()==phs_i
 
@@ -198,16 +169,15 @@ smooth_density(THashTable * P_table)
       density=0.0;
       norm = 0.0;
 
-#if HAVE_ENERGY_SMOOTH==1
-//      cout << wnorm_e << endl;
+#if HAVE_ENERGY_SMOOTH==1 //Also do normalization
       assert (wnorm_e > 0);
       engr = engr/wnorm_e;
       pi->put_new_energy(engr);
-#elif HAVE_ENERGY_SMOOTH==2
+#elif HAVE_ENERGY_SMOOTH==2 //Do not normalize it
       pi->put_new_energy(engr);
 #endif
 
-#if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 12)
+#if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 12) || (DENSITY_UPDATE_SPH == 10)
 	  for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++) //add wnorm up, so start from second phase.
 	       norm += wnorm [phs_i-1];
 
@@ -239,9 +209,12 @@ smooth_density(THashTable * P_table)
 //   	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
 //   	   density +=phaserho[phs_i-1];
 //     }
-//#elif DENSITY_UPDATE_SPH == 11
-//     for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
-//   	   density +=phaserho[phs_i-1];
+#elif DENSITY_UPDATE_SPH == 11
+     for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+     {
+       phaserho[phs_i-1]=tmprho[phs_i-1];
+   	   density +=phaserho[phs_i-1];
+     }
 #endif
 
 #ifndef SIMULATE_ASH
@@ -276,15 +249,6 @@ smooth_density(THashTable * P_table)
       assert(mssfrc <= 1);
       pi->put_new_mass_frac(mssfrc);
 
-//#if USE_GSPH==1
-//      //before updating, normalization might needed: Normalization of derivative in 3D need to be careful!!
-//      pi->put_density_d(dr);
-//      pi->put_velocity_u_d(du);
-//      pi->put_velocity_v_d(dv);
-//      pi->put_velocity_w_d(dw);
-//      pi->put_pressure_d(dp);
-//#endif
-
 //      /*
 //       * the bad thing here is: particle do not have information about its bgmesh, the better way is set adapt +=1 only if the bucket where the particle belong to originally does not have involved particles.
 //       * Well why not add a new member Key mybucket in particle ---> this is another story, keep track bgmesh for each particle requires additional effort
@@ -312,9 +276,7 @@ smooth_density(THashTable * P_table)
           pi->set_involved_flag(INVOLVED);
 
        pi->update_density();
-#if HAVE_ENERGY_SMOOTH==1
-       pi->update_energy();
-#elif HAVE_ENERGY_SMOOTH==2
+#if (HAVE_ENERGY_SMOOTH==1 || HAVE_ENERGY_SMOOTH==2)
        pi->update_energy();
 #endif
 
