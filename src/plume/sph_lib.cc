@@ -2106,20 +2106,34 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     for (i = 0; i < DIMENSION; i++)
     	dx[i] = xi[i] - xj[i];
 
-#if SWITCH_OFF_AV_FOR_EXPAN==1
+#if ((SWITCH_OFF_AV_FOR_EXPAN==1) || (SWITCH_OFF_AV_FOR_EXPAN==2))
+    bool expd_ind = false; //expand indicator
+
 	double dot_product=0.0;
 	for (i = 0; i < DIMENSION; i++)
 		dot_product += dx[i]*(vi[i] - vj[i]);
 
+	double p_avg;
+	double v_avg[DIMENSION];
+
 	if (dot_product<=0)
 	{
-		*p_star = 0.5*(pi+pj);
+		p_avg = 0.5*(pi+pj);
+		v_avg[DIMENSION];
 		for (i = 0; i < DIMENSION; i++)
-			*(v_star+i) = 0.5*(vi[i] + vj[i]);
+			v_avg[i] = 0.5*(vi[i] + vj[i]);
 
+#if (SWITCH_OFF_AV_FOR_EXPAN==1)
+		*p_star = p_avg;
+		for (i = 0; i < DIMENSION; i++)
+			*(v_star+i) = v_avg[i];
 		return;
+#endif //(SWITCH_OFF_AV_FOR_EXPAN==1)
+
+		expd_ind = true;
 	}
-#endif
+
+#endif //(SWITCH_OFF_AV_FOR_EXPAN==1) || (SWITCH_OFF_AV_FOR_EXPAN==2)
 
 	double dist = 0.0;
 	for (i = 0; i < DIMENSION; i++)
@@ -2226,6 +2240,13 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	dpj=0.0;
     	dduj=0.0;
     }
+
+#if (SWITCH_OFF_AV_FOR_EXPAN==2)
+    double av_coef = 1.0;
+    if (expd_ind)
+		double av_coef=(drhoi+drhoj)/12.5; //0.5*(drhoi+drhoj)/25.0;
+
+#endif //(SWITCH_OFF_AV_FOR_EXPAN==1)
 //#endif
 
     //determine the right and left location
@@ -2351,6 +2372,15 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 		*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
 	}
 #endif
+
+#if (SWITCH_OFF_AV_FOR_EXPAN==2)
+	if (expd_ind)
+	{
+		*p_star = p_avg + av_coef*(*p_star-p_avg);
+		for (int i=0; i<DIMENSION; i++)
+			*(v_star+i)=v_avg[i] + av_coef*(*(v_star+i) - v_avg[i]);
+	}
+#endif //(SWITCH_OFF_AV_FOR_EXPAN==1)
 
 	return;
 }

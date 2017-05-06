@@ -64,7 +64,7 @@
 
 //Define whether should pressure ghost particles should be took into account for density update
 //PGHOST_CONTRIBUTE_DES == 1: yes, take the pressure ghost particles into account
-//PGHOST_CONTRIBUTE_DES == 2: No,  do not take the pressure ghost particles into account
+//PGHOST_CONTRIBUTE_DES == 0: No,  do not take the pressure ghost particles into account
 #ifndef PGHOST_CONTRIBUTE_DES
 #define PGHOST_CONTRIBUTE_DES 1
 #endif
@@ -131,7 +131,7 @@
  */
 #if USE_GSPH==0
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 0
+#define  RIEMANN_SOLVER 1
 #endif
 #endif
 
@@ -182,10 +182,11 @@
 /*
  * SWITCH_OFF_AV_FOR_EXPAN 0: Do not switch off artificial viscosity for expansion
  * SWITCH_OFF_AV_FOR_EXPAN 1: switch off artificial viscosity for expansion
+ * SWITCH_OFF_AV_FOR_EXPAN 2: use an switch coefficient that is proportional to the density gradient to determine the amount of artificial viscosity: Use the approximate numerical density gradient (AROUND 25) at the location where there is a shock as the reference to determine the value of this switch coefficient
  */
 #if USE_GSPH==1
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
-#define SWITCH_OFF_AV_FOR_EXPAN 0
+#define SWITCH_OFF_AV_FOR_EXPAN 2
 #endif
 #endif
 
