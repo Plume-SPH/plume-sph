@@ -1,0 +1,57 @@
+#-------------------------------------------------------------------------------------------------------------------------------
+Plume-SPH is designed to describe an injection of well mixed solid and volcanic gas from a circular vent above a flat surface into a stratified stationary atmosphere.
+
+#-------------------------------------------------------------------------------------------------------------------------------
+Installation: 
+Setting up environment variables (or alternatively load modules)
+setenv PATH /path/to/mpicxx/:$PATH
+setenv HDF5 "/path/to/dir/where_hdf5_is_installed"
+
+Download the source code:
+git clone  https://github.com/Plume-SPH/plume-sph.git
+Configure:
+cd plume-sph
+
+make clean
+make distclean
+
+aclocal
+autoreconf
+automake --add-missing
+
+./configure --without-gdal --with-hdf5 --enable-debug --enable-parallel CC=mpicc CXX=mpicxx FC=mpifort
+
+Note: 
+1) It is recommended to turn off debug by remove “--enable-debug” from the configure option. 
+2) It is recommended to use the mpi version of Plume-SPH, as you will see, the serial version is too slow to do real simulation. So always configure with “--enable-parallel”
+Install:
+make && make install
+check installation:
+1) if there is some error, there will be some error message print on the screan.
+2) cd bin
+ls -l
+There should be two recently generated binary file: “particler” and “preprocess” in the bin directory.
+
+
+
+#-------------------------------------------------------------------------------------------------------------------------------
+Test run:
+All input data are ready, For do simulation with different input parameters, please refer to the user manual in the doc directory.
+
+cd bin
+./preprocess <#_of_cores> <smoothing_length> 0
+
+Please note there are three command line options for running “preprocess”, the first one is the number of cores, the second one is smoothing length, the last one MUST be zero for current version, which indicates that “do not read wind field data while running simulation”. We preserve the last option for future development of Plume-SPH. 
+If successful, you will see some files named as: funkyxxxx.h5 in the running dorectory.
+
+Run the serial version: 
+./particler
+
+Run the MPI version
+mpirun –np <#_of_cores> ./particler
+NOTE: <#_of_cores> while running particler should be the consistent with that for running preprocess.
+Check running output. 
+
+The outputs are files named as pvplotxxxx.h5part (And maybe also pvplot_showxxx.h5part). Each file is corresponding to each sub-domain.
+
+For more details, please refer to user manual
