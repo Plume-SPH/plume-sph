@@ -129,7 +129,7 @@
  * 1: --> HLLC
  * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock
  */
-#if USE_GSPH==0
+#if USE_GSPH==1
 #ifndef RIEMANN_SOLVER
 #define  RIEMANN_SOLVER 1
 #endif
@@ -452,7 +452,7 @@
  * 1: --> HLLC
  * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock
  */
-#if USE_GSPH==0
+#if USE_GSPH==1
 #ifndef RIEMANN_SOLVER
 #define  RIEMANN_SOLVER 0
 #endif
@@ -505,10 +505,11 @@
 /*
  * SWITCH_OFF_AV_FOR_EXPAN 0: Do not switch off artificial viscosity for expansion
  * SWITCH_OFF_AV_FOR_EXPAN 1: switch off artificial viscosity for expansion
+ * SWITCH_OFF_AV_FOR_EXPAN 2: use an switch coefficient that is proportional to the density gradient to determine the amount of artificial viscosity: Use the approximate numerical density gradient (AROUND 25) at the location where there is a shock as the reference to determine the value of this switch coefficient
  */
 #if USE_GSPH==1
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
-#define SWITCH_OFF_AV_FOR_EXPAN 0
+#define SWITCH_OFF_AV_FOR_EXPAN 2
 #endif
 #endif
 //Define whether use nature boundary condition for ks or essentiall boundary ks
@@ -568,7 +569,7 @@
  * 4: realistic interpolation --->read realistic atmosphere data and do interpolation to determine temperature, pressure, density
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 2
+#define ATMOSPHERE_TYPE 0
 //The default value represents hydro-static atmosphere
 #endif
 
@@ -600,7 +601,7 @@
  *                       Because when the fluid is water, the gradient of temperature and density is almost vanish
  */
 #ifndef FLUID_COMPRESSIBILITY
-#define FLUID_COMPRESSIBILITY 1
+#define FLUID_COMPRESSIBILITY 0
 #endif
 
 //Define the time step constrain
