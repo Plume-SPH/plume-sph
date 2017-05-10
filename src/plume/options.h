@@ -351,7 +351,6 @@
 #ifndef USE_SUMMATION
 #define USE_SUMMATION
 
-
 // only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
 /*
  * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!

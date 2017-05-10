@@ -227,7 +227,7 @@ smooth_density(THashTable * P_table)
      pi->calc_density_suzuki(mssfrc);
 #else
      assert(density > 0);
-     assert(!isnan(density));
+//     assert(!isnan(density));
      pi->put_new_density(density);
 #endif
 
