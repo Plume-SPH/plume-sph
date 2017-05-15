@@ -23,6 +23,8 @@ using namespace std;
 #include <outforms.h>
 #include <hdf5calls.h>
 
+
+//Function for writing buckets decomposition in a hdf5 file
 void
 write_matlab(int myid, THashTable * P_table, HashTable * BG_mesh,
              TimeProps * timeprops, vector <BucketHead>  & partition_table)

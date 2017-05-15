@@ -29,6 +29,12 @@ using namespace std;
 #  include <debug_header.h>
 #endif
 
+#if CODE_DIMENSION==1
+#include <iostream>
+#include <fstream>
+#include <string>
+#endif
+
 //#define WRITE_GHOSTS
 
 void
@@ -436,3 +442,94 @@ write_h5part_show(int myid, int numproc, THashTable * P_table, TimeProps * timep
 
   return;
 }
+
+#if CODE_DIMENSION==1
+//function that used to write output into a cvs file ---> useful for small size output, such as output for shock tube problem.
+void
+write_cvs(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
+{
+	  int i, j;
+	  vector < double >x, y, z, Vx, Vy, Vz, rho, engr, mssfrc, prss;
+	  vector < int >  phase, bctp, guest;
+
+
+	#ifdef DEBUG
+	  vector < int > involved;
+	#endif
+
+	#ifdef WRITE_PID
+	  vector < int > myprocess;
+	#endif
+
+	#ifdef WRITE_PMASS
+	  vector < double > mymass;
+	#endif
+
+	#if defined (WRITE_SML) && (ADAPTIVE_SML ==1)
+	  vector < double > mysml;
+	#endif
+
+	  char filename[18];
+	  static int step = 0;
+	  hid_t fp;
+	  herr_t ierr;
+
+	#ifdef PARALLEL_IO
+	  sprintf(filename, "pvplot_out.h5part");
+	#else
+	  sprintf(filename, "pvplot%03d.h5part", myid);
+	#endif
+
+	  if (timepros->ifstart())
+	    fp = GH5_fopen(filename, 'w');
+	  else
+	    fp = GH5_fopen(filename, 'a');
+
+	  THTIterator *itr = new THTIterator(P_table);
+	  Particle *pi = NULL;
+	  int my_count = 0;
+
+	  while ((pi = (Particle *) itr->next()))
+	  {
+	#ifndef WRITE_GHOSTS
+	    if (pi->need_neigh())//non guest and is real
+	    {
+	#endif
+	      rho.push_back(pi->get_density());
+	      x.push_back(*(pi->get_coords()));
+	      Vx.push_back(*(pi->get_vel()));
+	      y.push_back(*(pi->get_coords() + 1));
+	      Vy.push_back(*(pi->get_vel() + 1));
+	      my_count++;
+	      z.push_back(*(pi->get_coords() + 2));
+	      Vz.push_back(*(pi->get_vel() + 2));
+	      engr.push_back(pi->get_energy ());
+	      mssfrc.push_back(pi->get_mass_frac());
+	      prss.push_back(pi->get_pressure());
+	      phase.push_back(pi->which_phase());
+	      bctp.push_back(pi->get_bc_type ());
+	      guest.push_back(pi->get_guest());
+
+	#ifdef DEBUG
+	      involved.push_back(pi->get_involved ());
+	#endif
+
+	#ifdef WRITE_PID
+	      myprocess.push_back(myid);
+	#endif
+
+	#ifdef WRITE_PMASS
+	      mymass.push_back(pi->get_mass ());
+	#endif
+
+	#if defined (WRITE_SML) && (ADAPTIVE_SML ==1)
+	      mysml.push_back(pi->get_smlen ());
+	#endif
+
+	#ifndef WRITE_GHOSTS
+	    }
+	#endif
+	  }
+
+}
+#endif  //CODE_DIMENSION==1
