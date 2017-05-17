@@ -572,6 +572,17 @@
 //The default value represents hydro-static atmosphere
 #endif
 
+//Define whether use variable gravity or not, the gravity is a function of height:
+//   g = 9.80665 * (6400/(6400+h(km)))^2
+/*
+ * 0: use constant gravity
+ * 1: use
+ */
+#if (ATMOSPHERE_TYPE==0) || (ATMOSPHERE_TYPE==1) || (ATMOSPHERE_TYPE==4)
+#ifndef VARIABLE_GRAVITY
+#define VARIABLE_GRAVITY 1
+#endif
+#endif
 
 //Define the erupt velocity profile type --> for plume modeling
 /*

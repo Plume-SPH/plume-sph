@@ -276,6 +276,9 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		   // z-velocity
 //		   unew[3] = uvec[3] + dt * (rhs_v[2] + gravity[2]);
+#if VARIABLE_GRAVITY==1
+		   gravity[DIMENSION-1]=-g_P*(6400/(6400+xi[DIMENSION-1]*0.001))*(6400/(6400+xi[DIMENSION-1]*0.001));
+#endif
 		   unew[NO_OF_EQNS-2] += dt*gravity[DIMENSION-1];
 
 		   // energy
@@ -666,7 +669,7 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		          double x_dot_star[DIMENSION];
 		          for (k = 0; k < DIMENSION; k++)
-		        	  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]+gravity[k]);//Do not forget gravity
+		        	  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]);
 
 		          for (k=0; k<DIMENSION; k++)
 		          {
@@ -708,8 +711,12 @@ mom_engr_update(int myid, THashTable * P_table,
 		   for (i = 0; i < DIMENSION; i++)
 			   unew[i+1] = uvec[i+1] + dt * (rhs_v[i]);
 
+
 		   // z-velocity
 //		   unew[3] = uvec[3] + dt * (rhs_v[2] + gravity[2]);
+#if VARIABLE_GRAVITY==1
+		   gravity[DIMENSION-1]=-g_P*(6400/(6400+xi[DIMENSION-1]*0.001))*(6400/(6400+xi[DIMENSION-1]*0.001));
+#endif
 		   unew[NO_OF_EQNS-2] += dt*gravity[DIMENSION-1];
 
 		   // energy
