@@ -28,7 +28,7 @@ smooth_velocity(THashTable * P_table)
   int i, k;
   //unsigned jkey[TKEYLENGTH];
   double xi[DIMENSION], ds[DIMENSION], s[DIMENSION];
-  double wght, temp_dv[DIMENSION];
+  double wght, rhoj, mj, temp_dv[DIMENSION];
   double vi[DIMENSION], vj[DIMENSION];
   TKey tmpkey;
   double smoothed_v[DIMENSION];
@@ -36,6 +36,11 @@ smooth_velocity(THashTable * P_table)
   // create a Hash Table iterator instance
   THTIterator * itr = new THTIterator (P_table);
   Particle * pi = NULL;
+
+#if HAVE_TURBULENCE_LANS==2
+  double mvw_e, wnorm_e, s_e[DIMENSION];
+  double ei, temp_de, smoothed_e;
+#endif
 
 #ifdef DEBUG
 //   bool check_den = false;
@@ -69,6 +74,13 @@ smooth_velocity(THashTable * P_table)
       for (i = 0; i < DIMENSION; i++)
         vi[i] = (*(pi->get_vel() + i));
 
+#if HAVE_TURBULENCE_LANS==2
+      ei= (pi->get_energy ());
+      wnorm_e =0.0;
+      temp_de=0.0;
+#endif
+
+
       double hi = pi->get_smlen ();
       double supp = 3.0 * hi;
       TKey ki = pi->getKey ();
@@ -98,16 +110,30 @@ smooth_velocity(THashTable * P_table)
 
       		 if (in_support(ds, supp))
       		 {
+      			 rhoj=pj->get_density();
+      			 mj=pj->get_mass();
+
       		     for (k = 0; k < DIMENSION; k++)
       		        s[k] = ds[k] / hi;
       		      wght = weight(s, hi);
-      		      mvw =  wght * (pj->get_mass()) / pj->get_density();
+      		      mvw =  wght * mj/rhoj;
 
       		      for (i = 0; i < DIMENSION; i++)
-      		            vj[i] = (*(pj->get_vel() + i));
+      		         vj[i] = (*(pj->get_vel() + i));
       		      for (i = 0; i < DIMENSION; i++)
       		         temp_dv[i] += mvw * (vj[i] - vi[i]);
     		      wnorm += mvw;
+
+#if HAVE_TURBULENCE_LANS==2
+				  for (k = 0; k < DIMENSION; k++)
+					 s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
+				  mvw_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj/rhoj;
+
+      		      temp_de += mvw_e * ( (pj->get_energy ()) - ei);
+
+				  wnorm_e +=mvw_e;
+#endif
+
       		  }
       	    }
       }//end of go through all neighbors
@@ -119,6 +145,16 @@ smooth_velocity(THashTable * P_table)
     	  smoothed_v[i] = vi[i] + temp_dv[i];
 
       pi->put_smoothed_velocity(smoothed_v);
+
+#if HAVE_TURBULENCE_LANS==2
+      assert(wnorm_e > 0);
+      temp_de /= wnorm_e;
+
+      smoothed_e = ei + temp_de;
+
+      pi->put_smoothed_energy(smoothed_e);
+#endif
+
 
     }//end of if --> if the velocity of that particle need to be updated based summation
   }//end of loop -->go through all particle

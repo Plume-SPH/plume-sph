@@ -125,11 +125,11 @@ GMFG_new_MPI_Datatype ()
 #if USE_GSPH==0
   blockcounts2[0] = 5;
   blockcounts2[1] = TKEYLENGTH;
-  blockcounts2[2] = 4 + 2*DIMENSION + NO_OF_EQNS;
+  blockcounts2[2] = 5 + 2*DIMENSION + NO_OF_EQNS;
 #elif USE_GSPH==1
   blockcounts2[0] = 5;
   blockcounts2[1] = TKEYLENGTH;
-  blockcounts2[2] = 4 + 7*DIMENSION + NO_OF_EQNS;  // For GSPH there will be 5 additional variable for gradient
+  blockcounts2[2] = 5 + 7*DIMENSION + NO_OF_EQNS;  // For GSPH there will be 5 additional variable for gradient
 #endif
 
 #if DENSITY_UPDATE_SML==0

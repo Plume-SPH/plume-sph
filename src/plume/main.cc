@@ -376,14 +376,14 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
     // smooth out velocity
     smooth_velocity(P_table);
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
-#endif
+#endif //HAVE_TURBULENCE_LANS !=0
 
 #ifdef DEBUG
   if (check_part)
@@ -837,14 +837,14 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
     // smooth out velocity
     smooth_velocity(P_table);
 #ifdef MULTI_PROC
     // update guests on all procs
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
-#endif
+#endif //HAVE_TURBULENCE_LANS !=0
 
 #ifdef DEBUG
   if (check_part)

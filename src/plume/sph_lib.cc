@@ -817,6 +817,11 @@ void initial_air (Particle * pi, SimProps * simprops)
 	      //put data back into particle:
 	      pi->put_density(dens);
 	      pi->put_energy(erg);
+
+#if HAVE_TURBULENCE_LANS==2
+	      pi->put_smoothed_energy(erg);
+#endif
+
 	      pi->put_pressure(prss);
 	      pi->put_velocity(vel);
 	      pi->put_mass(mss);

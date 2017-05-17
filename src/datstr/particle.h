@@ -106,6 +106,8 @@ protected:
   double d_p[DIMENSION];
 #endif
 
+  double smoothed_e; //smoothed energy
+
   //!to indicate whether the particle is eruption ghost particle or not
   int bc_type; //bc_type=0: eruption ghost
                //bc_type=1: pressure ghost
@@ -847,7 +849,6 @@ public:
   // Operator overloads
   bool operator== (const Particle & rhs) const;
 
-  //#ifdef HAVE_TURBULENCE_LANS
     //! get specific heat under constant pressure
     const double get_specific_heat_p() const
     {
@@ -860,11 +861,23 @@ public:
       return smoothed_v;
     }
 
+    //! get smoothed energy
+    const double get_smoothed_energy() const
+    {
+      return smoothed_e;
+    }
+
     //put smoothed velocity
     void put_smoothed_velocity (double smed_u[])
     {
   	  for(int i=0; i<DIMENSION; i++)
-  		  smoothed_v[i]=smed_u[i];
+  		 smoothed_v[i]=smed_u[i];
+    }
+
+    //put smoothed energy
+    void put_smoothed_energy (double smed_e)
+    {
+    	smoothed_e = smed_e;
     }
 
     //put smoothed specific heat
@@ -872,7 +885,6 @@ public:
     {
   	  specific_heat_p = Cp;
     }
-  //#endif
 };
 
 #endif /* PARTICLE_H */

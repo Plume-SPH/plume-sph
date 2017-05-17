@@ -45,6 +45,8 @@ Particle::Particle ()
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.;
 
+  smoothed_e =0.0;
+
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0.;
 
@@ -124,8 +126,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.;
 
+  smoothed_e =0.0;
+
   for (i = 0; i < NO_OF_EQNS; i++)
-      state_vars[i] = 0;
+      state_vars[i] = 0.;
 //
 //  for (i = 0; i < PHASE_NUM; i++)
 //  	  phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
@@ -199,7 +203,9 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
   }
 
   for (i = 0; i < DIMENSION; i++)
-	  smoothed_v[i] = 0.;
+	  smoothed_v[i] = 0.0;
+
+  smoothed_e = ev0;
 
   for (i = 0; i < NO_OF_EQNS; i++)
     state_vars[i] = 0;//velocity is set to zero
@@ -215,11 +221,9 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
     phase_num= 2;
     mass_frac= 1.; //default is 1
 
-    double des, engr;
+    double des;
     des = rhov;
     state_vars[0] = des;
-    engr = ev0;
-    state_vars[NO_OF_EQNS-1] = engr;
 
     update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
     pressure = pv0; //Why I have this? --> I need double check this!
@@ -288,6 +292,8 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.;
 
+  smoothed_e = ev0;
+
   for (i = 0; i < NO_OF_EQNS; i++)
       state_vars[i] = 0;//velocity is set to zero
 
@@ -303,11 +309,9 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
     phase_num= 2;
     mass_frac= msfc0;
 
-    double des, engr;
+    double des;
     des = rhov;
     state_vars[0] = des;
-    engr = ev0;
-    state_vars[NO_OF_EQNS-1] = engr;
 
     update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
     pressure = pv0; //Why I have this? --> I need double check this!
@@ -371,14 +375,16 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
 
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.;
+
+  smoothed_e = prss/((gmm-1)*des);
 //
 //  for (i = 0; i < PHASE_NUM; i++)
 //  	  phase_density[i] = PHASE_DENS; //divided by PHASE_NUM to make sure sum of density of all phase will be 1.
 //                                        //Density will be updated in updating of secondary variable
 
   state_vars[0] = des;//default density is 1.0;
-  state_vars[1] = vel;//default density is 1.0;
-  state_vars[2] = prss/((gmm-1)*des);//default density is 1.0;
+  state_vars[1] = vel;
+  state_vars[2] = prss/((gmm-1)*des);
 
   pressure = prss;
 
@@ -428,7 +434,13 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 	double desm = state_vars[0];
 
 	double na=1-mass_frac;
+
+#if HAVE_TURBULENCE_LANS==2
+	double engr = smoothed_e;
+#else
 	double engr = state_vars[NO_OF_EQNS-1];
+#endif
+
 	double ng=ng0_P*mass_frac;
 	double ns=mass_frac-ng;
 
@@ -487,7 +499,7 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 	temperature = engr/Cvm;
 
 //update specific heat
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS != 0
 	specific_heat_p=Cvm;
 #endif
 }

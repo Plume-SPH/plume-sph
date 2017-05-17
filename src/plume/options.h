@@ -224,9 +224,14 @@
 
 //Define have LANS turbulent model in the code
 //--> it is a stupid idea to do module management in C++ in this way, I should make use of the template, inherit, overloading as much as possible
-//#ifndef HAVE_TURBULENCE_LANS
-//#define HAVE_TURBULENCE_LANS
-//#endif
+/*
+ * 0 : No HAVE_TURBULENCE_LANS
+ * 1 : use SPH integration to do the smooth
+ * 2 : use XSPH to do the interpolation
+ */
+#ifndef HAVE_TURBULENCE_LANS
+#define HAVE_TURBULENCE_LANS 0
+#endif
 
 ////Define have physics viscosity
 //#ifndef USE_PHYSICS_VIS
@@ -250,6 +255,18 @@
 #ifndef ATMOSPHERE_TYPE
 #define ATMOSPHERE_TYPE 2
 //The default value represents hydro-static atmosphere
+#endif
+
+//Define whether use variable gravity or not, the gravity is a function of height:
+//   g = 9.80665 * (6400/(6400+h(km)))^2
+/*
+ * 0: use constant gravity
+ * 1: use
+ */
+#if (ATMOSPHERE_TYPE==0) || (ATMOSPHERE_TYPE==1) || (ATMOSPHERE_TYPE==4)
+#ifndef VARIABLE_GRAVITY
+#define VARIABLE_GRAVITY 0
+#endif
 #endif
 
 
@@ -365,7 +382,7 @@
 
 
 /*
- * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true
+ * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true  ---> is necessary when Turbulence model is included. ---> If the turbulence has an energy smoothing process, it is not necessary to do smooth again here!
  * 0: do not use energy smooth
  * 1: use energy smooth with normalization
  * 2: use energy smooth without normalization
@@ -386,7 +403,7 @@
  * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
  */
 #ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 1 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
+#define DENSITY_UPDATE_SPH 11 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
                            //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
 #endif
 
@@ -442,7 +459,7 @@
  */
 #if USE_GSPH==1
 #ifndef GSPH_MODIFIED_MONOTONICITY
-#define  GSPH_MODIFIED_MONOTONICITY 1
+#define GSPH_MODIFIED_MONOTONICITY 1
 #endif
 #endif
 
@@ -453,7 +470,7 @@
  */
 #if USE_GSPH==1
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 0
+#define RIEMANN_SOLVER 0
 #endif
 #endif
 
@@ -468,7 +485,7 @@
  */
 #if (RIEMANN_SOLVER==1) || (RIEMANN_SOLVER==2) //Use HLL type of Riemann Solver
 #ifndef HLL_WAVE_SPEED_EVA
-#define  HLL_WAVE_SPEED_EVA 0
+#define HLL_WAVE_SPEED_EVA 0
 #endif
 #endif
 
@@ -544,8 +561,13 @@
 
 //Define have LANS turbulent model in the code
 //--> it is a stupid idea to do module management in C++ in this way, I should make use of the template, inherit, overloading as much as possible
+/*
+ * 0 : No HAVE_TURBULENCE_LANS
+ * 1 : only filter velocity
+ * 2 : filter both velocity and energy  ---> In which case, it is not necessary to smooth energy. ---> For energy smooth, it is OK to use a different filter scale length.
+ */
 #ifndef HAVE_TURBULENCE_LANS
-#define HAVE_TURBULENCE_LANS
+#define HAVE_TURBULENCE_LANS 1
 #endif
 
 ////Define have physics viscosity
@@ -568,7 +590,7 @@
  * 4: realistic interpolation --->read realistic atmosphere data and do interpolation to determine temperature, pressure, density
  */
 #ifndef ATMOSPHERE_TYPE
-#define ATMOSPHERE_TYPE 0
+#define ATMOSPHERE_TYPE 4
 //The default value represents hydro-static atmosphere
 #endif
 
@@ -576,11 +598,11 @@
 //   g = 9.80665 * (6400/(6400+h(km)))^2
 /*
  * 0: use constant gravity
- * 1: use
+ * 1: use variable gravity as a function of height
  */
 #if (ATMOSPHERE_TYPE==0) || (ATMOSPHERE_TYPE==1) || (ATMOSPHERE_TYPE==4)
 #ifndef VARIABLE_GRAVITY
-#define VARIABLE_GRAVITY 1
+#define VARIABLE_GRAVITY 0
 #endif
 #endif
 

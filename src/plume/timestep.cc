@@ -64,7 +64,7 @@ pressure_bc_step(HashTable * BG_mesh, THashTable * P_table)
 			    	{
 			    		 Particle *p_curr = (Particle *) P_table->lookup(*p_itr);
 			    		 assert(p_curr);
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 			    		 p_spd_u = *(p_curr->get_smoothed_velocity());
 			    		 p_spd_v = *(p_curr->get_smoothed_velocity()+1);
 			    		 p_spd_w = *(p_curr->get_smoothed_velocity()+2);

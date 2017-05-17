@@ -191,6 +191,7 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   pack_array->smlen_original = psend->smlen_original;
 #endif
   pack_array->mass_frac = psend->mass_frac;
+  pack_array->smoothed_e = psend->smoothed_e;
   pack_array->sound_speed = psend->sound_speed;
   pack_array->myprocess = psend->myprocess;
    
@@ -416,6 +417,8 @@ void unpack_particle (ParticlePack *packet, Particle *part)
 #endif
 
   part->mass_frac = packet->mass_frac;
+
+  part->smoothed_e = packet->smoothed_e;
 
   part->sound_speed = packet->sound_speed;
 

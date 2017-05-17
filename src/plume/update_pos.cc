@@ -77,7 +77,7 @@ update_pos(THashTable * P_table,
       // velocity and coordinates
       for (i = 0; i < DIMENSION; i++)
       {
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
          vel[i] = *(p->get_smoothed_velocity() + i);
 #else
          vel[i] = *(p->get_vel() + i);

@@ -145,7 +145,7 @@ mom_engr_update(int myid, THashTable * P_table,
 #endif // MOMENTUM_DISCRETIZE ==1
 
           // velocity veli
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 		  for (k = 0; k < DIMENSION; k++)
 		      veli[k] = *(pi->get_smoothed_velocity()+k);
 #else
@@ -198,7 +198,7 @@ mom_engr_update(int myid, THashTable * P_table,
 				  // density must always be positive
 				  assert(uvecj[0] > 0);
 
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 		          for (k = 0; k < DIMENSION; k++)
 		               velj[k] = *(pj->get_smoothed_velocity()+k);
 #else
@@ -216,7 +216,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		          vis= art_vis (rhoab, sndspdab, dx, velij, dist_sq, hi);
 
 		          //compute turbulent stress
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 		          turb_stress=SPH_epsilon_mom(velij, Vj);
 		          vis -=turb_stress; //The minus comes from the fact that there is a minus sign at the front of discretized equation
 #endif
@@ -251,7 +251,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		          // Energy rhs
 		          //turbulent heat transfer term
 		          heat_tran = 0.; //This line is for the situation when we do not have turbulence in our model
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 		          Cp_ij = 0.5* (pj->get_specific_heat_p() + Cp_i);
 //		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
 		          double hab=0.5*(hi+pj->get_smlen());
@@ -453,7 +453,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		  double Vi = 1.0 / uvec[0];
 
           // velocity veli
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 		  for (k = 0; k < DIMENSION; k++)
 		      veli[k] = *(pi->get_smoothed_velocity()+k);
 #else
@@ -516,7 +516,7 @@ mom_engr_update(int myid, THashTable * P_table,
 				  sndspdj = pj->get_sound_speed();
 				  gammaj= pj->get_gamma();
 
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 		          for (k = 0; k < DIMENSION; k++)
 		               velj[k] = *(pj->get_smoothed_velocity()+k);
 #else
@@ -540,7 +540,7 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		          //compute turbulent stress
 		          turb_stress=0.0;
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 		          //velocity difference veli-velj
 		          for (k = 0; k < DIMENSION; k++)
 		               velij[k] = veli[k]- velj[k];
@@ -619,7 +619,7 @@ mom_engr_update(int myid, THashTable * P_table,
 				  sndspdj = pj->get_sound_speed();
 				  gammaj= pj->get_gamma();
 
-#ifdef HAVE_TURBULENCE_LANS
+#ifdef #if HAVE_TURBULENCE_LANS !=0
 		          for (k = 0; k < DIMENSION; k++)
 		               velj[k] = *(pj->get_smoothed_velocity()+k);
 #else
@@ -643,7 +643,7 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		          //compute turbulent stress
 				  turb_stress=0.0;
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
 		          //velocity difference veli-velj
 		          for (k = 0; k < DIMENSION; k++)
 		               velij[k] = veli[k]- velj[k];
@@ -680,7 +680,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		          // Energy rhs
 		          //turbulent heat transfer term
 		          heat_tran = 0.; //This line is for the situation when we do not have turbulence in our model
-#ifdef HAVE_TURBULENCE_LANS
+#if HAVE_TURBULENCE_LANS !=0
                   //pre-compute
 		          double rhoab= 0.5 * ((pi->get_density()) + (pj->get_density()));
 		          double sndspdab = 0.5 * (sndspdi + sndspdj);
