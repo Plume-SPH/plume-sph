@@ -132,11 +132,7 @@ smooth_density(THashTable * P_table)
 						for (k = 0; k < DIMENSION; k++)
 							s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
 						wm_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj;
-//						cout<< "wm_e=" << wm_e <<endl;
-//						cout<< "rhoj=" << rhoj<<endl;
 						wnorm_e +=wm_e/rhoj;
-//						if (isnan(wnorm_e))
-//							cout<<"found it!"<<endl;
 						engr +=wm_e*pj->get_energy()/rhoj;
 #elif HAVE_ENERGY_SMOOTH==2
 						for (k = 0; k < DIMENSION; k++)

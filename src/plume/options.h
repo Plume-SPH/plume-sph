@@ -409,7 +409,7 @@
 
 //Define whether should pressure ghost particles should be took into account for density update
 //PGHOST_CONTRIBUTE_DES == 1: yes, take the pressure ghost particles into account
-//PGHOST_CONTRIBUTE_DES == 2: No,  do not take the pressure ghost particles into account
+//PGHOST_CONTRIBUTE_DES == 0: No,  do not take the pressure ghost particles into account
 #ifndef PGHOST_CONTRIBUTE_DES
 #define PGHOST_CONTRIBUTE_DES 1
 #endif
@@ -424,7 +424,7 @@
  */
 
 #ifndef USE_GSPH
-#define USE_GSPH 0
+#define USE_GSPH 1
 #endif
 
 
@@ -525,7 +525,7 @@
  */
 #if USE_GSPH==1
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
-#define SWITCH_OFF_AV_FOR_EXPAN 2
+#define SWITCH_OFF_AV_FOR_EXPAN 0
 #endif
 #endif
 //Define whether use nature boundary condition for ks or essentiall boundary ks

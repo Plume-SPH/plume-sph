@@ -619,7 +619,7 @@ mom_engr_update(int myid, THashTable * P_table,
 				  sndspdj = pj->get_sound_speed();
 				  gammaj= pj->get_gamma();
 
-#ifdef #if HAVE_TURBULENCE_LANS !=0
+#if HAVE_TURBULENCE_LANS !=0
 		          for (k = 0; k < DIMENSION; k++)
 		               velj[k] = *(pj->get_smoothed_velocity()+k);
 #else
@@ -669,7 +669,7 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		          double x_dot_star[DIMENSION];
 		          for (k = 0; k < DIMENSION; k++)
-		        	  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]);
+		        	  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]+gravity[k]);//Do not forget gravity
 
 		          for (k=0; k<DIMENSION; k++)
 		          {
