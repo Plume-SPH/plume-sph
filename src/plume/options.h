@@ -424,7 +424,7 @@
  */
 
 #ifndef USE_GSPH
-#define USE_GSPH 1
+#define USE_GSPH 0
 #endif
 
 

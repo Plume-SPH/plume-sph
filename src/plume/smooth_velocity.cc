@@ -83,7 +83,6 @@ smooth_velocity(THashTable * P_table)
 
       double hi = pi->get_smlen ();
       double supp = 3.0 * hi;
-      TKey ki = pi->getKey ();
 
       for (i = 0; i < DIMENSION; i++)
     	  temp_dv[i] = 0.;
@@ -126,8 +125,8 @@ smooth_velocity(THashTable * P_table)
 
 #if HAVE_TURBULENCE_LANS==2
 				  for (k = 0; k < DIMENSION; k++)
-					 s_e[k] = E_SMOOTH_RATIO*ds[k] / hi;
-				  mvw_e=weight(s_e, hi/E_SMOOTH_RATIO) * mj/rhoj;
+					 s_e[k] = E_FILTER_HRATIO*ds[k] / hi;
+				  mvw_e=weight(s_e, hi/E_FILTER_HRATIO) * mj/rhoj;
 
       		      temp_de += mvw_e * ( (pj->get_energy ()) - ei);
 

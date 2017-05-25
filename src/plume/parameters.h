@@ -874,7 +874,7 @@ const double Tv0_P=243; //unit K
 const double pv0_P=4363.4;
 
 //Initial mass fraction of erupted material, for umbrella simulation, the mass fraction of erupted material should be smaller than 1.
-const double msfc0_P=0.1;
+const double msfc0_P=0.08;
 
 const double Rv_P=ng0_P*Rg_P*msfc0_P + (1-msfc0_P)*Ra_P;  //Not used in current code
 const double Cvv_P=msfc0_P*ng0_P*Cvg_P+msfc0_P*(1-ng0_P)*Cvs_P + (1-msfc0_P)* Cva_P; /*specific heat of erupted material*/
@@ -897,8 +897,8 @@ const double Mv_P=1.5e+09;  /*mass flow rate, it is not directly used in simulat
 
 const double r_out_P= 10000.0; /*outside radius of influx particle adding */
 const double r_in_P= 5000.0; /*outside radius of influx particle adding */
-const double h_top_P= 25000.0; /*Top height of the plume */
-const double h_bot_P= 20000.0; /*bottom height of the plume */
+const double h_top_P= 22000.0; /*Top height of the plume */
+const double h_bot_P= 17000.0; /*bottom height of the plume */
 
 ////Here is the new way to give parameters --->So it is also OK if sml2 is given as a parameter
 //const double rv_P = 140;
@@ -933,7 +933,7 @@ const double eta_smooth_P = 1.2; //We can try different value to get best result
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.3;
+const double CFL_P=0.4;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------
@@ -950,7 +950,7 @@ const double eruptp_load = 0.02;
 
 //work load check interval, this value should be optimized to get good balance, for problems with different time scale, this value should be different
 //For strong
-const int balancing_check_int_P = 3;
+const int balancing_check_int_P = 30.0;
 //for weak
 //const int balancing_check_int_P = 1;
 #endif /*SIMULATE_ASH*/
