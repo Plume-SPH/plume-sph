@@ -609,7 +609,7 @@ public:
   //! update smoothing length
   void put_smlen (double h)
   {
-    smlen = h;
+    smlen = RATIO_SML_DX*h;
   }
 
   //! update neighbor information

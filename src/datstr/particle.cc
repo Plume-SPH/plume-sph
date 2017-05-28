@@ -100,7 +100,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   int i;
 
   mass = m;
-  smlen = h;
+  smlen = RATIO_SML_DX* h;
 #if DENSITY_UPDATE_SML==0
   smlen_original = h;
 #endif
@@ -176,7 +176,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
   int i;
   myprocess = id;
   mass = m;
-  smlen = h;
+  smlen = RATIO_SML_DX*h;
 #if DENSITY_UPDATE_SML==0
   smlen_original = h;
 #endif
@@ -265,7 +265,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
   int i;
   myprocess = id;
   mass = m;
-  smlen = h;
+  smlen = RATIO_SML_DX*h;
 #if DENSITY_UPDATE_SML==0
   smlen_original = h;
 #endif
@@ -350,7 +350,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
   int i;
 
   mass = m;
-  smlen = h;
+  smlen = RATIO_SML_DX* h;
 #if DENSITY_UPDATE_SML==0
   smlen_original = h;
 #endif

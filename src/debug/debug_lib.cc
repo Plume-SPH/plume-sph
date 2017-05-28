@@ -80,7 +80,7 @@ void check_particle_bykey (THashTable * P_table)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[TKEYLENGTH] = {71862445, 869232911, 0}; //key of its neighbor which is missing
+    unsigned keycheck[TKEYLENGTH] = {71606976, 8257279, 0}; //key of its neighbor which is missing
     //{93400792, 2478187757, 0}; //key of the particle itself is:
     //
     unsigned keytemp[TKEYLENGTH] ;
@@ -109,7 +109,7 @@ bool check_particle_bykey (THashTable * P_table, int* id)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[TKEYLENGTH] = {81155803, 29184500, 0}; //key of its neighbor which is missing
+    unsigned keycheck[TKEYLENGTH] = {71606976, 8257279, 0}; //key of its neighbor which is missing
     //{93400792, 2478187757, 0}; //key of the particle itself is:
     //
     unsigned keytemp[TKEYLENGTH] ;
@@ -169,9 +169,9 @@ void check_particle_bypos (THashTable * P_table)
 {
 
     bool do_search = true;
-    double range_x[2]={-10000000,-1000000};
+    double range_x[2]={-1000,1000};
     double range_y[2]={-1000,1000};
-    double range_z[2]={3000,7000};
+    double range_z[2]={1500, 2100};
     double pcrd[DIMENSION];
     int bctp;
 
@@ -188,7 +188,7 @@ void check_particle_bypos (THashTable * P_table)
 
 		  	if ((pcrd[0]>range_x[0] && pcrd[0]<range_x[1]) &&
 		  		(pcrd[1]>range_y[0] && pcrd[1]<range_y[1]) &&
-		  		(pcrd[2]>range_z[0] && pcrd[2]<range_z[1]) )
+		  		(pcrd[2]>range_z[0] && pcrd[2]<range_z[1]))
 		  	{
 		  		bctp = p_curr->get_bc_type();
 		  		cout << "The particle found!" << endl;

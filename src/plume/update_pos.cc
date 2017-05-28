@@ -100,7 +100,7 @@ update_pos(THashTable * P_table,
 
     //Because updating of erupted particle is based on unsmoothed velocity, ---> Why?
     //SO it is better to do real and erupted separately
-    else if (p->is_erupt_ghost()  && timeprops->iferupt() )
+    else if (p->is_erupt_ghost() && timeprops->iferupt() )
     {
 
 #ifdef DEBUG

@@ -115,6 +115,8 @@ struct TimeProps
   }
 
   //function to determine whether the volcano is eruptting or not.
+  //Return TRUE if it is erupt
+  //Return FALSE if it is not erupt
   bool iferupt()
   {
 	  if((time * TIME_SCALE) < stat_erupt)
