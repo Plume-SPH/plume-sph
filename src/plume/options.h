@@ -216,7 +216,7 @@
  * 0: The basic symmetric format which can conserve momentum, without any further modification
  * 1: Based on 0, an external pressure is deduce by every pressure, the external pressure the pressure of atmosphere at corresponding height of particle a. ---> The purpose of this is to make sure when pressure gradient vanish the acceleration will be zero.
  *    Note: Please note that for GSPH, such tricky is not necessary, as GSPH can guarantee zero RHS of momentum equation when pressure gradient is zero.
- *    So you should not use this option together with
+ *    So you should not use this option together with GSPH
  */
 #ifndef MOMENTUM_DISCRETIZE
 #define MOMENTUM_DISCRETIZE 0
@@ -553,7 +553,7 @@
  * 0: The basic symmetric format which can conserve momentum, without any further modification
  * 1: Based on 0, an external pressure is deduce by every pressure, the external pressure the pressure of atmosphere at corresponding height of particle a. ---> The purpose of this is to make sure when pressure gradient vanish the acceleration will be zero.
  *    Note: Please note that for GSPH, such tricky is not necessary, as GSPH can guarantee zero RHS of momentum equation when pressure gradient is zero.
- *    So you should not use this option together with
+ *    So you should not use this option together with GSPH
  */
 #ifndef MOMENTUM_DISCRETIZE
 #define MOMENTUM_DISCRETIZE 0

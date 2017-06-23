@@ -177,7 +177,7 @@ const double ENERGY_CUT = 1.0;
 //heat transfer spatial ratio to momentum exchange
 const double HEAT_TRANS_SCALE_RATIO = 1.0;
 const double E_SMOOTH_RATIO = 4.0;  //Ratio of energy smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)
-const double E_FILTER_HRATIO = 2.0;  //Ratio of energy filtering smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)
+const double E_FILTER_HRATIO = 2.0;  //Ratio of energy filtering smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)  --> will be used when HAVE_TURBULENCE_LANS == 2
 
 //Adaptive sml
 const int SML_UPDATE_INT = 50.;

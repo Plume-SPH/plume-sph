@@ -694,7 +694,7 @@ mom_engr_update(int myid, THashTable * P_table,
 #endif
 		          deltae = 0.;
 		          for (k = 0; k < DIMENSION; k++)
-		              deltae -= mj*(v_star[k]-x_dot_star[k])*(p_star*(vsqdwi[k]+vsqdwj[k]) - 0.5*turb_stress*dwdxi[k]);
+		              deltae -= mj*(v_star[k]-x_dot_star[k])*(p_star*(vsqdwi[k]+vsqdwj[k]) - turb_stress*dwdxi[k]); //(v_star[k]-x_dot_star[k]) = - v_{ab}
 
 		          rhs_e += (deltae + heat_tran);
 		      }//end of particle j is within the support of particle i
