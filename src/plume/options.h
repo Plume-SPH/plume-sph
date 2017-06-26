@@ -131,7 +131,7 @@
  */
 #if USE_GSPH==1
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 1
+#define  RIEMANN_SOLVER 0
 #endif
 #endif
 
@@ -226,11 +226,11 @@
 //--> it is a stupid idea to do module management in C++ in this way, I should make use of the template, inherit, overloading as much as possible
 /*
  * 0 : No HAVE_TURBULENCE_LANS
- * 1 : use SPH integration to do the smooth
- * 2 : use XSPH to do the interpolation
+ * 1 : only filter velocity
+ * 2 : filter both velocity and energy  ---> In which case, it is not necessary to smooth energy. ---> For energy smooth, it is OK to use a different filter scale length.
  */
 #ifndef HAVE_TURBULENCE_LANS
-#define HAVE_TURBULENCE_LANS 0
+#define HAVE_TURBULENCE_LANS 2
 #endif
 
 ////Define have physics viscosity

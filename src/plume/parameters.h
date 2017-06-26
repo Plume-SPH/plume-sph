@@ -963,8 +963,8 @@ const int balancing_check_int_P = 30.0;
  *
  */
 const int Nb_P=10;
-const double Ll_P[DIMENSION]={-0.4};
-const double Lu_P[DIMENSION]={0.4};
+const double Ll_P[DIMENSION]={-0.8};
+const double Lu_P[DIMENSION]={0.8};
 
 //----------------------------------------------------------------------------------------
 //% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -976,7 +976,7 @@ const double g_P=9.80665;
 
 //the following 4 parameters are not independent!, they should satisfy the EOS
 const double Ta0_P=268.; //Should be temperature on the ground
-const double pa0_P= 0.852321e5; //Should be pressure on the ground
+const double pa0_P= 1.0125e5; //Should be pressure on the ground
 const double rhoa0_P=1.104;  //density of air on the ground
 const double Ra_P=287;   //gas constant of pure air --> Gas constant of influx mixture will based on influx mass fraction and initial mass fraction of vapor in erupted material (ng0)
                                                   //--> gas constant of any mxiture will be computed based on properties of pure material
@@ -1022,7 +1022,7 @@ const double ng0_P=0.05; /* initial mass fraction of volcanic gas: (mass of volc
 //const double ng0_P=0.03; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
 
 //radial influx velocity
- const double vel0_P=50.0;
+const double vel0_P=50.0;
 
 //temperature of influx material
 const double Tv0_P=243; //unit K
@@ -1090,7 +1090,7 @@ const double eta_smooth_P = 1.2; //We can try different value to get best result
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.5*0.01;
+const double CFL_P=0.4*0.1;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------

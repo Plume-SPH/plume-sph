@@ -1331,7 +1331,8 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab)
       else if (DIMENSION==2)
         kab=8.0*EPSILON_HALF*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 1/10 of h*alf*soundspeed
       else
-    	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
+    	kab=0.0; //This equation might be incorrect, the purpose of this line is just to let the code running without break for 1D test problem.
+//    	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
 
 #ifdef DEBUG
 	bool print = true;
@@ -1384,7 +1385,8 @@ double SPH_epsilon_heat_conductivity(double Cp_ab, double * ds, double *vab, dou
       else if (DIMENSION==2)
         kab=8.0*EPSILON_HALF*Cp_ab*dotrr*dotvv/(PRANDTL_NUM*dotvr); //For 2D shear viscosity is 1/10 of h*alf*soundspeed
       else
-    	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
+    	kab=0.0; //This equation might be incorrect, the purpose of this line is just to let the code running without break for 1D test problem.
+//    	  cout<< "Dimension is neither 2 or 3, this program is not supposed to handle it!" <<endl;
 
 #ifdef DEBUG
 	bool print = true;

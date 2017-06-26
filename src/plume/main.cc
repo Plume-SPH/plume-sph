@@ -1042,6 +1042,11 @@ main(int argc, char **argv)
     // smooth out density oscillations (if any)
     smooth_density(P_table);
 
+#if HAVE_TURBULENCE_LANS !=0
+    // smooth out velocity
+    smooth_velocity(P_table);
+#endif //HAVE_TURBULENCE_LANS !=0
+
     // update particle positions
     update_pos (P_table, timeprops, matprops);
 
