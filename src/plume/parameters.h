@@ -962,16 +962,17 @@ const int balancing_check_int_P = 30.0;
  * These parameters are for 1D shock tube simulation
  *
  */
-const int Nb_P=10;
-
+const int Nb_P=15;
 #if (SHOCK_TUBE_TESTS==0 || SHOCK_TUBE_TESTS==1)
 //For Sod shock tube
 const double Ll_P[DIMENSION]={-0.4};
 const double Lu_P[DIMENSION]={0.4};
+const int Nnsrp_P=20; //No saving real particles
 #elif SHOCK_TUBE_TESTS==2
 //for shu-Osher problem, see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
 const double Ll_P[DIMENSION]={-5.0};
 const double Lu_P[DIMENSION]={5.0};
+const int Nnsrp_P=50;
 #endif
 
 //----------------------------------------------------------------------------------------

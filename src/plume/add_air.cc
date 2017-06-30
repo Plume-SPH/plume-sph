@@ -55,7 +55,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  //Initial particle property
 	  int bctp_real = 100; //boundary condition ghost particle type.
 	  int bctp_prss = 1; //boundary condition ghost particle type.
-	  int bctp_erupt = 0; //boundary condition ghost particle type.
+	  int bctp_nsrp = 99; //no_save real particles
 
 	  class Shock_Inputs
 	  {
@@ -187,7 +187,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	     bnd[i*2+1]=Lu_P[i];
 	  }
 
-	for (k = 0; k < Nb_P; k++)
+	for (k = 0; k < Nnsrp_P; k++)
 	{
 		pcrd[0] = bnd[0] - ( dx2_l + k*dx_l);
 		pkey[0]=num_particle;
@@ -204,7 +204,31 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_l, prss_l, gmm, sndspd, bctp_erupt, not_involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_l, prss_l, gmm, sndspd, bctp_nsrp, not_involved);
+		// add to hash-table
+		P_table->add(pkey, pnew);
+		num_particle++;
+		neighs.push_back(pkey);
+	}
+
+	for (k = 0; k < Nb_P; k++)
+	{
+		pcrd[0] -= dx_l;
+		pkey[0]=num_particle;
+		pkey[1]=0;
+		pkey[2]=add_step;
+
+		des=SIPT.get_rho(pcrd[0]);
+	    mass=des* dx_l;
+		// check for duplicates
+		if (P_table->lookup(pkey))
+		{
+		  fprintf(stderr, "ERROR: Trying to add particle "
+						  "twice on same location.\n");
+		  exit(1);
+		}
+
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_l, prss_l, gmm, sndspd, bctp_prss, not_involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
@@ -262,6 +286,30 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		neighs.push_back(pkey);
 	}
 
+	for (k = 0; k < Nnsrp_P; k++)
+	{
+		pkey[0]=num_particle;
+		pkey[1]=0;
+		pkey[2]=add_step;
+
+		des=SIPT.get_rho(pcrd[0]);
+	    mass=des* dx_r;
+		// check for duplicates
+		if (P_table->lookup(pkey))
+		{
+		  fprintf(stderr, "ERROR: Trying to add particle "
+						  "twice on same location.\n");
+		  exit(1);
+		}
+
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_r, prss_r, gmm, sndspd, bctp_nsrp, involved);
+		// add to hash-table
+		P_table->add(pkey, pnew);
+		num_particle++;
+		pcrd[0] += dx_r;
+		neighs.push_back(pkey);
+	}
+
 	for (k = 0; k < Nb_P; k++)
 	{
 		pkey[0]=num_particle;
@@ -278,7 +326,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_r, bctp_erupt, gmm, sndspd, bctp_prss, involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_r, prss_r, gmm, sndspd, bctp_prss, involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;

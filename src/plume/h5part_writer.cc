@@ -84,7 +84,7 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   while ((pi = (Particle *) itr->next()))
   {
 #ifndef WRITE_GHOSTS
-    if (pi->need_neigh())//non guest and is real
+    if ((!pi->is_guest ()) && (pi->get_bc_type ()==100) )//non guest and is real
     {
 #endif
       rho.push_back(pi->get_density());

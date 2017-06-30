@@ -112,6 +112,7 @@ protected:
   int bc_type; //bc_type=0: eruption ghost
                //bc_type=1: pressure ghost
                //bc_type=2: wall ghost
+               //bc_type=99; No_save_real: treated like real particle, the only different is do not save it when output: This is useful for 1D shock tube problem test, we can use such particles for boundary conditions
                //bc_type=100: corresponding to real partilce in the old data
                //First of all, the particle has to be ghost particles.
                //The tricky here is that as long as bc_type is not zero,
@@ -473,14 +474,14 @@ public:
   //! check if particle is need neighbor information: only these real and non-guest particles need neighbor
   bool need_neigh () const
   {
-    return ((bc_type == 100) && (!guest));
+    return ((bc_type == 100  || bc_type == 99) && (!guest));
   }
 
   //! check if particle will contribute to the image of wall ghost which reflected into the domain
   // The contribution of pressure ghost particles is also considered.
   bool contr_image() const
   {
-	  return ((bc_type == 100) || (bc_type == 1));//real and pressure ghost will contribute to image
+	  return ((bc_type == 100) || (bc_type == 99) || (bc_type == 1));//real and pressure ghost will contribute to image
   }
 
   //! check if particle will contribute to the density estimation?
@@ -489,9 +490,9 @@ public:
   bool contr_dens() const
   {
 #if PGHOST_CONTRIBUTE_DES==1
-	  return (bc_type == 100 || bc_type == 1);
+	  return (bc_type == 100 || bc_type == 99 || bc_type == 1);
 #else
-	  return (bc_type == 100);
+	  return (bc_type == 100 || bc_type == 99);
 #endif //PGHOST_CONTRIBUTE_DES
 
   }
@@ -503,7 +504,7 @@ public:
   // erupted ghost should not be considered for sure
   bool contr_vel_smooth() const
   {
-	  return (bc_type == 100 || bc_type == 2);
+	  return (bc_type == 100 || bc_type == 99 || bc_type == 2);
   }
 
   //! check if particle is erupt ghost particle or not
@@ -527,7 +528,7 @@ public:
   //! check if particle is real particle or not
   bool is_real () const
   {
-    return (bc_type == 100);
+    return (bc_type == 100 || bc_type == 99);
   }
 
   //! check if particle is guest particle or not
