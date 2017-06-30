@@ -165,11 +165,12 @@ void check_particle_all_type (THashTable * P_table)
 }
 
 //check particles in certain region
+#if CODE_DIMENSION==3
 void check_particle_bypos (THashTable * P_table)
 {
 
     bool do_search = true;
-    double range_x[2]={-1000,1000};
+    double range_x[2]={20,100000};
     double range_y[2]={-1000,1000};
     double range_z[2]={1500, 2100};
     double pcrd[DIMENSION];
@@ -198,6 +199,69 @@ void check_particle_bypos (THashTable * P_table)
 	 }
 
 }
+#elif CODE_DIMENSION==2
+void check_particle_bypos (THashTable * P_table)
+{
+
+    bool do_search = true;
+    double range_x[2]={20,100000};
+    double range_y[2]={-1000,1000};
+    double pcrd[DIMENSION];
+    int bctp;
+
+    int i;
+	THTIterator *itr = new THTIterator(P_table);
+	Particle *p_curr = NULL;
+
+	while ((p_curr = (Particle *) itr->next()))
+	{
+		if (do_search)
+		{
+		  	for (i = 0; i < DIMENSION; i++)
+		  		pcrd[i] = *(p_curr->get_coords ()+i);
+
+		  	if ((pcrd[0]>range_x[0] && pcrd[0]<range_x[1]) &&
+		  		(pcrd[1]>range_y[0] && pcrd[1]<range_y[1]) )
+		  	{
+		  		bctp = p_curr->get_bc_type();
+		  		cout << "The particle found!" << endl;
+		  		cout << "done!" << endl;
+		  	}
+		 }
+	 }
+
+}
+#elif CODE_DIMENSION==1
+void check_particle_bypos (THashTable * P_table)
+{
+
+    bool do_search = true;
+    double range_x[2]={20,1e123};
+    double pcrd[DIMENSION];
+    int bctp;
+
+    int i;
+	THTIterator *itr = new THTIterator(P_table);
+	Particle *p_curr = NULL;
+
+	while ((p_curr = (Particle *) itr->next()))
+	{
+		if (do_search)
+		{
+		  	for (i = 0; i < DIMENSION; i++)
+		  		pcrd[i] = *(p_curr->get_coords ()+i);
+
+		  	if ((pcrd[0]>range_x[0] && pcrd[0]<range_x[1]))
+		  	{
+		  		bctp = p_curr->get_bc_type();
+		  		cout << "The particle found!" << endl;
+		  		cout << "done!" << endl;
+		  	}
+		 }
+	 }
+
+}
+#endif
 
 //find the particle with non-physical density
 void find_large_density_particle (THashTable * P_table)

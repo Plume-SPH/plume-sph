@@ -13,7 +13,7 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
-#include <cmath>
+#include <cmath> //sin
 using namespace std;
 
 #include <mpi.h>
@@ -42,6 +42,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  unsigned pkey[TKEYLENGTH];
 	  unsigned tkeylen = TKEYLENGTH;
 	  double pcrd[DIMENSION], bnd[DIMENSION*2];
+	  double mass, des;
 	  vector < TKey > neighs;
 
 	  // direction indices on upper bucket
@@ -54,13 +55,100 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  //Initial particle property
 	  int bctp_real = 100; //boundary condition ghost particle type.
 	  int bctp_prss = 1; //boundary condition ghost particle type.
+	  int bctp_erupt = 0; //boundary condition ghost particle type.
 
-	  double prss_l = 1.;  //Parameter
+	  class Shock_Inputs
+	  {
+	  private:
+		  double prss_l;  //Parameter
+		  double prss_r ;  //Parameter
+		  double des_l ;  //Parameter
+		  double des_r ;  //Parameter
+		  double vel_l ;  //Parameter
+		  double vel_r ;  //Parameter
+		  double middle_point;
+		  double A;  //amplitude for density of Shu-Osher
+		  double f; //frequency for density of Shu-Osher
+	  public:
+		  Shock_Inputs(); //The default contructor ---> Use default value
+		  //basic constructor for constant input
+		  Shock_Inputs(double dl, double pl, double ul, double dr, double pr, double ur, double mid)
+		  {
+			 prss_l = pl;  //Parameter
+			 prss_r = pr;  //Parameter
+			 des_l = dl;  //Parameter
+			 des_r = dr;  //Parameter
+			 vel_l = ul;  //Parameter
+			 vel_r = ur;  //Parameter
+			 middle_point=mid;
+			 A=0.0;  //amplitude for density of Shu-Osher
+			 f=1.0; //frequency for density of Shu-Osher
+		  };
+		  //constructor for Shu-Osher ---> Density is a function of location
+		  Shock_Inputs(double dl, double pl, double ul, double dr, double pr, double ur, double mid, double amp, double fre)
+		  {
+			  prss_l = pl;  //Parameter
+			  prss_r = pr;  //Parameter
+			  des_l = dl;  //Parameter
+			  des_r = dr;  //Parameter
+			  vel_l = ul;  //Parameter
+			  vel_r = ur;  //Parameter
+			  middle_point=mid;
+			  A=amp; //amplitude for density of Shu-Osher
+			  f=fre; //frequency for density of Shu-Osher
+		  };
+		  double get_rho(double x)
+		  {
+			  double dl=des_l;
+			  double dr=des_r+A*sin(f*x);
+			  return (x > middle_point ? dr : dl);
+		  };
+
+		  double get_press (double x)
+		  {
+			  return (x > middle_point ? prss_r : prss_l);
+		  };
+
+		  double get_vel (double x)
+		  {
+			  return (x > middle_point ? vel_r : vel_l);
+		  };
+
+	  };
+
+#if SHOCK_TUBE_TESTS==0
+	  //Sod shock tube input ---Initial GSPH test parameters
+	  double prss_l = 1.0;  //Parameter
 	  double prss_r = 0.2;  //Parameter
 	  double des_l = 1.0;  //Parameter
 	  double des_r = 0.5;  //Parameter
 	  double vel_l = 0.0;  //Parameter
 	  double vel_r = 0.0;  //Parameter
+	  double middle_point=0.;
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
+#elif SHOCK_TUBE_TESTS==1
+	  //Sod shock tube input ---Famous test case in FV
+	  double prss_l = 1.0;  //Parameter
+	  double prss_r = 0.1;  //Parameter
+	  double des_l = 1.0;  //Parameter
+	  double des_r = 0.125;  //Parameter
+	  double vel_l = 0.0;  //Parameter
+	  double vel_r = 0.0;  //Parameter
+	  double middle_point=0.;
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
+#elif SHOCK_TUBE_TESTS==2
+	  //Shu-Osher problem ---Famous test case in FV
+	  double prss_l = 10.33333;  //Parameter
+	  double prss_r = 1.0;  //Parameter
+	  double des_l = 3.857143;  //Parameter
+	  double des_r = 1.0;  //---> Is a function of
+	  double vel_l = 2.629369;  //Parameter
+	  double vel_r = 0.0;  //Parameter
+	  double middle_point=-4.0;
+	  double amp = 0.2;
+	  double fre = 5.0;
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point, amp, fre);
+#endif
 
 	  double dx_l=smlen;
 
@@ -75,10 +163,6 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 
 	  double dx2_l = 0.5 * dx_l;
 	  double dx2_r = 0.5 * dx_r;
-
-	  double mass_l=des_l* dx_l;
-	  double mass_r=des_r* dx_r;
-	  double middle_point=0.;
 
 #if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
 	  double sndspd = 340.;
@@ -109,6 +193,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		pkey[0]=num_particle;
 		pkey[1]=0;
 		pkey[2]=add_step;
+
+		des=SIPT.get_rho(pcrd[0]);
+	    mass=des* dx_l;
 		// check for duplicates
 		if (P_table->lookup(pkey))
 		{
@@ -117,7 +204,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass_l, smlen , des_l, vel_l, prss_l, gmm, sndspd, bctp_prss, not_involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_l, prss_l, gmm, sndspd, bctp_erupt, not_involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
@@ -131,6 +218,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		pkey[0]=num_particle;
 		pkey[1]=0;
 		pkey[2]=add_step;
+
+		des=SIPT.get_rho(pcrd[0]);
+	    mass=des* dx_l;
 		// check for duplicates
 		if (P_table->lookup(pkey))
 		{
@@ -139,7 +229,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass_l, smlen , des_l, vel_l, prss_l, gmm, sndspd, bctp_real, involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_l, prss_l, gmm, sndspd, bctp_real, involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
@@ -153,6 +243,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		pkey[0]=num_particle;
 		pkey[1]=0;
 		pkey[2]=add_step;
+
+		des=SIPT.get_rho(pcrd[0]);
+	    mass=des* dx_r;
 		// check for duplicates
 		if (P_table->lookup(pkey))
 		{
@@ -161,7 +254,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass_r, smlen, des_r, vel_r, prss_r, gmm, sndspd, bctp_real, involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen, des, vel_r, prss_r, gmm, sndspd, bctp_real, involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
@@ -174,6 +267,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		pkey[0]=num_particle;
 		pkey[1]=0;
 		pkey[2]=add_step;
+
+		des=SIPT.get_rho(pcrd[0]);
+	    mass=des* dx_r;
 		// check for duplicates
 		if (P_table->lookup(pkey))
 		{
@@ -182,13 +278,15 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass_r, smlen , des_r, vel_r, prss_r, gmm, sndspd, bctp_prss, involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_r, bctp_erupt, gmm, sndspd, bctp_prss, involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
 		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
 	}
+
+	cout << "The total number of real particles is:" << num_particle-1-2*Nb_P << endl;
 
 	// updating neighbor list
 	THTIterator * itr = new THTIterator (P_table);

@@ -974,6 +974,22 @@ main(int argc, char **argv)
   numprocs = 1;
   myid = 0;
 
+#ifdef DEBUG
+  bool check_part = false;
+  int  id;
+  bool find = false;
+  bool check_buck = false;
+  bool check_mesh_err = false;
+  bool check_part_tp = false;
+  bool check_bypos = true;
+  bool find_large_density = false;
+  bool search_byphase = false;
+  bool find_maxz = false;
+  bool vis_flag = false;
+  bool check_neigh =false;
+  bool check_bucket = false;
+#endif
+
   // allocate communcation array
   int * my_comm = new int [numprocs];
 
@@ -1002,8 +1018,13 @@ main(int argc, char **argv)
   set_up_shock_tube(P_table, matprops, simprops, numprocs, myid);
 
 
+//#ifdef DEBUG
+//  if(check_bypos)
+//	  check_particle_bypos (P_table);
+//#endif
+
   // Write inital configuration
-  write_output (myid, numprocs, P_table, timeprops);
+  write_output(myid, numprocs, P_table, timeprops);
 
   /*
    *
@@ -1029,6 +1050,8 @@ main(int argc, char **argv)
     calc_gradients(P_table);
 #endif  //USE_GSPH==1
 
+
+
     // update momentum and energy
     int err2 = mom_engr_update (myid, P_table, timeprops, simprops);
     if ( err2 )
@@ -1049,6 +1072,14 @@ main(int argc, char **argv)
 
     // update particle positions
     update_pos (P_table, timeprops, matprops);
+
+#ifdef DEBUG
+  if(check_bypos)
+	  check_particle_bypos ( P_table);
+#endif
+
+
+    //impose boundary conditions
 
     // write output if needed
     if (timeprops->ifoutput())

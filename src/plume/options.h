@@ -72,11 +72,24 @@
 #endif // end of USE_SUMMATION
 //-----------------------------------------------------------------------------------------------------------------------
 
+//Different cases for shock tube test:
+/*
+ * 0: Sod shock in first GSPH
+ * 1: another Sod shock test: ee paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
+ * 2: shu-Osher problem, see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
+ */
+////using Gaussian Kernel currently, only one kind of kernel is available
+#ifndef SHOCK_TUBE_TESTS
+#define SHOCK_TUBE_TESTS 1
+#endif
+
 //if defined, use equal particle mass and different sml
 //Otherwise, use different particle mass to guarantee equal sml
 //This option is only for 1D problem
+#if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
 #define EQUAL_PART_MASS
+#endif
 #endif
 
 //define to use GSPH or not ---> I need move this option to configure after test is done
@@ -85,7 +98,7 @@
  * USE_GSPH 1 : GSPH
  */
 #ifndef USE_GSPH
-#define USE_GSPH 1
+#define USE_GSPH 0
 #endif
 
 
@@ -110,7 +123,7 @@
  */
 #if USE_GSPH==1
 #ifndef  MINI_DERIVATIVE_COND
-#define  MINI_DERIVATIVE_COND 10
+#define  MINI_DERIVATIVE_COND 0
 #endif
 #endif
 
@@ -120,7 +133,7 @@
  */
 #if USE_GSPH==1
 #ifndef GSPH_MODIFIED_MONOTONICITY
-#define  GSPH_MODIFIED_MONOTONICITY 1
+#define  GSPH_MODIFIED_MONOTONICITY 0
 #endif
 #endif
 
@@ -186,7 +199,7 @@
  */
 #if USE_GSPH==1
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
-#define SWITCH_OFF_AV_FOR_EXPAN 2
+#define SWITCH_OFF_AV_FOR_EXPAN 0
 #endif
 #endif
 
@@ -230,7 +243,7 @@
  * 2 : filter both velocity and energy  ---> In which case, it is not necessary to smooth energy. ---> For energy smooth, it is OK to use a different filter scale length.
  */
 #ifndef HAVE_TURBULENCE_LANS
-#define HAVE_TURBULENCE_LANS 2
+#define HAVE_TURBULENCE_LANS 0
 #endif
 
 ////Define have physics viscosity
@@ -354,6 +367,7 @@
 //#endif
 
 #endif //DEBUG
+
 //----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------
 //##################################################################################################################################################################

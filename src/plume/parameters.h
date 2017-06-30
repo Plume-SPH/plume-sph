@@ -963,8 +963,16 @@ const int balancing_check_int_P = 30.0;
  *
  */
 const int Nb_P=10;
-const double Ll_P[DIMENSION]={-0.8};
-const double Lu_P[DIMENSION]={0.8};
+
+#if (SHOCK_TUBE_TESTS==0 || SHOCK_TUBE_TESTS==1)
+//For Sod shock tube
+const double Ll_P[DIMENSION]={-0.4};
+const double Lu_P[DIMENSION]={0.4};
+#elif SHOCK_TUBE_TESTS==2
+//for shu-Osher problem, see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
+const double Ll_P[DIMENSION]={-5.0};
+const double Lu_P[DIMENSION]={5.0};
+#endif
 
 //----------------------------------------------------------------------------------------
 //% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -1090,7 +1098,7 @@ const double eta_smooth_P = 1.2; //We can try different value to get best result
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.4*0.1;
+const double CFL_P=0.1;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------

@@ -132,6 +132,7 @@ update_pos(THashTable * P_table,
 
       p->put_coords(pos);
 
+#if CODE_DIMENSION==3
 #ifndef SIMULATE_ASH
       //Change ghost to real; change erupt to false
       if ((pos[2]>=Ll_P[2]) ) //need to make it more general!
@@ -153,7 +154,8 @@ update_pos(THashTable * P_table,
     	  p->put_smlen(sml_of_phase2);
     	  p->set_involved_flag(INVOLVED); //equivalent to set involved to be true
       }
-#endif
+#endif //SIMULATE_ASH
+#endif //CODE_DIMENSION
     } //end of if particle is erupted
 
   }//end of go through all particles
