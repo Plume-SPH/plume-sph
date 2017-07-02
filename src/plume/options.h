@@ -80,7 +80,7 @@
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 2
+#define SHOCK_TUBE_TESTS 1
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -346,10 +346,10 @@
 #define OUT_PUT_EXCUT_TIME
 #endif
 
-////Output ghost particles
-//#ifndef WRITE_GHOSTS
-//#define WRITE_GHOSTS
-//#endif
+//Output ghost particles
+#ifndef WRITE_GHOSTS
+#define WRITE_GHOSTS
+#endif
 
 //output PID
 #ifndef WRITE_PID

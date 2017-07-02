@@ -967,12 +967,16 @@ const int Nb_P=15;
 //For Sod shock tube
 const double Ll_P[DIMENSION]={-0.4};
 const double Lu_P[DIMENSION]={0.4};
-const int Nnsrp_P=20; //No saving real particles
+const int Nnsrp_r_P=20; //No saving real particles on right hand side
+const int Nnsrp_l_P=40; //No saving real particles on left hand side
+const double csv_out_P=0.2; //time to output csv files
 #elif SHOCK_TUBE_TESTS==2
 //for shu-Osher problem, see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
-const double Ll_P[DIMENSION]={-5.0};
+const double Ll_P[DIMENSION]={-9.73};//-5-4.73
 const double Lu_P[DIMENSION]={5.0};
-const int Nnsrp_P=50;
+const int Nnsrp_l_P=50;
+const int Nnsrp_r_P=50;
+const double csv_out_P=1.8; //time to output csv files
 #endif
 
 //----------------------------------------------------------------------------------------

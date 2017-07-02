@@ -54,7 +54,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 
 	  //Initial particle property
 	  int bctp_real = 100; //boundary condition ghost particle type.
-	  int bctp_prss = 1; //boundary condition ghost particle type.
+	  int bctp_prss = 0; //boundary condition ghost particle type.
 	  int bctp_nsrp = 99; //no_save real particles
 
 	  class Shock_Inputs
@@ -187,7 +187,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	     bnd[i*2+1]=Lu_P[i];
 	  }
 
-	for (k = 0; k < Nnsrp_P; k++)
+	for (k = 0; k < Nnsrp_l_P; k++)
 	{
 		pcrd[0] = bnd[0] - ( dx2_l + k*dx_l);
 		pkey[0]=num_particle;
@@ -286,7 +286,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		neighs.push_back(pkey);
 	}
 
-	for (k = 0; k < Nnsrp_P; k++)
+	for (k = 0; k < Nnsrp_r_P; k++)
 	{
 		pkey[0]=num_particle;
 		pkey[1]=0;

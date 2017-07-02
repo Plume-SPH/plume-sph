@@ -63,6 +63,7 @@ src/plume/particler
 bin/preprocess
 src/preproc/preprocess
 pvplot*.h5part
+bin/*.csv
 
 #Others
 #/sh

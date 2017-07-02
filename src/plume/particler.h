@@ -229,6 +229,15 @@ int Initial_Ptable (
                THashTable **  //! Ptable
               );
 
+//function that used to write output into a cvs file ---> useful for small size output, such as output for shock tube problem.
+void
+write_csv(
+		int ,          //myid,
+		int ,          //numproc,
+		THashTable *,  // P_table,
+		TimeProps *   //timepros
+		);
+
 #endif  //CODE_DIMENSION==1
 
 #ifndef SIMULATE_ASH
