@@ -32,7 +32,7 @@
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 1
+#define DENSITY_UPDATE_SML 0
 #endif
 
 
@@ -63,10 +63,11 @@
 #endif
 
 //Define whether should pressure ghost particles should be took into account for density update
+//PGHOST_CONTRIBUTE_DES == 2: yes, take the eruption ghost particles into account
 //PGHOST_CONTRIBUTE_DES == 1: yes, take the pressure ghost particles into account
 //PGHOST_CONTRIBUTE_DES == 0: No,  do not take the pressure ghost particles into account
 #ifndef PGHOST_CONTRIBUTE_DES
-#define PGHOST_CONTRIBUTE_DES 1
+#define PGHOST_CONTRIBUTE_DES 2
 #endif
 
 #endif // end of USE_SUMMATION
@@ -98,7 +99,7 @@
  * USE_GSPH 1 : GSPH
  */
 #ifndef USE_GSPH
-#define USE_GSPH 0
+#define USE_GSPH 1
 #endif
 
 
@@ -109,7 +110,7 @@
  */
 #if USE_GSPH==1
 #ifndef GSPH_SPECIFIC_VOL_APP
-#define  GSPH_SPECIFIC_VOL_APP 3
+#define  GSPH_SPECIFIC_VOL_APP 1
 #endif
 #endif
 
@@ -144,7 +145,7 @@
  */
 #if USE_GSPH==1
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 0
+#define  RIEMANN_SOLVER 1
 #endif
 #endif
 
@@ -165,7 +166,7 @@
 
 //Defines the way to compute derivative. ---> This option will be needed only when USE_GSPH = 1
 /*
- * NORM_DERIVATIVE 0: derivative is not normalized
+ * NORM_DERIVATIVE 0: derivative is not normalized  --> Currently not available
  * NORM_DERIVATIVE 1: derivative is normalized
  */
 #if USE_GSPH==1
@@ -422,6 +423,7 @@
 #endif
 
 //Define whether should pressure ghost particles should be took into account for density update
+//PGHOST_CONTRIBUTE_DES == 2: yes, take the eruption ghost particles into account
 //PGHOST_CONTRIBUTE_DES == 1: yes, take the pressure ghost particles into account
 //PGHOST_CONTRIBUTE_DES == 0: No,  do not take the pressure ghost particles into account
 #ifndef PGHOST_CONTRIBUTE_DES

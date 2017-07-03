@@ -306,6 +306,12 @@ public:
   {
     return smlen_original;
   }
+
+  //! update original smoothing length
+  void put_smlen_original (double h)
+  {
+    smlen_original = h;
+  }
 #endif
 
 
@@ -490,7 +496,9 @@ public:
   bool contr_dens() const
   {
 #if PGHOST_CONTRIBUTE_DES==1
-	  return (bc_type == 100 || bc_type == 99 || bc_type == 1);
+	  return (bc_type == 100 || bc_type == 99 || bc_type == 1); //real+pressure
+#elif PGHOST_CONTRIBUTE_DES==2
+	  return (bc_type == 100 || bc_type == 99 || bc_type == 1 || bc_type == 0); ////real+pressure+erupt
 #else
 	  return (bc_type == 100 || bc_type == 99);
 #endif //PGHOST_CONTRIBUTE_DES

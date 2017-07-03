@@ -107,6 +107,30 @@ inv3 (double * A, //! input: 3 x 3 Matrix
 
 }
 
+//for solving 2 by 2 matrix
+void
+inv2 (double * A, //! input: 1 x 1 Matrix
+      double * Ap //! output: 1 x 1 Matrix inverse
+     )
+{
+	double det_inv;
+	det_inv=1.0/A[0]*A[3]-A[1]*A[2];
+	Ap[0]=det_inv*A[3];
+	Ap[1]=-det_inv*A[1];
+	Ap[2]=-det_inv*A[2];
+	Ap[0]=det_inv*A[0];
+}
+
+
+//for solving 1 by 1 matrix
+void
+inv1 (double * A, //! input: 1 x 1 Matrix
+      double * Ap //! output: 1 x 1 Matrix inverse
+     )
+{
+	Ap[0]=-1/A[0];
+}
+
 void
 matrix_matrix_mult (double * A,   //! input A : N x P matrix
                     int N,        //! no. of rows of LHS
@@ -132,15 +156,25 @@ matrix_matrix_mult (double * A,   //! input A : N x P matrix
 
 // solve linear equations for LHS: 3 x 3 and RHS: 3 x N
 void
-linsolve (double * A,  //! input: LHS 3 x 3 Matrix
-          double * d,  //! input: RHS 3 x N Matix
+linsolve (double * A,  //! input: LHS K x K Matrix, k is dimension, K=1,2,3
+          double * d,  //! input: RHS K x N Matix
           int N,       //! number of columns in RHS
-          double * x   //! output  3 x N Matrix
+          double * x   //! output  K x N Matrix
          )
 {
+#if CODE_DIMENSION==3
   double Ainv[9];
   inv3 (A, Ainv);
   matrix_matrix_mult (Ainv, 3, 3, d, N, x);
+#elif CODE_DIMENSION==2
+  double Ainv[4];
+  inv2 (A, Ainv);
+  matrix_matrix_mult (Ainv, 2, 2, d, N, x);
+#elif CODE_DIMENSION==1
+  double Ainv[1];
+  inv1 (A, Ainv);
+  matrix_matrix_mult (Ainv, 1, 1, d, N, x);
+#endif //CODE_DIMENSION
   return;
 }
 
@@ -1766,13 +1800,13 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
     *u_star= ulr-0.5*(pr-pl)/clr;
 
 #ifdef DEBUG
-//    bool check=true;
-//    if (check)
-//    	if (isnan(*p_star)||isnan(u_star))
-//    	{
-//    		cout << "NAN solution obtained from Riemann Solver!" << endl;
-////    		exit(0);
-//    	}
+    bool check=true;
+    if (check)
+    	if (isnan(*p_star)||isnan(*u_star))
+    	{
+    		cout << "NAN solution obtained from Riemann Solver!" << endl;
+//    		exit(0);
+    	}
     bool check_pressure=false;
     if (check_pressure)
 		if (*p_star<0)
@@ -2177,8 +2211,8 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     double drhoj=0.0, duj=0.0, dvj=0.0, dwj=0.0, dpj=0.0;
     for (i=0; i<DIMENSION; i++)
     {
-    	rhoi +=DDri[i]*e[i];
-    	rhoj +=DDrj[i]*e[i];
+    	drhoi +=DDri[i]*e[i];
+    	drhoj +=DDrj[i]*e[i];
     	dpi  +=DDpi[i]*e[i];
     	dpj  +=DDpj[i]*e[i];
     	dui  +=DDui[i]*e[i];
@@ -2197,8 +2231,8 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     double drhoj=0.0, duj=0.0, dvj=0.0, dpj=0.0;
     for (i=0; i<DIMENSION; i++)
     {
-    	rhoi +=DDri[i]*e[i];
-    	rhoj +=DDrj[i]*e[i];
+    	drhoi +=DDri[i]*e[i];
+    	drhoj +=DDrj[i]*e[i];
     	dpi  +=DDpi[i]*e[i];
     	dpj  +=DDpj[i]*e[i];
     	dui  +=DDui[i]*e[i];
@@ -2215,8 +2249,8 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     double drhoj=0.0, duj=0.0, dpj=0.0;
     for (i=0; i<DIMENSION; i++)
     {
-    	rhoi +=DDri[i]*e[i];
-    	rhoj +=DDrj[i]*e[i];
+    	drhoi +=DDri[i]*e[i];
+    	drhoj +=DDrj[i]*e[i];
     	dpi  +=DDpi[i]*e[i];
     	dpj  +=DDpj[i]*e[i];
     	dui  +=DDui[i]*e[i];

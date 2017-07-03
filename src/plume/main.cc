@@ -979,13 +979,13 @@ main(int argc, char **argv)
   myid = 0;
 
 #ifdef DEBUG
-  bool check_part = false;
+  bool check_part = true;
   int  id;
   bool find = false;
   bool check_buck = false;
   bool check_mesh_err = false;
   bool check_part_tp = false;
-  bool check_bypos = true;
+  bool check_bypos = false;
   bool find_large_density = false;
   bool search_byphase = false;
   bool find_maxz = false;
@@ -1065,6 +1065,12 @@ main(int argc, char **argv)
       cerr << "Check outfile for proc " << myid << " for errors." << endl;
       ierr += err2;
     }
+
+#ifdef DEBUG
+    if (check_part)
+	   check_particle_bykey (P_table);
+#endif
+
 
     // smooth out density oscillations (if any)
     smooth_density(P_table);

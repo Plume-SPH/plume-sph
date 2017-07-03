@@ -36,8 +36,8 @@ void calc_gradients(THashTable *P_table)
 	  Particle * pi = NULL;
 
 #ifdef DEBUG
-	   bool do_search = true;
-	   unsigned keycheck[TKEYLENGTH] = {268315389, 3363091095, 0};
+	   bool do_search = false;
+	   unsigned keycheck[TKEYLENGTH] = {36, 0, 0};
 	   unsigned keytemp[TKEYLENGTH];
 
 #if CODE_DIMENSION==3

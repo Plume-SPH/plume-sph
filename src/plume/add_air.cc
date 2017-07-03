@@ -209,6 +209,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		P_table->add(pkey, pnew);
 		num_particle++;
 		neighs.push_back(pkey);
+#if DENSITY_UPDATE_SML==0
+		pnew->put_smlen_original(dx_l);
+#endif
 	}
 
 	for (k = 0; k < Nb_P; k++)
@@ -233,6 +236,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		P_table->add(pkey, pnew);
 		num_particle++;
 		neighs.push_back(pkey);
+#if DENSITY_UPDATE_SML==0
+		pnew->put_smlen_original(dx_l);
+#endif
 	}
 
 
@@ -259,6 +265,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		num_particle++;
 		pcrd[0] += dx_l;
 		neighs.push_back(pkey);
+#if DENSITY_UPDATE_SML==0
+		pnew->put_smlen_original(dx_l);
+#endif
 	}
 
 	pcrd[0] = pcrd[0] - dx_l+ dx_r;
@@ -284,6 +293,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		num_particle++;
 		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
+#if DENSITY_UPDATE_SML==0
+		pnew->put_smlen_original(dx_r);
+#endif
 	}
 
 	for (k = 0; k < Nnsrp_r_P; k++)
@@ -308,6 +320,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		num_particle++;
 		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
+#if DENSITY_UPDATE_SML==0
+		pnew->put_smlen_original(dx_r);
+#endif
 	}
 
 	for (k = 0; k < Nb_P; k++)
@@ -332,6 +347,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		num_particle++;
 		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
+#if DENSITY_UPDATE_SML==0
+		pnew->put_smlen_original(dx_r);
+#endif
 	}
 
 	cout << "The total number of real particles is:" << num_particle-1-2*Nb_P << endl;
