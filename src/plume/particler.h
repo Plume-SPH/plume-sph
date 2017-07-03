@@ -143,6 +143,13 @@ int  search_neighs(
                          HashTable *  //! HashTable of cells of background mesh
                          );
 
+#if DENSITY_UPDATE_SML==1
+void adaptive_sml
+              (
+              int ,        //myid,
+              THashTable * //P_table
+			  );
+#endif
 //function that used to set up initial atmosphere and determine the mass of air particles
 int setup_ini(
 		int ,          //myid

@@ -32,9 +32,8 @@
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 0
+#define DENSITY_UPDATE_SML 1
 #endif
-
 
 /*
  * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true
@@ -81,7 +80,7 @@
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 1
+#define SHOCK_TUBE_TESTS 0
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -92,8 +91,8 @@
  * EQUAL_PART_MASS 0: No, different mass
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
-#ifndef EQUAL_PART_MASS 1
-#define EQUAL_PART_MASS
+#ifndef EQUAL_PART_MASS
+#define EQUAL_PART_MASS 0
 #endif
 #endif
 
@@ -114,7 +113,7 @@
  */
 #if USE_GSPH==1
 #ifndef GSPH_SPECIFIC_VOL_APP
-#define  GSPH_SPECIFIC_VOL_APP 1
+#define  GSPH_SPECIFIC_VOL_APP 3
 #endif
 #endif
 
@@ -149,7 +148,7 @@
  */
 #if USE_GSPH==1
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 1
+#define  RIEMANN_SOLVER 0
 #endif
 #endif
 
@@ -202,7 +201,7 @@
  * SWITCH_OFF_AV_FOR_EXPAN 1: switch off artificial viscosity for expansion
  * SWITCH_OFF_AV_FOR_EXPAN 2: use an switch coefficient that is proportional to the density gradient to determine the amount of artificial viscosity: Use the approximate numerical density gradient (AROUND 25) at the location where there is a shock as the reference to determine the value of this switch coefficient
  */
-#if USE_GSPH==1
+#if USE_GSPH==0
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
 #define SWITCH_OFF_AV_FOR_EXPAN 0
 #endif
@@ -224,7 +223,7 @@
  * 1: adaptive      -->DENSITY_UPDATE_SML shold always be 1
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 0
+#define ADAPTIVE_SML 1
 #endif
 
 
@@ -248,7 +247,7 @@
  * 2 : filter both velocity and energy  ---> In which case, it is not necessary to smooth energy. ---> For energy smooth, it is OK to use a different filter scale length.
  */
 #ifndef HAVE_TURBULENCE_LANS
-#define HAVE_TURBULENCE_LANS 0
+#define HAVE_TURBULENCE_LANS 2
 #endif
 
 ////Define have physics viscosity

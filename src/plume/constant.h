@@ -84,7 +84,7 @@ const double E_SMOOTH_RATIO = 4.0;  //Ratio of energy smoothing length to smooth
 const double E_FILTER_HRATIO = 1.0;  //Ratio of energy filtering smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)
 
 //Adaptive sml
-const int SML_UPDATE_INT = 50.;
+const int SML_UPDATE_INT = 0.1;
 const double RATIO_SML_DX = 1.0; //The ratio between sml and dx, the maximum value allowed by current code design is 2.0 (as number of particles in each direction in each bucket is 6, the kernal cut off is 3).
                                  /*
                                   * This constant is used within particle class (which might not be a good design),

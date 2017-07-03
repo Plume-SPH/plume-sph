@@ -474,3 +474,104 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
 
   return 0;
 }
+
+#if DENSITY_UPDATE_SML==1
+void adaptive_sml(int myid, THashTable * P_table)
+{
+	  /*
+	   * before searching for neighbors, adjust smooth length
+	   * The algorithm is a simplified version of the one introduced in Shu-ichiro Inutsuka's paper:
+	   * 1) The algorithm is excuted only for one loop instead of a iteration process
+	   * 2) I did not search for neighbors for the new smooth length h*, just used the old neighbor information.
+	   * 3) Consider all phases while computing rho_star;
+	   * 4) Consider even ghost particles while sum up ---> Ghost particles also contribute to momentum and energy update.
+	   * 5) Only the smooth length of particles who need neighbor information will be updated!  --> should be careful on all those information.
+	   */
+
+	  int i, j, k;
+
+	  double H_star, H_old, H_new;
+	  double rho_star;
+	  double supp ;
+	  double mj;
+	  Particle * pi = NULL ;
+	  Particle * pj = NULL ;
+	  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION];
+	  double wght;
+	  THTIterator *itr2 = new THTIterator(P_table);
+
+//	  double hi;
+
+	#ifdef DEBUG
+	   bool do_search = true;
+	   bool find;
+	   unsigned keycheck[TKEYLENGTH] = {70794110, 1322680614, 0};
+	   unsigned keytemp[TKEYLENGTH];
+	#endif
+
+	  int loop = 0;
+	  for (loop = 0; loop < num_loop_P; loop ++) //We will set num_loop_P = 2
+	  {
+		  itr2->reset();
+		  while ((pi = (Particle *) itr2->next ()))
+		   {
+		 	  if (pi->need_neigh ())  //real and no-guest
+		 	  {
+
+	#ifdef DEBUG
+			    if (do_search)
+			    {
+			      for (i = 0; i < TKEYLENGTH; i++)
+				      keytemp[i] = pi->getKey ().key[i];
+
+			      if (find_particle (keytemp, keycheck))
+				      cout << "The particle found!" << endl;
+			    }
+	#endif
+				  for (i = 0; i < DIMENSION; i++)
+					  xi[i] = *(pi->get_coords() + i);
+
+				  // expanded smoothing length for Momentum equation
+				  H_old = pi->get_smlen();
+				  H_star = H_old *  C_smooth_P;
+				  supp = 3 * H_star;
+
+				  vector < TKey > pneighs = pi->get_neighs();
+				  vector < TKey >::iterator p_itr;
+		 		  rho_star = 0.;
+		 		  for (p_itr = pneighs.begin(); p_itr != pneighs.end(); p_itr++)
+		 		  {
+		 			 if (pj->contr_dens())
+		 			 {
+			 		      pj = (Particle *) P_table->lookup(*p_itr);
+			 		      assert (pj);
+
+			 		      for (i = 0; i < DIMENSION; i++)
+			 		      {
+			 		           dx[i] = xi[i] - *(pj->get_coords() + i);
+			 		           si[i] = dx[i] / H_star;
+			 		      }
+
+			 		      if (in_support(dx, supp))
+			 		      {
+			 		          mj = pj->get_mass();
+			 		          wght = weight(si, H_star);
+			 		          rho_star += wght * mj;
+			 		      }
+		 			 }
+		 		  }// end loop over neighs
+
+#if CODE_DIMENSION==3
+		 		  H_new = eta_smooth_P * cbrt(pi->get_mass()/rho_star);
+#elif CODE_DIMENSION==2
+		 		  H_new = eta_smooth_P * sqrt(pi->get_mass()/rho_star);
+#elif CODE_DIMENSION==1
+		 		  H_new = eta_smooth_P * (pi->get_mass()/rho_star);
+#endif //CODE_DIMENSION
+
+		 		  pi->put_smlen(H_new);
+		 	  }//if need neighbour
+		   }//go through all neighbours
+	  }//end of for loop
+}
+#endif //DENSITY_UPDATE_SML==1

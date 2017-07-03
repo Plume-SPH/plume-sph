@@ -53,7 +53,7 @@ protected:
    * 2) updating of density based on summation expression and use its original smoothing length --> The normalized summation expression will always guarantee conservation of mass
    */
 #if DENSITY_UPDATE_SML==0
-  double smlen_original;
+  double smlen_original;  //Original sml will not change during whole simulation ---> if sml is adaptive, we will not need sml_original
 #endif
 
   //! pressure

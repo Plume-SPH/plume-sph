@@ -313,16 +313,13 @@ main(int argc, char **argv)
     ierr = 0;  // reset error code
     adapt = 0; // and adapt flag
 
+    //In current version, neighbor searching and sml updating are separate --> Works OK for current framework, for more general framework, it might need to be integrated together.
+    // search and update neighbors
+    search_neighs_consth (myid, P_table, BG_mesh);
 #if ADAPTIVE_SML==1
     if ((timeprops->step) % SML_UPDATE_INT == 0)
     	// search and update neighbors
-    	search_neighs (myid, P_table, BG_mesh);
-    else
-    	// search and update neighbors
-    	search_neighs_consth (myid, P_table, BG_mesh);
-#else
-    // search and update neighbors
-    search_neighs_consth (myid, P_table, BG_mesh);
+    	adaptive_sml(myid, P_table);
 #endif
 
 
@@ -774,16 +771,11 @@ main(int argc, char **argv)
     ierr = 0;  // reset error code
     adapt = 0; // and adapt flag
 
+    search_neighs_consth (myid, P_table, BG_mesh);
 #if ADAPTIVE_SML==1
     if ((timeprops->step) % SML_UPDATE_INT == 0)
     	// search and update neighbors
-    	search_neighs (myid, P_table, BG_mesh);
-    else
-    	// search and update neighbors
-    	search_neighs_consth (myid, P_table, BG_mesh);
-#else
-    // search and update neighbors
-    search_neighs_consth (myid, P_table, BG_mesh);
+    	adaptive_sml(myid, P_table);
 #endif
 
 
@@ -1048,6 +1040,13 @@ main(int argc, char **argv)
         << " time=" << timeprops->timesec() << endl;
 
     ierr = 0;  // reset error code
+
+#if ADAPTIVE_SML==1
+    //if ((timeprops->step) % SML_UPDATE_INT == 0)
+    	// search and update neighbors
+    	adaptive_sml(myid, P_table);
+#endif
+
 
 #if USE_GSPH==1
     // calculate gradient, before momentum and energy updating

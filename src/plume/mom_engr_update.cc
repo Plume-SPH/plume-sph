@@ -61,8 +61,8 @@ mom_engr_update(int myid, THashTable * P_table,
 
 
 #ifdef DEBUG
-   bool do_search = true;
-   unsigned keycheck[TKEYLENGTH] = {39, 0, 0};
+   bool do_search = false;
+   unsigned keycheck[TKEYLENGTH] = {86, 0, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
 
@@ -92,7 +92,7 @@ mom_engr_update(int myid, THashTable * P_table,
 	  {
 		  for (i = 0; i < DIMENSION; i++)
 			  xi[i] = *(pi->get_coords() + i);
-		  pkey
+
 #ifdef DEBUG
 		  if (do_search)
 		  {
@@ -386,8 +386,8 @@ mom_engr_update(int myid, THashTable * P_table,
 
 
 #ifdef DEBUG
-   bool do_search = true;
-   unsigned keycheck[TKEYLENGTH] = {39, 0, 0};;
+   bool do_search = false;
+   unsigned keycheck[TKEYLENGTH] = {71863351, 347014367, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
 #if  CODE_DIMENSION==3
