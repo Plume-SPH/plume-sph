@@ -87,8 +87,12 @@
 //if defined, use equal particle mass and different sml
 //Otherwise, use different particle mass to guarantee equal sml
 //This option is only for 1D problem
+/*
+ * EQUAL_PART_MASS 1: yes equal mass
+ * EQUAL_PART_MASS 0: No, different mass
+ */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
-#ifndef EQUAL_PART_MASS
+#ifndef EQUAL_PART_MASS 1
 #define EQUAL_PART_MASS
 #endif
 #endif

@@ -152,7 +152,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 
 	  double dx_l=smlen;
 
-#ifdef EQUAL_PART_MASS
+#if EQUAL_PART_MASS==1
 	  double dx_r = dx_l*des_l/des_r;
 #else
 	  double dx_r = smlen;
