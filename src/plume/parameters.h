@@ -964,7 +964,7 @@ const int balancing_check_int_P = 30.0;
  */
 #if (SHOCK_TUBE_TESTS==0 || SHOCK_TUBE_TESTS==1)
 //For Sod shock tube
-const int Nb_P=100;
+const int Nb_P=35;
 const double Ll_P[DIMENSION]={-0.4};
 const double Lu_P[DIMENSION]={0.4};
 const int Nnsrp_r_P=20; //No saving real particles on right hand side
@@ -1098,7 +1098,7 @@ const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length
 const int num_loop_P=5;
-const double thresh_P=1e-5;
+const double thresh_P=1e-3;
 const double C_smooth_P = 2.0;
 const double eta_smooth_P = 1.2; //We can try different value to get best results
 

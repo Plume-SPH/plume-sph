@@ -110,6 +110,12 @@ struct TimeProps
       ndtimeoutput = ((ioutput + 1) * timeoutput) / TIME_SCALE;
       return true;
     }
+    else if (time == ndmax_time)
+    {
+    	ioutput++;
+    	ndtimeoutput = ((ioutput + 1) * timeoutput) / TIME_SCALE;
+    	return true;
+    }
     else
       return false;
   }

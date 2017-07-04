@@ -129,9 +129,9 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 #elif SHOCK_TUBE_TESTS==1
 	  //Sod shock tube input ---Famous test case in FV
 	  double prss_l = 1.0;  //Parameter
-	  double prss_r = 0.1;  //Parameter
+	  double prss_r = 0.1795;  //Parameter
 	  double des_l = 1.0;  //Parameter
-	  double des_r = 0.125;  //Parameter
+	  double des_r = 0.25;  //Parameter
 	  double vel_l = 0.0;  //Parameter
 	  double vel_r = 0.0;  //Parameter
 	  double middle_point=0.;

@@ -498,6 +498,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 	  Particle * pj = NULL ;
 	  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION];
 	  double wght;
+	  double err;
 	  THTIterator *itr2 = new THTIterator(P_table);
 
 //	  double hi;
@@ -541,10 +542,11 @@ void adaptive_sml(int myid, THashTable * P_table)
 		 		  rho_star = 0.;
 		 		  for (p_itr = pneighs.begin(); p_itr != pneighs.end(); p_itr++)
 		 		  {
-		 			 if (pj->contr_dens())
-		 			 {
-			 		      pj = (Particle *) P_table->lookup(*p_itr);
-			 		      assert (pj);
+			 		 pj = (Particle *) P_table->lookup(*p_itr);
+			 		 assert (pj);
+
+			 		 if (pj->contr_dens())
+			 		 {
 
 			 		      for (i = 0; i < DIMENSION; i++)
 			 		      {
@@ -558,7 +560,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 			 		          wght = weight(si, H_star);
 			 		          rho_star += wght * mj;
 			 		      }
-		 			 }
+		 			  }
 		 		  }// end loop over neighs
 
 #if CODE_DIMENSION==3
@@ -570,8 +572,12 @@ void adaptive_sml(int myid, THashTable * P_table)
 #endif //CODE_DIMENSION
 
 		 		  pi->put_smlen(H_new);
+
+		 		  err=abs((H_new-H_old)/H_old);
+		 		  if (err<thresh_P)
+		 			  break;
 		 	  }//if need neighbour
-		   }//go through all neighbours
+		   }//go through all particles
 	  }//end of for loop
 }
 #endif //DENSITY_UPDATE_SML==1

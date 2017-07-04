@@ -80,7 +80,7 @@
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 0
+#define SHOCK_TUBE_TESTS 1
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -92,7 +92,7 @@
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
-#define EQUAL_PART_MASS 0
+#define EQUAL_PART_MASS 1
 #endif
 #endif
 
@@ -137,7 +137,7 @@
  */
 #if USE_GSPH==1
 #ifndef GSPH_MODIFIED_MONOTONICITY
-#define  GSPH_MODIFIED_MONOTONICITY 0
+#define GSPH_MODIFIED_MONOTONICITY 0
 #endif
 #endif
 
@@ -223,7 +223,7 @@
  * 1: adaptive      -->DENSITY_UPDATE_SML shold always be 1
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 1
+#define ADAPTIVE_SML 0
 #endif
 
 
@@ -247,7 +247,7 @@
  * 2 : filter both velocity and energy  ---> In which case, it is not necessary to smooth energy. ---> For energy smooth, it is OK to use a different filter scale length.
  */
 #ifndef HAVE_TURBULENCE_LANS
-#define HAVE_TURBULENCE_LANS 2
+#define HAVE_TURBULENCE_LANS 0
 #endif
 
 ////Define have physics viscosity
