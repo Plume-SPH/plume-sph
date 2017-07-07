@@ -80,7 +80,7 @@
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 1
+#define SHOCK_TUBE_TESTS 0
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -100,9 +100,10 @@
 /*
  * USE_GSPH 0 : SPH
  * USE_GSPH 1 : GSPH
+ * USE_GSPH 2 : RCMSPH
  */
 #ifndef USE_GSPH
-#define USE_GSPH 1
+#define USE_GSPH 0
 #endif
 
 
@@ -111,7 +112,7 @@
  * GSPH_SPECIFIC_VOL_APP 1: linear --> See Shu-ichiro's 2002 paper
  * GSPH_SPECIFIC_VOL_APP 3: Cubic --> See Shu-ichiro's 2002 paper
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef GSPH_SPECIFIC_VOL_APP
 #define  GSPH_SPECIFIC_VOL_APP 3
 #endif
@@ -125,7 +126,7 @@
  * MINI_DERIVATIVE_COND 3: apply to all variables on both sides, that is to say, if negative pressure on one side shows up, apply the minimum derivative condition for all variables (pressure, density and velocity) on both sides.
  * MINI_DERIVATIVE_COND 10: based on 1, use piece-wise linear constant if C_SHOCK*abs(ul-ur)>min(CSi, CSj)
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef  MINI_DERIVATIVE_COND
 #define  MINI_DERIVATIVE_COND 0
 #endif
@@ -135,7 +136,7 @@
 /* GSPH_MODIFIED_MONOTONICITY 0: original --> See Shu-ichiro's 2002 paper
  * GSPH_MODIFIED_MONOTONICITY 1: modified --> Based on Shu-ichiro's 2002 paper, the second monotonicity condition is change be to use absolute value of (ul-ur) There is no abs in Shu-ichiro's 2002 paper
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef GSPH_MODIFIED_MONOTONICITY
 #define GSPH_MODIFIED_MONOTONICITY 0
 #endif
@@ -146,9 +147,10 @@
  * 1: --> HLLC
  * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock
  */
-#if USE_GSPH==1
+//For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 0
+#define  RIEMANN_SOLVER 1
 #endif
 #endif
 
@@ -172,7 +174,7 @@
  * NORM_DERIVATIVE 0: derivative is not normalized  --> Currently not available
  * NORM_DERIVATIVE 1: derivative is normalized
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef NORM_DERIVATIVE
 #define NORM_DERIVATIVE 1
 #endif
@@ -189,7 +191,7 @@
  * SHEAR_VEL_APP 2: Roe average ---> Weighted by square root of density
  * SHEAR_VEL_APP 10: From solving a Riemann problem taking the shear velocity wave into account.
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef SHEAR_VEL_APP
 #define SHEAR_VEL_APP 2
 #endif
@@ -247,7 +249,7 @@
  * 2 : filter both velocity and energy  ---> In which case, it is not necessary to smooth energy. ---> For energy smooth, it is OK to use a different filter scale length.
  */
 #ifndef HAVE_TURBULENCE_LANS
-#define HAVE_TURBULENCE_LANS 0
+#define HAVE_TURBULENCE_LANS 2
 #endif
 
 ////Define have physics viscosity
@@ -366,9 +368,9 @@
 #endif
 //
 ////output particle smoothing length ---> useful for debug
-//#ifndef WRITE_SML
-//#define WRITE_SML
-//#endif
+#ifndef WRITE_SML
+#define WRITE_SML
+#endif
 
 #endif //DEBUG
 
@@ -440,6 +442,7 @@
 /*
  * USE_GSPH 0 : SPH
  * USE_GSPH 1 : GSPH
+ * USE_GSPH 2 : RCMSPH
  */
 
 #ifndef USE_GSPH
@@ -452,7 +455,7 @@
  * GSPH_SPECIFIC_VOL_APP 1: linear --> See Shu-ichiro's 2002 paper
  * GSPH_SPECIFIC_VOL_APP 3: Cubic --> See Shu-ichiro's 2002 paper
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef GSPH_SPECIFIC_VOL_APP
 #define  GSPH_SPECIFIC_VOL_APP 3
 #endif
@@ -466,7 +469,7 @@
  * MINI_DERIVATIVE_COND 3: apply to all variables on both sides, that is to say, if negative pressure on one side shows up, apply the minimum derivative condition for all variables (pressure, density and velocity) on both sides.
  * MINI_DERIVATIVE_COND 10: based on 1, use piece-wise linear constant if C_SHOCK*abs(ul-ur)>min(CSi, CSj)
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef  MINI_DERIVATIVE_COND
 #define  MINI_DERIVATIVE_COND 10
 #endif
@@ -476,7 +479,7 @@
 /* GSPH_MODIFIED_MONOTONICITY 0: original --> See Shu-ichiro's 2002 paper
  * GSPH_MODIFIED_MONOTONICITY 1: modified --> Based on Shu-ichiro's 2002 paper, the second monotonicity condition is change be to use absolute value of (ul-ur) There is no abs in Shu-ichiro's 2002 paper
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef GSPH_MODIFIED_MONOTONICITY
 #define GSPH_MODIFIED_MONOTONICITY 1
 #endif
@@ -487,7 +490,8 @@
  * 1: --> HLLC
  * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock
  */
-#if USE_GSPH==1
+//For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef RIEMANN_SOLVER
 #define RIEMANN_SOLVER 0
 #endif
@@ -513,7 +517,7 @@
  * NORM_DERIVATIVE 0: derivative is not normalized
  * NORM_DERIVATIVE 1: derivative is normalized
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef NORM_DERIVATIVE
 #define NORM_DERIVATIVE 1
 #endif
@@ -530,7 +534,7 @@
  * SHEAR_VEL_APP 2: Roe average ---> Weighted by square root of density
  * SHEAR_VEL_APP 10: From solving a Riemann problem taking the shear velocity wave into account.
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef SHEAR_VEL_APP
 #define SHEAR_VEL_APP 2
 #endif
@@ -542,7 +546,7 @@
  * SWITCH_OFF_AV_FOR_EXPAN 1: switch off artificial viscosity for expansion
  * SWITCH_OFF_AV_FOR_EXPAN 2: use an switch coefficient that is proportional to the density gradient to determine the amount of artificial viscosity: Use the approximate numerical density gradient (AROUND 25) at the location where there is a shock as the reference to determine the value of this switch coefficient
  */
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
 #define SWITCH_OFF_AV_FOR_EXPAN 0
 #endif

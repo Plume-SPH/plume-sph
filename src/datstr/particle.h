@@ -97,7 +97,7 @@ protected:
   //! new_state_vars stores updated state variables
   double new_state_vars[NO_OF_EQNS];
 
-#if USE_GSPH==1  //Assume 3D
+#if (USE_GSPH==1 || USE_GSPH==2)  //Assume 3D
   //derivatives
   double d_rho[DIMENSION];
   double d_u[DIMENSION];
@@ -409,7 +409,7 @@ public:
     return temperature;
   }
 
-#if USE_GSPH==1  //Assume 3D
+#if (USE_GSPH==1 || USE_GSPH==2)  //Assume 3D
   //! get density derivative
   const double * get_density_derivative () const
   {
@@ -699,7 +699,7 @@ public:
       new_state_vars[ NO_OF_EQNS-1]=new_engr;
   }
 
-#if USE_GSPH==1  //Assume 3D
+#if (USE_GSPH==1 || USE_GSPH==2)  //Assume 3D
   //! put density derivative
   void put_density_d (double d[])
   {

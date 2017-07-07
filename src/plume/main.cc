@@ -328,7 +328,7 @@ main(int argc, char **argv)
     move_bnd_images (myid, numprocs, P_table, Image_table);
 #endif
 
-#if USE_GSPH==1
+#if  (USE_GSPH ==1 || USE_GSPH ==2)
     // calculate gradient, before momentum and energy updating
     calc_gradients(P_table);
 
@@ -337,7 +337,7 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif  //MULTI_PROC
 
-#endif  //USE_GSPH==1
+#endif  // (USE_GSPH ==1 || USE_GSPH ==2)
 
 #ifdef DEBUG
   if (check_part)
@@ -784,7 +784,7 @@ main(int argc, char **argv)
     move_bnd_images (myid, numprocs, P_table, Image_table);
 #endif
 
-#if USE_GSPH==1
+#if  (USE_GSPH ==1 || USE_GSPH ==2)
     // calculate gradient, before momentum and energy updating
     calc_gradients(P_table);
 
@@ -793,7 +793,7 @@ main(int argc, char **argv)
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif  //MULTI_PROC
 
-#endif  //USE_GSPH==1
+#endif  // (USE_GSPH ==1 || USE_GSPH ==2)
 
 #ifdef DEBUG
   if (check_part)
@@ -984,6 +984,12 @@ main(int argc, char **argv)
   bool vis_flag = false;
   bool check_neigh =false;
   bool check_bucket = false;
+  bool test_function=true;
+#endif
+
+#ifdef DEBUG
+    if (test_function)
+    	Generate_VanderCorput(1);
 #endif
 
   // allocate communcation array
@@ -1048,10 +1054,10 @@ main(int argc, char **argv)
 #endif
 
 
-#if USE_GSPH==1
+#if  (USE_GSPH ==1 || USE_GSPH ==2)
     // calculate gradient, before momentum and energy updating
     calc_gradients(P_table);
-#endif  //USE_GSPH==1
+#endif  // (USE_GSPH ==1 || USE_GSPH ==2)
 
 
 

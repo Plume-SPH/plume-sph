@@ -343,7 +343,7 @@ mom_engr_update(int myid, THashTable * P_table,
   return 0;
 }
 
-#elif USE_GSPH ==1  //Use GSPH method to discretize the momentum and energy equation
+#elif (USE_GSPH ==1 || USE_GSPH ==2) //Use GSPH method to discretize the momentum and energy equation
 
 int
 mom_engr_update(int myid, THashTable * P_table,
@@ -536,8 +536,14 @@ mom_engr_update(int myid, THashTable * P_table,
                   //pre-compute, solve RP to get p* and v*
 		          double p_star;
 		          double v_star[DIMENSION];
-		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
 
+#if USE_GSPH==1
+		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
+#elif USE_GSPH==2
+		          double sample_pt;
+		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
+#endif
 		          //compute turbulent stress
 		          turb_stress=0.0;
 #if HAVE_TURBULENCE_LANS !=0
@@ -639,8 +645,13 @@ mom_engr_update(int myid, THashTable * P_table,
                   //pre-compute, solve RP to get p* and v*
 		          double p_star;
 		          double v_star[DIMENSION];
+#if USE_GSPH==1
 		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
-
+#elif USE_GSPH==2
+		          double sample_pt;
+		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
+#endif
 		          //compute turbulent stress
 				  turb_stress=0.0;
 #if HAVE_TURBULENCE_LANS !=0

@@ -26,6 +26,8 @@
 //#include <math.h> //fabs
 #include <algorithm>    // std::min
 
+#include <vector> //for generate random number
+
 //#include <petsc.h>
 using namespace std;
 
@@ -1667,7 +1669,7 @@ double Compute_sij_star (double hij, double Vi, double Vj, double Dri, double Dr
 
 	double dist_sq=dist* dist;
 	double dist_cub = dist_sq* dist;
-	double dist_1 = 1.0/dist;
+
 
 	double A=-2.0*(Vi-Vj)/dist_cub + (DVi + DVj)/dist_sq;
 	double B=0.5*(DVi - DVj)/dist;
@@ -1827,13 +1829,14 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
 
 //HLLC Riemann Solver ---> based on HLLC solver presented in "Approximate Riemann solvers for the Godunov SPH (GSPH)"
 //void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
-void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star)
+void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star, double sample_x=0.0, double delta_t=0.0)
 {
     //Roe average:
     double rdl=sqrt(dl);
     double rdr=sqrt(dr);
     double denominator = 1.0 / (rdl+rdr);
 
+    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
     double plr=(pl*rdl + pr*rdr)*denominator;
     double gammalr=(gj*rdl + gi*rdr)*denominator;
     double dlr=(dl*rdl + dr*rdr)*denominator;
@@ -1842,7 +1845,6 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 #elif  FLUID_COMPRESSIBILITY==1
     double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
 #endif
-    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
 
 	//Compute approximation of wave speed
     double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
@@ -1892,6 +1894,7 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
 #endif
 
+
     double Ml=dl*ul; //The momentum, velocity should be ul instead of vl (the relative velocity)
     double Mr=dr*ur;
 //    double Ml=dl*vl; //The momentum, velocity should be ul instead of vl (the relative velocity)
@@ -1908,27 +1911,64 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     	cout <<"Wave speed incorrect!"<<endl;
 #endif
 
-    if (Sl>0)
-    	*p_star=pl;
-    else if ((Sl<=0) && (Sm>0))
-    	*p_star=Sm/(Sl-Sm)*((Sl-vl)*Ml+(p_hat-pl))+p_hat;
-    else if ((Sm<=0) && (Sr>0))
-    	*p_star=Sm/(Sr-Sm)*((Sr-vr)*Mr+(p_hat-pr))+p_hat;
-    else if (Sr<=0)
-    	*p_star=pr;
-    else
-    	cout <<"Fatal error in HLLC Riemann Solver"<<endl;
+#if USE_GSPH==1
+    	    if (Sl>0)
+    	    {
+    	    	*p_star=pl;
+    	        *u_star=ul;
+    	    }
+    	    else if ((Sl<=0) && (Sm>0))
+    	    {
+    	    	*p_star=Sm/(Sl-Sm)*((Sl-vl)*Ml+(p_hat-pl))+p_hat;
+    	    	*u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
+    	    }
+    	    else if ((Sm<=0) && (Sr>0))
+    	    {
+    	    	*p_star=Sm/(Sr-Sm)*((Sr-vr)*Mr+(p_hat-pr))+p_hat;
+    	    	*u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
+    	    }
+    	    else if (Sr<=0)
+    	    {
+    	    	*p_star=pr;
+    	    	*u_star=ur;
+    	    }
+    	    else
+    	    	cout <<"Fatal error in HLLC Riemann Solver"<<endl;
+#elif USE_GSPH==2
+    	    if (Sl*delta_t>sample_x)
+    	    {
+    	    	*p_star=pl;
+    	        *u_star=ul;
+    	    }
+    	    else if ((Sl*delta_t<=sample_x) && (Sm*delta_t>sample_x))
+    	    {
+    	    	*p_star=Sm/(Sl-Sm)*((Sl-vl)*Ml+(p_hat-pl))+p_hat;
+    	    	*u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
+    	    }
+    	    else if ((Sm*delta_t<=sample_x) && (Sr*delta_t>sample_x))
+    	    {
+    	    	*p_star=Sm/(Sr-Sm)*((Sr-vr)*Mr+(p_hat-pr))+p_hat;
+    	    	*u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
+    	    }
+    	    else if (Sr*delta_t<=sample_x)
+    	    {
+    	    	*p_star=pr;
+    	    	*u_star=ur;
+    	    }
+    	    else
+    	    	cout <<"Fatal error in HLLC Riemann Solver"<<endl;
 
-//    double u_star;
-    if (Sl>0)
-    	*u_star=ul;
-    else if ((Sl<=0) && (Sm>0))
-    	*u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
-    else if ((Sm<=0) && (Sr>0))
-    	*u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
-    else
-    	*u_star=ur;
+#endif //USE_GSPH
 
+////    double u_star;
+//    if (Sl>0)
+//    	*u_star=ul;
+//    else if ((Sl<=0) && (Sm>0))
+//    	*u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
+//    else if ((Sm<=0) && (Sr>0))
+//    	*u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
+//    else
+//    	*u_star=ur;
 
 #ifdef DEBUG
 //    bool check=true;
@@ -2077,7 +2117,7 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
 
     double p_hllc=(pr*alf_r - pl*alf_l - alf_r*alf_l*(ul-ur))/(alf_r-alf_l);
     double dl_star=alf_l/(Sl-Sm);
-    double dr_star=alf_r/(Sr-Sm);
+//    double dr_star=alf_r/(Sr-Sm);
     double el_star=p_hllc/(dl_star*(gj-1)); //gl_star=gj --> You can also use er
     //double er_star=p_hllc/(dr_star*(gi-1)); //gr_star=gi
     double el=pl/(dl*(gj-1));
@@ -2134,10 +2174,45 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
 //    }
 }
 
+//Generate Van Der Corput for RCM.
+//The maximum steps is 2^16=65536
+double Generate_VanderCorput(unsigned n)
+{
+//	const int m = 16;
+	while (n>65536)
+		n -= 65536;
+
+	if (n<0)
+		cout << "Invalid step number: " << n << endl;
+
+	double vdcN=0.0;
+
+	unsigned one=1, two=2, three=4, four=8, five=16, six=32, seven=64, eight=128, nine=256, ten=512, eleven=1024, twevel=2048, thirteen=4096, fourteen=8192, fifteen=16384, sixteen=32768;
+
+	vdcN += ((one&n)>0)*pow(0.5,1);
+	vdcN += ((two&n)>0)*pow(0.5,2);
+	vdcN += ((three&n)>0)*pow(0.5,3);
+	vdcN += ((four&n)>0)*pow(0.5,4);
+	vdcN += ((five&n)>0)*pow(0.5,5);
+	vdcN += ((six&n)>0)*pow(0.5,6);
+	vdcN += ((seven&n)>0)*pow(0.5,7);
+	vdcN += ((eight&n)>0)*pow(0.5,8);
+	vdcN += ((nine&n)>0)*pow(0.5,9);
+	vdcN += ((ten&n)>0)*pow(0.5,10);
+	vdcN += ((eleven&n)>0)*pow(0.5,11);
+	vdcN += ((twevel&n)>0)*pow(0.5,12);
+	vdcN += ((thirteen&n)>0)*pow(0.5,13);
+	vdcN += ((fourteen&n)>0)*pow(0.5,14);
+	vdcN += ((fifteen&n)>0)*pow(0.5,15);
+	vdcN += ((sixteen&n)>0)*pow(0.5,16);
+
+	return vdcN;
+}
 //Overloading of function for Riemann solver, the derivative is computed in a more accurate way,
 void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DIMENSION], double pi, double pj, double hi,  double hj, double xi[DIMENSION], double xj[DIMENSION],
 		            double CSi, double CSj, double gi, double gj, double dt_half,  double DDri[DIMENSION], double DDrj[DIMENSION], double DDui[DIMENSION], double DDuj[DIMENSION],
-		            double DDvi[DIMENSION], double DDvj[DIMENSION], double DDwi[DIMENSION], double DDwj[DIMENSION], double DDpi[DIMENSION], double DDpj[DIMENSION], double* p_star, double* v_star)
+		            double DDvi[DIMENSION], double DDvj[DIMENSION], double DDwi[DIMENSION], double DDwj[DIMENSION], double DDpi[DIMENSION], double DDpj[DIMENSION], double* p_star,
+					double* v_star, double sp, double delta_t)
 {
 	//Pre compute:
 	int i;
@@ -2180,6 +2255,10 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 	for (i = 0; i < DIMENSION; i++)
 	   dist += dx[i]*dx[i];
 	dist = sqrt(dist);
+
+#if USE_GSPH==2
+    double sample_x = (sp-0.5)*dist;
+#endif
 
 	double e[DIMENSION];
 	Compute_eij(dx, dist, e);
@@ -2370,15 +2449,19 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     }
 #endif
 
-
     double u_star;
+#if USE_GSPH==1
 #if RIEMANN_SOLVER == 0
     Roe_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #elif RIEMANN_SOLVER == 1
     HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #elif RIEMANN_SOLVER == 2
     HLLC_RP_Solver_my(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
-#endif
+#endif //Riemann Solver
+
+#elif USE_GSPH==2
+    HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star, sample_x, delta_t);
+#endif //USE_GSPH
 
     //project u_star to v_star
 #if SHEAR_VEL_APP==0  //mean

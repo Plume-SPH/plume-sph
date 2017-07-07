@@ -126,7 +126,7 @@ GMFG_new_MPI_Datatype ()
   blockcounts2[0] = 5;
   blockcounts2[1] = TKEYLENGTH;
   blockcounts2[2] = 5 + 2*DIMENSION + NO_OF_EQNS;
-#elif USE_GSPH==1
+#elif (USE_GSPH==1 || USE_GSPH==2)
   blockcounts2[0] = 5;
   blockcounts2[1] = TKEYLENGTH;
   blockcounts2[2] = 5 + 7*DIMENSION + NO_OF_EQNS;  // For GSPH there will be 5 additional variable for gradient

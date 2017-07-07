@@ -586,6 +586,12 @@ void Riemann_Solver(
 		double DDpi[DIMENSION],
 		double DDpj[DIMENSION],
 		double* p_star,
-		double* v_star
+		double* v_star,
+		double smaple_point=0.5,
+		double dt=0.0
+		);
+
+double Generate_VanderCorput (
+		unsigned  //n
 		);
 #endif  //SPH_HEADER_H_

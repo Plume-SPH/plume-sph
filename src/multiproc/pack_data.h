@@ -53,7 +53,7 @@ struct ParticlePack
   double smoothed_v[DIMENSION];
   double state_vars[NO_OF_EQNS];// rho, v , e
 
-#if USE_GSPH==1  //Assume 3D
+#if (USE_GSPH==1 || USE_GSPH==2)  //Assume 3D
   //derivatives
   double d_rho[DIMENSION];
   double d_u[DIMENSION];

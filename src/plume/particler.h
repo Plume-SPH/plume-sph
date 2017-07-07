@@ -343,7 +343,7 @@ shift_brief_buck (
 		int          //myid
 		);
 
-#if USE_GSPH==1
+#if (USE_GSPH==1 || USE_GSPH==2)
 //Function for computing gradient of all state variables.
 void calc_gradients(
 		THashTable * //P_table

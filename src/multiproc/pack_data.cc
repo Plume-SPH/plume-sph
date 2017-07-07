@@ -207,7 +207,7 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   for (j=0; j < NO_OF_EQNS; j++)
     pack_array->state_vars[j] = psend->state_vars[j];
 
-#if USE_GSPH==1  //Assume 3D
+#if (USE_GSPH==1 || USE_GSPH==2)  //Assume 3D
   for (j = 0; j < DIMENSION; j++)
 	  pack_array->d_rho[j]=psend->d_rho[j];
 
@@ -398,7 +398,7 @@ void unpack_particle (ParticlePack *packet, Particle *part)
   for ( i=0; i < NO_OF_EQNS; i++ )
     part->state_vars[i] = packet->state_vars[i];
 
-#if USE_GSPH==1  //Assume 3D
+#if (USE_GSPH==1 || USE_GSPH==2)  //Assume 3D
   //derivatives
   for ( i=0; i < DIMENSION; i++ )
     part->d_rho[i] = packet->d_rho[i];
