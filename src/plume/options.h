@@ -48,16 +48,18 @@
 #endif
 
 /*
- * There are two ways to view particles of two phases in multiphase SPH method:
- * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
-// * 10: The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
-// * 11: The same as option 1 , except that does not do normalization. ---> Original smoothing length should be used.
+ * There are two ways to view particles of two phases in multiphase SPH method.
+ * In addition, there are several different formulations for updating density by weighted summation, For example, "A multi-phase SPH method for macroscopic and mesoscopic flows" by Xu
+ * 1  : They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
+ * 10 : The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
+ * 11 : The same as option 1 , except that does not do normalization.
  * 12 : The same as option 1, the only difference is that use phase density instead of total density in computing normalization.
- * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
+ * 13 : The same as option 1, except that adopt the weighted summation formulation in the paper: "A multi-phase SPH method for macroscopic and mesoscopic flows". ---> And do not do normalization
+ * 2  : Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
  * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
  */
 #ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 11 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
+#define DENSITY_UPDATE_SPH 13 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
                               //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
 #endif
 
@@ -81,7 +83,7 @@
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 0
+#define SHOCK_TUBE_TESTS 1
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -223,7 +225,7 @@
 //Define whether use adaptive smoothing length or not ---> adaptively adjust sml at a given interval, to avoid sml update at every time step
 /*
  * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
- * 1: adaptive      -->DENSITY_UPDATE_SML shold always be 1
+ * 1: adaptive      -->DENSITY_UPDATE_SML should always be 1
  */
 #ifndef ADAPTIVE_SML
 #define ADAPTIVE_SML 1
@@ -415,12 +417,14 @@
 #endif
 
 /*
- * There are two ways to view particles of two phases in multiphase SPH method:
- * 1: They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
-// * 10: The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
-// * 11: The same as option 1 , except that does not do normalization. ---> Original smoothing length should be used.
+ * There are two ways to view particles of two phases in multiphase SPH method.
+ * In addition, there are several different formulations for updating density by weighted summation, For example, "A multi-phase SPH method for macroscopic and mesoscopic flows" by Xu
+ * 1  : They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
+ * 10 : The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
+ * 11 : The same as option 1 , except that does not do normalization.
  * 12 : The same as option 1, the only difference is that use phase density instead of total density in computing normalization.
- * 2: Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
+ * 13 : The same as option 1, except that adopt the weighted summation formulation in the paper: "A multi-phase SPH method for macroscopic and mesoscopic flows". ---> And do not do normalization
+ * 2  : Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
  * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
  */
 #ifndef DENSITY_UPDATE_SPH

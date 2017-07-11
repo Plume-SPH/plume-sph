@@ -34,6 +34,10 @@ smooth_density(THashTable * P_table)
   double wnorm[PHASE_NUM], norm;
   double wm, mj, rhoj;
 
+#if DENSITY_UPDATE_SPH==13
+   double mi;
+#endif
+
 #if HAVE_ENERGY_SMOOTH ==1
   double engr, wm_e, wnorm_e, s_e[DIMENSION];
 #elif HAVE_ENERGY_SMOOTH ==2
@@ -97,6 +101,10 @@ smooth_density(THashTable * P_table)
       engr = 0.0;
 #endif
 
+#if DENSITY_UPDATE_SPH==13
+     mi=pi->get_mass();
+#endif
+
       vector <TKey> neighs = pi->get_neighs ();
       vector <TKey> :: iterator p_itr;
 
@@ -142,7 +150,12 @@ smooth_density(THashTable * P_table)
 #endif
 
 						wght = weight(s, hi);
+
+#if DENSITY_UPDATE_SPH==13
+						wm = wght * mi;
+#else
 						wm = wght * mj;
+#endif
 						tmprho[phs_i-1] += wm;
 
 #if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 22)
@@ -205,7 +218,7 @@ smooth_density(THashTable * P_table)
 //   	   phaserho[phs_i-1]= tmprho[phs_i-1] / wnorm[0];
 //   	   density +=phaserho[phs_i-1];
 //     }
-#elif DENSITY_UPDATE_SPH == 11
+#elif (DENSITY_UPDATE_SPH == 11) || (DENSITY_UPDATE_SPH==13)
      for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
      {
        phaserho[phs_i-1]=tmprho[phs_i-1];
