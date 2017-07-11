@@ -78,11 +78,11 @@ smooth_density(THashTable * P_table)
 
 #if DENSITY_UPDATE_SML==0
       hi = pi->get_original_smlen ();
-#elif DENSITY_UPDATE_SML==1
+#elif (DENSITY_UPDATE_SML==1) || (DENSITY_UPDATE_SML==11) || (DENSITY_UPDATE_SML==12) || (DENSITY_UPDATE_SML==13)
       hi = pi->get_smlen ();
 #endif
 
-      double supp = 4.0 * hi;
+      double supp = 4.0 * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
 //      TKey ki = pi->getKey ();
 
       for (i = 0; i < PHASE_NUM; i++)
@@ -133,6 +133,13 @@ smooth_density(THashTable * P_table)
 
 					if (in_support(ds, supp))
 					{
+
+#if DENSITY_UPDATE_SML==11
+						hi=0.5*(hi+pj->get_smlen ()); //Overwrite original hi with 0.5*(hi+hj)
+#elif DENSITY_UPDATE_SML==12
+						hi=pj->get_smlen ();          //Overwrite original hi with hj
+#endif
+
 						for (k = 0; k < DIMENSION; k++)
 						    s[k] = ds[k] / hi;
 
@@ -149,7 +156,16 @@ smooth_density(THashTable * P_table)
 						engr +=wm_e*pj->get_energy()/rhoj;
 #endif
 
+#if DENSITY_UPDATE_SML==13
 						wght = weight(s, hi);
+						double hj=pj->get_smlen ();
+						for (k = 0; k < DIMENSION; k++)
+							s[k] = ds[k] / hj;
+						wght += weight(s, hj);
+						wght = 0.5*wght;
+#else
+						wght = weight(s, hi);
+#endif // DENSITY_UPDATE_SML==13
 
 #if DENSITY_UPDATE_SPH==13
 						wm = wght * mi;

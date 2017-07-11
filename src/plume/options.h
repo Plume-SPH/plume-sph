@@ -20,14 +20,21 @@
 #endif
 
 //define use summation method to update density  ---> Another way is based on discretized mass conservation
-#ifndef USE_SUMMATION
+/*
+ * USE_SUMMATION=1: Use weighted summation formulation for density update
+ * USE_SUMMATION=0: Use discretized mass conservation equation ---> Currently, did not consider updating for mass fraction yet. ---> Is this one works well with shock tube, try it for Plume model
+ */
+#ifndef USE_SUMMATION 1
 #define USE_SUMMATION
 
 // only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
 /*
  * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
  * 0 : use original smoothing length   ---> It is easier to get negative energy
- * 1 : use current smoothing length    ----> More stable choice
+ * 1 : use current smoothing length hi  ----> More stable choice
+ * 11: same as option1, the only difference is use (hi+hj)*0.5 instead of hi
+ * 12: same as option1, the only difference is use hj instead of hi
+ * 13: This one is using similar idea of 11, but use [w(hi)+w(hj)]*0.5 instead of
  * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
@@ -47,19 +54,20 @@
 #define HAVE_ENERGY_SMOOTH 0
 #endif
 
+//This option only make sense when USE_SUMMATION==1
 /*
  * There are two ways to view particles of two phases in multiphase SPH method.
  * In addition, there are several different formulations for updating density by weighted summation, For example, "A multi-phase SPH method for macroscopic and mesoscopic flows" by Xu
  * 1  : They are nothing but discretized points, phase num of each particle is just a flag of that particle (or properties of particle)
  * 10 : The same as option 1 update of density will not based on SPH, instead, it will based on an equation (Can be found in Suzuki's 2005 paper)
- * 11 : The same as option 1 , except that does not do normalization.
+ * 11 : The same as option 1 except that does not do normalization.
  * 12 : The same as option 1, the only difference is that use phase density instead of total density in computing normalization.
- * 13 : The same as option 1, except that adopt the weighted summation formulation in the paper: "A multi-phase SPH method for macroscopic and mesoscopic flows". ---> And do not do normalization
+ * 13 : The same as option 1, except that adopt the weighted summation formulation in the paper: "A multi-phase SPH method for macroscopic and mesoscopic flows". ---> And do not do normalization  ---> Probably DENSITY_UPDATE_SPH=12 should be used when use this form.
  * 2  : Two different sets of discretized points. essentially independent and only interact with each other by the interact terms (include explicit terms like drag force or implicit terms such as the pressure force term.) in the governing equation.
  * 22 : The same as option 2, the only difference is that use the total density instead of phase density in computing normalization.
  */
 #ifndef DENSITY_UPDATE_SPH
-#define DENSITY_UPDATE_SPH 13 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
+#define DENSITY_UPDATE_SPH 11 //DENSITY_UPDATE_SPH=2, view particle as two different phases will lead to very large density
                               //When DENSITY_UPDATE_SPH=0, DENSITY_UPDATE_SML should be set to 1;
 #endif
 
@@ -228,7 +236,7 @@
  * 1: adaptive      -->DENSITY_UPDATE_SML should always be 1
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 1
+#define ADAPTIVE_SML 0
 #endif
 
 
@@ -388,19 +396,25 @@
 #endif
 
 //define use summation method to update density  ---> Another way is based on discretized mass conservation
-#ifndef USE_SUMMATION
+/*
+ * USE_SUMMATION=1: Use weighted summation formulation for density update
+ * USE_SUMMATION=0: Use discretized mass conservation equation ---> Currently, did not consider updating for mass fraction yet. ---> Is this one works well with shock tube, try it for Plume model
+ */
+#ifndef USE_SUMMATION 1
 #define USE_SUMMATION
+
 
 // only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
 /*
  * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
  * 0 : use original smoothing length   ---> It is easier to get negative energy
- * 1 : use current smoothing length    ----> More stable choice
+ * 1 : use current smoothing length hi  ----> More stable choice
+ * 11: same as option1, the only difference is use (hi+hj)*0.5 instead of hi
  * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 1
+#define DENSITY_UPDATE_SML 11
 #endif
 
 

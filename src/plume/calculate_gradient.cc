@@ -82,7 +82,7 @@ void calc_gradients(THashTable *P_table)
 
 #if DENSITY_UPDATE_SML==0
 	      hi = pi->get_original_smlen ();
-#elif DENSITY_UPDATE_SML==1
+#elif  (DENSITY_UPDATE_SML==1) || (DENSITY_UPDATE_SML==11) || (DENSITY_UPDATE_SML==12) || (DENSITY_UPDATE_SML==13)
 	      hi = pi->get_smlen ();
 #endif
 

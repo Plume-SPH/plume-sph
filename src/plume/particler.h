@@ -143,7 +143,7 @@ int  search_neighs(
                          HashTable *  //! HashTable of cells of background mesh
                          );
 
-#if DENSITY_UPDATE_SML==1
+#if (DENSITY_UPDATE_SML==1) || (DENSITY_UPDATE_SML==11) || (DENSITY_UPDATE_SML==12) || (DENSITY_UPDATE_SML==13)
 void adaptive_sml
               (
               int ,        //myid,

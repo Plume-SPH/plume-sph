@@ -475,7 +475,7 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
   return 0;
 }
 
-#if DENSITY_UPDATE_SML==1
+#if (DENSITY_UPDATE_SML==1) || (DENSITY_UPDATE_SML==11) || (DENSITY_UPDATE_SML==12) || (DENSITY_UPDATE_SML==13)
 void adaptive_sml(int myid, THashTable * P_table)
 {
 	  /*
