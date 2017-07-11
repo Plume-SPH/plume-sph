@@ -148,6 +148,16 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  double amp = 0.2;
 	  double fre = 5.0;
 	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point, amp, fre);
+#elif SHOCK_TUBE_TESTS==3
+	  //Sjogreen test: See paper Approximate Riemann Solvers for the Godunov SPH
+	  double prss_l = 0.4;  //Parameter
+	  double prss_r = 0.4;  //Parameter
+	  double des_l = 1.0;  //Parameter
+	  double des_r = 1.0;  //Parameter
+	  double vel_l = -2.0;  //Parameter
+	  double vel_r = 2.0;  //Parameter
+	  double middle_point=0.;
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
 #endif
 
 	  double dx_l=smlen;

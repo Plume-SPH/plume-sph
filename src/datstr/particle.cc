@@ -454,6 +454,7 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 	double Rmg=Rm/(ng+na); //gas constant for gas mixture
 
 	gamma=1+Rm/Cvm; // gamma for mixture
+	//gamma=1.4;
 
 	//	double lmd=desm*Rm/Cvm; not necessary
     // for gas mixture
@@ -486,7 +487,8 @@ void Particle::update_second_var(double ng0_P, double Cvs_P, double Cvg_P, doubl
 //	sound_speed=pow((Rmg*(pressure/desmg+engrg)/Cvmg),0.5);  //sound speed is assumed to only depends on gas phase---> definitely not exact, but in SPH, sound speed is only useful when determine the time steps.
 
     //The new way
-    sound_speed=pow((1+Rmg/Cvmg)*pressure/desmg, 0.5); //use sound speed of only gas phase, that will make sound speed larger than the real value, but safe in determine time steps.
+	sound_speed=pow(gamma*pressure/desmg, 0.5); //use sound speed of only gas phase, that will make sound speed larger than the real value, but safe in determine time steps.
+	//sound_speed=pow(1.4*pressure/desmg, 0.5); //use sound speed of only gas phase, that will make sound speed larger than the real value, but safe in determine time steps.
 #elif FLUID_COMPRESSIBILITY==1
 	sound_speed=pow(gama*(pressure+B-pa0_P)/desm, 0.5); //The equation of sound_speed comes from paper: "Historical Review of Real-Fluid Isentropio Flow Models" by D. A. Sullivan
 #endif //FLUID_COMPRESSIBILIT

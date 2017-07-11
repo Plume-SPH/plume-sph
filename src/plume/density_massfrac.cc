@@ -48,7 +48,7 @@ smooth_density(THashTable * P_table)
    bool check_den = true;
    bool do_search = false;
    bool check_mssfrac = false;
-   unsigned keycheck[TKEYLENGTH] =  {71606976, 8257279, 0};
+   unsigned keycheck[TKEYLENGTH] =  {224, 0, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
 

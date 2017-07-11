@@ -2014,6 +2014,10 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
     double cr= sqrt(pr*gi/(rhoa0_P*(pow(dr/rhoa0_P, gi)-1.0)));
 #endif
 
+    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+    ul = ul -ulr;
+    ur = ur -ulr;
+
 //Different ways to estimate Nonlinear wave speed
 #if HLL_WAVE_SPEED_EVA==0
     cout<< "In this Riemann, Should not use relative speed!"<< endl;
@@ -2026,7 +2030,6 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
 #elif  FLUID_COMPRESSIBILITY==1
     double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
 #endif
-    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
     double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
     double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
 	//Compute approximation of wave speed
@@ -2045,7 +2048,7 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
 #elif  FLUID_COMPRESSIBILITY==1
     double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
 #endif
-    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+//    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
     //Compute approximation of wave speed
     double Sl=min(ul-cl, ulr-clr);
     double Sr=max(ur+cr, ulr+clr);

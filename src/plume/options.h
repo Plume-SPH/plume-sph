@@ -62,7 +62,7 @@
 #endif
 
 //Define whether should pressure ghost particles should be took into account for density update
-//PGHOST_CONTRIBUTE_DES == 2: yes, take the eruption ghost particles into account
+//PGHOST_CONTRIBUTE_DES == 2: yes, take the eruption ghost particles and pressure ghost particles into account
 //PGHOST_CONTRIBUTE_DES == 1: yes, take the pressure ghost particles into account
 //PGHOST_CONTRIBUTE_DES == 0: No,  do not take the pressure ghost particles into account
 #ifndef PGHOST_CONTRIBUTE_DES
@@ -77,6 +77,7 @@
  * 0: Sod shock in first GSPH
  * 1: another Sod shock test: ee paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
  * 2: shu-Osher problem, see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
+ * 3: Sjogreen test: See paper Approximate Riemann Solvers for the Godunov SPH
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
@@ -92,7 +93,7 @@
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
-#define EQUAL_PART_MASS 1
+#define EQUAL_PART_MASS 0
 #endif
 #endif
 
@@ -108,13 +109,13 @@
 
 
 //define the order that used to approximate specific volume between two particles for GSPH
-/* GSPH_SPECIFIC_VOL_APP 0: zeroth order --> means use fi as fr and fj as fl directly
- * GSPH_SPECIFIC_VOL_APP 1: linear --> See Shu-ichiro's 2002 paper
- * GSPH_SPECIFIC_VOL_APP 3: Cubic --> See Shu-ichiro's 2002 paper
+/* GSPH_SPECIFIC_VOL_APP 0: zeroth order --> means use fi as fr and fj as fl directly --> It is actually piece wise constant
+ * GSPH_SPECIFIC_VOL_APP 1: linear --> See Shu-ichiro's 2002 paper  --> It is actually piece wise linear
+ * GSPH_SPECIFIC_VOL_APP 3: Cubic --> See Shu-ichiro's 2002 paper   --> It is actually piece wise cubic
  */
 #if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef GSPH_SPECIFIC_VOL_APP
-#define  GSPH_SPECIFIC_VOL_APP 3
+#define GSPH_SPECIFIC_VOL_APP 3
 #endif
 #endif
 
@@ -150,7 +151,7 @@
 //For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
 #if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 1
+#define  RIEMANN_SOLVER 0
 #endif
 #endif
 
@@ -209,7 +210,7 @@
 #endif
 #endif
 
-//Define whether use nature boundary condition for ks or essentiall boundary ks
+//Define whether use nature boundary condition for ks or essentiall boundary for ks
 /*
  * 0: essential
  * 1: nature
@@ -225,7 +226,7 @@
  * 1: adaptive      -->DENSITY_UPDATE_SML shold always be 1
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 0
+#define ADAPTIVE_SML 1
 #endif
 
 
@@ -234,7 +235,7 @@
 /*
  * 0: The basic symmetric format which can conserve momentum, without any further modification
  * 1: Based on 0, an external pressure is deduce by every pressure, the external pressure the pressure of atmosphere at corresponding height of particle a. ---> The purpose of this is to make sure when pressure gradient vanish the acceleration will be zero.
- *    Note: Please note that for GSPH, such tricky is not necessary, as GSPH can guarantee zero RHS of momentum equation when pressure gradient is zero.
+ *    Note: Please note that for GSPH, such trick is not necessary, as GSPH can guarantee zero RHS of momentum equation when pressure gradient is zero.
  *    So you should not use this option together with GSPH
  */
 #ifndef MOMENTUM_DISCRETIZE
@@ -249,7 +250,7 @@
  * 2 : filter both velocity and energy  ---> In which case, it is not necessary to smooth energy. ---> For energy smooth, it is OK to use a different filter scale length.
  */
 #ifndef HAVE_TURBULENCE_LANS
-#define HAVE_TURBULENCE_LANS 2
+#define HAVE_TURBULENCE_LANS 0
 #endif
 
 ////Define have physics viscosity
@@ -428,7 +429,7 @@
 #endif
 
 //Define whether should pressure ghost particles should be took into account for density update
-//PGHOST_CONTRIBUTE_DES == 2: yes, take the eruption ghost particles into account
+//PGHOST_CONTRIBUTE_DES == 2: yes, take the eruption ghost particles and pressure ghost particles into account
 //PGHOST_CONTRIBUTE_DES == 1: yes, take the pressure ghost particles into account
 //PGHOST_CONTRIBUTE_DES == 0: No,  do not take the pressure ghost particles into account
 #ifndef PGHOST_CONTRIBUTE_DES

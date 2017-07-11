@@ -1,12 +1,12 @@
-maximum simulation time(s):0.20
+maximum simulation time(s):0.18
 maximum simulation time step:100000000
-output time interval(s):0.001
+output time interval(s):0.1
 start eruption time(s):0.0
 end eruption time(s):7200.0
 output format indicator, 0 for matlab readable data, 1 for h5part data:1
 P_CONSTANT, the constant in equation of state for ideal gas:2587463
 the ratio between specific heat of constant pressure and that of constant volume:1.4
-smoothing length for air particles:0.003
+smoothing length for air particles:0.0032
 minimun x coordinate of initial domain:-0.4
 maximum x coordinate of initial domain:0.4
 minimun y coordinate of initial domain:0

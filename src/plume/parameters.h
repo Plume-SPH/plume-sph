@@ -986,6 +986,14 @@ const double Lu_P[DIMENSION]={5.0};
 const int Nnsrp_l_P=50;
 const int Nnsrp_r_P=50;
 const double csv_out_P=1.8; //time to output csv files
+#elif SHOCK_TUBE_TESTS==3
+//for Sjogreen test: See paper Approximate Riemann Solvers for the Godunov SPH
+const int Nb_P=15;
+const double Ll_P[DIMENSION]={-0.4};//-5-4.73
+const double Lu_P[DIMENSION]={0.4};
+const int Nnsrp_l_P=10;
+const int Nnsrp_r_P=10;
+const double csv_out_P=0.18; //time to output csv files
 #endif
 
 //----------------------------------------------------------------------------------------
@@ -1106,9 +1114,9 @@ const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length
 const int num_loop_P=5;
-const double thresh_P=1e-3;
+const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
-const double eta_smooth_P = 1.2; //We can try different value to get best results
+const double eta_smooth_P = 1.0; //We can try different value to get best results
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
