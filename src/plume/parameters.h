@@ -963,7 +963,7 @@ const int balancing_check_int_P = 30.0;
  *
  */
 #if (SHOCK_TUBE_TESTS==0)
-//For Sod shock tube
+//For Sod shock tube in first GSPH paper
 const int Nb_P=35;
 const double Ll_P[DIMENSION]={-0.4};
 const double Lu_P[DIMENSION]={0.4};
@@ -971,7 +971,7 @@ const int Nnsrp_r_P=20; //No saving real particles on right hand side
 const int Nnsrp_l_P=40; //No saving real particles on left hand side
 const double csv_out_P=0.2; //time to output csv files
 #elif SHOCK_TUBE_TESTS==1
-//For Sod shock tube
+//another Sod shock test: see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
 const int Nb_P=35;
 const double Ll_P[DIMENSION]={-0.4};
 const double Lu_P[DIMENSION]={0.4};
@@ -994,6 +994,14 @@ const double Lu_P[DIMENSION]={0.4};
 const int Nnsrp_l_P=10;
 const int Nnsrp_r_P=10;
 const double csv_out_P=0.18; //time to output csv files
+#elif SHOCK_TUBE_TESTS==4
+//strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
+const int Nb_P=15;
+const double Ll_P[DIMENSION]={-0.4};//-5-4.73
+const double Lu_P[DIMENSION]={0.4};
+const int Nnsrp_l_P=30;
+const int Nnsrp_r_P=30;
+const double csv_out_P=0.012; //time to output csv files
 #endif
 
 //----------------------------------------------------------------------------------------
@@ -1108,19 +1116,19 @@ const double h_bot_P= 20000.0; /*bottom height of the plume */
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
-const double alf_P=1.0;
-const double beta_P=2.0;
+const double alf_P=2.0;
+const double beta_P=4.0;
 const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length
 const int num_loop_P=5;
 const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
-const double eta_smooth_P = 1.0; //We can try different value to get best results
+const double eta_smooth_P = 0.8; //We can try different value to get best results --> Especially for unequal particle mass
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.1;
+const double CFL_P=0.01;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------

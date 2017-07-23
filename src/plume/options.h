@@ -85,13 +85,14 @@
 //Different cases for shock tube test:
 /*
  * 0: Sod shock in first GSPH
- * 1: another Sod shock test: ee paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
+ * 1: another Sod shock test: see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
  * 2: shu-Osher problem, see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
  * 3: Sjogreen test: See paper Approximate Riemann Solvers for the Godunov SPH
+ * 4: strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 1
+#define SHOCK_TUBE_TESTS 4
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -103,7 +104,7 @@
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
-#define EQUAL_PART_MASS 0
+#define EQUAL_PART_MASS 1
 #endif
 #endif
 
@@ -233,7 +234,7 @@
 //Define whether use adaptive smoothing length or not ---> adaptively adjust sml at a given interval, to avoid sml update at every time step
 /*
  * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
- * 1: adaptive      -->DENSITY_UPDATE_SML should always be 1
+ * 1: adaptive scheme one: based on the assumption that smoothing length should be proportional to ratio between particle mass and density. This is the traditional way of adaptive smoothing length -->DENSITY_UPDATE_SML should always be 1
  */
 #ifndef ADAPTIVE_SML
 #define ADAPTIVE_SML 1

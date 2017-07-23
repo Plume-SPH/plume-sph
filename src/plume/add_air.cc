@@ -158,6 +158,16 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  double vel_r = 2.0;  //Parameter
 	  double middle_point=0.;
 	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
+#elif SHOCK_TUBE_TESTS==4
+	  //strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
+	  double prss_l = 0.01;  //Parameter
+	  double prss_r = 1000;  //Parameter
+	  double des_l = 1.0;  //Parameter
+	  double des_r = 1.0;  //Parameter
+	  double vel_l = 0.0;  //Parameter
+	  double vel_r = 0.0;  //Parameter
+	  double middle_point=0.;
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
 #endif
 
 	  double dx_l=smlen;
