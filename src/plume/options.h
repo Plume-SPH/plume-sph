@@ -236,7 +236,7 @@
  * 1: adaptive      -->DENSITY_UPDATE_SML should always be 1
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 0
+#define ADAPTIVE_SML 1
 #endif
 
 
@@ -410,6 +410,8 @@
  * 0 : use original smoothing length   ---> It is easier to get negative energy
  * 1 : use current smoothing length hi  ----> More stable choice
  * 11: same as option1, the only difference is use (hi+hj)*0.5 instead of hi
+ * 12: same as option1, the only difference is use hj instead of hi
+ * 13: This one is using similar idea of 11, but use [w(hi)+w(hj)]*0.5 instead of
  * Note: to make sure conservation of momentum and energy conservation, smoothing length might be changed so that sml for two phases are equal in mixing region
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
