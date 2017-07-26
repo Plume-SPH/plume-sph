@@ -24,7 +24,8 @@ Particle::Particle ()
 
   mass = 0.;
   smlen = 0.;
-#if DENSITY_UPDATE_SML==0
+
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
   smlen_original = 0.;
 #endif
 
@@ -52,6 +53,10 @@ Particle::Particle ()
 
   for (i = 0; i < PHASE_NUM; i++)
 	  phase_density[i] = 0.;
+
+#if ADAPTIVE_SML==2
+  rho_based_on_dx=0.0;
+#endif
 
   pressure = 0.;
 
@@ -101,8 +106,11 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 
   mass = m;
   smlen = RATIO_SML_DX* h;
+
 #if DENSITY_UPDATE_SML==0
   smlen_original = h;
+#elif ADAPTIVE_SML==2
+  smlen_original = h*ADKE_sml_ratio_P;
 #endif
 
   specific_heat_p = 0.;
@@ -136,6 +144,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 //                                        //Density will be updated in updating of secondary variable
 
   state_vars[0] = 1.0;//default density is 1.0;
+
+#if ADAPTIVE_SML==2
+  rho_based_on_dx=1.0;
+#endif
 
   pressure = prss;
 
@@ -177,8 +189,11 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
   myprocess = id;
   mass = m;
   smlen = RATIO_SML_DX*h;
+
 #if DENSITY_UPDATE_SML==0
   smlen_original = h;
+#elif ADAPTIVE_SML==2
+  smlen_original = h*ADKE_sml_ratio_P;
 #endif
 
 
@@ -225,6 +240,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
     des = rhov;
     state_vars[0] = des;
 
+#if ADAPTIVE_SML==2
+  rho_based_on_dx=des;
+#endif
+
     update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
     pressure = pv0; //Why I have this? --> I need double check this!
 
@@ -266,8 +285,11 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
   myprocess = id;
   mass = m;
   smlen = RATIO_SML_DX*h;
+
 #if DENSITY_UPDATE_SML==0
   smlen_original = h;
+#elif ADAPTIVE_SML==2
+  smlen_original = h*ADKE_sml_ratio_P;
 #endif
 
   specific_heat_p = 0.;
@@ -313,6 +335,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
     des = rhov;
     state_vars[0] = des;
 
+#if ADAPTIVE_SML==2
+    rho_based_on_dx=des;
+#endif
+
     update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
     pressure = pv0; //Why I have this? --> I need double check this!
 
@@ -351,8 +377,11 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
 
   mass = m;
   smlen = RATIO_SML_DX* h;
+
 #if DENSITY_UPDATE_SML==0
   smlen_original = h;
+#elif ADAPTIVE_SML==2
+  smlen_original = h*ADKE_sml_ratio_P;
 #endif
 
   specific_heat_p = 0.;
@@ -385,6 +414,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
   state_vars[0] = des;//default density is 1.0;
   state_vars[1] = vel;
   state_vars[2] = prss/((gmm-1)*des);
+
+#if ADAPTIVE_SML==2
+  rho_based_on_dx=des;
+#endif
 
   pressure = prss;
 

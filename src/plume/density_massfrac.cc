@@ -44,6 +44,10 @@ smooth_density(THashTable * P_table)
   double engr, wm_e, s_e[DIMENSION];
 #endif
 
+#if ADAPTIVE_SML==2
+   double   hi_ori, tmprho_ori[PHASE_NUM], s_ori_i[DIMENSION], s_ori_j[DIMENSION], wght_ori, density_ori;
+#endif
+
   // create a Hash Table iterator instance
   THTIterator * itr = new THTIterator (P_table);
   Particle * pi = NULL;
@@ -82,14 +86,27 @@ smooth_density(THashTable * P_table)
       hi = pi->get_smlen ();
 #endif
 
-      double supp = 4.0 * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
-//      TKey ki = pi->getKey ();
+#if ADAPTIVE_SML==2
+      hi_ori=pi->get_original_smlen ();
+#endif
+
+      double supp = CUTOFF * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
 
       for (i = 0; i < PHASE_NUM; i++)
     	  tmprho[i] = 0.;
 
+#if ADAPTIVE_SML==2
+     for (i = 0; i < PHASE_NUM; i++)
+		  tmprho_ori[i] = 0.;
+#endif
+
       for (i = 0; i < PHASE_NUM; i++)
     	  phaserho[i] = 0.;
+
+//#if ADAPTIVE_SML==2
+//     for (i = 0; i < PHASE_NUM; i++)
+//    	 phaserho_ori[i] = 0.;
+//#endif
 
       for (i = 0; i < PHASE_NUM; i++)
     	  wnorm [i] = 0.;
@@ -174,6 +191,16 @@ smooth_density(THashTable * P_table)
 #endif
 						tmprho[phs_i-1] += wm;
 
+#if ADAPTIVE_SML==2
+						for (k = 0; k < DIMENSION; k++)
+						    s_ori_i[k] = ds[k]/hi_ori;
+						for (k = 0; k < DIMENSION; k++)
+						    s_ori_j[k] = ds[k]/(pj->get_original_smlen ());
+
+						wght_ori = 0.5*(weight(s_ori_i,hi_ori)+weight(s_ori_j,pj->get_original_smlen ()));
+						tmprho_ori[phs_i-1] += wght_ori*mj;
+#endif
+
 #if (DENSITY_UPDATE_SPH == 1) || (DENSITY_UPDATE_SPH == 22)
 						//View multiple phase SPH as one set of discretized point
 						wnorm[phs_i-1] += wm / rhoj;
@@ -193,6 +220,10 @@ smooth_density(THashTable * P_table)
 
       density=0.0;
       norm = 0.0;
+
+#if ADAPTIVE_SML==2
+      density_ori=0.0;
+#endif
 
 #if HAVE_ENERGY_SMOOTH==1 //Also do normalization
       assert (wnorm_e > 0);
@@ -242,6 +273,14 @@ smooth_density(THashTable * P_table)
      }
 #endif
 
+#if ADAPTIVE_SML==2
+     for (phs_i = 1; phs_i<= PHASE_NUM; phs_i++)
+     {
+//       phaserho_ori[phs_i-1]=tmprho_ori[phs_i-1];
+   	   density_ori +=tmprho_ori[phs_i-1];
+     }
+#endif
+
 #ifndef SIMULATE_ASH
      mssfrc=phaserho[1]/density;
 #else
@@ -254,6 +293,10 @@ smooth_density(THashTable * P_table)
      assert(density > 0);
 //     assert(!isnan(density));
      pi->put_new_density(density);
+#endif //DENSITY_UPDATE_SPH
+
+#if ADAPTIVE_SML==2
+     pi->put_dx_density(density_ori);
 #endif
 
 #ifdef DEBUG

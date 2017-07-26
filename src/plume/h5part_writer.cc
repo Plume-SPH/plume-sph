@@ -57,7 +57,7 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
   vector < double > mymass;
 #endif
 
-#if defined (WRITE_SML) && (ADAPTIVE_SML ==1)
+#if defined (WRITE_SML) && (ADAPTIVE_SML >=1)
   vector < double > mysml;
 #endif
 
@@ -114,7 +114,7 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
       mymass.push_back(pi->get_mass ());
 #endif
 
-#if defined (WRITE_SML) && (ADAPTIVE_SML ==1)
+#if defined (WRITE_SML) && (ADAPTIVE_SML >=1)
       mysml.push_back(pi->get_smlen ());
 #endif
 
@@ -197,7 +197,7 @@ write_h5part(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 #endif
 
   //mysml
-#if defined (WRITE_SML) && (ADAPTIVE_SML ==1)
+#if defined (WRITE_SML) && (ADAPTIVE_SML >=1)
   copy(mysml.begin(), mysml.end(), buf);
   ierr = GH5_Write(gid, "sml", dims, (void *) buf, start, my_count,  DOUBLETYPE);
 #endif

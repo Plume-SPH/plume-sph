@@ -52,7 +52,7 @@ protected:
    * 1) updating of momentum and energy use larger smoothing length. ---> conserve energy and momentum
    * 2) updating of density based on summation expression and use its original smoothing length --> The normalized summation expression will always guarantee conservation of mass
    */
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
   double smlen_original;  //Original sml will not change during whole simulation ---> if sml is adaptive, we will not need sml_original
 #endif
 
@@ -75,6 +75,10 @@ protected:
   double temperature;
 
   double specific_heat_p; //specific heat under constant pressure
+
+#if ADAPTIVE_SML==2
+  double rho_based_on_dx; //This is an intermediate density calculated based on original smoothing length. ---> Needed for ADKE
+#endif
 
   //density of each phase
   double phase_density[PHASE_NUM]; //phase1 = air, phase2 =erupted material
@@ -300,7 +304,7 @@ public:
     return smlen;
   }
 
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
   //! get original smoothing length of current paricle
   double get_original_smlen () const
   {
@@ -362,6 +366,14 @@ public:
   {
     return state_vars[0];/*In C++, array index starts from zero*/;
   }
+
+#if ADAPTIVE_SML==2
+  //! get dx_density
+  const double get_dx_density () const
+  {
+    return rho_based_on_dx;
+  }
+#endif
 
   //! get new density
   const double get_new_density () const
@@ -608,6 +620,14 @@ public:
   {
     state_vars[0] = den;
   }
+
+#if ADAPTIVE_SML==2
+  //! update dx_density value
+  void put_dx_density (double den)
+  {
+	  rho_based_on_dx = den;
+  }
+#endif
 
   //! update new_density value
   void put_new_density (double den)

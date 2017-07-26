@@ -501,7 +501,11 @@ void adaptive_sml(int myid, THashTable * P_table)
 	  double err;
 	  THTIterator *itr2 = new THTIterator(P_table);
 
-//	  double hi;
+#if ADAPTIVE_SML==2
+	  int p_num ;
+	  double dlog_sum;
+	  double g_bar;
+#endif
 
 	#ifdef DEBUG
 	   bool do_search = false;
@@ -529,6 +533,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 			  for (i = 0; i < DIMENSION; i++)
 				  xi[i] = *(pi->get_coords() + i);
 
+#if ADAPTIVE_SML==1
 			  int loop = 0;
 			  for (loop = 0; loop < num_loop_P; loop ++) //We will set num_loop_P = 2
 			  {
@@ -576,7 +581,44 @@ void adaptive_sml(int myid, THashTable * P_table)
 				  err=abs((H_new-H_old)/H_old);
 				  if (err<thresh_P)
 					  break;
-			  }//end of for loop
+
+			  }//end of for iterative loop
+#elif ADAPTIVE_SML==2
+		  // expanded smoothing length for Momentum equation
+		  H_old =pi->get_original_smlen ();
+		  H_star = H_old *  C_smooth_P;
+		  supp = CUTOFF * H_star;
+
+		  p_num = 0;
+		  dlog_sum = 0.0;
+
+		  vector < TKey > pneighs = pi->get_neighs();
+		  vector < TKey >::iterator p_itr;
+		  for (p_itr = pneighs.begin(); p_itr != pneighs.end(); p_itr++)
+		  {
+			 pj = (Particle *) P_table->lookup(*p_itr);
+			 assert (pj);
+
+			 if (pj->contr_dens())
+			 {
+
+				  for (i = 0; i < DIMENSION; i++)
+					   dx[i] = xi[i] - *(pj->get_coords() + i);
+
+				  if (in_support(dx, supp))
+				  {
+					  dlog_sum += log(pj->get_dx_density());
+					  p_num++;
+				  }
+			  }
+		  }// end loop over neighs
+
+		  rho_star=pi->get_dx_density ();
+		  g_bar=exp(dlog_sum/p_num);
+		  H_new=ADKE_k_P*pow((rho_star/g_bar), ADKE_epson_P)*H_old;
+		  pi->put_smlen(H_new);
+#endif //ADAPTIVE_SML==1
+
 		  }//if need neighbour
 	  }//go through all particles
 }

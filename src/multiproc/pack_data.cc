@@ -187,8 +187,11 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
 
   pack_array->mass  = psend->mass;
   pack_array->smlen = psend->smlen;
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
   pack_array->smlen_original = psend->smlen_original;
+#endif
+#if ADAPTIVE_SML==2
+  pack_array->rho_based_on_dx = psend->rho_based_on_dx;
 #endif
   pack_array->mass_frac = psend->mass_frac;
   pack_array->smoothed_e = psend->smoothed_e;
@@ -384,8 +387,11 @@ void unpack_particle (ParticlePack *packet, Particle *part)
   
   part->mass  = packet->mass;
   part->smlen = packet->smlen;
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
   part->smlen_original = packet->smlen_original;
+#endif
+#if ADAPTIVE_SML==2
+  part->rho_based_on_dx = packet->rho_based_on_dx;
 #endif
   part->myprocess = packet->myprocess;
   

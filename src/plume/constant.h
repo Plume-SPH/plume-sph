@@ -85,7 +85,7 @@ const double E_FILTER_HRATIO = 1.0;  //Ratio of energy filtering smoothing lengt
 
 //Adaptive sml
 const int SML_UPDATE_INT = 0.1;
-const double RATIO_SML_DX = 1.0; //The ratio between sml and dx, the maximum value allowed by current code design is 2.0 (as number of particles in each direction in each bucket is 6, the kernal cut off is 3).
+const double RATIO_SML_DX = 1.5; //The ratio between sml and dx, the maximum value allowed by current code design is 2.0 (as number of particles in each direction in each bucket is 6, the kernal cut off is 3).
                                  /*
                                   * This constant is used within particle class (which might not be a good design),
                                   * 1) For whatever sml given in constructors of particle, the sml will be enlarged by a ratio of RATIO_SML_DX

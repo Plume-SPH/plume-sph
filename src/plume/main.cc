@@ -316,7 +316,7 @@ main(int argc, char **argv)
     //In current version, neighbor searching and sml updating are separate --> Works OK for current framework, for more general framework, it might need to be integrated together.
     // search and update neighbors
     search_neighs_consth (myid, P_table, BG_mesh);
-#if ADAPTIVE_SML==1
+#if ADAPTIVE_SML>=1
     if ((timeprops->step) % SML_UPDATE_INT == 0)
     	// search and update neighbors
     	adaptive_sml(myid, P_table);
@@ -772,7 +772,7 @@ main(int argc, char **argv)
     adapt = 0; // and adapt flag
 
     search_neighs_consth (myid, P_table, BG_mesh);
-#if ADAPTIVE_SML==1
+#if ADAPTIVE_SML>=1
     if ((timeprops->step) % SML_UPDATE_INT == 0)
     	// search and update neighbors
     	adaptive_sml(myid, P_table);
@@ -1047,7 +1047,7 @@ main(int argc, char **argv)
 
     ierr = 0;  // reset error code
 
-#if ADAPTIVE_SML==1
+#if ADAPTIVE_SML>=1
     //if ((timeprops->step) % SML_UPDATE_INT == 0)
     	// search and update neighbors
     	adaptive_sml(myid, P_table);

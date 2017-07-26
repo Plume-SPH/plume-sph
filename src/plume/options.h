@@ -28,6 +28,7 @@
 #define USE_SUMMATION
 
 // only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
+// NOTE: currently, all of these schemes are only applied to density updating. Actually, some of these ideas can be used in momentum and energy updating.
 /*
  * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
  * 0 : use original smoothing length   ---> It is easier to get negative energy
@@ -92,7 +93,7 @@
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 4
+#define SHOCK_TUBE_TESTS 1
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -104,7 +105,7 @@
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
-#define EQUAL_PART_MASS 1
+#define EQUAL_PART_MASS 0
 #endif
 #endif
 
@@ -235,9 +236,10 @@
 /*
  * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
  * 1: adaptive scheme one: based on the assumption that smoothing length should be proportional to ratio between particle mass and density. This is the traditional way of adaptive smoothing length -->DENSITY_UPDATE_SML should always be 1
+ * 2: adaptive scheme two: based ADKE: see paper "Adaptive kernel estimation and SPH tensile instability", In this case, need original sml, even though updating of density is based on current sml, we still have original sml.
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 1
+#define ADAPTIVE_SML 0
 #endif
 
 
@@ -586,7 +588,8 @@
 //Define whether use adaptive smoothing length or not ---> adaptively adjust sml at a given interval, to avoid sml update at every time step
 /*
  * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
- * 1: adaptive      -->DENSITY_UPDATE_SML shold always be 1
+ * 1: adaptive scheme one: based on the assumption that smoothing length should be proportional to ratio between particle mass and density. This is the traditional way of adaptive smoothing length -->DENSITY_UPDATE_SML should always be 1
+ * 2: adaptive scheme two: based ADKE: see paper "Adaptive kernel estimation and SPH tensile instability", In this case, need original sml, even though updating of density is based on current sml, we still have original sml.
  */
 #ifndef ADAPTIVE_SML
 #define ADAPTIVE_SML 0

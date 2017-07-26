@@ -229,7 +229,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		P_table->add(pkey, pnew);
 		num_particle++;
 		neighs.push_back(pkey);
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
 		pnew->put_smlen_original(dx_l);
 #endif
 	}
@@ -256,7 +256,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		P_table->add(pkey, pnew);
 		num_particle++;
 		neighs.push_back(pkey);
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
 		pnew->put_smlen_original(dx_l);
 #endif
 	}
@@ -285,7 +285,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		num_particle++;
 		pcrd[0] += dx_l;
 		neighs.push_back(pkey);
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
 		pnew->put_smlen_original(dx_l);
 #endif
 	}
@@ -313,7 +313,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		num_particle++;
 		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
 		pnew->put_smlen_original(dx_r);
 #endif
 	}
@@ -340,7 +340,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		num_particle++;
 		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
 		pnew->put_smlen_original(dx_r);
 #endif
 	}
@@ -367,7 +367,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		num_particle++;
 		pcrd[0] += dx_r;
 		neighs.push_back(pkey);
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
 		pnew->put_smlen_original(dx_r);
 #endif
 	}

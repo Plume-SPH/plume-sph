@@ -43,8 +43,11 @@ struct ParticlePack
   //doubles
   double mass;
   double smlen;
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
   double smlen_original;
+#endif
+#if ADAPTIVE_SML==2
+  double rho_based_on_dx;
 #endif
   double mass_frac;
   double smoothed_e;

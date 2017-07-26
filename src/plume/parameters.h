@@ -1116,19 +1116,23 @@ const double h_bot_P= 20000.0; /*bottom height of the plume */
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
-const double alf_P=2.0;
-const double beta_P=4.0;
+const double alf_P=1.0;
+const double beta_P=1.0;
 const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length
 const int num_loop_P=5;
 const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
-const double eta_smooth_P = 0.8; //We can try different value to get best results --> Especially for unequal particle mass
-
+const double eta_smooth_P = 1.0; //We can try different value to get best results --> Especially for unequal particle mass
+#if ADAPTIVE_SML==2
+const double ADKE_k_P =0.7;
+const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
+const double ADKE_sml_ratio_P = 2.0; // The ration that used to determine the initial smoothing length. ---> based on input smoothing length. This is useful when use equal particle mass but different interval
+#endif
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.01;
+const double CFL_P=0.1;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------

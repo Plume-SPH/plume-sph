@@ -132,7 +132,11 @@ GMFG_new_MPI_Datatype ()
   blockcounts2[2] = 5 + 7*DIMENSION + NO_OF_EQNS;  // For GSPH there will be 5 additional variable for gradient
 #endif
 
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2  //This is for original smoothing length
+  blockcounts2[2]++;
+#endif
+
+#if ADAPTIVE_SML==2
   blockcounts2[2]++;
 #endif
 
@@ -152,7 +156,7 @@ GMFG_new_MPI_Datatype ()
 
   // create datatype for Boundary Images
 #if BC_FOR_KX==1
-  int blockcounts3[3] = { 2, TKEYLENGTH + KEYLENGTH, DIMENSION + NO_OF_EQNS +1};
+  int blockcounts3[3] = { 2, TKEYLENGTH + KEYLENGTH, DIMENSION + NO_OF_EQNS +1};  //if impose natural BC for KX, need additional variables in image
 #else
   int blockcounts3[3] = { 2, TKEYLENGTH + KEYLENGTH, DIMENSION + NO_OF_EQNS };
 #endif
