@@ -43,6 +43,17 @@
 #define DENSITY_UPDATE_SML 1
 #endif
 
+//Define the smoothing length used in momentum and energy update
+//Note: To be safe, it would be better to have more neighbors than needed by support.
+/*
+ * 0 : use hi for updating of energy and momentum of particle i --> The default manner
+ * 1 : use hj for updating of energy and momentum of particle i
+ * 2 : use 0.5(hi+hj) for updating of energy and momentum of particle i
+ */
+#ifndef DENSITY_UPDATE_SML
+#define DENSITY_UPDATE_SML 1
+#endif
+
 /*
  * Based on assumption of immediate thermodynamics equilibrium, a internal energy smooth might be necessary to make this assumption to be true
  * 0: do not use energy smooth

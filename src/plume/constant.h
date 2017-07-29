@@ -39,7 +39,8 @@ const double EXT_DOM_COF_BOT = 1.5;//Coefficient that used to extend  -z directi
 // Number of particles per cell per dimension EXT_DOM_COF, to avoid placing particles on the boundary-->placing of particles on the boundary will cause instability of simulation.
 const int PARTICLE_DENSITY=6;
 const int ADDING_NUM= 6; //For 1D is 6
-const double CUTOFF = 5.0;
+const double CUTOFF = 3.0; // CUTOFF is very critical
+const double CUTOFF2 = 6.0; // CUTOFF is very critical --> Need to be at least CUTOFF*sqrt(2)
 
 // Bucket TYPES
 const int BREIF = 0x0;  //Brief bucket which is totally empty
@@ -132,7 +133,8 @@ const double EXT_DOM_COF_BOT = 1.5;//Coefficient that used to extend  -z directi
 // Number of particles per cell per dimension EXT_DOM_COF, to avoid placing particles on the boundary-->placing of particles on the boundary will cause instability of simulation.
 const int PARTICLE_DENSITY=6;
 const int ADDING_NUM= 256; //For 3D is 256
-const double CUTOFF = 5.0;
+const double CUTOFF = 3.0; // CUTOFF is very critical
+const double CUTOFF2 = 6.0; // CUTOFF is very critical --> Need to be at least CUTOFF*sqrt(2)
 
 // Bucket TYPES
 const int BREIF = 0x0;  //Brief bucket which is totally empty

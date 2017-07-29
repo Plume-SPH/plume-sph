@@ -120,7 +120,7 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		  // expanded smoothing length for Momentum equation
 		  double hi = pi->get_smlen();
-		  double supp = 3 * hi;
+		  double supp = CUTOFF2 * hi;
 		  double pressi = (pi->get_pressure());
 		  double tempi= pi->get_temperature ();
 		  Cp_i = pi->get_specific_heat_p();
@@ -464,7 +464,7 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		  // expanded smoothing length for Momentum equation
 		  hi = pi->get_smlen();
-		  double supp = 3 * hi;
+		  double supp = CUTOFF2 * hi;
 		  double pressi = (pi->get_pressure());
 		  double tempi= pi->get_temperature ();
 		  Cp_i = pi->get_specific_heat_p();

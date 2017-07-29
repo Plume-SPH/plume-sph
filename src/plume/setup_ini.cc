@@ -287,7 +287,7 @@ setup_ini(int myid, THashTable * P_table, HashTable * BG_mesh,
 //
 //	       // expanded smoothing length for Momentum equation
 //	        double hi = pi->get_smlen();
-//		    double supp = 3 * hi;
+//		    double supp = CUTOFF2 * hi;
 ////	        wnorm =0;
 // 	       // list of neighbors
 // 	       vector < TKey > pneighs = pi->get_neighs();

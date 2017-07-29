@@ -82,7 +82,7 @@ smooth_velocity(THashTable * P_table)
 
 
       double hi = pi->get_smlen ();
-      double supp = 3.0 * hi;
+      double supp = CUTOFF2 * hi;
 
       for (i = 0; i < DIMENSION; i++)
     	  temp_dv[i] = 0.;

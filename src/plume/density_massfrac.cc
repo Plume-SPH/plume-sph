@@ -90,7 +90,7 @@ smooth_density(THashTable * P_table)
       hi_ori=pi->get_original_smlen ();
 #endif
 
-      double supp = CUTOFF * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
+      double supp = CUTOFF2 * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
 
       for (i = 0; i < PHASE_NUM; i++)
     	  tmprho[i] = 0.;

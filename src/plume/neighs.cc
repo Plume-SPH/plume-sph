@@ -80,7 +80,7 @@ search_neighs_consth (int myid, THashTable * P_table, HashTable * BG_mesh)
 	      	     else
 	      	     {
 #endif
-	      	          // 3*sqrt(2) < 4.25
+	      	          // 3*sqrt(2) < 4.25 ---> Why choose this number?
 	      	          hi = 4.25 * pi->get_smlen();
 	      	          for (int k = 0; k < DIMENSION; k++)
 	      	            xi[k] = *(pi->get_coords() + k);
@@ -351,7 +351,7 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
 			  // expanded smoothing length for Momentum equation
 			  H_old = pi->get_smlen();
 			  H_star = H_old *  C_smooth_P;
-			  supp = 3 * H_star;
+			  supp = CUTOFF2 * H_star;
 
 			  vector < TKey > pneighs = pi->get_neighs();
 			  vector < TKey >::iterator p_itr;
@@ -544,7 +544,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 				  // expanded smoothing length for Momentum equation
 				  H_old = pi->get_smlen();
 				  H_star = H_old * C_smooth_P;
-				  supp = CUTOFF * H_star;
+				  supp = CUTOFF2 * H_star;
 
 				  vector < TKey > pneighs = pi->get_neighs();
 				  vector < TKey >::iterator p_itr;
@@ -619,7 +619,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 		  // expanded smoothing length for Momentum equation
 		  H_old =pi->get_original_smlen ();
 		  H_star = H_old *  C_smooth_P;
-		  supp = CUTOFF * H_star;
+		  supp = CUTOFF2 * H_star;
 
 		  p_num = 0;
 		  dlog_sum = 0.0;
@@ -703,7 +703,7 @@ calculate_mass_grad (THashTable * P_table)
           xi[i] = (*(pi->get_coords () + i));
 
       hi = pi->get_smlen ();
-      double supp = CUTOFF * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
+      double supp = CUTOFF2 * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
 
 #if ADAPTIVE_SML==31
       mi=pi->get_mass();

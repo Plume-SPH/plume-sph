@@ -86,7 +86,7 @@ void calc_gradients(THashTable *P_table)
 	      hi = pi->get_smlen ();
 #endif
 
-	      double supp = 3.0 * hi;
+	      double supp = CUTOFF2 * hi;
 
 	      int nreal=0;
 

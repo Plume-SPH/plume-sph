@@ -102,7 +102,7 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
         {
           double h = pj->get_smlen();
 
-          supp = 3 * h;
+          supp = CUTOFF2 * h;
           for (j = 0; j < DIMENSION; j++)
             dx[j] = refc[j] - *(pj->get_coords() + j);
 
@@ -158,7 +158,7 @@ apply_bcond(int myid, THashTable * P_table, HashTable * BG_mesh,
                   {
                     double h = pj->get_smlen();
 
-                    supp = 3 * h;
+                    supp = CUTOFF2 * h;
                     for (j = 0; j < DIMENSION; j++)
                       dx[j] = refc[j] - *(pj->get_coords() + j);
 
