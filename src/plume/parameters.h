@@ -1117,7 +1117,7 @@ const double h_bot_P= 20000.0; /*bottom height of the plume */
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
 const double alf_P=1.0;
-const double beta_P=1.0;
+const double beta_P=2.0;
 const double ata_P = 0.01;
 //----------------------------------------------------------------------------------------
 // for variable smooth length
@@ -1129,6 +1129,9 @@ const double eta_smooth_P = 1.0; //We can try different value to get best result
 const double ADKE_k_P =0.7;
 const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
 const double ADKE_sml_ratio_P = 2.0; // The ration that used to determine the initial smoothing length. ---> based on input smoothing length. This is useful when use equal particle mass but different interval
+#elif ADAPTIVE_SML==31
+const double MY_ADKE_k_P=1.0;
+const double Mreduce_R_P=1.0; //coefficient that used to reduce equivalent particle mass in adaptive smoothing length.
 #endif
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update

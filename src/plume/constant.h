@@ -81,11 +81,11 @@ const double ENERGY_CUT = 1.0;
 //heat transfer spatial ratio to momentum exchange
 const double HEAT_TRANS_SCALE_RATIO = 1.0;
 const double E_SMOOTH_RATIO = 4.0;  //Ratio of energy smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)
-const double E_FILTER_HRATIO = 1.0;  //Ratio of energy filtering smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)
+const double E_FILTER_HRATIO = 2.0;  //Ratio of energy filtering smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)
 
 //Adaptive sml
 const int SML_UPDATE_INT = 0.1;
-const double RATIO_SML_DX = 1.5; //The ratio between sml and dx, the maximum value allowed by current code design is 2.0 (as number of particles in each direction in each bucket is 6, the kernal cut off is 3).
+const double RATIO_SML_DX = 2.0; //The ratio between sml and dx, the maximum value allowed by current code design is 2.0 (as number of particles in each direction in each bucket is 6, the kernal cut off is 3).
                                  /*
                                   * This constant is used within particle class (which might not be a good design),
                                   * 1) For whatever sml given in constructors of particle, the sml will be enlarged by a ratio of RATIO_SML_DX
@@ -94,6 +94,7 @@ const double RATIO_SML_DX = 1.5; //The ratio between sml and dx, the maximum val
                                   * By doing this, what we actually do is having enough particles within kernel without using adaptive sml (which will cause losing of conservation of energy and momentum)
                                   * This is especially necessary for simulation with relatively large density ratio.
                                   */
+const double MASS_IND_THRESH=0.;
 
 //Parameters for GSPH
 const double C_SHOCK = 3.0; //corresponding to number of particles in shock surface.

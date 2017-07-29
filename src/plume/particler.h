@@ -350,6 +350,11 @@ void calc_gradients(
 		);
 #endif
 
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+void calculate_mass_grad (
+		THashTable * //P_table
+		);
+#endif
 ////This function is useless should be removed.
 //int
 //put_ghost_particles (

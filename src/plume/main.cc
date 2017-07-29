@@ -1025,6 +1025,10 @@ main(int argc, char **argv)
 //	  check_particle_bypos (P_table);
 //#endif
 
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+    calculate_mass_grad (P_table);
+#endif
+
   // Write inital configuration
   write_output(myid, numprocs, P_table, timeprops);
 
@@ -1087,6 +1091,10 @@ main(int argc, char **argv)
 
     // update particle positions
     update_pos (P_table, timeprops, matprops);
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+    calculate_mass_grad (P_table);
+#endif
 
 #ifdef DEBUG
   if(check_bypos)

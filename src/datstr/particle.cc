@@ -43,6 +43,15 @@ Particle::Particle ()
   for (i = 0; i < DIMENSION; i++)
     coord[i] = 0.;
 
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  for (i = 0; i < DIMENSION; i++)
+    dm[i] = 0.;
+#endif
+
+#if ADAPTIVE_SML==31
+  m_ind=0.;
+#endif
+
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.;
 
@@ -131,6 +140,15 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
     coord[i] = *(crd + i);
   }
 
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  for (i = 0; i < DIMENSION; i++)
+    dm[i] = 0.;
+#endif
+
+#if ADAPTIVE_SML==31
+  m_ind=0.;
+#endif
+
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.;
 
@@ -216,6 +234,15 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
     coord[i] = *(crd + i);
 //    bedfrict[i] = 0;
   }
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  for (i = 0; i < DIMENSION; i++)
+    dm[i] = 0.;
+#endif
+
+#if ADAPTIVE_SML==31
+  m_ind=0.;
+#endif
 
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.0;
@@ -311,6 +338,15 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
     coord[i] = *(crd + i);
   }
 
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  for (i = 0; i < DIMENSION; i++)
+    dm[i] = 0.;
+#endif
+
+#if ADAPTIVE_SML==31
+  m_ind=0.;
+#endif
+
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.;
 
@@ -401,6 +437,15 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
   {
     coord[i] = *(crd + i);
   }
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  for (i = 0; i < DIMENSION; i++)
+    dm[i] = 0.;
+#endif
+
+#if ADAPTIVE_SML==31
+  m_ind=0.;
+#endif
 
   for (i = 0; i < DIMENSION; i++)
 	  smoothed_v[i] = 0.;

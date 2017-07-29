@@ -140,6 +140,14 @@ GMFG_new_MPI_Datatype ()
   blockcounts2[2]++;
 #endif
 
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  blockcounts2[2] += DIMENSION;
+#endif
+
+#if ADAPTIVE_SML==31
+  blockcounts2[2] ++;
+#endif
+
   MPI_Address (&(particlePack->bc_type), &displs2[0]);
   MPI_Address (&(particlePack->key), &displs2[1]);
   MPI_Address (&(particlePack->mass), &displs2[2]);

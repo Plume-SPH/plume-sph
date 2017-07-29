@@ -59,6 +59,9 @@ mom_engr_update(int myid, THashTable * P_table,
   //create a hash table iterator instance
   THTIterator *itr = new THTIterator(P_table);
 
+#if ADAPTIVE_SML==3
+  double dmi[DIMENSION], dmi_max;
+#endif
 
 #ifdef DEBUG
    bool do_search = false;
@@ -123,9 +126,24 @@ mom_engr_update(int myid, THashTable * P_table,
 		  Cp_i = pi->get_specific_heat_p();
 
 		  const double *uvec = pi->get_state_vars();
+
+#if ADAPTIVE_SML==3
+	      for (i = 0; i < DIMENSION; i++)
+	    	  dmi[i] = (*(pi->get_mass_grad() + i));
+
+		  dmi_max=0;
+		  for (k=0; k<DIMENSION; k++)
+			  if (dmi[k]>dmi_max)
+				  dmi_max=dmi[k];
+
+		  // density must always be positive
+		  double Vi = 1.0 / (uvec[0]-dmi_max/(DIMENSION+1)); // k=1/2 for 1D is correct, k=1/3 for 2D and k=1/4 for 3D actually only give the uper bound,
+		  assert(Vi > 0);
+#else
 		  // density must always be positive
 		  assert(uvec[0] > 0);
 		  double Vi = 1.0 / uvec[0];
+#endif
 
 #if MOMENTUM_DISCRETIZE ==1
 		  double p_external;
@@ -232,8 +250,9 @@ mom_engr_update(int myid, THashTable * P_table,
 #if MOMENTUM_DISCRETIZE ==1
 		          mpvsqij = mj*((pressj-p_external) * Vj * Vj + pvsqi + vis);
 #else
-		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
-#endif
+          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
+
+#endif //MOMENTUM_DISCRETIZE ==1
 
 	              for (int ii=0; ii<DIMENSION; ii++)
 	            	  s_heat[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
@@ -369,6 +388,11 @@ mom_engr_update(int myid, THashTable * P_table,
 
   Particle *pi=NULL;
 
+#if ADAPTIVE_SML==3
+  double dmi[DIMENSION], dmi_max;
+  double dmj[DIMENSION], dmj_max;
+#endif
+
 #if CODE_DIMENSION == 3
   double gravity[DIMENSION] = { 0., 0., -g_P};
 #elif CODE_DIMENSION == 2
@@ -448,9 +472,24 @@ mom_engr_update(int myid, THashTable * P_table,
 		  gammai= pi->get_gamma();
 
 		  const double *uvec = pi->get_state_vars();
+
+#if ADAPTIVE_SML==3
+	      for (i = 0; i < DIMENSION; i++)
+	    	  dmi[i] = (*(pi->get_mass_grad() + i));
+
+		  dmi_max=0;
+		  for (k=0; k<DIMENSION; k++)
+			  if (dmi[k]>dmi_max)
+				  dmi_max=dmi[k];
+
+		  // density must always be positive
+		  double Vi = 1.0 / (uvec[0]-dmi_max/(DIMENSION+1)); // k=1/2 for 1D is correct, k=1/3 for 2D and k=1/4 for 3D actually only give the uper bound,
+		  assert(Vi > 0);
+#else
 		  // density must always be positive
 		  assert(uvec[0] > 0);
 		  double Vi = 1.0 / uvec[0];
+#endif
 
           // velocity veli
 #if HAVE_TURBULENCE_LANS !=0
@@ -507,9 +546,25 @@ mom_engr_update(int myid, THashTable * P_table,
 		      if (in_support(dx, supp))
 		      {
 				  const double *uvecj = pj->get_state_vars();
-				  // density must always be positive
-				  assert(uvecj[0] > 0);
-				  double Vj = 1.0 /uvecj[0];
+
+#if ADAPTIVE_SML==3
+	      for (i = 0; i < DIMENSION; i++)
+	    	  dmj[i] = (*(pj->get_mass_grad() + i));
+
+		  dmj_max=0;
+		  for (k=0; k<DIMENSION; k++)
+			  if (dmj[k]>dmj_max)
+				  dmj_max=dmj[k];
+
+		  // density must always be positive
+		  double Vj = 1.0 / (uvecj[0]-dmj_max/(DIMENSION+1)); // k=1/2 for 1D is correct, k=1/3 for 2D and k=1/4 for 3D actually only give the uper bound,
+		  assert(Vj > 0);
+#else
+		  // density must always be positive
+		  assert(uvecj[0] > 0);
+		  double Vj = 1.0 /uvecj[0];
+#endif
+
 		          double mj = pj->get_mass();
 		          double pressj = (pj->get_pressure());
 		          hj = pj->get_smlen();
@@ -537,13 +592,23 @@ mom_engr_update(int myid, THashTable * P_table,
 		          double p_star;
 		          double v_star[DIMENSION];
 
+#if RP_MASS_WEIGHTED==0
 #if USE_GSPH==1
 		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
 #elif USE_GSPH==2
 		          double sample_pt;
 		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
 		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
-#endif
+#endif //USE_GSPH
+
+#elif RP_MASS_WEIGHTED>0
+		          double sample_pt=0.0;
+#if USE_GSPH==2
+		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+#endif //USE_GSPH
+		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt, pi->get_mass(), mj);
+
+#endif //RP_MASS_WEIGHTED
 		          //compute turbulent stress
 		          turb_stress=0.0;
 #if HAVE_TURBULENCE_LANS !=0
@@ -616,9 +681,25 @@ mom_engr_update(int myid, THashTable * P_table,
 		      if (in_support(dx, supp))
 		      {
 				  const double *uvecj = pj->get_state_vars();
+
+#if ADAPTIVE_SML==3
+				  for (i = 0; i < DIMENSION; i++)
+					  dmj[i] = (*(pj->get_mass_grad() + i));
+
+				  dmj_max=0;
+				  for (k=0; k<DIMENSION; k++)
+					  if (dmj[k]>dmj_max)
+						  dmj_max=dmj[k];
+
+				  // density must always be positive
+				  double Vj = 1.0 / (uvecj[0]-dmj_max/(DIMENSION+1)); // k=1/2 for 1D is correct, k=1/3 for 2D and k=1/4 for 3D actually only give the uper bound,
+				  assert(Vj > 0);
+#else
 				  // density must always be positive
 				  assert(uvecj[0] > 0);
 				  double Vj = 1.0 /uvecj[0];
+#endif
+
 		          double mj = pj->get_mass();
 		          double pressj = (pj->get_pressure());
 		          hj = pj->get_smlen();
@@ -645,13 +726,25 @@ mom_engr_update(int myid, THashTable * P_table,
                   //pre-compute, solve RP to get p* and v*
 		          double p_star;
 		          double v_star[DIMENSION];
+
+#if RP_MASS_WEIGHTED==0
 #if USE_GSPH==1
 		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
 #elif USE_GSPH==2
 		          double sample_pt;
 		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
 		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
-#endif
+#endif //USE_GSPH
+
+#elif RP_MASS_WEIGHTED>0
+		          double sample_pt=0.0;
+#if USE_GSPH==2
+		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+#endif //USE_GSPH
+		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt, pi->get_mass(), mj);
+
+#endif //RP_MASS_WEIGHTED
+
 		          //compute turbulent stress
 				  turb_stress=0.0;
 #if HAVE_TURBULENCE_LANS !=0

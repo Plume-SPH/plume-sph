@@ -51,8 +51,14 @@ struct ParticlePack
 #endif
   double mass_frac;
   double smoothed_e;
+#if ADAPTIVE_SML==31
+  double m_ind;
+#endif
   double sound_speed; //actually sound speed is not primary variable, but is needed when computing pressure (When the fluid is weakly compressible flow)
   double coords[DIMENSION];
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  double dm[DIMENSION];
+#endif
   double smoothed_v[DIMENSION];
   double state_vars[NO_OF_EQNS];// rho, v , e
 

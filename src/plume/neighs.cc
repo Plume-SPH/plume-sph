@@ -242,7 +242,7 @@ search_neighs (int myid, THashTable * P_table, HashTable * BG_mesh)
 
 #ifdef DEBUG
    bool do_search = true;
-   bool find;
+
    unsigned keycheck[TKEYLENGTH] =  {70794110, 1322680614, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
@@ -501,6 +501,10 @@ void adaptive_sml(int myid, THashTable * P_table)
 	  double err;
 	  THTIterator *itr2 = new THTIterator(P_table);
 
+#if ADAPTIVE_SML==31
+	  double mcoef, fdm;
+#endif
+
 #if ADAPTIVE_SML==2
 	  int p_num ;
 	  double dlog_sum;
@@ -533,13 +537,13 @@ void adaptive_sml(int myid, THashTable * P_table)
 			  for (i = 0; i < DIMENSION; i++)
 				  xi[i] = *(pi->get_coords() + i);
 
-#if ADAPTIVE_SML==1
+#if ADAPTIVE_SML==1 || ADAPTIVE_SML==3 || ADAPTIVE_SML==31
 			  int loop = 0;
 			  for (loop = 0; loop < num_loop_P; loop ++) //We will set num_loop_P = 2
 			  {
 				  // expanded smoothing length for Momentum equation
 				  H_old = pi->get_smlen();
-				  H_star = H_old *  C_smooth_P;
+				  H_star = H_old * C_smooth_P;
 				  supp = CUTOFF * H_star;
 
 				  vector < TKey > pneighs = pi->get_neighs();
@@ -568,6 +572,32 @@ void adaptive_sml(int myid, THashTable * P_table)
 					  }
 				  }// end loop over neighs
 
+#if ADAPTIVE_SML==31
+				  double dmi_max=0.;
+			      dmi_max=abs(*(pi->get_mass_grad() +0));
+//			      for (k=0; k<DIMENSION; k++)
+//			    	  if (abs(*(pi->get_mass_grad() + k))>dmi_max)
+//			    		  dmi_max=abs(*(pi->get_mass_grad() + i));
+
+//			      if (dmi_max<=5e-3)
+//				  	  dmi_max=0.0;
+
+				  mcoef=exp(dmi_max*pi->which_mass_ind ()*Mreduce_R_P);
+#if CODE_DIMENSION==3
+				  H_new = eta_smooth_P * cbrt(pi->get_mass()*mcoef/rho_star);
+#elif CODE_DIMENSION==2
+				  H_new = eta_smooth_P * sqrt(pi->get_mass()*mcoef/rho_star);
+#elif CODE_DIMENSION==1
+				  H_new = eta_smooth_P * (pi->get_mass()*mcoef/rho_star);
+#endif //CODE_DIMENSION
+
+			      fdm=MY_ADKE_k_P*pow(log(dmi_max+1), 0.5);
+//				  fdm=MY_ADKE_k_P*dmi_max;
+//				  H_new = (1+MY_ADKE_k_P*dmi_max)*H_new;
+//				  H_new = exp(MY_ADKE_k_P*dmi_max)*H_new;
+			      H_new = (1+fdm)*H_new;
+
+#else //ADAPTIVE_SML!=31
 #if CODE_DIMENSION==3
 				  H_new = eta_smooth_P * cbrt(pi->get_mass()/rho_star);
 #elif CODE_DIMENSION==2
@@ -575,6 +605,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 #elif CODE_DIMENSION==1
 				  H_new = eta_smooth_P * (pi->get_mass()/rho_star);
 #endif //CODE_DIMENSION
+#endif //ADAPTIVE_SML==31
 
 				  pi->put_smlen(H_new);
 
@@ -583,6 +614,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 					  break;
 
 			  }//end of for iterative loop
+
 #elif ADAPTIVE_SML==2
 		  // expanded smoothing length for Momentum equation
 		  H_old =pi->get_original_smlen ();
@@ -623,3 +655,134 @@ void adaptive_sml(int myid, THashTable * P_table)
 	  }//go through all particles
 }
 #endif //DENSITY_UPDATE_SML==1
+
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+void
+calculate_mass_grad (THashTable * P_table)
+{
+  int i, k;
+  double xi[DIMENSION], ds[DIMENSION], si[DIMENSION], hi;
+  double dwdxi[DIMENSION], dm[DIMENSION], dmj[DIMENSION];
+  TKey tmpkey;
+  double mmv, mj, rhoj, dmj_max;
+
+#if ADAPTIVE_SML==31
+      double mi, mind;
+#endif
+
+  // create a Hash Table iterator instance
+  THTIterator * itr = new THTIterator (P_table);
+  Particle * pi = NULL;
+
+#ifdef DEBUG
+   bool check_den = true;
+   bool do_search = false;
+   bool check_mssfrac = false;
+   unsigned keycheck[TKEYLENGTH] =  {224, 0, 0};
+   unsigned keytemp[TKEYLENGTH] ;
+#endif
+
+  // iterate over the table
+  while ((pi = (Particle *) itr->next ()))
+  {
+    if (pi->need_neigh())
+    {
+#ifdef DEBUG
+		if (do_search)
+		{
+		    for (i = 0; i < TKEYLENGTH; i++)
+			    keytemp[i] = pi->getKey ().key[i];
+
+		    if (find_particle (keytemp, keycheck))
+			    cout << "The particle found!" << endl;
+		}
+#endif
+
+      for (i = 0; i < DIMENSION; i++)
+          xi[i] = (*(pi->get_coords () + i));
+
+      hi = pi->get_smlen ();
+      double supp = CUTOFF * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
+
+#if ADAPTIVE_SML==31
+      mi=pi->get_mass();
+      mind = 0.0;
+#endif
+
+      for (i = 0; i < PHASE_NUM; i++)
+    	  dm[i] = 0.;
+
+      vector <TKey> neighs = pi->get_neighs ();
+      vector <TKey> :: iterator p_itr;
+
+      //go through all neighbors
+      for (p_itr = neighs.begin (); p_itr != neighs.end (); p_itr++)
+      {
+          Particle *pj = (Particle *) P_table->lookup (*p_itr);
+	      if (!pj)
+	    	  cout << "here it is, the missed particles" << endl;
+          assert (pj);
+
+	      if (*pi == *pj)
+	         continue;
+
+		  // the boundary deficiency and interface deficiency is handled by wnorm!
+		  for (i = 0; i < DIMENSION; i++)
+			  ds[i] = xi[i] - *(pj->get_coords() + i);
+
+		  if (in_support(ds, supp))
+		  {
+			  mj=pj->get_mass();
+			  rhoj=pj->get_density();
+
+#if ADAPTIVE_SML==3
+		      for (i = 0; i < DIMENSION; i++)
+		    	  dmj[i] = (*(pj->get_mass_grad() + i));
+
+			  dmj_max=0;
+			  for (k=0; k<DIMENSION; k++)
+				  if (dmj[k]>dmj_max)
+					  dmj_max=dmj[k];
+			  rhoj-= dmj_max/(DIMENSION+1); // k=1/2 for 1D is correct, k=1/3 for 2D and k=1/4 for 3D actually only give the uper bound,
+#endif //ADAPTIVE_SML==3
+
+			  for (k = 0; k < DIMENSION; k++)
+				  si[k] = ds[k] / hi;
+
+//			  for (k = 0; k < DIMENSION; k++)
+//				  dwdxi[k] = d_weight(si, hi, k);
+//
+//			  mmv = mj*mj/rhoj;
+//			  for (k = 0; k < DIMENSION; k++)
+//				  dm[k] += mmv*dwdxi[k];
+
+			  for (k = 0; k < DIMENSION; k++)
+			      dm[k] += mj/rhoj*(mi-mj)/ds[k]*weight(si, hi);
+
+#if ADAPTIVE_SML==31
+			  mind += (mj-mi)*weight(si, hi)/rhoj;
+#endif
+		  }
+
+      }//end of go through all neighbors
+
+//      for (k = 0; k < DIMENSION; k++)
+//    	  dm[k]=abs(dm[k]);
+      pi->put_mass_grad(dm);
+
+#if ADAPTIVE_SML==31
+      pi->put_mass_indicator(mind);
+#endif
+
+    }//if need neighbour
+  }//loop go through all particles
+
+  // clean up stuff
+  delete itr;
+//  delete it2;
+
+  return;
+}
+
+#endif //ADAPTIVE_SML==3

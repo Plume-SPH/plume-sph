@@ -80,6 +80,16 @@ protected:
   double rho_based_on_dx; //This is an intermediate density calculated based on original smoothing length. ---> Needed for ADKE
 #endif
 
+#if ADAPTIVE_SML==31
+  //! An indicate used to show whether the particle mass is relatively larger than surrounding or smaller on average.
+  /*
+   * m_ind > 0 particle mass is smaller than surrounding on average
+   * m_ind <0  particle mass is larger than surrounding on average
+   * m_ind = 0, no need to consider particle mass non-equilibrium
+   */
+  double m_ind;
+#endif
+
   //density of each phase
   double phase_density[PHASE_NUM]; //phase1 = air, phase2 =erupted material
                                //According to the simplest Japanese Model, d1=d*(1-ks), d2=d*ks
@@ -94,6 +104,11 @@ protected:
 
   //! current (normalized) postion of each particle
   double coord[DIMENSION];
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  //! gradient of mass
+  double dm[DIMENSION];
+#endif
 
   //! state_vars are normalized density, velocities;  stresses is not included in my model
   double state_vars[NO_OF_EQNS];
@@ -324,6 +339,33 @@ public:
   {
     return coord;
   }
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  //!get mass gradient
+  const double *get_mass_grad () const
+  {
+    return dm;
+  }
+#endif
+
+#if ADAPTIVE_SML==31
+  //!get mass indicator
+  const double get_mass_indicator () const
+  {
+    return m_ind;
+  }
+
+  //return a inter value 1, -1 or 0 for adaptive sml
+  int which_mass_ind ()
+  {
+    if (m_ind < -MASS_IND_THRESH)
+    	return -1 ; //Should reduce equivalent particle mass in adaptive sml--> Means this particle is larger than surrounding particles on average
+    else if (m_ind > MASS_IND_THRESH)
+    	return 1;  ///Should increase equivalent particle mass in adaptive sml--> Means this particle is smaller than surrounding particles on average
+    else
+    	return 0;
+  }
+#endif
 
   //! get velocity
   const double *get_vel () const
@@ -824,6 +866,23 @@ public:
     for (int i = 0; i < DIMENSION; i++)
       coord[i] = *(x + i);
   }
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  // update mass gradient
+  void put_mass_grad (double *m_grad)
+  {
+    for (int i = 0; i < DIMENSION; i++)
+      dm[i] = *(m_grad + i);
+  }
+#endif
+
+#if ADAPTIVE_SML==31
+  // update mass indicator
+  void put_mass_indicator (double ind)
+  {
+	  m_ind = ind;
+  }
+#endif
 
   //! update guest info
   void put_guest_flag (bool val)

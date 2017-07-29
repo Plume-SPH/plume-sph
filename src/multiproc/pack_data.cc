@@ -190,9 +190,15 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
 #if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
   pack_array->smlen_original = psend->smlen_original;
 #endif
+
 #if ADAPTIVE_SML==2
   pack_array->rho_based_on_dx = psend->rho_based_on_dx;
 #endif
+
+#if ADAPTIVE_SML==31
+  pack_array->m_ind = psend->m_ind;
+#endif
+
   pack_array->mass_frac = psend->mass_frac;
   pack_array->smoothed_e = psend->smoothed_e;
   pack_array->sound_speed = psend->sound_speed;
@@ -203,6 +209,11 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
 
   for (j=0; j < DIMENSION; j++)
     pack_array->coords[j] = psend->coord[j];
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  for (j=0; j < DIMENSION; j++)
+    pack_array->dm[j] = psend->dm[j];
+#endif
 
   for (j=0; j < DIMENSION; j++)
       pack_array->smoothed_v[j] = psend->smoothed_v[j];
@@ -393,10 +404,19 @@ void unpack_particle (ParticlePack *packet, Particle *part)
 #if ADAPTIVE_SML==2
   part->rho_based_on_dx = packet->rho_based_on_dx;
 #endif
+
+#if ADAPTIVE_SML==31
+  part->m_ind = packet->m_ind;
+#endif
   part->myprocess = packet->myprocess;
   
   for ( i=0; i < DIMENSION; i++ )
     part->coord[i] = packet->coords[i];
+
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+  for ( i=0; i < DIMENSION; i++ )
+    part->dm[i] = packet->dm[i];
+#endif
 
   for ( i=0; i < DIMENSION; i++ )
       part->smoothed_v[i] = packet->smoothed_v[i];

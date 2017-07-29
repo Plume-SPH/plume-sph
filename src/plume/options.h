@@ -93,7 +93,7 @@
  */
 ////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 1
+#define SHOCK_TUBE_TESTS 0
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -163,7 +163,7 @@
 //For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
 #if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef RIEMANN_SOLVER
-#define  RIEMANN_SOLVER 0
+#define RIEMANN_SOLVER 0
 #endif
 #endif
 
@@ -178,7 +178,7 @@
  */
 #if (RIEMANN_SOLVER==1) || (RIEMANN_SOLVER==2) //Use HLL type of Riemann Solver
 #ifndef HLL_WAVE_SPEED_EVA
-#define  HLL_WAVE_SPEED_EVA 0
+#define HLL_WAVE_SPEED_EVA 0
 #endif
 #endif
 
@@ -216,9 +216,23 @@
  * SWITCH_OFF_AV_FOR_EXPAN 1: switch off artificial viscosity for expansion
  * SWITCH_OFF_AV_FOR_EXPAN 2: use an switch coefficient that is proportional to the density gradient to determine the amount of artificial viscosity: Use the approximate numerical density gradient (AROUND 25) at the location where there is a shock as the reference to determine the value of this switch coefficient
  */
-#if USE_GSPH==0
+#if  (USE_GSPH==1 || USE_GSPH==2)
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
-#define SWITCH_OFF_AV_FOR_EXPAN 0
+#define SWITCH_OFF_AV_FOR_EXPAN 2
+#endif
+#endif
+
+//For particle mass with Non-uniform particle mass, use particle mass weighted average when solving Riemann Problems.
+/*
+ * RP_MASS_WEIGHTED==0: do not use mass weighted
+ * RP_MASS_WEIGHTED==1: use m/rho as weight
+ * RP_MASS_WEIGHTED==2: use m as weight  ---> Use mass weighted project only when project back
+ * RP_MASS_WEIGHTED==21:use m as weight  ---> Use mass weighted project for both construct interface and project back.
+ * RP_MASS_WEIGHTED==3: replace Roe average, which is weighted by sqrt(rho) with sqrt(m/rho)
+ */
+#if  (USE_GSPH==1 || USE_GSPH==2) && EQUAL_PART_MASS==0
+#ifndef RP_MASS_WEIGHTED
+#define RP_MASS_WEIGHTED 0
 #endif
 #endif
 
@@ -237,9 +251,11 @@
  * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
  * 1: adaptive scheme one: based on the assumption that smoothing length should be proportional to ratio between particle mass and density. This is the traditional way of adaptive smoothing length -->DENSITY_UPDATE_SML should always be 1
  * 2: adaptive scheme two: based ADKE: see paper "Adaptive kernel estimation and SPH tensile instability", In this case, need original sml, even though updating of density is based on current sml, we still have original sml.
+ * 3: adaptive scheme three: my own scheme
+ * 31: adaptive scheme three: my own scheme, use the idea of mass gradient to adaptively change smoothing length
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 0
+#define ADAPTIVE_SML 1
 #endif
 
 

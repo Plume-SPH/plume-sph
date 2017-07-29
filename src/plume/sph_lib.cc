@@ -1778,11 +1778,16 @@ double Compute_sij_star (double hij, double Vi, double Vj, double Dri, double Dr
 
 // Roe RP solver:
 //void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
-void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star)
+void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star, double mi=1.0, double mj=1.0)
 {
     //Roe Riemann Solver:
+#if RP_MASS_WEIGHTED==3
+    double rdl=mj/sqrt(dl);
+    double rdr=mi/sqrt(dr);
+#else
     double rdl=sqrt(dl);
     double rdr=sqrt(dr);
+#endif // RP_MASS_WEIGHTED==3
     double denominator = 1.0 / (rdl+rdr);
 
     double plr=(pl*rdl + pr*rdr)*denominator;
@@ -2215,7 +2220,7 @@ double Generate_VanderCorput(unsigned n)
 void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DIMENSION], double pi, double pj, double hi,  double hj, double xi[DIMENSION], double xj[DIMENSION],
 		            double CSi, double CSj, double gi, double gj, double dt_half,  double DDri[DIMENSION], double DDrj[DIMENSION], double DDui[DIMENSION], double DDuj[DIMENSION],
 		            double DDvi[DIMENSION], double DDvj[DIMENSION], double DDwi[DIMENSION], double DDwj[DIMENSION], double DDpi[DIMENSION], double DDpj[DIMENSION], double* p_star,
-					double* v_star, double sp, double delta_t)
+					double* v_star, double sp, double delta_t, double mi, double mj)
 {
 	//Pre compute:
 	int i;
@@ -2372,17 +2377,31 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 #endif //(SWITCH_OFF_AV_FOR_EXPAN==1)
 //#endif
 
+#if RP_MASS_WEIGHTED==2 || RP_MASS_WEIGHTED==21
+    double wr=mi;
+    double wl=mj;
+    double w_denominator=wr+wl;
+#endif //RP_MASS_WEIGHTED==2x
+
     //determine the right and left location
     double Si, Sj;
+    double sij_star=0.0;
+
+#if RP_MASS_WEIGHTED==21
+    Si=wr*dist/w_denominator;
+    Sj=-wl*dist/w_denominator;
+    sij_star = 0.0;
+#else
     Si=0.5*dist; //should be positive
     Sj=-Si;      //should be negative
-    //compute_si_sj(xi, xj, e, &Si, &Sj); //--> a more expensive way of computing, actually get the same results as Si=0.5*dist; Sj=-Si;
-    double sij_star=0.0;
 #if GSPH_SPECIFIC_VOL_APP==1
     sij_star=Compute_sij_star(hij, 1/rhoi, 1/rhoj, dist);
 #elif GSPH_SPECIFIC_VOL_APP==3
+    //compute_si_sj(xi, xj, e, &Si, &Sj); //--> a more expensive way of computing, actually get the same results as Si=0.5*dist; Sj=-Si;
     sij_star=Compute_sij_star(hij, 1/rhoi, 1/rhoj, drhoi, drhoj, dist);
-#endif
+#endif //GSPH_SPECIFIC_VOL_APP==1
+
+#endif //RP_MASS_WEIGHTED==21
 
     double delta_i = sij_star + CSi * dt_half - Si; //Si = dist/2 is positive
     double delta_j = sij_star - CSj * dt_half - Sj;
@@ -2453,18 +2472,39 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 #endif
 
     double u_star;
+
+    //----------------------------------------------------------------------------
 #if USE_GSPH==1
 #if RIEMANN_SOLVER == 0
-    Roe_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
+        Roe_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #elif RIEMANN_SOLVER == 1
-    HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
+        HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #elif RIEMANN_SOLVER == 2
-    HLLC_RP_Solver_my(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
+        HLLC_RP_Solver_my(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #endif //Riemann Solver
-
 #elif USE_GSPH==2
-    HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star, sample_x, delta_t);
+        HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star, sample_x, delta_t);
 #endif //USE_GSPH
+    //----------------------------------------------------------------------------------------
+
+#if RP_MASS_WEIGHTED==1
+	double wr=mi/dr;
+	double wl=mj/dl;
+	double w_denominator=wr+wl;
+    ul=2.0*ul*wl/w_denominator;
+    ur=2.0*ur*wr/w_denominator;
+    pl=2.0*pl*wl/w_denominator;
+    pr=2.0*pr*wr/w_denominator;
+#elif RP_MASS_WEIGHTED==2 || RP_MASS_WEIGHTED==21
+    ul=2.0*ul*wl/w_denominator;
+    ur=2.0*ur*wr/w_denominator;
+    pl=2.0*pl*wl/w_denominator;
+    pr=2.0*pr*wr/w_denominator;
+#endif //
+
+#if RP_MASS_WEIGHTED==3
+    Roe_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star, mi, mj);
+#endif //
 
     //project u_star to v_star
 #if SHEAR_VEL_APP==0  //mean
@@ -2472,7 +2512,12 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     uij=0.5*(ul+ur);
     for (int i=0; i<DIMENSION; i++)
     {
-    	vij_3D=0.5*(vj[i] + vi[i]);
+#if RP_MASS_WEIGHTED==1  || RP_MASS_WEIGHTED==2 || RP_MASS_WEIGHTED==21
+        vij_3D=(wl*vj[i] + wr*vi[i])/w_denominator;
+#else
+        vij_3D=0.5*(vj[i] + vi[i]);
+#endif //RP_MASS_WEIGHTED
+
     	*(v_star+i)=e[i]*u_star+ vij_3D - uij*e[i];
     }
 #elif SHEAR_VEL_APP==1  //distance weighted
@@ -2484,21 +2529,38 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     uij=ul*weighti+ur*weightj;
     for (int i=0; i<DIMENSION; i++)
     {
-    	vij_3D=vj[i]*weightj + vi[i]*weighti;
+#if RP_MASS_WEIGHTED==1  || RP_MASS_WEIGHTED==2 || RP_MASS_WEIGHTED==21
+        vij_3D=(wl*vj[i]*weightj + wr*vi[i]*weighti)/(wl*weightj+wr*weighti);
+#else
+        vij_3D=vj[i]*weightj + vi[i]*weighti;
+#endif //RP_MASS_WEIGHTED
+
     	*(v_star+i)=e[i]*u_star+ vij_3D - uij*e[i];
     }
 #elif SHEAR_VEL_APP==2  //Roe average --> square root of density weighted.
+
+#if RP_MASS_WEIGHTED==3
+    double rdl=mj/sqrt(dl);
+    double rdr=mi/sqrt(dr);
+#else
     double rdl=sqrt(dl);
     double rdr=sqrt(dr);
+#endif // RP_MASS_WEIGHTED==3
+
     double denominator = 1.0 / (rdl+rdr);
     double ulr = (ul*rdl + ur*rdr)*denominator;
 	double vlr_3D[DIMENSION];
 	for (int i=0; i<DIMENSION; i++)
 	{
-		vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+#if RP_MASS_WEIGHTED==1  || RP_MASS_WEIGHTED==2 || RP_MASS_WEIGHTED==21
+		vlr_3D[i]=(wl*vj[i]*rdl + wr*vi[i]*rdr)/(wl*rdl+wr*rdr);
+#else
+        vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
+#endif //RP_MASS_WEIGHTED
+
 		*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
 	}
-#endif
+#endif //SHEAR_VEL_APP==0
 
 #if (SWITCH_OFF_AV_FOR_EXPAN==2)
 	if (expd_ind)
