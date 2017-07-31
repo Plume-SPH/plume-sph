@@ -582,20 +582,27 @@ void adaptive_sml(int myid, THashTable * P_table)
 //			      if (dmi_max<=5e-3)
 //				  	  dmi_max=0.0;
 
-				  mcoef=exp(dmi_max*pi->which_mass_ind ()*Mreduce_R_P);
+			      mcoef=(exp(pi->get_mass_indicator ()*Mreduce_R_P));
+//			      mcoef=1+pi->get_mass_indicator ()*Mreduce_R_P;
+				  assert(mcoef>=0);
 #if CODE_DIMENSION==3
-				  H_new = eta_smooth_P * cbrt(pi->get_mass()*mcoef/rho_star);
+				  H_new = eta_smooth_P * cbrt(pi->get_mass()/rho_star);
 #elif CODE_DIMENSION==2
-				  H_new = eta_smooth_P * sqrt(pi->get_mass()*mcoef/rho_star);
+				  H_new = eta_smooth_P * sqrt(pi->get_mass()/rho_star);
 #elif CODE_DIMENSION==1
-				  H_new = eta_smooth_P * (pi->get_mass()*mcoef/rho_star);
+				  H_new = eta_smooth_P * (pi->get_mass()/rho_star);
 #endif //CODE_DIMENSION
 
 			      fdm=MY_ADKE_k_P*pow(log(dmi_max+1), 0.5);
 //				  fdm=MY_ADKE_k_P*dmi_max;
+			      assert(fdm>=0);
+//			      mcoef=1.0;
+//			      fdm=0.55;
+//				  fdm=MY_ADKE_k_P*dmi_max;
 //				  H_new = (1+MY_ADKE_k_P*dmi_max)*H_new;
 //				  H_new = exp(MY_ADKE_k_P*dmi_max)*H_new;
-			      H_new = (1+fdm)*H_new;
+//			      H_new = mcoef*(1+pi->which_mass_ind ()*fdm)*H_new;
+			      H_new = (1+mcoef*pi->which_mass_ind ()*fdm)*H_new;
 
 #else //ADAPTIVE_SML!=31
 #if CODE_DIMENSION==3
@@ -747,21 +754,25 @@ calculate_mass_grad (THashTable * P_table)
 			  rhoj-= dmj_max/(DIMENSION+1); // k=1/2 for 1D is correct, k=1/3 for 2D and k=1/4 for 3D actually only give the uper bound,
 #endif //ADAPTIVE_SML==3
 
-			  for (k = 0; k < DIMENSION; k++)
-				  si[k] = ds[k] / hi;
+			  double hij=0.5*(hi+ pj->get_smlen ());
 
-//			  for (k = 0; k < DIMENSION; k++)
-//				  dwdxi[k] = d_weight(si, hi, k);
-//
-//			  mmv = mj*mj/rhoj;
-//			  for (k = 0; k < DIMENSION; k++)
-//				  dm[k] += mmv*dwdxi[k];
+//			  double hij=hi;
 
 			  for (k = 0; k < DIMENSION; k++)
-			      dm[k] += mj/rhoj*(mi-mj)/ds[k]*weight(si, hi);
+				  si[k] = ds[k] / hij;
+
+			  for (k = 0; k < DIMENSION; k++)
+				  dwdxi[k] = d_weight(si, hij, k);
+
+			  mmv = mj*mj/rhoj;
+			  for (k = 0; k < DIMENSION; k++)
+				  dm[k] += mmv*dwdxi[k];
+
+//			  for (k = 0; k < DIMENSION; k++)
+//			      dm[k] += mj/rhoj*(mi-mj)/ds[k]*weight(si, hij);
 
 #if ADAPTIVE_SML==31
-			  mind += (mj-mi)*weight(si, hi)/rhoj;
+			  mind += (mj-mi)*weight(si, hij)/rhoj;
 #endif
 		  }
 

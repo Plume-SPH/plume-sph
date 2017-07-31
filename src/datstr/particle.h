@@ -356,12 +356,12 @@ public:
   }
 
   //return a inter value 1, -1 or 0 for adaptive sml
-  int which_mass_ind ()
+  double which_mass_ind ()
   {
     if (m_ind < -MASS_IND_THRESH)
-    	return -1 ; //Should reduce equivalent particle mass in adaptive sml--> Means this particle is larger than surrounding particles on average
+    	return -1.0 ; //Should reduce equivalent particle mass in adaptive sml--> Means this particle is larger than surrounding particles on average
     else if (m_ind > MASS_IND_THRESH)
-    	return 1;  ///Should increase equivalent particle mass in adaptive sml--> Means this particle is smaller than surrounding particles on average
+    	return 1.0;  ///Should increase equivalent particle mass in adaptive sml--> Means this particle is smaller than surrounding particles on average
     else
     	return 0;
   }

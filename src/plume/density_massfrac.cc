@@ -152,7 +152,7 @@ smooth_density(THashTable * P_table)
 					{
 
 #if DENSITY_UPDATE_SML==11
-						hi=0.5*(hi+pj->get_smlen ()); //Overwrite original hi with 0.5*(hi+hj)
+						hi=0.5*(pi->get_smlen ()+pj->get_smlen ()); //Overwrite original hi with 0.5*(hi+hj)
 #elif DENSITY_UPDATE_SML==12
 						hi=pj->get_smlen ();          //Overwrite original hi with hj
 #endif

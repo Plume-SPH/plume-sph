@@ -34,14 +34,18 @@ mom_engr_update(int myid, THashTable * P_table,
   int i, k;
 
   vector < TKey > pneighs;
-  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION], s_heat[DIMENSION];
+  double dx[DIMENSION], xi[DIMENSION], si[DIMENSION], s_heati[DIMENSION], h;
   double rhs_v[DIMENSION], unew[NO_OF_EQNS], rhs_e;
-  double dwdx[DIMENSION], dwdx_heat[DIMENSION];
+  double dwdxi[DIMENSION], dwdx_heati[DIMENSION];
   double veli[DIMENSION], velj[DIMENSION], velij[DIMENSION];
   double vis;
   double Fij, Cp_ij, kij, Cp_i;
   double deltae;
   double turb_stress; //turbulent viscosity term
+
+#if ME_UPDATE_SML==3
+  double hj, sj[DIMENSION],dwdxj[DIMENSION];
+#endif //ME_UPDATE_SML
 
   Particle *pi=NULL;
 
@@ -160,7 +164,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		  double pvsqi=(pressi-p_external)*Vi*Vi;//p*v^2
 #else
           double pvsqi=pressi*Vi*Vi;//p*v^2
-#endif // MOMENTUM_DISCRETIZE ==1
+#endif //MOMENTUM_DISCRETIZE ==1
 
           // velocity veli
 #if HAVE_TURBULENCE_LANS !=0
@@ -168,11 +172,10 @@ mom_engr_update(int myid, THashTable * P_table,
 		      veli[k] = *(pi->get_smoothed_velocity()+k);
 #else
           for (k = 0; k < DIMENSION; k++)
-               veli[k] = uvec[k+1];
+              veli[k] = uvec[k+1];
 #endif
 
           double mpvsqij= 0.;   //mpvsqij=mj*(pi/rhoi^2+pj/rhoj^2);
-
 
           double heat_tran = 0.; //heat transfer term heat_tran=mj/rho_j (Ti-Tj) F_ij
 
@@ -200,10 +203,18 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		      double dist_sq = 0;
 
+#if ME_UPDATE_SML==1
+		      h=pj->get_smlen();
+#elif ME_UPDATE_SML==2
+		      h=0.5*(hi+pj->get_smlen());
+#else
+		      h=hi;
+#endif
+
 		      for (i = 0; i < DIMENSION; i++)
 		      {
 		           dx[i] = xi[i] - *(pj->get_coords() + i);
-		           si[i] = dx[i] / hi;
+		           si[i] = dx[i] / h;
 		           dist_sq += dx[i] * dx[i];
 		      }
 		      if (in_support(dx, supp))
@@ -231,7 +242,7 @@ mom_engr_update(int myid, THashTable * P_table,
                   //pre-compute, artificial viscosity
 		          double rhoab= 0.5 * ((pi->get_density()) + (pj->get_density()));
 		          double sndspdab = 0.5 * ((pi->get_sound_speed()) + (pj->get_sound_speed()));
-		          vis= art_vis (rhoab, sndspdab, dx, velij, dist_sq, hi);
+		          vis= art_vis (rhoab, sndspdab, dx, velij, dist_sq, h);
 
 		          //compute turbulent stress
 #if HAVE_TURBULENCE_LANS !=0
@@ -242,7 +253,7 @@ mom_engr_update(int myid, THashTable * P_table,
 #ifdef DEBUG
 		          if (check_vis)
 		          {
-		        	  vis_2d = art_vis_2d (rhoab, sndspdab, &(dx[1]), &(velij[1]), dist_sq, hi);
+		        	  vis_2d = art_vis_2d (rhoab, sndspdab, &(dx[1]), &(velij[1]), dist_sq, h);
 		        	  phasej = pj->which_phase();
 		          }
 #endif
@@ -250,22 +261,34 @@ mom_engr_update(int myid, THashTable * P_table,
 #if MOMENTUM_DISCRETIZE ==1
 		          mpvsqij = mj*((pressj-p_external) * Vj * Vj + pvsqi + vis);
 #else
-          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
+		          mpvsqij = mj*(pressj * Vj * Vj + pvsqi + vis);
 
 #endif //MOMENTUM_DISCRETIZE ==1
 
 	              for (int ii=0; ii<DIMENSION; ii++)
-	            	  s_heat[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
+	            	  s_heati[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
+
 		          // pre-compute weight function derivatives
 		          for (k = 0; k < DIMENSION; k++)
 		          {
-		              dwdx[k] = d_weight (si, hi, k);
-		              dwdx_heat[k] = d_weight (s_heat, hi/HEAT_TRANS_SCALE_RATIO, k);
+		              dwdxi[k] = d_weight (si, h, k);
+		              dwdx_heati[k] = d_weight (s_heati, h/HEAT_TRANS_SCALE_RATIO, k);
 		          }
 
-	          // Velocity rhs
+#if ME_UPDATE_SML==3
+		          hj=pj->get_smlen();
+			      for (i = 0; i < DIMENSION; i++)
+			           sj[i] = dx[i] / hj;
+	              for (int ii=0; ii<DIMENSION; ii++)
+//	            	  s_heatj[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
+
 		          for (k = 0; k < DIMENSION; k++)
-		              rhs_v[k] -= mpvsqij* dwdx[k];
+		          {
+		              dwdxj[k] = d_weight (sj, hj, k);
+		              dwdxi[k]=0.5*(dwdxi[k]+dwdxj[k]);
+//		              dwdx_heatj[k] = d_weight (s_heatj, hj/HEAT_TRANS_SCALE_RATIO, k);
+		          }
+#endif //ME_UPDATE_SML
 
 		          // Energy rhs
 		          //turbulent heat transfer term
@@ -275,12 +298,17 @@ mom_engr_update(int myid, THashTable * P_table,
 //		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
 		          double hab=0.5*(hi+pj->get_smlen());
 		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij, rhoab, hab, sndspdab);
-		          Fij=compute_F(dwdx_heat,dx);
+		          Fij=compute_F(dwdx_heati,dx);
 		          heat_tran =mj*Vj*Vi* kij*(tempi- pj->get_temperature ())* Fij;
 #endif
+
+		          // Velocity rhs
+				  for (k = 0; k < DIMENSION; k++)
+					  rhs_v[k] -= mpvsqij* dwdxi[k];
+
 		          deltae = 0.;
 		          for (k = 0; k < DIMENSION; k++)
-		              deltae += 0.5* (mpvsqij* dwdx[k])* velij[k];
+		              deltae += 0.5* (mpvsqij* dwdxi[k])* velij[k];
 
 		          rhs_e += (deltae + heat_tran);
 		      }
@@ -619,13 +647,47 @@ mom_engr_update(int myid, THashTable * P_table,
 		          turb_stress=SPH_epsilon_mom(velij, Vj);
 #endif
 
+#if ME_UPDATE_SML==2
+			      double hij=0.5*(hi+hj);
+
+		          // pre-compute weight function derivatives
+			      for (i = 0; i < DIMENSION; i++)
+			           si[i] = dx[i] / hij;
+
+		          for (k = 0; k < DIMENSION; k++)
+		              dwdxi[k] = d_weight (si, hij, k);
+
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
+		        	  vsqdwj[k]=Vj*Vj*dwdxi[k];
+		          }
+#elif ME_UPDATE_SML==3
 		          // pre-compute weight function derivatives
 			      for (i = 0; i < DIMENSION; i++)
 			      {
 			           si[i] = dx[i] / hi;
 			           sj[i] = dx[i] / hj;
 			      }
+		          for (k = 0; k < DIMENSION; k++)
+		          {
+		              dwdxi[k] = d_weight (si, hi, k);
+		              dwdxj[k] = d_weight (sj, hj, k);
+		              dwdxi[k]=0.5*(dwdxi[k]+dwdxj[k]);
+		          }
 
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
+		        	  vsqdwj[k]=Vj*Vj*dwdxi[k];
+		          }
+#else
+		          // pre-compute weight function derivatives
+			      for (i = 0; i < DIMENSION; i++)
+			      {
+			           si[i] = dx[i] / hi;
+			           sj[i] = dx[i] / hj;
+			      }
 		          for (k = 0; k < DIMENSION; k++)
 		          {
 		              dwdxi[k] = d_weight (si, hi, k);
@@ -637,6 +699,8 @@ mom_engr_update(int myid, THashTable * P_table,
 		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
 		        	  vsqdwj[k]=Vj*Vj*dwdxj[k];
 		          }
+#endif
+
 
 #ifdef DEBUG
 		  if (check_ratio)
@@ -755,6 +819,52 @@ mom_engr_update(int myid, THashTable * P_table,
 		          turb_stress=SPH_epsilon_mom(velij, Vj);
 #endif
 
+#if ME_UPDATE_SML==2
+			      double hij=0.5*(hi+hj);
+
+		          // pre-compute weight function derivatives
+			      for (i = 0; i < DIMENSION; i++)
+			      {
+			           si[i] = dx[i] / hij;
+			           s_heati[i]=si[i]*HEAT_TRANS_SCALE_RATIO;
+			      }
+
+		          for (k = 0; k < DIMENSION; k++)
+		          {
+		              dwdxi[k] = d_weight (si, hij, k);
+		              dwdx_heati[k] = d_weight (s_heati, hij/HEAT_TRANS_SCALE_RATIO, k);
+		              dwdx_heatj[k] = d_weight (s_heati, hij/HEAT_TRANS_SCALE_RATIO, k);
+		          }
+
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
+		        	  vsqdwj[k]=Vj*Vj*dwdxi[k];
+		          }
+#elif ME_UPDATE_SML==3
+		          // pre-compute weight function derivatives
+			      for (i = 0; i < DIMENSION; i++)
+			      {
+			           si[i] = dx[i] / hi;
+			           s_heati[i]=si[i]*HEAT_TRANS_SCALE_RATIO;
+			           sj[i] = dx[i] / hj;
+			           s_heatj[i]=sj[i]*HEAT_TRANS_SCALE_RATIO;
+			      }
+		          for (k = 0; k < DIMENSION; k++)
+		          {
+		              dwdxi[k] = d_weight (si, hi, k);
+		              dwdxj[k] = d_weight (sj, hj, k);
+		              dwdxi[k] = 0.5* (dwdxi[k]+dwdxi[k]);
+		              dwdx_heati[k] = d_weight (s_heati, hi/HEAT_TRANS_SCALE_RATIO, k);
+		              dwdx_heatj[k] = d_weight (s_heatj, hj/HEAT_TRANS_SCALE_RATIO, k);
+		          }
+
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
+		        	  vsqdwj[k]=Vj*Vj*dwdxi[k];
+		          }
+#else
 		          // pre-compute weight function derivatives
 			      for (i = 0; i < DIMENSION; i++)
 			      {
@@ -771,15 +881,16 @@ mom_engr_update(int myid, THashTable * P_table,
 		              dwdx_heatj[k] = d_weight (s_heatj, hj/HEAT_TRANS_SCALE_RATIO, k);
 		          }
 
-		          double x_dot_star[DIMENSION];
-		          for (k = 0; k < DIMENSION; k++)
-		        	  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]+gravity[k]);//Do not forget gravity
-
 		          for (k=0; k<DIMENSION; k++)
 		          {
 		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
 		        	  vsqdwj[k]=Vj*Vj*dwdxj[k];
 		          }
+#endif
+
+		          double x_dot_star[DIMENSION];
+		          for (k = 0; k < DIMENSION; k++)
+		        	  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]+gravity[k]);//Do not forget gravity
 
 		          // Energy rhs
 		          //turbulent heat transfer term
@@ -793,7 +904,7 @@ mom_engr_update(int myid, THashTable * P_table,
 //		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
 		          double hab=0.5*(hi+pj->get_smlen());
 		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij, rhoab, hab, sndspdab);// What computed here is actually 0.5*kij
-		          Fij=compute_F(dwdx_heati,dx);
+		          Fij=compute_F(0.5*(dwdx_heati+dwdx_heatj),dx);
 		          heat_tran =mj*Vj*Vi* kij*(tempi- pj->get_temperature ())* Fij; //As function SPH_epsilon_heat_conductivity actually returns 2k, so it is not necessary to multiply by 2 here
 #endif
 		          deltae = 0.;

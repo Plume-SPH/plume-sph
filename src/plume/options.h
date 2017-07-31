@@ -44,14 +44,16 @@
 #endif
 
 //Define the smoothing length used in momentum and energy update
-//Note: To be safe, it would be better to have more neighbors than needed by support.
+//Note: To be safe, it would be better to have more neighbors than needed by support.--->That's why I set CUTOFF2 = 2*CUTOFF
 /*
- * 0 : use hi for updating of energy and momentum of particle i --> The default manner
- * 1 : use hj for updating of energy and momentum of particle i
- * 2 : use 0.5(hi+hj) for updating of energy and momentum of particle i
+ * 0 : use hi for updating of energy and momentum of particle i --> The default manner  		-->Only apply for SPH
+ * 1 : use hj for updating of energy and momentum of particle i                         		-->Only apply for SPH
+ * 2 : use 0.5(hi+hj) for updating of energy and momentum of particle i                 		-->apply for SPH and GSPH
+ * 3 : use 0.5[w(hi)+w(hj)] for updating of energy and momentum of particle i           		-->apply for SPH and GSPH
+ * 4 : use (w(hi)/rho_i^2+w(hj)/rho_j^2) --->This is actually the default formulation for GSPH  -->Only apply for GSPH
  */
-#ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 1
+#ifndef ME_UPDATE_SML
+#define ME_UPDATE_SML 0
 #endif
 
 /*
@@ -266,7 +268,7 @@
  * 31: adaptive scheme three: my own scheme, use the idea of mass gradient to adaptively change smoothing length
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 1
+#define ADAPTIVE_SML 31
 #endif
 
 
