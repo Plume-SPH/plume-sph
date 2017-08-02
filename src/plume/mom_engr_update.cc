@@ -599,54 +599,6 @@ mom_engr_update(int myid, THashTable * P_table,
 				  sndspdj = pj->get_sound_speed();
 				  gammaj= pj->get_gamma();
 
-#if HAVE_TURBULENCE_LANS !=0
-		          for (k = 0; k < DIMENSION; k++)
-		               velj[k] = *(pj->get_smoothed_velocity()+k);
-#else
-		          for (k = 0; k < DIMENSION; k++)
-		          	   velj[k] = uvecj[k+1];
-#endif
-
-				  for (k = 0; k < DIMENSION; k++)
-				  {
-				      drj[k] = *(pj->get_density_derivative()+k);
-				      duj[k] = *(pj->get_velocity_u_derivative()+k);
-				      dvj[k] = *(pj->get_velocity_v_derivative()+k);
-				      dwj[k] = *(pj->get_velocity_w_derivative()+k);
-				      dpj[k] = *(pj->get_pressure_derivative()+k);
-				  }
-
-                  //pre-compute, solve RP to get p* and v*
-		          double p_star;
-		          double v_star[DIMENSION];
-
-#if RP_MASS_WEIGHTED==0
-#if USE_GSPH==1
-		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
-#elif USE_GSPH==2
-		          double sample_pt;
-		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
-		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
-#endif //USE_GSPH
-
-#elif RP_MASS_WEIGHTED>0
-		          double sample_pt=0.0;
-#if USE_GSPH==2
-		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
-#endif //USE_GSPH
-		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt, pi->get_mass(), mj);
-
-#endif //RP_MASS_WEIGHTED
-		          //compute turbulent stress
-		          turb_stress=0.0;
-#if HAVE_TURBULENCE_LANS !=0
-		          //velocity difference veli-velj
-		          for (k = 0; k < DIMENSION; k++)
-		               velij[k] = veli[k]- velj[k];
-
-		          turb_stress=SPH_epsilon_mom(velij, Vj);
-#endif
-
 #if ME_UPDATE_SML==2
 			      double hij=0.5*(hi+hj);
 
@@ -661,6 +613,14 @@ mom_engr_update(int myid, THashTable * P_table,
 		          {
 		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
 		        	  vsqdwj[k]=Vj*Vj*dwdxi[k];
+		          }
+
+		          double absdw, max_dw=0.0;
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  absdw=abs(vsqdwi[k]);
+		        	  if (absdw>max_dw)
+		        		  max_dw=absdw;
 		          }
 #elif ME_UPDATE_SML==3
 		          // pre-compute weight function derivatives
@@ -681,6 +641,14 @@ mom_engr_update(int myid, THashTable * P_table,
 		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
 		        	  vsqdwj[k]=Vj*Vj*dwdxi[k];
 		          }
+
+		          double absdw, max_dw=0.0;
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  absdw=abs(vsqdwi[k]);
+		        	  if (absdw>max_dw)
+		        		  max_dw=absdw;
+		          }
 #else
 		          // pre-compute weight function derivatives
 			      for (i = 0; i < DIMENSION; i++)
@@ -699,26 +667,92 @@ mom_engr_update(int myid, THashTable * P_table,
 		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
 		        	  vsqdwj[k]=Vj*Vj*dwdxj[k];
 		          }
+
+		          double absdw, max_dw=0.0;
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  absdw=abs(vsqdwi[k]);
+		        	  if (absdw>max_dw)
+		        		  max_dw=absdw;
+		          }
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  absdw=abs(vsqdwj[k]);
+		        	  if (absdw>max_dw)
+		        		  max_dw=absdw;
+		          }
+#endif
+
+		          if (max_dw>0)
+		          {
+#if HAVE_TURBULENCE_LANS !=0
+					  for (k = 0; k < DIMENSION; k++)
+						   velj[k] = *(pj->get_smoothed_velocity()+k);
+#else
+					  for (k = 0; k < DIMENSION; k++)
+						   velj[k] = uvecj[k+1];
+#endif
+
+					  for (k = 0; k < DIMENSION; k++)
+					  {
+						  drj[k] = *(pj->get_density_derivative()+k);
+						  duj[k] = *(pj->get_velocity_u_derivative()+k);
+						  dvj[k] = *(pj->get_velocity_v_derivative()+k);
+						  dwj[k] = *(pj->get_velocity_w_derivative()+k);
+						  dpj[k] = *(pj->get_pressure_derivative()+k);
+					  }
+
+					  //pre-compute, solve RP to get p* and v*
+					  double p_star;
+					  double v_star[DIMENSION];
+
+#if RP_MASS_WEIGHTED==0
+#if USE_GSPH==1
+					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
+#elif USE_GSPH==2
+					  double sample_pt;
+					  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
+#endif //USE_GSPH
+
+#elif RP_MASS_WEIGHTED>0
+					  double sample_pt=0.0;
+#if USE_GSPH==2
+					  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+#endif //USE_GSPH
+					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt, pi->get_mass(), mj);
+
+#endif //RP_MASS_WEIGHTED
+					  //compute turbulent stress
+					  turb_stress=0.0;
+#if HAVE_TURBULENCE_LANS !=0
+					  //velocity difference veli-velj
+					  for (k = 0; k < DIMENSION; k++)
+						   velij[k] = veli[k]- velj[k];
+
+					  turb_stress=SPH_epsilon_mom(velij, Vj);
 #endif
 
 
 #ifdef DEBUG
-		  if (check_ratio)
-		  {
+					  if (check_ratio)
+					  {
 
-		      for (k=0; k<DIMENSION; k++)
-		      {
-		    	  double temp_ratio=turb_stress*dwdxi[k]/(p_star*(vsqdwi[k]+vsqdwj[k]));
-		    	  if (temp_ratio>max_mom)
-		    		  max_mom = temp_ratio;
-		      }
-		  }
+						  for (k=0; k<DIMENSION; k++)
+						  {
+							  double temp_ratio=turb_stress*dwdxi[k]/(p_star*(vsqdwi[k]+vsqdwj[k]));
+							  if (temp_ratio>max_mom)
+								  max_mom = temp_ratio;
+						  }
+					  }
 
 #endif
 
-		          // Velocity rhs
-		          for (k = 0; k < DIMENSION; k++)
-		              rhs_v[k] -= mj*(p_star*(vsqdwi[k]+vsqdwj[k])- turb_stress*dwdxi[k]);
+					  // Velocity rhs
+					  for (k = 0; k < DIMENSION; k++)
+						  rhs_v[k] -= mj*(p_star*(vsqdwi[k]+vsqdwj[k])- turb_stress*dwdxi[k]);
+		          } //end of if dw>0
+
 		      }//end of particle j is within the support of particle i
 		  } // end loop over neighs
 
@@ -770,55 +804,6 @@ mom_engr_update(int myid, THashTable * P_table,
 				  sndspdj = pj->get_sound_speed();
 				  gammaj= pj->get_gamma();
 
-#if HAVE_TURBULENCE_LANS !=0
-		          for (k = 0; k < DIMENSION; k++)
-		               velj[k] = *(pj->get_smoothed_velocity()+k);
-#else
-		          for (k = 0; k < DIMENSION; k++)
-		          	   velj[k] = uvecj[k+1];
-#endif
-
-				  for (k = 0; k < DIMENSION; k++)
-				  {
-				      drj[k] = *(pj->get_density_derivative()+k);
-				      duj[k] = *(pj->get_velocity_u_derivative()+k);
-				      dvj[k] = *(pj->get_velocity_v_derivative()+k);
-				      dwj[k] = *(pj->get_velocity_w_derivative()+k);
-				      dpj[k] = *(pj->get_pressure_derivative()+k);
-				  }
-
-                  //pre-compute, solve RP to get p* and v*
-		          double p_star;
-		          double v_star[DIMENSION];
-
-#if RP_MASS_WEIGHTED==0
-#if USE_GSPH==1
-		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
-#elif USE_GSPH==2
-		          double sample_pt;
-		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
-		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
-#endif //USE_GSPH
-
-#elif RP_MASS_WEIGHTED>0
-		          double sample_pt=0.0;
-#if USE_GSPH==2
-		          sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
-#endif //USE_GSPH
-		          Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt, pi->get_mass(), mj);
-
-#endif //RP_MASS_WEIGHTED
-
-		          //compute turbulent stress
-				  turb_stress=0.0;
-#if HAVE_TURBULENCE_LANS !=0
-		          //velocity difference veli-velj
-		          for (k = 0; k < DIMENSION; k++)
-		               velij[k] = veli[k]- velj[k];
-
-		          turb_stress=SPH_epsilon_mom(velij, Vj);
-#endif
-
 #if ME_UPDATE_SML==2
 			      double hij=0.5*(hi+hj);
 
@@ -841,6 +826,13 @@ mom_engr_update(int myid, THashTable * P_table,
 		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
 		        	  vsqdwj[k]=Vj*Vj*dwdxi[k];
 		          }
+		          double absdw, max_dw=0.0;
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  absdw=abs(vsqdwi[k]);
+		        	  if (absdw>max_dw)
+		        		  max_dw=absdw;
+		          }
 #elif ME_UPDATE_SML==3
 		          // pre-compute weight function derivatives
 			      for (i = 0; i < DIMENSION; i++)
@@ -854,7 +846,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		          {
 		              dwdxi[k] = d_weight (si, hi, k);
 		              dwdxj[k] = d_weight (sj, hj, k);
-		              dwdxi[k] = 0.5* (dwdxi[k]+dwdxi[k]);
+		              dwdxi[k] = 0.5* (dwdxi[k]+dwdxj[k]);
 		              dwdx_heati[k] = d_weight (s_heati, hi/HEAT_TRANS_SCALE_RATIO, k);
 		              dwdx_heatj[k] = d_weight (s_heatj, hj/HEAT_TRANS_SCALE_RATIO, k);
 		          }
@@ -863,6 +855,14 @@ mom_engr_update(int myid, THashTable * P_table,
 		          {
 		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
 		        	  vsqdwj[k]=Vj*Vj*dwdxi[k];
+		          }
+
+		          double absdw, max_dw=0.0;
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  absdw=abs(vsqdwi[k]);
+		        	  if (absdw>max_dw)
+		        		  max_dw=absdw;
 		          }
 #else
 		          // pre-compute weight function derivatives
@@ -886,32 +886,98 @@ mom_engr_update(int myid, THashTable * P_table,
 		        	  vsqdwi[k]=Vi*Vi*dwdxi[k];
 		        	  vsqdwj[k]=Vj*Vj*dwdxj[k];
 		          }
+
+		          double absdw, max_dw=0.0;
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  absdw=abs(vsqdwi[k]);
+		        	  if (absdw>max_dw)
+		        		  max_dw=absdw;
+		          }
+		          for (k=0; k<DIMENSION; k++)
+		          {
+		        	  absdw=abs(vsqdwj[k]);
+		        	  if (absdw>max_dw)
+		        		  max_dw=absdw;
+		          }
 #endif
 
-		          double x_dot_star[DIMENSION];
-		          for (k = 0; k < DIMENSION; k++)
-		        	  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]+gravity[k]);//Do not forget gravity
-
-		          // Energy rhs
-		          //turbulent heat transfer term
-		          heat_tran = 0.; //This line is for the situation when we do not have turbulence in our model
+		          if (max_dw>0)
+		          {
 #if HAVE_TURBULENCE_LANS !=0
-                  //pre-compute
-		          double rhoab= 0.5 * ((pi->get_density()) + (pj->get_density()));
-		          double sndspdab = 0.5 * (sndspdi + sndspdj);
-
-		          Cp_ij = 0.5* (pj->get_specific_heat_p() + Cp_i);
-//		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
-		          double hab=0.5*(hi+pj->get_smlen());
-		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij, rhoab, hab, sndspdab);// What computed here is actually 0.5*kij
-		          Fij=compute_F(0.5*(dwdx_heati+dwdx_heatj),dx);
-		          heat_tran =mj*Vj*Vi* kij*(tempi- pj->get_temperature ())* Fij; //As function SPH_epsilon_heat_conductivity actually returns 2k, so it is not necessary to multiply by 2 here
+					  for (k = 0; k < DIMENSION; k++)
+						   velj[k] = *(pj->get_smoothed_velocity()+k);
+#else
+					  for (k = 0; k < DIMENSION; k++)
+						   velj[k] = uvecj[k+1];
 #endif
-		          deltae = 0.;
-		          for (k = 0; k < DIMENSION; k++)
-		              deltae -= mj*(v_star[k]-x_dot_star[k])*(p_star*(vsqdwi[k]+vsqdwj[k]) - turb_stress*dwdxi[k]); //(v_star[k]-x_dot_star[k]) = - v_{ab}
 
-		          rhs_e += (deltae + heat_tran);
+					  for (k = 0; k < DIMENSION; k++)
+					  {
+						  drj[k] = *(pj->get_density_derivative()+k);
+						  duj[k] = *(pj->get_velocity_u_derivative()+k);
+						  dvj[k] = *(pj->get_velocity_v_derivative()+k);
+						  dwj[k] = *(pj->get_velocity_w_derivative()+k);
+						  dpj[k] = *(pj->get_pressure_derivative()+k);
+					  }
+
+					  //pre-compute, solve RP to get p* and v*
+					  double p_star;
+					  double v_star[DIMENSION];
+
+					  //compute turbulent stress
+					  turb_stress=0.0;
+#if HAVE_TURBULENCE_LANS !=0
+					  //velocity difference veli-velj
+					  for (k = 0; k < DIMENSION; k++)
+						   velij[k] = veli[k]- velj[k];
+
+					  turb_stress=SPH_epsilon_mom(velij, Vj);
+#endif
+#if RP_MASS_WEIGHTED==0
+#if USE_GSPH==1
+					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
+#elif USE_GSPH==2
+					  double sample_pt;
+					  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
+#endif //USE_GSPH
+
+#elif RP_MASS_WEIGHTED>0
+					  double sample_pt=0.0;
+#if USE_GSPH==2
+					  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+#endif //USE_GSPH
+					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt, pi->get_mass(), mj);
+
+#endif //RP_MASS_WEIGHTED
+
+
+					  double x_dot_star[DIMENSION];
+					  for (k = 0; k < DIMENSION; k++)
+						  x_dot_star[k]=veli[k]+0.5*dt*(rhs_v[k]+gravity[k]);//Do not forget gravity
+
+					  // Energy rhs
+					  //turbulent heat transfer term
+					  heat_tran = 0.; //This line is for the situation when we do not have turbulence in our model
+#if HAVE_TURBULENCE_LANS !=0
+					  //pre-compute
+					  double rhoab= 0.5 * ((pi->get_density()) + (pj->get_density()));
+					  double sndspdab = 0.5 * (sndspdi + sndspdj);
+
+					  Cp_ij = 0.5* (pj->get_specific_heat_p() + Cp_i);
+	//		          kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij);
+					  double hab=0.5*(hi+pj->get_smlen());
+					  kij=SPH_epsilon_heat_conductivity(Cp_ij, dx, velij, rhoab, hab, sndspdab);// What computed here is actually 0.5*kij
+					  Fij=compute_F(0.5*(dwdx_heati+dwdx_heatj),dx);
+					  heat_tran =mj*Vj*Vi* kij*(tempi- pj->get_temperature ())* Fij; //As function SPH_epsilon_heat_conductivity actually returns 2k, so it is not necessary to multiply by 2 here
+#endif
+					  deltae = 0.;
+					  for (k = 0; k < DIMENSION; k++)
+						  deltae -= mj*(v_star[k]-x_dot_star[k])*(p_star*(vsqdwi[k]+vsqdwj[k]) - turb_stress*dwdxi[k]); //(v_star[k]-x_dot_star[k]) = - v_{ab}
+
+					  rhs_e += (deltae + heat_tran);
+		          }//end of if dw>0
 		      }//end of particle j is within the support of particle i
 		  } // end loop over neighs
 

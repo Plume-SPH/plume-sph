@@ -148,8 +148,15 @@ timestep(THashTable * P_table, TimeProps* timeprops)
   while ((p_curr = (Particle *) itr->next()))
     if (p_curr->need_neigh())
     {
-      // calc speed of sound through the medium
-      double c = p_curr->get_sound_speed();
+
+#if TIME_STEP_CONSTRAIN==2
+        // calc speed of sound through the medium
+        double c = 2*(p_curr->get_sound_speed()+abs(*p_curr->get_vel())); //Only for 1D
+#else
+        // calc speed of sound through the medium
+        double c = p_curr->get_sound_speed();
+#endif
+
 
 #ifdef DEBUG
       bool check_sndspd = true;

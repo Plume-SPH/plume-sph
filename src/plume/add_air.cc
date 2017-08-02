@@ -42,7 +42,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  unsigned pkey[TKEYLENGTH];
 	  unsigned tkeylen = TKEYLENGTH;
 	  double pcrd[DIMENSION], bnd[DIMENSION*2];
-	  double mass, des;
+	  double mass, des, pressure, velocity;
 	  vector < TKey > neighs;
 
 	  // direction indices on upper bucket
@@ -69,6 +69,8 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  double middle_point;
 		  double A;  //amplitude for density of Shu-Osher
 		  double f; //frequency for density of Shu-Osher
+		  double sml; //smoothing length
+		  double sml2; //(smoothing length)/2
 	  public:
 		  Shock_Inputs(); //The default contructor ---> Use default value
 		  //basic constructor for constant input
@@ -83,6 +85,22 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 			 middle_point=mid;
 			 A=0.0;  //amplitude for density of Shu-Osher
 			 f=1.0; //frequency for density of Shu-Osher
+			 sml=0.0;
+			 sml2=0.;
+		  };
+		  Shock_Inputs(double dl, double pl, double ul, double dr, double pr, double ur, double mid, double smlen)
+		  {
+			 prss_l = pl;  //Parameter
+			 prss_r = pr;  //Parameter
+			 des_l = dl;  //Parameter
+			 des_r = dr;  //Parameter
+			 vel_l = ul;  //Parameter
+			 vel_r = ur;  //Parameter
+			 middle_point=mid;
+			 A=0.0;  //amplitude for density of Shu-Osher
+			 f=1.0; //frequency for density of Shu-Osher
+			 sml=smlen;
+			 sml2=0.5*smlen;
 		  };
 		  //constructor for Shu-Osher ---> Density is a function of location
 		  Shock_Inputs(double dl, double pl, double ul, double dr, double pr, double ur, double mid, double amp, double fre)
@@ -96,22 +114,45 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 			  middle_point=mid;
 			  A=amp; //amplitude for density of Shu-Osher
 			  f=fre; //frequency for density of Shu-Osher
+			  sml=0.0;
+			  sml2=0.;
 		  };
 		  double get_rho(double x)
 		  {
+#if SHOCK_TUBE_SMOOTH==1
+			  assert(sml2>0);
+			  double SMF=exp((x-middle_point)/sml2);
+			  double dens =0.0;
+			  dens = (des_l + des_r*SMF)/(1+SMF);
+			  return (x > middle_point ? dens + A*sin(f*x) : dens);
+#else
 			  double dl=des_l;
 			  double dr=des_r+A*sin(f*x);
 			  return (x > middle_point ? dr : dl);
+#endif  //SHOCK_TUBE_SMOOTH
 		  };
 
 		  double get_press (double x)
 		  {
+#if SHOCK_TUBE_SMOOTH==1
+			  assert(sml2>0);
+			  double SMF=exp((x-middle_point)/sml2);
+			  return (prss_l + prss_r*SMF)/(1+SMF);
+#else
 			  return (x > middle_point ? prss_r : prss_l);
+#endif  //SHOCK_TUBE_SMOOTH
 		  };
 
 		  double get_vel (double x)
 		  {
+#if SHOCK_TUBE_SMOOTH==1
+			  assert(sml2>0);
+			  double SMF=exp((x-middle_point)/sml2);
+			  return (vel_l + vel_r*SMF)/(1+SMF);
+#else
 			  return (x > middle_point ? vel_r : vel_l);
+#endif  //SHOCK_TUBE_SMOOTH
+
 		  };
 
 	  };
@@ -125,7 +166,6 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  double vel_l = 0.0;  //Parameter
 	  double vel_r = 0.0;  //Parameter
 	  double middle_point=0.;
-	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
 #elif SHOCK_TUBE_TESTS==1
 	  //Sod shock tube input ---Famous test case in FV
 	  double prss_l = 1.0;  //Parameter
@@ -135,7 +175,6 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  double vel_l = 0.0;  //Parameter
 	  double vel_r = 0.0;  //Parameter
 	  double middle_point=0.;
-	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
 #elif SHOCK_TUBE_TESTS==2
 	  //Shu-Osher problem ---Famous test case in FV
 	  double prss_l = 10.33333;  //Parameter
@@ -147,7 +186,6 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  double middle_point=-4.0;
 	  double amp = 0.2;
 	  double fre = 5.0;
-	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point, amp, fre);
 #elif SHOCK_TUBE_TESTS==3
 	  //Sjogreen test: See paper Approximate Riemann Solvers for the Godunov SPH
 	  double prss_l = 0.4;  //Parameter
@@ -157,17 +195,15 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  double vel_l = -2.0;  //Parameter
 	  double vel_r = 2.0;  //Parameter
 	  double middle_point=0.;
-	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
 #elif SHOCK_TUBE_TESTS==4
 	  //strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
-	  double prss_l = 0.01;  //Parameter
-	  double prss_r = 1000;  //Parameter
+	  double prss_l = 1000;  //Parameter
+	  double prss_r = 0.01;  //Parameter
 	  double des_l = 1.0;  //Parameter
 	  double des_r = 1.0;  //Parameter
 	  double vel_l = 0.0;  //Parameter
 	  double vel_r = 0.0;  //Parameter
 	  double middle_point=0.;
-	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
 #endif
 
 	  double dx_l=smlen;
@@ -183,6 +219,25 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 
 	  double dx2_l = 0.5 * dx_l;
 	  double dx2_r = 0.5 * dx_r;
+
+
+#if SHOCK_TUBE_TESTS==0
+	  //Sod shock tube input ---Initial GSPH test parameters
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
+#elif SHOCK_TUBE_TESTS==1
+	  //Sod shock tube input ---Famous test case in FV
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
+#elif SHOCK_TUBE_TESTS==2
+	  //Shu-Osher problem ---Famous test case in FV
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point, amp, fre);
+#elif SHOCK_TUBE_TESTS==3
+	  //Sjogreen test: See paper Approximate Riemann Solvers for the Godunov SPH
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
+#elif SHOCK_TUBE_TESTS==4
+	  //strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point, smlen);
+#endif
+
 
 #if FLUID_COMPRESSIBILITY==0 //using EOS of ideal gas
 	  double sndspd = 340.;
@@ -234,7 +289,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 #endif
 	}
 
-	for (k = 0; k < Nb_P; k++)
+	for (k = 0; k < Nb_P; k++)  //BC ghost on the left
 	{
 		pcrd[0] -= dx_l;
 		pkey[0]=num_particle;
@@ -251,7 +306,12 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
+#if ADAPTIVE_SML_GHOST==11
+		Particle * pnew = new Particle(pkey, pcrd, mass, dx_l, des, vel_l, prss_l, gmm, sndspd, bctp_prss, not_involved);
+#else
 		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_l, prss_l, gmm, sndspd, bctp_prss, not_involved);
+#endif //ADAPTIVE_SML_GHOST
+
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
@@ -263,13 +323,15 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 
 
     pcrd[0]=bnd[0]+dx2_l;
-	while (pcrd[0]<=middle_point)
+	while (pcrd[0]<=middle_point) //Real left side particles
 	{
 		pkey[0]=num_particle;
 		pkey[1]=0;
 		pkey[2]=add_step;
 
 		des=SIPT.get_rho(pcrd[0]);
+		pressure = SIPT.get_press(pcrd[0]);
+		velocity = SIPT.get_vel(pcrd[0]);
 	    mass=des* dx_l;
 		// check for duplicates
 		if (P_table->lookup(pkey))
@@ -279,7 +341,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_l, prss_l, gmm, sndspd, bctp_real, involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, velocity, pressure, gmm, sndspd, bctp_real, involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
@@ -291,13 +353,15 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	}
 
 	pcrd[0] = pcrd[0] - dx_l+ dx_r;
-	while (pcrd[0]<=bnd[1])
+	while (pcrd[0]<=bnd[1]) //Real right side particles
 	{
 		pkey[0]=num_particle;
 		pkey[1]=0;
 		pkey[2]=add_step;
 
 		des=SIPT.get_rho(pcrd[0]);
+		pressure = SIPT.get_press(pcrd[0]);
+		velocity = SIPT.get_vel(pcrd[0]);
 	    mass=des* dx_r;
 		// check for duplicates
 		if (P_table->lookup(pkey))
@@ -307,7 +371,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
-		Particle * pnew = new Particle(pkey, pcrd, mass, smlen, des, vel_r, prss_r, gmm, sndspd, bctp_real, involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, smlen, des, velocity, pressure, gmm, sndspd, bctp_real, involved);
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;
@@ -345,7 +409,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 #endif
 	}
 
-	for (k = 0; k < Nb_P; k++)
+	for (k = 0; k < Nb_P; k++) //BC ghost right side particles
 	{
 		pkey[0]=num_particle;
 		pkey[1]=0;
@@ -361,7 +425,12 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		  exit(1);
 		}
 
+#if ADAPTIVE_SML_GHOST==11
+		Particle * pnew = new Particle(pkey, pcrd, mass, dx_r , des, vel_r, prss_r, gmm, sndspd, bctp_prss, involved);
+#else
 		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_r, prss_r, gmm, sndspd, bctp_prss, involved);
+#endif //ADAPTIVE_SML_GHOST
+
 		// add to hash-table
 		P_table->add(pkey, pnew);
 		num_particle++;

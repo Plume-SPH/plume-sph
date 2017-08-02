@@ -1019,6 +1019,11 @@ main(int argc, char **argv)
   //add air particles and put particles into bucket, bc_type is determined in this process
   set_up_shock_tube(P_table, matprops, simprops, numprocs, myid);
 
+#if ADAPTIVE_SML>=1
+    //if ((timeprops->step) % SML_UPDATE_INT == 0)
+    	// search and update neighbors
+    	adaptive_sml(myid, P_table);
+#endif
 
 //#ifdef DEBUG
 //  if(check_bypos)

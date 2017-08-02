@@ -929,7 +929,7 @@ const double ata_P = 0.01;
 const int num_loop_P=2;
 const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
-const double eta_smooth_P = 1.2; //We can try different value to get best results
+const double eta_smooth_P = 1.0; //We can try different value to get best results
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
@@ -997,10 +997,10 @@ const double csv_out_P=0.18; //time to output csv files
 #elif SHOCK_TUBE_TESTS==4
 //strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
 const int Nb_P=15;
-const double Ll_P[DIMENSION]={-0.4};//-5-4.73
-const double Lu_P[DIMENSION]={0.4};
-const int Nnsrp_l_P=30;
-const int Nnsrp_r_P=30;
+const double Ll_P[DIMENSION]={-0.55};//-5-4.73
+const double Lu_P[DIMENSION]={0.55};
+const int Nnsrp_l_P=100;
+const int Nnsrp_r_P=10;
 const double csv_out_P=0.012; //time to output csv files
 #endif
 

@@ -2182,6 +2182,122 @@ void HLLC_RP_Solver_my(double dl, double dr, double pl, double pr, double ul, do
 //    }
 }
 
+//An iterative Riemann Solver based on paper "Implementations and tests of Godunov-type particle hydrodynamics"
+//This is actually a Riemann Solver proposed by Van Leer.
+// index l is index a in the paper
+// index r is index b in the paper
+void VanLeer_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double cl, double cr, double *p_star, double * u_star)
+{
+    //Roe average:
+    double rdl=sqrt(dl);
+    double rdr=sqrt(dr);
+    double denominator = 1.0 / (rdl+rdr);
+
+    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
+	//Compute approximation of wave speed
+    double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+    double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+
+//
+//    double vl=ul;
+//    double vr=ur;
+
+    double p_iter=(cl*pr+cr*pl-cr*cl*(vl-vr))/(cl+cr);
+
+    double max_diff=abs(p_iter-pl)/pl;
+    double max_diff2=abs(p_iter-pr)/pr;
+    if (max_diff2>max_diff)
+    	max_diff=max_diff2;
+
+    if (max_diff < 0.01)
+    {
+        *u_star=0.5*(vl+vr);
+        *p_star=p_iter;
+        return;
+    }
+
+    double err=1.0;
+    double Thresh=0.01;
+
+    double G1l=0.5*(gj+1)/gj;
+    double G2l=0.5*(gj-1)/gj;
+    double G3l=1-G2l;
+    double G1r=0.5*(gi+1)/gi;
+    double G2r=0.5*(gi-1)/gi;
+    double G3r=1-G2r;
+
+    double Wl, Wr, Zl, Zr;
+    double PRl, PRr;
+    double Wl_sq, Wr_sq;
+    double vs_l, vs_r;
+    double cl_sq=cl*cl;
+    double cr_sq=cr*cr;
+
+    double p_iter_new;
+    while (err>Thresh)
+    {
+    	//Compute Lagrangian shock speed
+    	PRl=p_iter/pl;
+    	PRr=p_iter/pr;
+
+    	if (p_iter>=pl)
+    		Wl=cl*pow((1+G1l*(p_iter-pl)/pl),0.5);
+    	else
+    		Wl=G2l*(1-PRl)/(1-pow(PRl, G2l))*cl;
+
+    	if (p_iter>=pr)
+    		Wr=cr*pow((1+G1r*(p_iter-pr)/pr),0.5);
+    	else
+    		Wr=G2r*(1-PRr)/(1-pow(PRr, G2r))*cr;
+
+    	//Compute tangential slope
+    	Wl_sq=Wl*Wl;
+    	Wr_sq=Wr*Wr;
+
+    	if (p_iter>=pl)
+    		Zl=2*Wl_sq/(Wl_sq+cl_sq)*Wl;
+    	else
+    		Zl=cl*pow(PRl, G3l);
+
+    	if (p_iter>=pr)
+    		Zr=2*Wr_sq/(Wr_sq+cr_sq)*Wr;
+    	else
+    		Zr=cr*pow(PRr, G3r);
+
+    	//Update p_iter and v* (actually, v* for the previous step)
+    	vs_l=vl+(p_iter-pl)/Wl;
+    	vs_r=vr-(p_iter-pr)/Wr;
+    	p_iter_new=p_iter-(Zl*Zr*(vs_l-vs_r))/(Zl+Zr);
+
+    	//Compute err
+    	err=abs(p_iter_new-p_iter)/p_iter;
+
+    	p_iter=p_iter_new;
+    }
+
+    *u_star=(Zl*vs_l+Zr*vs_r)/(Zl+Zr);
+    *p_star=p_iter;
+
+#ifdef DEBUG
+//    bool check=true;
+//    if (check)
+//    	if (isnan(*p_star)||isnan(u_star))
+//    	{
+//    		cout << "NAN solution obtained from Riemann Solver!" << endl;
+////    		exit(0);
+//    	}
+    bool check_pressure=true;
+    if (check_pressure)
+		if (*p_star<0)
+		{
+			cout << "negative pressure obtained from Riemann Solver!" << endl;
+	//    		exit(0);
+		}
+#endif
+
+    return;
+}
+
 //Generate Van Der Corput for RCM.
 //The maximum steps is 2^16=65536
 double Generate_VanderCorput(unsigned n)
@@ -2469,6 +2585,13 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	ul=uj;
         ur=ui;
     }
+#elif MINI_DERIVATIVE_COND == 4
+    dr=rhoi;
+    ur=ui;
+    pr=pi;
+    dl=rhoj;
+    ul=uj;
+    pl=pj;
 #endif
 
     double u_star;
@@ -2481,7 +2604,10 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
         HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
 #elif RIEMANN_SOLVER == 2
         HLLC_RP_Solver_my(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star);
+#elif RIEMANN_SOLVER == 3
+        VanLeer_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, CSj, CSi, p_star, &u_star);
 #endif //Riemann Solver
+
 #elif USE_GSPH==2
         HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star, sample_x, delta_t);
 #endif //USE_GSPH

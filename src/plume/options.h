@@ -104,9 +104,17 @@
  * 3: Sjogreen test: See paper Approximate Riemann Solvers for the Godunov SPH
  * 4: strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
  */
-////using Gaussian Kernel currently, only one kind of kernel is available
 #ifndef SHOCK_TUBE_TESTS
 #define SHOCK_TUBE_TESTS 0
+#endif
+
+//Whether smooth the initial distribution for Shock tube problem or not?
+/*
+ * 0: No
+ * 1: Yes
+ */
+#ifndef SHOCK_TUBE_SMOOTH
+#define SHOCK_TUBE_SMOOTH 0
 #endif
 
 //if defined, use equal particle mass and different sml
@@ -151,10 +159,11 @@
  * MINI_DERIVATIVE_COND 2: apply to variables one by one for both side, that is to say, if negative pressure on left side shows up, only apply the minimum derivative condition for pressure on both sides.
  * MINI_DERIVATIVE_COND 3: apply to all variables on both sides, that is to say, if negative pressure on one side shows up, apply the minimum derivative condition for all variables (pressure, density and velocity) on both sides.
  * MINI_DERIVATIVE_COND 10: based on 1, use piece-wise linear constant if C_SHOCK*abs(ul-ur)>min(CSi, CSj)
+ * MINI_DERIVATIVE_COND 4: without check physics value, directly use zeroth order construction of RP
  */
 #if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef  MINI_DERIVATIVE_COND
-#define  MINI_DERIVATIVE_COND 0
+#define  MINI_DERIVATIVE_COND 4
 #endif
 #endif
 
@@ -172,6 +181,7 @@
 /* 0: --> Roe
  * 1: --> HLLC
  * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock
+ * 3: --> An iterative solver based by Van Leer
  */
 //For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
 #if (USE_GSPH==1 || USE_GSPH==2)
@@ -231,7 +241,7 @@
  */
 #if  (USE_GSPH==1 || USE_GSPH==2)
 #ifndef SWITCH_OFF_AV_FOR_EXPAN
-#define SWITCH_OFF_AV_FOR_EXPAN 2
+#define SWITCH_OFF_AV_FOR_EXPAN 0
 #endif
 #endif
 
@@ -268,10 +278,19 @@
  * 31: adaptive scheme three: my own scheme, use the idea of mass gradient to adaptively change smoothing length
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 31
+#define ADAPTIVE_SML 0
 #endif
 
-
+//Whether apply adaptive smooth length to ghost particle or not
+/*
+ * 0: No
+ * 1: Yes  ---> Currently not able to apply, need to 1) let ghost particles have neighbour information
+ *                                                   2) Will have difficult to deal with boundary deficiency. ---> Normalized it? Not sure
+ * 11: Instead of adaptively change smoothing length of ghost particles, set sml satisfy the common requirement on sml.
+ */
+#ifndef ADAPTIVE_SML_GHOST
+#define ADAPTIVE_SML_GHOST 11
+#endif
 
 //Define which format of to use for discretized momentum equation
 /*

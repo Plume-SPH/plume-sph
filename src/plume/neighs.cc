@@ -521,7 +521,11 @@ void adaptive_sml(int myid, THashTable * P_table)
 	  itr2->reset();
 	  while ((pi = (Particle *) itr2->next ()))
 	  {
-		  if (pi->need_neigh ())  //real and no-guest
+#if ADAPTIVE_SML_GHOST==1
+		  if (!pi->is_guest ())  //no-guest
+#else
+		  if (pi->need_neigh ())  //real and no-guest ---> Ghost particle has no neighbors! --Not able to apply here!
+#endif //ADAPTIVE_SML_GHOST
 		  {
 
 #ifdef DEBUG
