@@ -53,7 +53,7 @@
  * 4 : use (w(hi)/rho_i^2+w(hj)/rho_j^2) --->This is actually the default formulation for GSPH  -->Only apply for GSPH
  */
 #ifndef ME_UPDATE_SML
-#define ME_UPDATE_SML 0
+#define ME_UPDATE_SML 2
 #endif
 
 /*
@@ -126,7 +126,7 @@
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
-#define EQUAL_PART_MASS 0
+#define EQUAL_PART_MASS 1
 #endif
 #endif
 
@@ -278,7 +278,7 @@
  * 31: adaptive scheme three: my own scheme, use the idea of mass gradient to adaptively change smoothing length
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 0
+#define ADAPTIVE_SML 31
 #endif
 
 //Whether apply adaptive smooth length to ghost particle or not
@@ -415,8 +415,13 @@
 #endif
 
 //Output ghost particles
+/*
+ * Not defined: do not output
+ * If defined, output to h5part file for sure
+ * If  WRITE_GHOSTS==2: besides output to h5part file, also output to csv file  ---> Only apply to 1D code.
+ */
 #ifndef WRITE_GHOSTS
-#define WRITE_GHOSTS
+#define WRITE_GHOSTS 2
 #endif
 
 //output PID

@@ -43,8 +43,8 @@ mom_engr_update(int myid, THashTable * P_table,
   double deltae;
   double turb_stress; //turbulent viscosity term
 
-#if ME_UPDATE_SML==3
-  double hj, sj[DIMENSION],dwdxj[DIMENSION];
+#if ME_UPDATE_SML==3 || ME_UPDATE_SML==4
+  double hj, sj[DIMENSION], dwdxj[DIMENSION];
 #endif //ME_UPDATE_SML
 
   Particle *pi=NULL;
@@ -288,6 +288,17 @@ mom_engr_update(int myid, THashTable * P_table,
 		              dwdxi[k]=0.5*(dwdxi[k]+dwdxj[k]);
 //		              dwdx_heatj[k] = d_weight (s_heatj, hj/HEAT_TRANS_SCALE_RATIO, k);
 		          }
+#elif ME_UPDATE_SML==4
+		          hj=pj->get_smlen();
+			      for (i = 0; i < DIMENSION; i++)
+			           sj[i] = dx[i] / hj;
+	              for (int ii=0; ii<DIMENSION; ii++)
+//	            	  s_heatj[ii]=si[ii]*HEAT_TRANS_SCALE_RATIO;
+
+		          for (k = 0; k < DIMENSION; k++)
+		          {
+		              dwdxj[k] = d_weight (sj, hj, k);
+		          }
 #endif //ME_UPDATE_SML
 
 		          // Energy rhs
@@ -302,6 +313,15 @@ mom_engr_update(int myid, THashTable * P_table,
 		          heat_tran =mj*Vj*Vi* kij*(tempi- pj->get_temperature ())* Fij;
 #endif
 
+#if ME_UPDATE_SML==4
+		          // Velocity rhs
+				  for (k = 0; k < DIMENSION; k++)
+					  rhs_v[k] -= mj*(pressj * Vj * Vj*dwdxj[k]+ pvsqi* dwdxi[k] + 0.5*vis*(dwdxi[k]+dwdxj[k]));
+
+		          deltae = 0.;
+		          for (k = 0; k < DIMENSION; k++)
+		              deltae += 0.5* mj*(pressj * Vj * Vj*dwdxj[k]+ pvsqi* dwdxi[k] + 0.5*vis*(dwdxi[k]+dwdxj[k]))* velij[k];
+#else
 		          // Velocity rhs
 				  for (k = 0; k < DIMENSION; k++)
 					  rhs_v[k] -= mpvsqij* dwdxi[k];
@@ -309,6 +329,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		          deltae = 0.;
 		          for (k = 0; k < DIMENSION; k++)
 		              deltae += 0.5* (mpvsqij* dwdxi[k])* velij[k];
+#endif //ME_UPDATE_SML
 
 		          rhs_e += (deltae + heat_tran);
 		      }
