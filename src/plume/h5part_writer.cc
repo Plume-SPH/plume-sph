@@ -461,7 +461,7 @@ write_csv(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 
 	  // write the file headers
 	  //if (timepros->ifstart())
-		  outputFile << "RHO" << ","<<"X"<< "," << "U"<< ","<<"E"<< "," <<"KS"<< "," << "P"<< "," << "PHASE"<< "," << "BCTP"<< ","<< "GUEST_FLAG"<< ","<< "INVOLVE_FLAG" << "smlen" << std::endl;
+		  outputFile << "RHO" << ","<<"X"<< "," << "U"<< ","<<"E"<< "," <<"KS"<< "," << "P"<< "," << "PHASE"<< "," << "BCTP"<< ","<< "GUEST_FLAG"<< ","<< "INVOLVE_FLAG" << "," << "smlen" << std::endl;
 
 	  THTIterator *itr = new THTIterator(P_table);
 	  Particle *pi = NULL;
@@ -472,7 +472,7 @@ write_csv(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 	    if (pi->get_bc_type()==100) //only output real
 	    {
 #endif
-	        outputFile << pi->get_density() << "," << *(pi->get_coords()) << ","<< *(pi->get_vel())<< ","<<pi->get_energy () << ","<<pi->get_mass_frac() << ","<< pi->get_pressure() << "," << pi->which_phase()<< "," <<pi->get_bc_type ()<< ","<< pi->get_guest()<< ","<< pi->get_involved () << ","<< pi->get_involved ()<< std::endl;
+	        outputFile << pi->get_density() << "," << *(pi->get_coords()) << ","<< *(pi->get_vel())<< ","<<pi->get_energy () << ","<<pi->get_mass_frac() << ","<< pi->get_pressure() << "," << pi->which_phase()<< "," <<pi->get_bc_type ()<< ","<< pi->get_guest()<< ","<< pi->get_involved () << ","<< pi->get_smlen () << std::endl;
 #if WRITE_GHOSTS!=2
 	    }
 #endif

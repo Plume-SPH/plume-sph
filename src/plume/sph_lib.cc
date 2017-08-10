@@ -261,10 +261,13 @@ double compute_F(double* dwdx, double* dx)
 	double W_r=0.;
 	double result;
 	for (i=0; i<DIMENSION; i++)
-	{
-		r_sq += (*(dx+i)) * (*(dx+i));
 		W_r += (*(dwdx+i)) * (*(dx+i));
-	}
+
+	if (W_r==0)
+		return 0.0;
+
+	for (i=0; i<DIMENSION; i++)
+		r_sq += (*(dx+i)) * (*(dx+i));
 
 	result=W_r/r_sq;
 

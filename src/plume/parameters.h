@@ -969,7 +969,7 @@ const double Ll_P[DIMENSION]={-0.4};
 const double Lu_P[DIMENSION]={0.4};
 const int Nnsrp_r_P=20; //No saving real particles on right hand side
 const int Nnsrp_l_P=40; //No saving real particles on left hand side
-const double csv_out_P=0.2; //time to output csv files
+const double csv_out_P=0.1; //time to output csv files
 #elif SHOCK_TUBE_TESTS==1
 //another Sod shock test: see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
 const int Nb_P=35;

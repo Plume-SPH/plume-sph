@@ -24,8 +24,8 @@
  * USE_SUMMATION=1: Use weighted summation formulation for density update
  * USE_SUMMATION=0: Use discretized mass conservation equation ---> Currently, did not consider updating for mass fraction yet. ---> Is this one works well with shock tube, try it for Plume model
  */
-#ifndef USE_SUMMATION 1
-#define USE_SUMMATION
+#ifndef USE_SUMMATION
+#define USE_SUMMATION 1
 
 // only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
 // NOTE: currently, all of these schemes are only applied to density updating. Actually, some of these ideas can be used in momentum and energy updating.
@@ -53,7 +53,7 @@
  * 4 : use (w(hi)/rho_i^2+w(hj)/rho_j^2) --->This is actually the default formulation for GSPH  -->Only apply for GSPH
  */
 #ifndef ME_UPDATE_SML
-#define ME_UPDATE_SML 2
+#define ME_UPDATE_SML 0
 #endif
 
 /*
@@ -289,7 +289,7 @@
  * 11: Instead of adaptively change smoothing length of ghost particles, set sml satisfy the common requirement on sml.
  */
 #ifndef ADAPTIVE_SML_GHOST
-#define ADAPTIVE_SML_GHOST 11
+#define ADAPTIVE_SML_GHOST 0
 #endif
 
 //Define which format of to use for discretized momentum equation
@@ -456,11 +456,12 @@
  * USE_SUMMATION=1: Use weighted summation formulation for density update
  * USE_SUMMATION=0: Use discretized mass conservation equation ---> Currently, did not consider updating for mass fraction yet. ---> Is this one works well with shock tube, try it for Plume model
  */
-#ifndef USE_SUMMATION 1
-#define USE_SUMMATION
+#ifndef USE_SUMMATION
+#define USE_SUMMATION 1
 
 
 // only when no sml adaptive is used, it will be necessary to decide to use either original sml or current sml. If sml is adaptive, always use current sml
+// NOTE: currently, all of these schemes are only applied to density updating. Actually, some of these ideas can be used in momentum and energy updating.
 /*
  * Define the smoothing length that will be used in density update: ---> only need when SPH summation formulism is used!
  * 0 : use original smoothing length   ---> It is easier to get negative energy
@@ -472,7 +473,21 @@
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 11
+#define DENSITY_UPDATE_SML 1
+#endif
+
+
+//Define the smoothing length used in momentum and energy update
+//Note: To be safe, it would be better to have more neighbors than needed by support.--->That's why I set CUTOFF2 = 2*CUTOFF
+/*
+ * 0 : use hi for updating of energy and momentum of particle i --> The default manner                  -->Only apply for SPH
+ * 1 : use hj for updating of energy and momentum of particle i                                         -->Only apply for SPH
+ * 2 : use 0.5(hi+hj) for updating of energy and momentum of particle i                                 -->apply for SPH and GSPH
+ * 3 : use 0.5[w(hi)+w(hj)] for updating of energy and momentum of particle i                           -->apply for SPH and GSPH
+ * 4 : use (w(hi)/rho_i^2+w(hj)/rho_j^2) --->This is actually the default formulation for GSPH  -->Only apply for GSPH
+ */
+#ifndef ME_UPDATE_SML
+#define ME_UPDATE_SML 0
 #endif
 
 
@@ -485,7 +500,7 @@
  * Note: this option is not available for GSPH yet.
  */
 #ifndef HAVE_ENERGY_SMOOTH
-#define HAVE_ENERGY_SMOOTH 1
+#define HAVE_ENERGY_SMOOTH 0
 #endif
 
 /*
@@ -628,6 +643,22 @@
 #define SWITCH_OFF_AV_FOR_EXPAN 0
 #endif
 #endif
+
+//For particle mass with Non-uniform particle mass, use particle mass weighted average when solving Riemann Problems.
+/*
+ * RP_MASS_WEIGHTED==0: do not use mass weighted
+ * RP_MASS_WEIGHTED==1: use m/rho as weight
+ * RP_MASS_WEIGHTED==2: use m as weight  ---> Use mass weighted project only when project back
+ * RP_MASS_WEIGHTED==21:use m as weight  ---> Use mass weighted project for both construct interface and project back.
+ * RP_MASS_WEIGHTED==3: replace Roe average, which is weighted by sqrt(rho) with sqrt(m/rho)
+ */
+#if  (USE_GSPH==1 || USE_GSPH==2) && EQUAL_PART_MASS==0
+#ifndef RP_MASS_WEIGHTED
+#define RP_MASS_WEIGHTED 0
+#endif
+#endif
+
+
 //Define whether use nature boundary condition for ks or essentiall boundary ks
 /*
  * 0: essential
@@ -643,6 +674,8 @@
  * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
  * 1: adaptive scheme one: based on the assumption that smoothing length should be proportional to ratio between particle mass and density. This is the traditional way of adaptive smoothing length -->DENSITY_UPDATE_SML should always be 1
  * 2: adaptive scheme two: based ADKE: see paper "Adaptive kernel estimation and SPH tensile instability", In this case, need original sml, even though updating of density is based on current sml, we still have original sml.
+ * 3: adaptive scheme three: my own scheme
+ * 31: adaptive scheme three: my own scheme, use the idea of mass gradient to adaptively change smoothing length
  */
 #ifndef ADAPTIVE_SML
 #define ADAPTIVE_SML 0
