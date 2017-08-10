@@ -93,7 +93,10 @@ if test "x$enable_parallel" = "xyes"; then
     if test "x$mpich" = "xno"; then
         AC_CHECK_LIB([mpi],[MPI_Init],,[openmpi='no'])
     fi
-    if test "x$mpich" = "xno" -a "x$openmpi" = "x$no"; then
+    if test "x$mpich" = "xno" -a "x$openmpi" = "x$no" ; then
+        AC_CHECK_LIB([mpicxx],[MPI_Init],,[intel-mpi17='no'])
+    fi
+    if test "x$mpich" = "xno" -a "x$openmpi" = "x$no" -a "x$intel-mpi17" = "x$no"; then
         AC_MSG_FAILURE([can not find any mpi library])
     fi
 fi
