@@ -678,7 +678,7 @@
  * 31: adaptive scheme three: my own scheme, use the idea of mass gradient to adaptively change smoothing length
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 0
+#define ADAPTIVE_SML 31
 #endif
 
 

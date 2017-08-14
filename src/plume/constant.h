@@ -77,7 +77,7 @@ const double PRANDTL_NUM = 0.85; //Prandtl number
 
 #if HAVE_ENERGY_CUT==1
  //Constant for cut energy method ---> a simple way to avoid negative pressure (or negative energy)
-const double ENERGY_CUT = 1.0;
+const double ENERGY_CUT = 60.0;
 #endif
 
 //heat transfer spatial ratio to momentum exchange
@@ -176,7 +176,7 @@ const double PRANDTL_NUM = 0.85; //Prandtl number
 
 #if HAVE_ENERGY_CUT==1
  //Constant for cut energy method ---> a simple way to avoid negative pressure (or negative energy)
-const double ENERGY_CUT = 1.0;
+const double ENERGY_CUT = 60.0;
 #endif
 
 //heat transfer spatial ratio to momentum exchange
@@ -185,7 +185,7 @@ const double E_SMOOTH_RATIO = 4.0;  //Ratio of energy smoothing length to smooth
 const double E_FILTER_HRATIO = 2.0;  //Ratio of energy filtering smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)  --> will be used when HAVE_TURBULENCE_LANS == 2
 
 //Adaptive sml
-const int SML_UPDATE_INT = 50.;
+const int SML_UPDATE_INT = 3.;
 const double RATIO_SML_DX = 1.0; //The ratio between sml and dx, the maximum value allowed by current code design is 2.0 (as number of particles in each direction in each bucket is 6, the kernal cut off is 3).
                                  /*
                                   * This constant is used within particle class (which might not be a good design),
@@ -196,6 +196,7 @@ const double RATIO_SML_DX = 1.0; //The ratio between sml and dx, the maximum val
                                   * This is especially necessary for simulation with relatively large density ratio.
                                   */
 
+const double MASS_IND_THRESH=0.;
 
 //Parameters for GSPH
 const double C_SHOCK = 3.0; //corresponding to number of particles in shock surface.

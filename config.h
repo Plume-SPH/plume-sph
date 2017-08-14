@@ -31,6 +31,9 @@
 /* Define to 1 if you have the `mpich' library (-lmpich). */
 #define HAVE_LIBMPICH 1
 
+/* Define to 1 if you have the `mpicxx' library (-lmpicxx). */
+/* #undef HAVE_LIBMPICXX */
+
 /* Define to 1 if you have the `z' library (-lz). */
 #define HAVE_LIBZ 1
 

@@ -578,13 +578,15 @@ void adaptive_sml(int myid, THashTable * P_table)
 
 #if ADAPTIVE_SML==31
 				  double dmi_max=0.;
-			      dmi_max=abs(*(pi->get_mass_grad() +0));
+//			      dmi_max=abs(*(pi->get_mass_grad() +0));
 //			      for (k=0; k<DIMENSION; k++)
 //			    	  if (abs(*(pi->get_mass_grad() + k))>dmi_max)
 //			    		  dmi_max=abs(*(pi->get_mass_grad() + i));
 
-//			      if (dmi_max<=5e-3)
-//				  	  dmi_max=0.0;
+				  for (k=0; k<DIMENSION; k++)
+					  dmi_max+=abs(*(pi->get_mass_grad() + i));
+
+				  dmi_max = dmi_max/DIMENSION;
 
 			      mcoef=(exp(pi->get_mass_indicator ()*Mreduce_R_P));
 //			      mcoef=1+pi->get_mass_indicator ()*Mreduce_R_P;

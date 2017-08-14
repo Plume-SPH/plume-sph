@@ -1810,13 +1810,13 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
     *u_star= ulr-0.5*(pr-pl)/clr;
 
 #ifdef DEBUG
-    bool check=true;
-    if (check)
-    	if (isnan(*p_star)||isnan(*u_star))
-    	{
-    		cout << "NAN solution obtained from Riemann Solver!" << endl;
-//    		exit(0);
-    	}
+//    bool check=true;
+//    if (check)
+//    	if (isnan(*p_star)||isnan(*u_star))
+//    	{
+//    		cout << "NAN solution obtained from Riemann Solver!" << endl;
+////    		exit(0);
+//    	}
     bool check_pressure=false;
     if (check_pressure)
 		if (*p_star<0)
