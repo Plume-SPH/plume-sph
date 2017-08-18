@@ -357,14 +357,14 @@ const double eta_smooth_P = 1.2; //We can try different value to get best result
 const double ADKE_k_P =0.7;
 const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
 const double ADKE_sml_ratio_P = 2.0; // The ration that used to determine the initial smoothing length. ---> based on input smoothing length. This is useful when use equal particle mass but different interval
-#elif ADAPTIVE_SML==31
+#elif ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 const double MY_ADKE_k_P=1.0;
 const double Mreduce_R_P=1.0; //coefficient that used to reduce equivalent particle mass in adaptive smoothing length.
 #endif
 
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.40;
+const double CFL_P=0.80;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------
@@ -505,7 +505,7 @@ const int balancing_check_int_P = 3;
 //const double ADKE_k_P =0.7;
 //const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
 //const double ADKE_sml_ratio_P = 2.0; // The ration that used to determine the initial smoothing length. ---> based on input smoothing length. This is useful when use equal particle mass but different interval
-//#elif ADAPTIVE_SML==31
+//#elif ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 //const double MY_ADKE_k_P=1.0;
 //const double Mreduce_R_P=1.0; //coefficient that used to reduce equivalent particle mass in adaptive smoothing length.
 //#endif
@@ -650,7 +650,7 @@ const int balancing_check_int_P = 3;
 //const double ADKE_k_P =0.7;
 //const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
 //const double ADKE_sml_ratio_P = 2.0; // The ration that used to determine the initial smoothing length. ---> based on input smoothing length. This is useful when use equal particle mass but different interval
-//#elif ADAPTIVE_SML==31
+//#elif ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 //const double MY_ADKE_k_P=1.0;
 //const double Mreduce_R_P=1.0; //coefficient that used to reduce equivalent particle mass in adaptive smoothing length.
 //#endif
@@ -805,7 +805,7 @@ const int balancing_check_int_P = 3;
 //const double ADKE_k_P =0.7;
 //const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
 //const double ADKE_sml_ratio_P = 2.0; // The ration that used to determine the initial smoothing length. ---> based on input smoothing length. This is useful when use equal particle mass but different interval
-//#elif ADAPTIVE_SML==31
+//#elif ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 //const double MY_ADKE_k_P=1.0;
 //const double Mreduce_R_P=1.0; //coefficient that used to reduce equivalent particle mass in adaptive smoothing length.
 //#endif
@@ -967,7 +967,7 @@ const double eta_smooth_P = 1.0; //We can try different value to get best result
 const double ADKE_k_P =0.7;
 const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
 const double ADKE_sml_ratio_P = 2.0; // The ration that used to determine the initial smoothing length. ---> based on input smoothing length. This is useful when use equal particle mass but different interval
-#elif ADAPTIVE_SML==31
+#elif ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 const double MY_ADKE_k_P=1.0;
 const double Mreduce_R_P=1.0; //coefficient that used to reduce equivalent particle mass in adaptive smoothing length.
 #endif
@@ -1169,7 +1169,7 @@ const double eta_smooth_P = 1.0; //We can try different value to get best result
 const double ADKE_k_P =0.7;
 const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
 const double ADKE_sml_ratio_P = 2.0; // The ration that used to determine the initial smoothing length. ---> based on input smoothing length. This is useful when use equal particle mass but different interval
-#elif ADAPTIVE_SML==31
+#elif ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 const double MY_ADKE_k_P=1.0;
 const double Mreduce_R_P=1.0; //coefficient that used to reduce equivalent particle mass in adaptive smoothing length.
 #endif

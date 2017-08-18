@@ -501,7 +501,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 	  double err;
 	  THTIterator *itr2 = new THTIterator(P_table);
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 	  double mcoef, fdm;
 #endif
 
@@ -541,7 +541,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 			  for (i = 0; i < DIMENSION; i++)
 				  xi[i] = *(pi->get_coords() + i);
 
-#if ADAPTIVE_SML==1 || ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==1 || ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 			  int loop = 0;
 			  for (loop = 0; loop < num_loop_P; loop ++) //We will set num_loop_P = 2
 			  {
@@ -576,7 +576,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 					  }
 				  }// end loop over neighs
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31  || ADAPTIVE_SML==32
 				  double dmi_max=0.;
 //			      dmi_max=abs(*(pi->get_mass_grad() +0));
 //			      for (k=0; k<DIMENSION; k++)
@@ -591,6 +591,8 @@ void adaptive_sml(int myid, THashTable * P_table)
 			      mcoef=(exp(pi->get_mass_indicator ()*Mreduce_R_P));
 //			      mcoef=1+pi->get_mass_indicator ()*Mreduce_R_P;
 				  assert(mcoef>=0);
+
+#if ADAPTIVE_SML==31
 #if CODE_DIMENSION==3
 				  H_new = eta_smooth_P * cbrt(pi->get_mass()/rho_star);
 #elif CODE_DIMENSION==2
@@ -598,6 +600,15 @@ void adaptive_sml(int myid, THashTable * P_table)
 #elif CODE_DIMENSION==1
 				  H_new = eta_smooth_P * (pi->get_mass()/rho_star);
 #endif //CODE_DIMENSION
+#elif ADAPTIVE_SML==32
+#if CODE_DIMENSION==3
+				  H_new = eta_smooth_P * (0.33333333*cbrt(pi->get_mass()/(0.9844*rho_star+0.0156*pi->get_initial_des ()))+0.66666667*pi->get_original_smlen ());
+#elif CODE_DIMENSION==2
+				  H_new = eta_smooth_P * (0.33333333*sqrt(pi->get_mass()/(0.9375*rho_star+0.0625*pi->get_initial_des ()))+0.66666667*pi->get_original_smlen ());
+#elif CODE_DIMENSION==1
+				  H_new = eta_smooth_P * (0.33333333*(pi->get_mass()/(0.75*rho_star+0.25*pi->get_initial_des()))+0.66666667*pi->get_original_smlen ());
+#endif //CODE_DIMENSION
+#endif //ADAPTIVE_SML==31
 
 			      fdm=MY_ADKE_k_P*pow(log(dmi_max+1), 0.5);
 //				  fdm=MY_ADKE_k_P*dmi_max;
@@ -610,7 +621,16 @@ void adaptive_sml(int myid, THashTable * P_table)
 //			      H_new = mcoef*(1+pi->which_mass_ind ()*fdm)*H_new;
 			      H_new = (1+mcoef*pi->which_mass_ind ()*fdm)*H_new;
 
-#else //ADAPTIVE_SML!=31
+#else //ADAPTIVE_SML!=1  || ADAPTIVE_SML==3
+#if ADAPTIVE_SML==11
+#if CODE_DIMENSION==3
+				  H_new = eta_smooth_P * (0.33333333*cbrt(pi->get_mass()/(0.9844*rho_star+0.0156*pi->get_initial_des ()))+0.66666667*pi->get_original_smlen ());
+#elif CODE_DIMENSION==2
+				  H_new = eta_smooth_P * (0.33333333*sqrt(pi->get_mass()/(0.9375*rho_star+0.0625*pi->get_initial_des ()))+0.66666667*pi->get_original_smlen ());
+#elif CODE_DIMENSION==1
+				  H_new = eta_smooth_P * (0.33333333*(pi->get_mass()/(0.75*rho_star+0.25*pi->get_initial_des()))+0.66666667*pi->get_original_smlen ());
+#endif //CODE_DIMENSION
+#else  //if ADAPTIVE_SML==1, 3
 #if CODE_DIMENSION==3
 				  H_new = eta_smooth_P * cbrt(pi->get_mass()/rho_star);
 #elif CODE_DIMENSION==2
@@ -618,7 +638,9 @@ void adaptive_sml(int myid, THashTable * P_table)
 #elif CODE_DIMENSION==1
 				  H_new = eta_smooth_P * (pi->get_mass()/rho_star);
 #endif //CODE_DIMENSION
-#endif //ADAPTIVE_SML==31
+#endif //ADAPTIVE_SML==11
+
+#endif //ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 
 				  pi->put_smlen(H_new);
 
@@ -662,7 +684,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 		  g_bar=exp(dlog_sum/p_num);
 		  H_new=ADKE_k_P*pow((rho_star/g_bar), ADKE_epson_P)*H_old;
 		  pi->put_smlen(H_new);
-#endif //ADAPTIVE_SML==1
+#endif //ADAPTIVE_SML==1 || ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 
 		  }//if need neighbour
 	  }//go through all particles
@@ -670,7 +692,7 @@ void adaptive_sml(int myid, THashTable * P_table)
 #endif //DENSITY_UPDATE_SML==1
 
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 void
 calculate_mass_grad (THashTable * P_table)
 {
@@ -680,7 +702,7 @@ calculate_mass_grad (THashTable * P_table)
   TKey tmpkey;
   double mmv, mj, rhoj, dmj_max;
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
       double mi, mind;
 #endif
 
@@ -718,7 +740,7 @@ calculate_mass_grad (THashTable * P_table)
       hi = pi->get_smlen ();
       double supp = CUTOFF2 * hi;   // usually cut_off at 3, considering we might use a different h in place of hi, use a larger sml to guarantee number of particles are enough ---> Probably, I should use a even larger number: CUTOFF
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
       mi=pi->get_mass();
       mind = 0.0;
 #endif
@@ -777,7 +799,7 @@ calculate_mass_grad (THashTable * P_table)
 //			  for (k = 0; k < DIMENSION; k++)
 //			      dm[k] += mj/rhoj*(mi-mj)/ds[k]*weight(si, hij);
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 			  mind += (mj-mi)*weight(si, hij)/rhoj;
 #endif
 		  }
@@ -788,7 +810,7 @@ calculate_mass_grad (THashTable * P_table)
 //    	  dm[k]=abs(dm[k]);
       pi->put_mass_grad(dm);
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
       pi->put_mass_indicator(mind);
 #endif
 

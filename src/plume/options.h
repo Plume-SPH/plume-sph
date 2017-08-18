@@ -500,7 +500,7 @@
  * Note: this option is not available for GSPH yet.
  */
 #ifndef HAVE_ENERGY_SMOOTH
-#define HAVE_ENERGY_SMOOTH 0
+#define HAVE_ENERGY_SMOOTH 1
 #endif
 
 /*
@@ -673,12 +673,14 @@
 /*
  * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
  * 1: adaptive scheme one: based on the assumption that smoothing length should be proportional to ratio between particle mass and density. This is the traditional way of adaptive smoothing length -->DENSITY_UPDATE_SML should always be 1
+ * 11: based on 1, set an up and down limit on smoothing length ---> Due to current data structure, the current code does not support smoothing length of h > (ADDING_NUM/CUTOFF)*dx ---> currently, set the up limit as 2 times of dx, and the lower bound as the 2/3 of dx
  * 2: adaptive scheme two: based ADKE: see paper "Adaptive kernel estimation and SPH tensile instability", In this case, need original sml, even though updating of density is based on current sml, we still have original sml.
  * 3: adaptive scheme three: my own scheme
  * 31: adaptive scheme three: my own scheme, use the idea of mass gradient to adaptively change smoothing length
+ * 32: based on 31, set an up and down limit on smoothing length ---> Due to current data structure, the current code does not support smoothing length of h > (ADDING_NUM/CUTOFF)*dx ---> currently, set the up limit as 2 times of dx, and the lower bound as the 2/3 of dx
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 31
+#define ADAPTIVE_SML 0
 #endif
 
 

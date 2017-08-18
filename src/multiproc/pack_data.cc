@@ -187,7 +187,7 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
 
   pack_array->mass  = psend->mass;
   pack_array->smlen = psend->smlen;
-#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   pack_array->smlen_original = psend->smlen_original;
 #endif
 
@@ -195,7 +195,11 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   pack_array->rho_based_on_dx = psend->rho_based_on_dx;
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  pack_array->dens_ini = psend->dens_ini;
+#endif
+
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   pack_array->m_ind = psend->m_ind;
 #endif
 
@@ -210,7 +214,7 @@ void pack_particles (Particle *psend, ParticlePack *pack_array)
   for (j=0; j < DIMENSION; j++)
     pack_array->coords[j] = psend->coord[j];
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   for (j=0; j < DIMENSION; j++)
     pack_array->dm[j] = psend->dm[j];
 #endif
@@ -398,14 +402,17 @@ void unpack_particle (ParticlePack *packet, Particle *part)
   
   part->mass  = packet->mass;
   part->smlen = packet->smlen;
-#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   part->smlen_original = packet->smlen_original;
 #endif
 #if ADAPTIVE_SML==2
   part->rho_based_on_dx = packet->rho_based_on_dx;
 #endif
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  part->dens_ini = packet->dens_ini;
+#endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   part->m_ind = packet->m_ind;
 #endif
   part->myprocess = packet->myprocess;
@@ -413,7 +420,7 @@ void unpack_particle (ParticlePack *packet, Particle *part)
   for ( i=0; i < DIMENSION; i++ )
     part->coord[i] = packet->coords[i];
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   for ( i=0; i < DIMENSION; i++ )
     part->dm[i] = packet->dm[i];
 #endif

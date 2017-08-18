@@ -25,7 +25,7 @@ Particle::Particle ()
   mass = 0.;
   smlen = 0.;
 
-#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   smlen_original = 0.;
 #endif
 
@@ -43,12 +43,12 @@ Particle::Particle ()
   for (i = 0; i < DIMENSION; i++)
     coord[i] = 0.;
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   for (i = 0; i < DIMENSION; i++)
     dm[i] = 0.;
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   m_ind=0.;
 #endif
 
@@ -65,6 +65,10 @@ Particle::Particle ()
 
 #if ADAPTIVE_SML==2
   rho_based_on_dx=0.0;
+#endif
+
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  dens_ini = 0.0;
 #endif
 
   pressure = 0.;
@@ -116,7 +120,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
   mass = m;
   smlen = RATIO_SML_DX* h;
 
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   smlen_original = h;
 #elif ADAPTIVE_SML==2
   smlen_original = h*ADKE_sml_ratio_P;
@@ -140,12 +144,12 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
     coord[i] = *(crd + i);
   }
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   for (i = 0; i < DIMENSION; i++)
     dm[i] = 0.;
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   m_ind=0.;
 #endif
 
@@ -165,6 +169,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, double prs
 
 #if ADAPTIVE_SML==2
   rho_based_on_dx=1.0;
+#endif
+
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  dens_ini = 1.0;
 #endif
 
   pressure = prss;
@@ -208,12 +216,11 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
   mass = m;
   smlen = RATIO_SML_DX*h;
 
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   smlen_original = h;
 #elif ADAPTIVE_SML==2
   smlen_original = h*ADKE_sml_ratio_P;
 #endif
-
 
   specific_heat_p = 0.;
 
@@ -235,12 +242,12 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
 //    bedfrict[i] = 0;
   }
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   for (i = 0; i < DIMENSION; i++)
     dm[i] = 0.;
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   m_ind=0.;
 #endif
 
@@ -269,6 +276,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id,
 
 #if ADAPTIVE_SML==2
   rho_based_on_dx=des;
+#endif
+
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  dens_ini = des;
 #endif
 
     update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
@@ -313,7 +324,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
   mass = m;
   smlen = RATIO_SML_DX*h;
 
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   smlen_original = h;
 #elif ADAPTIVE_SML==2
   smlen_original = h*ADKE_sml_ratio_P;
@@ -338,12 +349,12 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
     coord[i] = *(crd + i);
   }
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   for (i = 0; i < DIMENSION; i++)
     dm[i] = 0.;
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   m_ind=0.;
 #endif
 
@@ -373,6 +384,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h, int id, do
 
 #if ADAPTIVE_SML==2
     rho_based_on_dx=des;
+#endif
+
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+    dens_ini = des;
 #endif
 
     update_second_var(ng0_P, Cvs_P, Cvg_P, Cva_P, Rg_P, Ra_P, rhoa0_P);
@@ -414,7 +429,7 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
   mass = m;
   smlen = RATIO_SML_DX* h;
 
-#if DENSITY_UPDATE_SML==0
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   smlen_original = h;
 #elif ADAPTIVE_SML==2
   smlen_original = h*ADKE_sml_ratio_P;
@@ -438,12 +453,12 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
     coord[i] = *(crd + i);
   }
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   for (i = 0; i < DIMENSION; i++)
     dm[i] = 0.;
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   m_ind=0.;
 #endif
 
@@ -462,6 +477,10 @@ Particle::Particle (unsigned *keyin, double *crd, double m, double h , double de
 
 #if ADAPTIVE_SML==2
   rho_based_on_dx=des;
+#endif
+
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  dens_ini = des;
 #endif
 
   pressure = prss;

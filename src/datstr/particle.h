@@ -52,8 +52,13 @@ protected:
    * 1) updating of momentum and energy use larger smoothing length. ---> conserve energy and momentum
    * 2) updating of density based on summation expression and use its original smoothing length --> The normalized summation expression will always guarantee conservation of mass
    */
-#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   double smlen_original;  //Original sml will not change during whole simulation ---> if sml is adaptive, we will not need sml_original
+#endif
+
+  //! intial density ---> The purpose of having this physical quantity is to set an upbound for sml in adaptive smoothing length
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  double dens_ini;  //Original sml will not change during whole simulation ---> if sml is adaptive, we will not need sml_original
 #endif
 
   //! pressure
@@ -80,7 +85,7 @@ protected:
   double rho_based_on_dx; //This is an intermediate density calculated based on original smoothing length. ---> Needed for ADKE
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   //! An indicate used to show whether the particle mass is relatively larger than surrounding or smaller on average.
   /*
    * m_ind > 0 particle mass is smaller than surrounding on average
@@ -105,7 +110,7 @@ protected:
   //! current (normalized) postion of each particle
   double coord[DIMENSION];
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   //! gradient of mass
   double dm[DIMENSION];
 #endif
@@ -319,7 +324,7 @@ public:
     return smlen;
   }
 
-#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   //! get original smoothing length of current paricle
   double get_original_smlen () const
   {
@@ -334,13 +339,27 @@ public:
 #endif
 
 
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  //! get initial density
+  double get_initial_des () const
+  {
+    return dens_ini;
+  }
+
+  //! update initial density
+  void put_initial_des (double d)
+  {
+	  dens_ini = d;
+  }
+#endif
+
   //!get coordinates
   const double *get_coords () const
   {
     return coord;
   }
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   //!get mass gradient
   const double *get_mass_grad () const
   {
@@ -348,7 +367,7 @@ public:
   }
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   //!get mass indicator
   const double get_mass_indicator () const
   {
@@ -867,7 +886,7 @@ public:
       coord[i] = *(x + i);
   }
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   // update mass gradient
   void put_mass_grad (double *m_grad)
   {
@@ -876,7 +895,7 @@ public:
   }
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   // update mass indicator
   void put_mass_indicator (double ind)
   {

@@ -132,19 +132,23 @@ GMFG_new_MPI_Datatype ()
   blockcounts2[2] = 5 + 7*DIMENSION + NO_OF_EQNS;  // For GSPH there will be 5 additional variable for gradient
 #endif
 
-#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2  //This is for original smoothing length
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32  //This is for original smoothing length
   blockcounts2[2]++;
 #endif
 
-#if ADAPTIVE_SML==2
+#if ADAPTIVE_SML==2  //rho_based_on_dx
   blockcounts2[2]++;
 #endif
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32 //dm
   blockcounts2[2] += DIMENSION;
 #endif
 
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32 //m_ind
+  blockcounts2[2] ++;
+#endif
+
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32 //dens_ini
   blockcounts2[2] ++;
 #endif
 

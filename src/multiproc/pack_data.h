@@ -43,20 +43,23 @@ struct ParticlePack
   //doubles
   double mass;
   double smlen;
-#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2
+#if DENSITY_UPDATE_SML==0 || ADAPTIVE_SML==2 || ADAPTIVE_SML==11 || ADAPTIVE_SML==32
   double smlen_original;
 #endif
 #if ADAPTIVE_SML==2
   double rho_based_on_dx;
 #endif
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+  double dens_ini;
+#endif
   double mass_frac;
   double smoothed_e;
-#if ADAPTIVE_SML==31
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   double m_ind;
 #endif
   double sound_speed; //actually sound speed is not primary variable, but is needed when computing pressure (When the fluid is weakly compressible flow)
   double coords[DIMENSION];
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
   double dm[DIMENSION];
 #endif
   double smoothed_v[DIMENSION];

@@ -350,7 +350,7 @@ void calc_gradients(
 		);
 #endif
 
-#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31
+#if ADAPTIVE_SML==3 || ADAPTIVE_SML==31 || ADAPTIVE_SML==32
 void calculate_mass_grad (
 		THashTable * //P_table
 		);
