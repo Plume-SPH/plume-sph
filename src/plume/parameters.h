@@ -353,6 +353,19 @@ const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
 const double eta_smooth_P = 1.2; //We can try different value to get best results
 
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+#if CODE_DIMENSION==3
+ const double C_sml1_P=1/(4.0*4.0*4.0);
+ const double C_sml2_P=1-C_sml1_P;
+#elif CODE_DIMENSION==2
+ const double C_sml1_P=1/(4.0*4.0);
+ const double C_sml2_P=1-C_sml1_P;
+#elif CODE_DIMENSION==1
+ const double C_sml1_P=1/4.0;
+ const double C_sml2_P=1-C_sml1_P;
+#endif //CODE_DIMENSION
+#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+
 #if ADAPTIVE_SML==2
 const double ADKE_k_P =0.7;
 const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
@@ -501,6 +514,20 @@ const int balancing_check_int_P = 3;
 //const double thresh_P=1e-5;
 //const double C_smooth_P = 2.0;
 //const double eta_smooth_P = 1.2;
+
+//#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+//#if CODE_DIMENSION==3
+// const double C_sml1_P=1/(4.0*4.0*4.0);
+// const double C_sml2_P=1-C_sml1_P;
+//#elif CODE_DIMENSION==2
+// const double C_sml1_P=1/(4.0*4.0);
+// const double C_sml2_P=1-C_sml1_P;
+//#elif CODE_DIMENSION==1
+// const double C_sml1_P=1/4.0;
+// const double C_sml2_P=1-C_sml1_P;
+//#endif //CODE_DIMENSION
+//#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+
 //#if ADAPTIVE_SML==2
 //const double ADKE_k_P =0.7;
 //const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
@@ -646,6 +673,20 @@ const int balancing_check_int_P = 3;
 //const double thresh_P=1e-5;
 //const double C_smooth_P = 2.0;
 //const double eta_smooth_P = 1.2;
+
+//#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+//#if CODE_DIMENSION==3
+// const double C_sml1_P=1/(4.0*4.0*4.0);
+// const double C_sml2_P=1-C_sml1_P;
+//#elif CODE_DIMENSION==2
+// const double C_sml1_P=1/(4.0*4.0);
+// const double C_sml2_P=1-C_sml1_P;
+//#elif CODE_DIMENSION==1
+// const double C_sml1_P=1/4.0;
+// const double C_sml2_P=1-C_sml1_P;
+//#endif //CODE_DIMENSION
+//#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+
 //#if ADAPTIVE_SML==2
 //const double ADKE_k_P =0.7;
 //const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
@@ -801,6 +842,20 @@ const int balancing_check_int_P = 3;
 //const double thresh_P=1e-5;
 //const double C_smooth_P = 2.0;
 //const double eta_smooth_P = 1.2;
+
+//#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+//#if CODE_DIMENSION==3
+// const double C_sml1_P=1/(4.0*4.0*4.0);
+// const double C_sml2_P=1-C_sml1_P;
+//#elif CODE_DIMENSION==2
+// const double C_sml1_P=1/(4.0*4.0);
+// const double C_sml2_P=1-C_sml1_P;
+//#elif CODE_DIMENSION==1
+// const double C_sml1_P=1/4.0;
+// const double C_sml2_P=1-C_sml1_P;
+//#endif //CODE_DIMENSION
+//#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+
 //#if ADAPTIVE_SML==2
 //const double ADKE_k_P =0.7;
 //const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
@@ -963,6 +1018,20 @@ const int num_loop_P=2;
 const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
 const double eta_smooth_P = 1.0; //We can try different value to get best results
+
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+#if CODE_DIMENSION==3
+ const double C_sml1_P=1/(4.0*4.0*4.0);
+ const double C_sml2_P=1-C_sml1_P;
+#elif CODE_DIMENSION==2
+ const double C_sml1_P=1/(4.0*4.0);
+ const double C_sml2_P=1-C_sml1_P;
+#elif CODE_DIMENSION==1
+ const double C_sml1_P=1/4.0;
+ const double C_sml2_P=1-C_sml1_P;
+#endif //CODE_DIMENSION
+#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+
 #if ADAPTIVE_SML==2
 const double ADKE_k_P =0.7;
 const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
@@ -1165,6 +1234,20 @@ const int num_loop_P=5;
 const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
 const double eta_smooth_P = 1.0; //We can try different value to get best results --> Especially for unequal particle mass
+
+#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+#if CODE_DIMENSION==3
+ const double C_sml1_P=1/(4.0*4.0*4.0);
+ const double C_sml2_P=1-C_sml1_P;
+#elif CODE_DIMENSION==2
+ const double C_sml1_P=1/(4.0*4.0);
+ const double C_sml2_P=1-C_sml1_P;
+#elif CODE_DIMENSION==1
+ const double C_sml1_P=1/4.0;
+ const double C_sml2_P=1-C_sml1_P;
+#endif //CODE_DIMENSION
+#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
+
 #if ADAPTIVE_SML==2
 const double ADKE_k_P =0.7;
 const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here

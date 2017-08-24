@@ -788,6 +788,7 @@
  * The cut method is a very natural way to avoid negative energy. ---> At least one paper reports they are using this method.
  * "An SPH model for multiphase flows with complex interface and large density difference" by Z. Chen
  *
+ * To avoid creating new energy, we actually convert kinetic energy into internal energy to avoid negative pressure (or in other words negative internal energy)
  * 0: No, do not use energy cut
  * 1: yes, use energy cut
  */

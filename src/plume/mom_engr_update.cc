@@ -355,7 +355,34 @@ mom_engr_update(int myid, THashTable * P_table,
 
 #if HAVE_ENERGY_CUT==1
 		   if (unew[NO_OF_EQNS-1]<=0)
+		   {
+			   //velocity need to be changed so that total energy is conserved.
+			   double gamma=pi->get_gamma ();
+			   double v2sq=0.0;
+			   for (k = 0; k < DIMENSION; k++)
+				   v2sq +=unew[1+k]*unew[1+k];
+			   double DeltaE;
+			   DeltaE=2*(gamma-1)*(unew[NO_OF_EQNS-1]-ENERGY_CUT);
+			   double v1sq=v2sq+DeltaE;
+
+#ifdef DEBUG
+			   if (v1sq<0)
+			   {
+				   cout<< "Negative kinetic energy in Energy Cut!" <<endl;
+				   cout<< "The staggered velocity square is"<< v1sq <<endl;
+			   }
+#endif  //Debug
+//			   assert(v1sq>=0);
+			   if (v1sq<0)
+				   v1sq=0.0;
+
+			   double v_ratio=sqrt(v1sq/v2sq);
+			   for (k = 1; k <= DIMENSION; k++)
+				   unew[k]=unew[k]*v_ratio;
+
 			   unew[NO_OF_EQNS-1] = ENERGY_CUT;
+		   }
+
 #endif
 
 #ifdef DEBUG
@@ -1030,8 +1057,37 @@ mom_engr_update(int myid, THashTable * P_table,
 
 		   //make sure all new values of quantities
 #if HAVE_ENERGY_CUT==1
-		   if (unew[4]<=0)
-			   unew[4] = ENERGY_CUT;
+		   if (unew[NO_OF_EQNS-1]<=0)
+		   {
+			   //velocity need to be changed so that total energy is conserved.
+			   double gamma=pi->get_gamma ();
+			   double v2sq=0.0;
+			   for (k = 0; k < DIMENSION; k++)
+				   v2sq +=unew[1+k]*unew[1+k];
+			   double DeltaE;
+			   DeltaE=2*(gamma-1)*(unew[NO_OF_EQNS-1]-ENERGY_CUT);
+			   double v1sq=v2sq+DeltaE;
+
+#ifdef DEBUG
+			   if (v1sq<0)
+			   {
+				   cout<< "Negative kinetic energy in Energy Cut!" <<endl;
+				   cout<< "The staggered velocity square is"<< v1sq <<endl;
+			   }
+#endif  //Debug
+//			   assert(v1sq>=0);
+			   if (v1sq<0)
+				   v1sq=0.0;
+
+//			   assert(v1sq>=0);
+
+			   double v_ratio=sqrt(v1sq/v2sq);
+			   for (k = 1; k <= DIMENSION; k++)
+				   unew[k]=unew[k]*v_ratio;
+
+			   unew[NO_OF_EQNS-1] = ENERGY_CUT;
+		   }
+
 #endif
 
 #ifdef DEBUG
