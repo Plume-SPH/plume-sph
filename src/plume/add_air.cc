@@ -204,6 +204,24 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  double vel_l = 0.0;  //Parameter
 	  double vel_r = 0.0;  //Parameter
 	  double middle_point=0.;
+#elif SHOCK_TUBE_TESTS==5
+	  //Double expansion
+	  double prss_l = 1.95;  //Parameter
+	  double prss_r = 1.95;  //Parameter
+	  double des_l = 2.0;  //Parameter
+	  double des_r = 1.0;  //Parameter
+	  double vel_l = -1.0;  //Parameter
+	  double vel_r = 1.0;  //Parameter
+	  double middle_point=0.;
+#elif SHOCK_TUBE_TESTS==6
+	  //Double shock
+	  double prss_l = 2.4;  //Parameter
+	  double prss_r = 0.4;  //Parameter
+	  double des_l = 1.0;  //Parameter
+	  double des_r = 0.5;  //Parameter
+	  double vel_l = 8.0;  //Parameter
+	  double vel_r = -0.25;  //Parameter
+	  double middle_point=0.;
 #endif
 
 	  double dx_l=smlen;
@@ -235,6 +253,12 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point);
 #elif SHOCK_TUBE_TESTS==4
 	  //strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point, smlen);
+#elif SHOCK_TUBE_TESTS==5
+	  //double expansion
+	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point, smlen);
+#elif SHOCK_TUBE_TESTS==6
+	  //double expansion
 	  Shock_Inputs SIPT (des_l, prss_l, vel_l, des_r, prss_r, vel_r, middle_point, smlen);
 #endif
 
@@ -307,7 +331,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		}
 
 #if ADAPTIVE_SML_GHOST==11
-		Particle * pnew = new Particle(pkey, pcrd, mass, dx_l, des, vel_l, prss_l, gmm, sndspd, bctp_prss, not_involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, dx_l*1.1, des, vel_l, prss_l, gmm, sndspd, bctp_prss, not_involved);
 #else
 		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_l, prss_l, gmm, sndspd, bctp_prss, not_involved);
 #endif //ADAPTIVE_SML_GHOST
@@ -426,7 +450,7 @@ set_up_shock_tube (THashTable * P_table, MatProps * matprops, SimProps* simprops
 		}
 
 #if ADAPTIVE_SML_GHOST==11
-		Particle * pnew = new Particle(pkey, pcrd, mass, dx_r , des, vel_r, prss_r, gmm, sndspd, bctp_prss, involved);
+		Particle * pnew = new Particle(pkey, pcrd, mass, dx_r*1.1, des, vel_r, prss_r, gmm, sndspd, bctp_prss, involved);
 #else
 		Particle * pnew = new Particle(pkey, pcrd, mass, smlen , des, vel_r, prss_r, gmm, sndspd, bctp_prss, involved);
 #endif //ADAPTIVE_SML_GHOST

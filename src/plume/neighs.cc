@@ -581,10 +581,10 @@ void adaptive_sml(int myid, THashTable * P_table)
 //			      dmi_max=abs(*(pi->get_mass_grad() +0));
 //			      for (k=0; k<DIMENSION; k++)
 //			    	  if (abs(*(pi->get_mass_grad() + k))>dmi_max)
-//			    		  dmi_max=abs(*(pi->get_mass_grad() + i));
+//			    		  dmi_max=abs(*(pi->get_mass_grad() + k));
 
 				  for (k=0; k<DIMENSION; k++)
-					  dmi_max+=abs(*(pi->get_mass_grad() + i));
+					  dmi_max+=abs(*(pi->get_mass_grad() + k));
 
 				  dmi_max = dmi_max/DIMENSION;
 
@@ -602,11 +602,11 @@ void adaptive_sml(int myid, THashTable * P_table)
 #endif //CODE_DIMENSION
 #elif ADAPTIVE_SML==32
 #if CODE_DIMENSION==3
-				  H_new = eta_smooth_P * (0.33333333*cbrt(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des ()))+0.66666667*pi->get_original_smlen ());
+				  H_new = eta_smooth_P * (lbd1_P*cbrt(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des ()))+lbd_P*pi->get_original_smlen ());
 #elif CODE_DIMENSION==2
-				  H_new = eta_smooth_P * (0.33333333*sqrt(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des ()))+0.66666667*pi->get_original_smlen ());
+				  H_new = eta_smooth_P * (lbd1_P*sqrt(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des ()))+lbd_P*pi->get_original_smlen ());
 #elif CODE_DIMENSION==1
-				  H_new = eta_smooth_P * (0.33333333*(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des()))+0.66666667*pi->get_original_smlen ());
+				  H_new = eta_smooth_P * (lbd1_P*(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des()))+lbd_P*pi->get_original_smlen ());
 #endif //CODE_DIMENSION
 #endif //ADAPTIVE_SML==31
 
@@ -619,16 +619,16 @@ void adaptive_sml(int myid, THashTable * P_table)
 //				  H_new = (1+MY_ADKE_k_P*dmi_max)*H_new;
 //				  H_new = exp(MY_ADKE_k_P*dmi_max)*H_new;
 //			      H_new = mcoef*(1+pi->which_mass_ind ()*fdm)*H_new;
-			      H_new = (1+mcoef*pi->which_mass_ind ()*fdm)*H_new;
+			      H_new = (1.1+mcoef*pi->which_mass_ind ()*fdm)*H_new;
 
 #else //ADAPTIVE_SML=1  || ADAPTIVE_SML==3 || ADAPTIVE_SML=11
 #if ADAPTIVE_SML==11
 #if CODE_DIMENSION==3
-				  H_new = eta_smooth_P * (0.33333333*cbrt(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des ()))+0.66666667*pi->get_original_smlen ());
+				  H_new = eta_smooth_P * (lbd1_P*cbrt(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des ()))+lbd_P*pi->get_original_smlen ());
 #elif CODE_DIMENSION==2
-				  H_new = eta_smooth_P * (0.33333333*sqrt(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des ()))+0.66666667*pi->get_original_smlen ());
+				  H_new = eta_smooth_P * (lbd1_P*sqrt(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des ()))+lbd_P*pi->get_original_smlen ());
 #elif CODE_DIMENSION==1
-				  H_new = eta_smooth_P * (0.33333333*(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des()))+0.66666667*pi->get_original_smlen ());
+				  H_new = eta_smooth_P * (lbd1_P*(pi->get_mass()/(C_sml2_P*rho_star+C_sml1_P*pi->get_initial_des()))+lbd_P*pi->get_original_smlen ());
 #endif //CODE_DIMENSION
 #else  //if ADAPTIVE_SML==1, 3
 #if CODE_DIMENSION==3

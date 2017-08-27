@@ -354,16 +354,11 @@ const double C_smooth_P = 2.0;
 const double eta_smooth_P = 1.2; //We can try different value to get best results
 
 #if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
-#if CODE_DIMENSION==3
- const double C_sml1_P=1/(4.0*4.0*4.0);
- const double C_sml2_P=1-C_sml1_P;
-#elif CODE_DIMENSION==2
- const double C_sml1_P=1/(4.0*4.0);
- const double C_sml2_P=1-C_sml1_P;
-#elif CODE_DIMENSION==1
- const double C_sml1_P=1/4.0;
- const double C_sml2_P=1-C_sml1_P;
-#endif //CODE_DIMENSION
+const double lbd_P=1/3;
+const double lbd1_P=1-lbd_P;
+const double ubd_n_P=8.0/3.0;
+const double C_sml1_P=pow(lbd1_P/(ubd_n_P-lbd_P), DIMENSION);  //1/(6*6*6)
+const double C_sml2_P=1-C_sml1_P;
 #endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 
 #if ADAPTIVE_SML==2
@@ -516,16 +511,11 @@ const int balancing_check_int_P = 3;
 //const double eta_smooth_P = 1.2;
 
 //#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
-//#if CODE_DIMENSION==3
-// const double C_sml1_P=1/(4.0*4.0*4.0);
-// const double C_sml2_P=1-C_sml1_P;
-//#elif CODE_DIMENSION==2
-// const double C_sml1_P=1/(4.0*4.0);
-// const double C_sml2_P=1-C_sml1_P;
-//#elif CODE_DIMENSION==1
-// const double C_sml1_P=1/4.0;
-// const double C_sml2_P=1-C_sml1_P;
-//#endif //CODE_DIMENSION
+//const double lbd_P=1/3;
+//const double lbd1_P=1-lbd_P;
+//const double ubd_n_P=8.0/3.0;
+//const double C_sml1_P=pow(lbd1_P/(ubd_n_P-lbd_P), DIMENSION);  //1/(6*6*6)
+//const double C_sml2_P=1-C_sml1_P;
 //#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 
 //#if ADAPTIVE_SML==2
@@ -675,16 +665,11 @@ const int balancing_check_int_P = 3;
 //const double eta_smooth_P = 1.2;
 
 //#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
-//#if CODE_DIMENSION==3
-// const double C_sml1_P=1/(4.0*4.0*4.0);
-// const double C_sml2_P=1-C_sml1_P;
-//#elif CODE_DIMENSION==2
-// const double C_sml1_P=1/(4.0*4.0);
-// const double C_sml2_P=1-C_sml1_P;
-//#elif CODE_DIMENSION==1
-// const double C_sml1_P=1/4.0;
-// const double C_sml2_P=1-C_sml1_P;
-//#endif //CODE_DIMENSION
+//const double lbd_P=1/3;
+//const double lbd1_P=1-lbd_P;
+//const double ubd_n_P=8.0/3.0;
+//const double C_sml1_P=pow(lbd1_P/(ubd_n_P-lbd_P), DIMENSION);  //1/(6*6*6)
+//const double C_sml2_P=1-C_sml1_P;
 //#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 
 //#if ADAPTIVE_SML==2
@@ -844,16 +829,11 @@ const int balancing_check_int_P = 3;
 //const double eta_smooth_P = 1.2;
 
 //#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
-//#if CODE_DIMENSION==3
-// const double C_sml1_P=1/(4.0*4.0*4.0);
-// const double C_sml2_P=1-C_sml1_P;
-//#elif CODE_DIMENSION==2
-// const double C_sml1_P=1/(4.0*4.0);
-// const double C_sml2_P=1-C_sml1_P;
-//#elif CODE_DIMENSION==1
-// const double C_sml1_P=1/4.0;
-// const double C_sml2_P=1-C_sml1_P;
-//#endif //CODE_DIMENSION
+//const double lbd_P=1/3;
+//const double lbd1_P=1-lbd_P;
+//const double ubd_n_P=8.0/3.0;
+//const double C_sml1_P=pow(lbd1_P/(ubd_n_P-lbd_P), DIMENSION);  //1/(6*6*6)
+//const double C_sml2_P=1-C_sml1_P;
 //#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 
 //#if ADAPTIVE_SML==2
@@ -1020,16 +1000,11 @@ const double C_smooth_P = 2.0;
 const double eta_smooth_P = 1.0; //We can try different value to get best results
 
 #if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
-#if CODE_DIMENSION==3
- const double C_sml1_P=1/(4.0*4.0*4.0);
- const double C_sml2_P=1-C_sml1_P;
-#elif CODE_DIMENSION==2
- const double C_sml1_P=1/(4.0*4.0);
- const double C_sml2_P=1-C_sml1_P;
-#elif CODE_DIMENSION==1
- const double C_sml1_P=1/4.0;
- const double C_sml2_P=1-C_sml1_P;
-#endif //CODE_DIMENSION
+const double lbd_P=1/3;
+const double lbd1_P=1-lbd_P;
+const double ubd_n_P=8.0/3.0;
+const double C_sml1_P=pow(lbd1_P/(ubd_n_P-lbd_P), DIMENSION);  //1/(6*6*6)
+const double C_sml2_P=1-C_sml1_P;
 #endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 
 #if ADAPTIVE_SML==2
@@ -1078,7 +1053,7 @@ const double Ll_P[DIMENSION]={-0.4};
 const double Lu_P[DIMENSION]={0.4};
 const int Nnsrp_r_P=20; //No saving real particles on right hand side
 const int Nnsrp_l_P=40; //No saving real particles on left hand side
-const double csv_out_P=0.1; //time to output csv files
+const double csv_out_P=0.2; //time to output csv files
 #elif SHOCK_TUBE_TESTS==1
 //another Sod shock test: see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
 const int Nb_P=35;
@@ -1111,6 +1086,22 @@ const double Lu_P[DIMENSION]={0.55};
 const int Nnsrp_l_P=100;
 const int Nnsrp_r_P=10;
 const double csv_out_P=0.012; //time to output csv files
+#elif SHOCK_TUBE_TESTS==5
+//Double expansion
+const int Nb_P=15;
+const double Ll_P[DIMENSION]={-0.4};//-5-4.73
+const double Lu_P[DIMENSION]={0.4};
+const int Nnsrp_l_P=100;
+const int Nnsrp_r_P=10;
+const double csv_out_P=0.13; //time to output csv files
+#elif SHOCK_TUBE_TESTS==6
+//Double expansion
+const int Nb_P=15;
+const double Ll_P[DIMENSION]={-0.4};//-5-4.73
+const double Lu_P[DIMENSION]={0.4};
+const int Nnsrp_l_P=20;
+const int Nnsrp_r_P=40;
+const double csv_out_P=0.051; //time to output csv files
 #endif
 
 //----------------------------------------------------------------------------------------
@@ -1236,16 +1227,11 @@ const double C_smooth_P = 2.0;
 const double eta_smooth_P = 1.0; //We can try different value to get best results --> Especially for unequal particle mass
 
 #if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
-#if CODE_DIMENSION==3
- const double C_sml1_P=1/(4.0*4.0*4.0);
- const double C_sml2_P=1-C_sml1_P;
-#elif CODE_DIMENSION==2
- const double C_sml1_P=1/(4.0*4.0);
- const double C_sml2_P=1-C_sml1_P;
-#elif CODE_DIMENSION==1
- const double C_sml1_P=1/4.0;
- const double C_sml2_P=1-C_sml1_P;
-#endif //CODE_DIMENSION
+const double lbd_P=0.1;
+const double lbd1_P=1-lbd_P;
+const double ubd_n_P=12.0/3.0;
+const double C_sml1_P=pow(lbd1_P/(ubd_n_P-lbd_P), DIMENSION);  //1/(6*6*6)
+const double C_sml2_P=1-C_sml1_P;
 #endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 
 #if ADAPTIVE_SML==2

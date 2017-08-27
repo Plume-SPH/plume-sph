@@ -40,7 +40,7 @@ const double EXT_DOM_COF_BOT = 1.5;//Coefficient that used to extend  -z directi
 const int PARTICLE_DENSITY=6;
 const int ADDING_NUM= 6; //For 1D is 6
 const double CUTOFF = 3.0; // CUTOFF is very critical
-const double CUTOFF2 = 6.0; // CUTOFF is very critical --> Need to be at least CUTOFF*sqrt(2)
+const double CUTOFF2 = 12.0; // CUTOFF is very critical --> Need to be at least CUTOFF*sqrt(2)
 const double CUTOFF3 = 12.0;
 
 // Bucket TYPES

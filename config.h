@@ -2,7 +2,7 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* build 3-d code */
-#define CODE_DIMENSION 3
+#define CODE_DIMENSION 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
@@ -29,7 +29,7 @@
 /* #undef HAVE_LIBMPI */
 
 /* Define to 1 if you have the `mpich' library (-lmpich). */
-#define HAVE_LIBMPICH 1
+/* #undef HAVE_LIBMPICH */
 
 /* Define to 1 if you have the `mpicxx' library (-lmpicxx). */
 /* #undef HAVE_LIBMPICXX */

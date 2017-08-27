@@ -53,7 +53,7 @@
  * 4 : use (w(hi)/rho_i^2+w(hj)/rho_j^2) --->This is actually the default formulation for GSPH  -->Only apply for GSPH
  */
 #ifndef ME_UPDATE_SML
-#define ME_UPDATE_SML 0
+#define ME_UPDATE_SML 2
 #endif
 
 /*
@@ -103,9 +103,11 @@
  * 2: shu-Osher problem, see paper: assessment of localized artificial diffusive scheme for large-eddy simulation of compressible turbulent flow.
  * 3: Sjogreen test: See paper Approximate Riemann Solvers for the Godunov SPH
  * 4: strong blast test: See Toro's book "Riemann Solvers and numerical method for fluid dynamics"
+ * 5: Double expansion
+ * 6: Double shock
  */
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 0
+#define SHOCK_TUBE_TESTS 6
 #endif
 
 //Whether smooth the initial distribution for Shock tube problem or not?
@@ -126,7 +128,7 @@
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
-#define EQUAL_PART_MASS 1
+#define EQUAL_PART_MASS 0
 #endif
 #endif
 
@@ -273,12 +275,14 @@
 /*
  * 0: Not adaptive  -->DENSITY_UPDATE_SML an be 1 or 0
  * 1: adaptive scheme one: based on the assumption that smoothing length should be proportional to ratio between particle mass and density. This is the traditional way of adaptive smoothing length -->DENSITY_UPDATE_SML should always be 1
+ * 11: based on 1, set an up and down limit on smoothing length ---> Due to current data structure, the current code does not support smoothing length of h > (ADDING_NUM/CUTOFF)*dx ---> currently, set the up limit as 2 times of dx, and the lower bound as the 2/3 of dx
  * 2: adaptive scheme two: based ADKE: see paper "Adaptive kernel estimation and SPH tensile instability", In this case, need original sml, even though updating of density is based on current sml, we still have original sml.
  * 3: adaptive scheme three: my own scheme
  * 31: adaptive scheme three: my own scheme, use the idea of mass gradient to adaptively change smoothing length
+ * 32: based on 31, set an up and down limit on smoothing length ---> Due to current data structure, the current code does not support smoothing length of h > (ADDING_NUM/CUTOFF)*dx ---> currently, set the up limit as 2 times of dx, and the lower bound as the 2/3 of dx
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 31
+#define ADAPTIVE_SML 1
 #endif
 
 //Whether apply adaptive smooth length to ghost particle or not
@@ -286,10 +290,10 @@
  * 0: No
  * 1: Yes  ---> Currently not able to apply, need to 1) let ghost particles have neighbour information
  *                                                   2) Will have difficult to deal with boundary deficiency. ---> Normalized it? Not sure
- * 11: Instead of adaptively change smoothing length of ghost particles, set sml satisfy the common requirement on sml.
+ * 11: Instead of adaptively change smoothing length of ghost particles, set initial sml satisfy the common requirement on sml.
  */
 #ifndef ADAPTIVE_SML_GHOST
-#define ADAPTIVE_SML_GHOST 0
+#define ADAPTIVE_SML_GHOST 11
 #endif
 
 //Define which format of to use for discretized momentum equation
@@ -421,7 +425,7 @@
  * If  WRITE_GHOSTS==2: besides output to h5part file, also output to csv file  ---> Only apply to 1D code.
  */
 #ifndef WRITE_GHOSTS
-#define WRITE_GHOSTS 2
+#define WRITE_GHOSTS 0
 #endif
 
 //output PID

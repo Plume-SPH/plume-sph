@@ -731,7 +731,7 @@ main(int argc, char **argv)
     {
        write_output (myid, numprocs, P_table, timeprops);
 
-       if (abs(timeprops->timesec()- csv_out_P)/csv_out_P < 0.03)
+       if (abs(timeprops->timesec()- csv_out_P)/csv_out_P < 0.015)
     	   write_csv(myid, numprocs, P_table, timeprops); // write in csv format for easy post process
     }
   }

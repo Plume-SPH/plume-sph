@@ -1,6 +1,6 @@
-maximum simulation time(s):0.051
+maximum simulation time(s):0.13
 maximum simulation time step:100000000
-output time interval(s):0.001
+output time interval(s):0.1
 start eruption time(s):0.0
 end eruption time(s):7200.0
 output format indicator, 0 for matlab readable data, 1 for h5part data:1
