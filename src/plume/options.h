@@ -40,7 +40,7 @@
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 1
+#define DENSITY_UPDATE_SML 11
 #endif
 
 //Define the smoothing length used in momentum and energy update
@@ -107,7 +107,7 @@
  * 6: Double shock
  */
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 6
+#define SHOCK_TUBE_TESTS 1
 #endif
 
 //Whether smooth the initial distribution for Shock tube problem or not?
