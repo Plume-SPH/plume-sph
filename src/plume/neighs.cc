@@ -613,14 +613,16 @@ void adaptive_sml(int myid, THashTable * P_table)
 			      fdm=MY_ADKE_k_P*pow(log(dmi_max+1), 0.5);
 //				  fdm=MY_ADKE_k_P*dmi_max;
 			      assert(fdm>=0);
-//			      mcoef=1.0;
+  			      mcoef=1.0;
 //			      fdm=0.55;
 //				  fdm=MY_ADKE_k_P*dmi_max;
 //				  H_new = (1+MY_ADKE_k_P*dmi_max)*H_new;
 //				  H_new = exp(MY_ADKE_k_P*dmi_max)*H_new;
 //			      H_new = mcoef*(1+pi->which_mass_ind ()*fdm)*H_new;
-			      H_new = (1.1+mcoef*pi->which_mass_ind ()*fdm)*H_new;
-
+//			      H_new = (1.0+(0.5*abs(pi->which_mass_ind ()*mcoef)+mcoef*pi->which_mass_ind ())*fdm)*H_new;
+ 			      H_new = (1.1+mcoef*pi->which_mass_ind ()*fdm)*H_new;  //Best results
+// 			      H_new = (1.0+mcoef*pi->which_mass_ind ()*fdm)*H_new;  //old formulation
+//
 #else //ADAPTIVE_SML=1  || ADAPTIVE_SML==3 || ADAPTIVE_SML=11
 #if ADAPTIVE_SML==11
 #if CODE_DIMENSION==3
@@ -800,6 +802,10 @@ calculate_mass_grad (THashTable * P_table)
 //			      dm[k] += mj/rhoj*(mi-mj)/ds[k]*weight(si, hij);
 
 #if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
+//			  for (k = 0; k < DIMENSION; k++)
+//				  si[k] = 0.7072*si[k];
+//
+//			  mind += (mj-mi)*weight(si, 1.414*hij)/rhoj;
 			  mind += (mj-mi)*weight(si, hij)/rhoj;
 #endif
 		  }

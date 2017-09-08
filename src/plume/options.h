@@ -107,7 +107,7 @@
  * 6: Double shock
  */
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 1
+#define SHOCK_TUBE_TESTS 0
 #endif
 
 //Whether smooth the initial distribution for Shock tube problem or not?
@@ -128,7 +128,7 @@
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
-#define EQUAL_PART_MASS 0
+#define EQUAL_PART_MASS 1
 #endif
 #endif
 

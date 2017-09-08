@@ -454,14 +454,13 @@ write_csv(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 
 	  ofstream outputFile;
 
-//	  if (timepros->ifstart())
-		  outputFile.open("pvplot_out.csv", std::fstream::out | std::fstream::app);
-//	  else
-//		  outputFile.open("pvplot_out.csv", std::fstream::app);
+	  outputFile.open("pvplot_out.csv", std::fstream::out | std::fstream::app);
 
-	  // write the file headers
-	  //if (timepros->ifstart())
-		  outputFile << "RHO" << ","<<"X"<< "," << "U"<< ","<<"E"<< "," <<"KS"<< "," << "P"<< "," << "PHASE"<< "," << "BCTP"<< ","<< "GUEST_FLAG"<< ","<< "INVOLVE_FLAG" << "," << "smlen" << std::endl;
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
+	  outputFile << "RHO" << ","<<"X"<< "," << "U"<< ","<<"E"<< "," <<"KS"<< "," << "P"<< "," << "PHASE"<< "," << "BCTP"<< ","<< "GUEST_FLAG"<< ","<< "INVOLVE_FLAG" << "," << "smlen" << "Grad-m" << "Ind-m" <<std::endl;
+#else
+	  outputFile << "RHO" << ","<<"X"<< "," << "U"<< ","<<"E"<< "," <<"KS"<< "," << "P"<< "," << "PHASE"<< "," << "BCTP"<< ","<< "GUEST_FLAG"<< ","<< "INVOLVE_FLAG" << "," << "smlen" << std::endl;
+#endif
 
 	  THTIterator *itr = new THTIterator(P_table);
 	  Particle *pi = NULL;
@@ -472,7 +471,13 @@ write_csv(int myid, int numproc, THashTable * P_table, TimeProps * timepros)
 	    if (pi->get_bc_type()==100) //only output real
 	    {
 #endif
+
+#if ADAPTIVE_SML==31 || ADAPTIVE_SML==32
+	    	outputFile << pi->get_density() << "," << *(pi->get_coords()) << ","<< *(pi->get_vel())<< ","<<pi->get_energy () << ","<<pi->get_mass_frac() << ","<< pi->get_pressure() << "," << pi->which_phase()<< "," <<pi->get_bc_type ()<< ","<< pi->get_guest()<< ","<< pi->get_involved () << ","<< pi->get_smlen ()<< ","<< *(pi->get_mass_grad ())<< ","<< pi->get_mass_indicator () << std::endl;
+#else
 	        outputFile << pi->get_density() << "," << *(pi->get_coords()) << ","<< *(pi->get_vel())<< ","<<pi->get_energy () << ","<<pi->get_mass_frac() << ","<< pi->get_pressure() << "," << pi->which_phase()<< "," <<pi->get_bc_type ()<< ","<< pi->get_guest()<< ","<< pi->get_involved () << ","<< pi->get_smlen () << std::endl;
+#endif //ADAPTIVE_SML==31 || ADAPTIVE_SML==32
+
 #if WRITE_GHOSTS!=2
 	    }
 #endif
