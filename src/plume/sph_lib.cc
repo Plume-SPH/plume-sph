@@ -1877,19 +1877,19 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
     p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
 #elif HLL_WAVE_SPEED_EVA==2  //Davis
-    double Sl=min(ul-cl, ur-cr);
-    double Sr=max(ul+cl, ur+cr);
-    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
-    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+    double Sl=min(vl-cl, vr-cr);
+    double Sr=max(vl+cl, vr+cr);
+    double Sm=(dr*vr*(Sr-vr)-dl*vl*(Sl-vl)+pl-pr)/(dr*(Sr-vr)-dl*(Sl-vl));
+    p_hat=dl*(vl-Sl)*(vl-Sm)+pl;
 #elif HLL_WAVE_SPEED_EVA==3 //Toro's
-    double p_pvrs=0.5*(pl+pr)+0.25*(ul-ur)*(dr+dl)*clr;
+    double p_pvrs=0.5*(pl+pr)+0.25*(vl-vr)*(dr+dl)*clr;
     double p_refs=max(0.0, p_pvrs);
     double ql=(p_refs<pl ? 1 : sqrt(1+0.5*(gj+1)/gj*(p_refs/pl-1)) );
     double qr=(p_refs<pr ? 1 : sqrt(1+0.5*(gi+1)/gi*(p_refs/pr-1)) );
-    double Sl=ul-cl*ql;
-    double Sr=ur+cr*qr;
-    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
-    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+    double Sl=vl-cl*ql;
+    double Sr=vr+cr*qr;
+    double Sm=(dr*vr*(Sr-vr)-dl*vl*(Sl-vl)+pl-pr)/(dr*(Sr-vr)-dl*(Sl-vl));
+    p_hat=dl*(vl-Sl)*(vl-Sm)+pl;
 #elif HLL_WAVE_SPEED_EVA==4  //P. Batten
     double Sl=min(ul-cl, ulr-clr);
     double Sr=max(ur+cr, ulr+clr);

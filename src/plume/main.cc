@@ -320,6 +320,11 @@ main(int argc, char **argv)
     if ((timeprops->step) % SML_UPDATE_INT == 0)
     	// search and update neighbors
     	adaptive_sml(myid, P_table);
+
+#ifdef MULTI_PROC
+    // update guests on all procs
+    move_data(numprocs, myid, my_comm, P_table, BG_mesh);
+#endif
 #endif
 
 

@@ -40,7 +40,7 @@
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 11
+#define DENSITY_UPDATE_SML 13
 #endif
 
 //Define the smoothing length used in momentum and energy update
@@ -53,7 +53,7 @@
  * 4 : use (w(hi)/rho_i^2+w(hj)/rho_j^2) --->This is actually the default formulation for GSPH  -->Only apply for GSPH
  */
 #ifndef ME_UPDATE_SML
-#define ME_UPDATE_SML 2
+#define ME_UPDATE_SML 3
 #endif
 
 /*
@@ -107,7 +107,7 @@
  * 6: Double shock
  */
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 0
+#define SHOCK_TUBE_TESTS 1
 #endif
 
 //Whether smooth the initial distribution for Shock tube problem or not?
@@ -128,7 +128,7 @@
  */
 #if (SHOCK_TUBE_TESTS==0) || (SHOCK_TUBE_TESTS==1)
 #ifndef EQUAL_PART_MASS
-#define EQUAL_PART_MASS 1
+#define EQUAL_PART_MASS 0
 #endif
 #endif
 
@@ -139,7 +139,7 @@
  * USE_GSPH 2 : RCMSPH
  */
 #ifndef USE_GSPH
-#define USE_GSPH 0
+#define USE_GSPH 2
 #endif
 
 
@@ -182,7 +182,7 @@
 //define which kind of Riemann Solver
 /* 0: --> Roe
  * 1: --> HLLC
- * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock
+ * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock ---> Should finally be the same as HLLC1
  * 3: --> An iterative solver based by Van Leer
  */
 //For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
@@ -203,7 +203,7 @@
  */
 #if (RIEMANN_SOLVER==1) || (RIEMANN_SOLVER==2) //Use HLL type of Riemann Solver
 #ifndef HLL_WAVE_SPEED_EVA
-#define HLL_WAVE_SPEED_EVA 0
+#define HLL_WAVE_SPEED_EVA 2
 #endif
 #endif
 
@@ -282,7 +282,7 @@
  * 32: based on 31, set an up and down limit on smoothing length ---> Due to current data structure, the current code does not support smoothing length of h > (ADDING_NUM/CUTOFF)*dx ---> currently, set the up limit as 2 times of dx, and the lower bound as the 2/3 of dx
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 1
+#define ADAPTIVE_SML 32
 #endif
 
 //Whether apply adaptive smooth length to ghost particle or not

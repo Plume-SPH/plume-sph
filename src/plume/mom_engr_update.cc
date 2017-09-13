@@ -1020,7 +1020,7 @@ mom_engr_update(int myid, THashTable * P_table,
 					  for (k = 0; k < DIMENSION; k++)
 						  dwdx_heati[k]=0.5*(dwdx_heati[k]+dwdx_heatj[k]);
 
-					  Fij=compute_F(0.5*(dwdx_heati+dwdx_heatj),dx);
+					  Fij=compute_F(dwdx_heati,dx);
 					  heat_tran =mj*Vj*Vi* kij*(tempi- pj->get_temperature ())* Fij; //As function SPH_epsilon_heat_conductivity actually returns 2k, so it is not necessary to multiply by 2 here
 #endif
 					  deltae = 0.;
