@@ -1689,96 +1689,6 @@ double Compute_sij_star (double hij, double Vi, double Vj, double Dri, double Dr
     return sij_star;
 }
 
-
-////function for Riemann solver --->derivative is computed in RP solver
-//void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DIMENSION], double pi, double pj, double hi,  double hj, double xi[DIMENSION], double xj[DIMENSION],
-//		            double CSi, double CSj, double gi, double gj, double dt_half, double* p_star, double* v_star)
-//{
-//	//Pre compute:
-//    //Interpolate global variable to local system to get input for local Riemann Solver:
-//    int i;
-//	double hij= 0.5*(hi+hj);
-//    double dx[DIMENSION];
-//    for (i = 0; i < DIMENSION; i++)
-//    	dx[i] = xi[i] - xj[i];
-//
-//    double dist = 0.0;
-//    for (i = 0; i < DIMENSION; i++)
-//  	   dist += dx[i]*dx[i];
-//    dist = sqrt(dist);
-//
-//    double e[DIMENSION];
-//    Compute_eij(dx, dist, e);
-//
-//    double Si, Sj;
-//    Si=0.5*dist;
-//    Sj=-Si;
-//    compute_si_sj(xi, xj, e, &Si, &Sj); //--> a more expensive way of computing, actually get the same results as Si=0.5*dist; Sj=-Si;
-//
-//    double sij_star=Compute_sij_star(hij, 1/rhoi, 1/rhoj, dist);
-//
-//    double delta_i = sij_star + CSi * dt_half - Si; //Si = dist/2 is positive
-//    double delta_j = sij_star - CSj * dt_half - Sj;
-//
-//    //compute derivative:
-//    double drho=(rhoi-rhoj)/dist; //drhoi=drhoj
-//    double ui=0.0, uj=0.0;
-//    //need to project ui and uj onto the direction of local coordinate system first, then compute differential.
-//    for (i=0; i<DIMENSION; i++)
-//    {
-//    	ui += vi[i]*e[i];
-//    	uj += vj[i]*e[i];
-//    }
-//    double du=(ui-uj)/dist;
-//    double dp=(pi-pj)/dist;
-//
-//    //Apply monotonicity
-//    // dvdxi * dvdxj always non-negative
-//    if (C_SHOCK*(uj-ui)>min(CSi, CSj))
-//    {
-//    	drho=0.0;
-//    	dp=0.0;
-//    	du=0.0;
-//    }
-//
-//	//compute the right input and left input
-//    double dr=rhoi+drho*delta_i;
-//    double ur=ui+du*delta_i;
-//    double pr=pi+dp*delta_i;
-//    double dl=rhoj+drho*delta_j;
-//    double ul=uj+du*delta_j;
-//    double pl=pj+dp*delta_j;
-//
-//    //for Roe Average:
-//    double rdl=sqrt(dl);
-//    double rdr=sqrt(dr);
-//    double denominator = 1.0 / (rdl+rdr);
-//
-//    double plr=(pl*rdl + pr*rdr)*denominator;
-//    double gammalr=(gj*rdl + gi*rdr)*denominator;
-//    double dlr=(dl*rdl + dr*rdr)*denominator;
-//#if FLUID_COMPRESSIBILITY==0
-//    double clr= sqrt(gammalr*plr/dlr);
-//#elif  FLUID_COMPRESSIBILITY==1
-//    double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
-//#endif
-//
-//    //solve RP problem with approxiamte Roe RP solver
-//    double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
-//    double u_star;
-//    *p_star=plr -0.5*clr*(ur-ul);
-//    u_star= ulr-0.5*(pr-pl)/clr;
-//
-//    //project u_star to v_star
-//    double vlr[DIMENSION];
-//    for (i=0; i<DIMENSION; i++)
-//    {
-//    	vlr[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
-//    	*(v_star+i)=e[i]*u_star+ vlr[i] - ulr*e[i];
-//    }
-//
-//}
-
 // Roe RP solver:
 //void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
 void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star, double mi=1.0, double mj=1.0)
@@ -1801,6 +1711,9 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
 #elif  FLUID_COMPRESSIBILITY==1
     double clr= sqrt(plr*gammalr/(rhoa0_P*(pow(dlr/rhoa0_P, gammalr)-1.0)));
 #endif
+
+    //Please be notice, the sound speed clr in Roe Riemann solver for Lagrangian method should be lagrangian sound speed!
+    clr=dlr*clr;
 
     //solve RP problem with approxiamte Roe RP solver
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
@@ -1871,11 +1784,11 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     double Sr=max(vr+cr, clr);
     double Sm=(dr*vr*(Sr-vr)-dl*vl*(Sl-vl)+pl-pr)/(dr*(Sr-vr)-dl*(Sl-vl));
     p_hat=dl*(vl-Sl)*(vl-Sm)+pl;
-#elif HLL_WAVE_SPEED_EVA==1 // B. Einfeldt  ---> Turned out to be the same as: Average-State Jacobians
-    double Sl=min(ul-cl, ulr-clr);
-    double Sr=max(ur+cr, ulr+clr);
-    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
-    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+//#elif HLL_WAVE_SPEED_EVA==1 // B. Einfeldt  ---> Turned out to be the same as: Average-State Jacobians
+//    double Sl=min(ul-cl, ulr-clr);
+//    double Sr=max(ur+cr, ulr+clr);
+//    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
+//    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
 #elif HLL_WAVE_SPEED_EVA==2  //Davis
     double Sl=min(vl-cl, vr-cr);
     double Sr=max(vl+cl, vr+cr);
@@ -1890,16 +1803,16 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     double Sr=vr+cr*qr;
     double Sm=(dr*vr*(Sr-vr)-dl*vl*(Sl-vl)+pl-pr)/(dr*(Sr-vr)-dl*(Sl-vl));
     p_hat=dl*(vl-Sl)*(vl-Sm)+pl;
-#elif HLL_WAVE_SPEED_EVA==4  //P. Batten
-    double Sl=min(ul-cl, ulr-clr);
-    double Sr=max(ur+cr, ulr+clr);
-    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
-    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
-#elif HLL_WAVE_SPEED_EVA==5  //A modified version of 0
-    double Sl=min(ul-cl,  -clr);
-    double Sr=max(ur+cr,  clr);
-    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
-    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+//#elif HLL_WAVE_SPEED_EVA==4  //P. Batten
+//    double Sl=min(ul-cl, ulr-clr);
+//    double Sr=max(ur+cr, ulr+clr);
+//    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
+//    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
+//#elif HLL_WAVE_SPEED_EVA==5  //A modified version of 0
+//    double Sl=min(ul-cl,  -clr);
+//    double Sr=max(ur+cr,  clr);
+//    double Sm=(dr*ur*(Sr-ur)-dl*ul*(Sl-ul)+pl-pr)/(dr*(Sr-ur)-dl*(Sl-ul));
+//    p_hat=dl*(ul-Sl)*(ul-Sm)+pl;
 #endif
 
 
@@ -1968,15 +1881,7 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 
 #endif //USE_GSPH
 
-////    double u_star;
-//    if (Sl>0)
-//    	*u_star=ul;
-//    else if ((Sl<=0) && (Sm>0))
-//    	*u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
-//    else if ((Sm<=0) && (Sr>0))
-//    	*u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
-//    else
-//    	*u_star=ur;
+//    	    *u_star=*u_star+ulr;
 
 #ifdef DEBUG
 //    bool check=true;
@@ -2196,14 +2101,19 @@ void VanLeer_RP_Solver(double dl, double dr, double pl, double pr, double ul, do
     double rdr=sqrt(dr);
     double denominator = 1.0 / (rdl+rdr);
 
+    //An very important modification: ---> The Lagrangian sound speed is calculated by sqrt(\gamma p \rho)
+    cl = cl*dl;
+    cr = cr*dr;
+
     double ulr = (ul*rdl + ur*rdr)*denominator; //Here always use Roe average to compute average value of u p d ...
 	//Compute approximation of wave speed
-    double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
-    double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+
+//    double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+//    double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
 
 //
-//    double vl=ul;
-//    double vr=ur;
+    double vl=ul;
+    double vr=ur;
 
     double p_iter=(cl*pr+cr*pl-cr*cl*(vl-vr))/(cl+cr);
 
@@ -2224,10 +2134,10 @@ void VanLeer_RP_Solver(double dl, double dr, double pl, double pr, double ul, do
 
     double G1l=0.5*(gj+1)/gj;
     double G2l=0.5*(gj-1)/gj;
-    double G3l=1-G2l;
+    double G3l=1.0-G2l;
     double G1r=0.5*(gi+1)/gi;
     double G2r=0.5*(gi-1)/gi;
-    double G3r=1-G2r;
+    double G3r=1.0-G2r;
 
     double Wl, Wr, Zl, Zr;
     double PRl, PRr;
@@ -2244,26 +2154,26 @@ void VanLeer_RP_Solver(double dl, double dr, double pl, double pr, double ul, do
     	PRr=p_iter/pr;
 
     	if (p_iter>=pl)
-    		Wl=cl*pow((1+G1l*(p_iter-pl)/pl),0.5);
+    		Wl=cl*pow((1.0+G1l*(p_iter-pl)/pl),0.5);
     	else
-    		Wl=G2l*(1-PRl)/(1-pow(PRl, G2l))*cl;
+    		Wl=G2l*(1.0-PRl)/(1.0-pow(PRl, G2l))*cl;
 
     	if (p_iter>=pr)
-    		Wr=cr*pow((1+G1r*(p_iter-pr)/pr),0.5);
+    		Wr=cr*pow((1.0+G1r*(p_iter-pr)/pr),0.5);
     	else
-    		Wr=G2r*(1-PRr)/(1-pow(PRr, G2r))*cr;
+    		Wr=G2r*(1.0-PRr)/(1.0-pow(PRr, G2r))*cr;
 
     	//Compute tangential slope
     	Wl_sq=Wl*Wl;
     	Wr_sq=Wr*Wr;
 
     	if (p_iter>=pl)
-    		Zl=2*Wl_sq/(Wl_sq+cl_sq)*Wl;
+    		Zl=2.0*Wl_sq/(Wl_sq+cl_sq)*Wl;
     	else
     		Zl=cl*pow(PRl, G3l);
 
     	if (p_iter>=pr)
-    		Zr=2*Wr_sq/(Wr_sq+cr_sq)*Wr;
+    		Zr=2.0*Wr_sq/(Wr_sq+cr_sq)*Wr;
     	else
     		Zr=cr*pow(PRr, G3r);
 
@@ -2298,6 +2208,7 @@ void VanLeer_RP_Solver(double dl, double dr, double pl, double pr, double ul, do
 		}
 #endif
 
+//    *u_star=*u_star+ulr;
     return;
 }
 
@@ -2397,19 +2308,6 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
     	ui += vi[i]*e[i];
     	uj += vj[i]*e[i];
     }
-
-    //compute derivative:
-//    double drho=(rhoi-rhoj)/dist; //drhoi=drhoj
-//    double du=(ui-uj)/dist;
-//    double dp=(pi-pj)/dist;
-//#if GSPH_SPECIFIC_VOL_APP==0
-//    double drhoi=0.0;
-//    double ddui=0.0;
-//    double dpi =0.0;
-//    double drhoj=0.0;
-//    double dduj=0.0;
-//    double dpj =0.0;
-//#else
 
 #if CODE_DIMENSION==3
     //need project gradient onto the local coordinate system

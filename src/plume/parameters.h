@@ -188,6 +188,10 @@
 const double Ll_P[DIMENSION]={-40800, -40800, 1500};
 const double Lu_P[DIMENSION]={40800, 40800, 55000};
 
+////for strong sml1=400, particle dens=8
+//const double Ll_P[DIMENSION]={-41600, -41600, 1500};
+//const double Lu_P[DIMENSION]={41600, 41600, 55000};
+
 //for strong sml1=300 or sml1=200, sml1=150
 //const double Lx_P[2]={-28800,28800};
 //const double Ly_P[2]={-28800,28800};

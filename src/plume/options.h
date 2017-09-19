@@ -40,7 +40,7 @@
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 13
+#define DENSITY_UPDATE_SML 1
 #endif
 
 //Define the smoothing length used in momentum and energy update
@@ -53,7 +53,7 @@
  * 4 : use (w(hi)/rho_i^2+w(hj)/rho_j^2) --->This is actually the default formulation for GSPH  -->Only apply for GSPH
  */
 #ifndef ME_UPDATE_SML
-#define ME_UPDATE_SML 3
+#define ME_UPDATE_SML 2
 #endif
 
 /*
@@ -107,7 +107,7 @@
  * 6: Double shock
  */
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 1
+#define SHOCK_TUBE_TESTS 4
 #endif
 
 //Whether smooth the initial distribution for Shock tube problem or not?
@@ -150,7 +150,7 @@
  */
 #if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef GSPH_SPECIFIC_VOL_APP
-#define GSPH_SPECIFIC_VOL_APP 3
+#define GSPH_SPECIFIC_VOL_APP 0
 #endif
 #endif
 
@@ -182,7 +182,7 @@
 //define which kind of Riemann Solver
 /* 0: --> Roe
  * 1: --> HLLC
- * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock ---> Should finally be the same as HLLC1
+ * #2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock  --> No difference between this one and previous one.
  * 3: --> An iterative solver based by Van Leer
  */
 //For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
@@ -194,16 +194,16 @@
 
 //define Sl and Sr evaluation in HLL and HLLC Riemann Solvers
 /* 0: --> Kunal Puri, Approximate Riemann solvers for the Godunov SPH (GSPH) For HLLC Riemann Solver in Puri's paper --> should always use this one.
- * 1: --> B. Einfeldt On Godunov-type methods near low density
+ * ###1--> B. Einfeldt On Godunov-type methods near low density ---> Are actually the same as 0, Notice that 0 is actually the for a moving coordinate system.
  * 2: --> S.F. Davis Simplified second-order Godunov-type methods
  * 3: --> E.F. Toro Riemann Solvers and Numerical Methods for Fluid Dynamics
- * 4: --> P. Batten Average-State Jacobians and Implicit Methods for Compressible Viscous and Turbulent Flows
- * 5: --> A modified version of 0 : us ul and ur instead of vl (=ul-ulr) and vr
+ * ###4: --> P. Batten Average-State Jacobians and Implicit Methods for Compressible Viscous and Turbulent Flows ---> The same as 0
+ * ###5: --> A modified version of 0 : us ul and ur instead of vl (=ul-ulr) and vr  ---> Actually 1, but incorrect if directly use, should be converted to a moving coordinate system which moves together with interface.
  *
  */
 #if (RIEMANN_SOLVER==1) || (RIEMANN_SOLVER==2) //Use HLL type of Riemann Solver
 #ifndef HLL_WAVE_SPEED_EVA
-#define HLL_WAVE_SPEED_EVA 2
+#define HLL_WAVE_SPEED_EVA 0
 #endif
 #endif
 
@@ -584,7 +584,7 @@
 //define which kind of Riemann Solver
 /* 0: --> Roe
  * 1: --> HLLC
- * 2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock
+ * #2: --> HLLC , based on paper:A robust HLLC-type Riemann solver for strong shock  --> No difference between this one and previous one.
  */
 //For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
 #if (USE_GSPH==1 || USE_GSPH==2)
@@ -595,11 +595,11 @@
 
 //define Sl and Sr evaluation in HLL and HLLC Riemann Solvers
 /* 0: --> Kunal Puri, Approximate Riemann solvers for the Godunov SPH (GSPH) For HLLC Riemann Solver in Puri's paper --> should always use this one.
- * 1: --> B. Einfeldt On Godunov-type methods near low density
+ * ###1--> B. Einfeldt On Godunov-type methods near low density ---> Are actually the same as 0, Notice that 0 is actually the for a moving coordinate system.
  * 2: --> S.F. Davis Simplified second-order Godunov-type methods
  * 3: --> E.F. Toro Riemann Solvers and Numerical Methods for Fluid Dynamics
- * 4: --> P. Batten Average-State Jacobians and Implicit Methods for Compressible Viscous and Turbulent Flows
- * 5: --> A modified version of 0 : us ul and ur instead of vl (=ul-ulr) and vr
+ * ###4: --> P. Batten Average-State Jacobians and Implicit Methods for Compressible Viscous and Turbulent Flows ---> The same as 0
+ * ###5: --> A modified version of 0 : us ul and ur instead of vl (=ul-ulr) and vr  ---> Actually 1, but incorrect if directly use, should be converted to a moving coordinate system which moves together with interface.
  *
  */
 #if (RIEMANN_SOLVER==1) || (RIEMANN_SOLVER==2) //Use HLL type of Riemann Solver

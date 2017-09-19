@@ -68,8 +68,8 @@ mom_engr_update(int myid, THashTable * P_table,
 #endif
 
 #ifdef DEBUG
-   bool do_search = false;
-   unsigned keycheck[TKEYLENGTH] = {224, 0, 0};
+   bool do_search = true;
+   unsigned keycheck[TKEYLENGTH] = {298, 0, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
 
@@ -510,6 +510,12 @@ mom_engr_update(int myid, THashTable * P_table,
    double tobef_e=0.0;
 #endif  //DEBUG
 
+#if USE_GSPH==2
+  double sample_pt;
+  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
+  cout <<"sample_pt = " <<  sample_pt << endl;
+#endif
+
   while ((pi = (Particle *) itr->next ()))
   {
 	  if (pi->need_neigh ())
@@ -647,8 +653,15 @@ mom_engr_update(int myid, THashTable * P_table,
 				  sndspdj = pj->get_sound_speed();
 				  gammaj= pj->get_gamma();
 
+#if ME_UPDATE_SML==2 || ME_UPDATE_SML==1 || ME_UPDATE_SML==0
+
 #if ME_UPDATE_SML==2
-			      double hij=0.5*(hi+hj);
+				  double hij=0.5*(hi+hj);
+#elif ME_UPDATE_SML==1
+				  double hij=hj;
+#elif ME_UPDATE_SML==0
+				  double hij=hi;
+#endif //for hij
 
 		          // pre-compute weight function derivatives
 			      for (i = 0; i < DIMENSION; i++)
@@ -731,7 +744,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		          }
 #endif
 
-		          if (max_dw>0)
+		          if (max_dw>0) //to improve computational efficiency, if dw=0, do not need to do these computation as they all lead to zero.
 		          {
 #if HAVE_TURBULENCE_LANS !=0
 					  for (k = 0; k < DIMENSION; k++)
@@ -758,16 +771,10 @@ mom_engr_update(int myid, THashTable * P_table,
 #if USE_GSPH==1
 					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
 #elif USE_GSPH==2
-					  double sample_pt;
-					  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
 					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
 #endif //USE_GSPH
 
 #elif RP_MASS_WEIGHTED>0
-					  double sample_pt=0.0;
-#if USE_GSPH==2
-					  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
-#endif //USE_GSPH
 					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt, pi->get_mass(), mj);
 
 #endif //RP_MASS_WEIGHTED
@@ -950,7 +957,7 @@ mom_engr_update(int myid, THashTable * P_table,
 		          }
 #endif
 
-		          if (max_dw>0)
+		          if (max_dw>0) //to improve computational efficiency, if dw=0, do not need to do these computation as they all lead to zero.
 		          {
 #if HAVE_TURBULENCE_LANS !=0
 					  for (k = 0; k < DIMENSION; k++)
@@ -986,8 +993,6 @@ mom_engr_update(int myid, THashTable * P_table,
 #if USE_GSPH==1
 					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star);
 #elif USE_GSPH==2
-					  double sample_pt;
-					  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
 					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt);
 #endif //USE_GSPH
 
