@@ -513,7 +513,7 @@ mom_engr_update(int myid, THashTable * P_table,
 #if USE_GSPH==2
   double sample_pt;
   sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
-  cout <<"sample_pt = " <<  sample_pt << endl;
+//cout <<"sample_pt = " <<  sample_pt << endl;
 #endif
 
   while ((pi = (Particle *) itr->next ()))
@@ -998,9 +998,6 @@ mom_engr_update(int myid, THashTable * P_table,
 
 #elif RP_MASS_WEIGHTED>0
 					  double sample_pt=0.0;
-#if USE_GSPH==2
-					  sample_pt = Generate_VanderCorput(unsigned (timeprops->step));
-#endif //USE_GSPH
 					  Riemann_Solver(uvec[0],  uvecj[0], veli, velj,  pressi, pressj, hi, hj, xi, xj, sndspdi, sndspdj, gammai, gammaj, dt_half, dri, drj, dui, duj, dvi, dvj, dwi, dwj, dpi, dpj, &p_star, v_star, sample_pt, dt, pi->get_mass(), mj);
 
 #endif //RP_MASS_WEIGHTED

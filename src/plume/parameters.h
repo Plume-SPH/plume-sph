@@ -166,11 +166,11 @@
 ////% parameter for domain definition: Lx_P the lower and up boundary in x direction
 ////                                   Ly_p the lower and up boundary in y direction
 ////                                   Lz_p the lower and up boundary in z direction
-//
-////for weak sml1=15m or sml1=30
-//const double Lx_P[2]={-2430,2430};
-//const double Ly_P[2]={-2430,2430};
-//const double Lz_P[2]={1500, 14000};
+
+//For weak, sml1=20, sml1=15m, or sml1=30 particle dens=8
+const double Ll_P[DIMENSION]={-2400,-2400, 1500};
+const double Lu_P[DIMENSION]={2400, 2400, 14000};
+
 
 ////for strong sml1=170 smaller domain
 //const double Lx_P[2]={-29580,29580};
@@ -184,7 +184,7 @@
 //const double Ll_P[DIMENSION]={-39780,-39780, 1500};
 //const double Lu_P[DIMENSION]={39780,39780, 55000};
 
-//for strong sml1=400
+//for strong sml1=400 , particle dens=6
 const double Ll_P[DIMENSION]={-40800, -40800, 1500};
 const double Lu_P[DIMENSION]={40800, 40800, 55000};
 
@@ -342,7 +342,7 @@ const int num_erupt_perlayer = 10;
 //----> 7056 for sml1=50, sml2=50.5, 3493 for sml1=200, sml2=101, 954 for sml1=150; sml2=141.5, 1337 for sml1=150, sml2=101; 1515 for sm1=170 sml2=101; 549 for sml1=400, sml2=236
 const int num_erupt_particles = 549; //number of particle in the initial erupt duct
 ////for weak
-//4963 for sml1=30, sml2=5.44 ; 1271 for sml1=15, sml2=6.8
+//4963 for sml1=30, sml2=5.44 ; 1271 for sml1=15, sml2=6.8; 715 for sml1=15, sml2=9.0665, particle-dens=8; 384 for sml1=25, sml2=13.6, particle dense=8
 //const int num_erupt_particles = 1271; //number of particle in the initial erupt duct
 
 //----------------------------------------------------------------------------------------
@@ -1089,7 +1089,7 @@ const double Ll_P[DIMENSION]={-0.55};//-5-4.73
 const double Lu_P[DIMENSION]={0.55};
 const int Nnsrp_l_P=100;
 const int Nnsrp_r_P=10;
-const double csv_out_P=0.012; //time to output csv files
+const double csv_out_P=0.01; //time to output csv files
 #elif SHOCK_TUBE_TESTS==5
 //Double expansion
 const int Nb_P=15;

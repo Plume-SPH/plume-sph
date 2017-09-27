@@ -1750,7 +1750,7 @@ void Roe_RP_Solver(double dl, double dr, double pl, double pr, double ul, double
 
 //HLLC Riemann Solver ---> based on HLLC solver presented in "Approximate Riemann solvers for the Godunov SPH (GSPH)"
 //void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * v_star, double * vj, double* vi, double* e)
-void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star, double sample_x=0.0, double delta_t=0.0)
+void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, double ur, double gj, double gi, double *p_star, double * u_star, double sp=0.5, double delta_t=0.0, double dist=0.0)
 {
     //Roe average:
     double rdl=sqrt(dl);
@@ -1770,6 +1770,7 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 	//Compute approximation of wave speed
     double vl=ul-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
     double vr=ur-ulr; //, velocity relative to interface, use Roe averaged velocity as the velocity at the interface
+
 #if FLUID_COMPRESSIBILITY==0
     double cl=sqrt(gj*pl/dl);
     double cr=sqrt(gi*pr/dr);
@@ -1829,7 +1830,7 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 
 #ifdef DEBUG
     if (Sm<Sl || Sm>Sr || Sl>Sr)
-    	cout <<"Wave speed incorrect!"<<endl;
+    	cout <<"Wave speed incorrect! Sl=" << Sl << ", Sm=" <<Sm <<", Sr="<<Sr<<endl;
 #endif
 
 #if USE_GSPH==1
@@ -1856,22 +1857,28 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
     	    else
     	    	cout <<"Fatal error in HLLC Riemann Solver"<<endl;
 #elif USE_GSPH==2
-    	    if (Sl*delta_t>sample_x)
+
+    	    double xSl=Sl*delta_t;
+    	    double xSm=Sm*delta_t;
+    	    double xSr=Sr*delta_t;
+    	    double sample_x = (sp-0.5)*dist*0.6;
+
+    	    if (xSl>sample_x)
     	    {
     	    	*p_star=pl;
     	        *u_star=ul;
     	    }
-    	    else if ((Sl*delta_t<=sample_x) && (Sm*delta_t>sample_x))
+    	    else if ((xSl<=sample_x) && (xSm>sample_x))
     	    {
     	    	*p_star=Sm/(Sl-Sm)*((Sl-vl)*Ml+(p_hat-pl))+p_hat;
     	    	*u_star=(Sm/(Sl-Sm)*((Sl-vl)*El+p_hat*Sm-pl*vl)+(Sm+ulr)*p_hat)/(*p_star);
     	    }
-    	    else if ((Sm*delta_t<=sample_x) && (Sr*delta_t>sample_x))
+    	    else if ((xSm<=sample_x) && (xSr>sample_x))
     	    {
     	    	*p_star=Sm/(Sr-Sm)*((Sr-vr)*Mr+(p_hat-pr))+p_hat;
     	    	*u_star=(Sm/(Sr-Sm)*((Sr-vr)*Er+p_hat*Sm-pr*vr)+(Sm+ulr)*p_hat)/(*p_star);
     	    }
-    	    else if (Sr*delta_t<=sample_x)
+    	    else if (xSr<=sample_x)
     	    {
     	    	*p_star=pr;
     	    	*u_star=ur;
@@ -1881,7 +1888,6 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 
 #endif //USE_GSPH
 
-//    	    *u_star=*u_star+ulr;
 
 #ifdef DEBUG
 //    bool check=true;
@@ -1899,15 +1905,6 @@ void HLLC_RP_Solver(double dl, double dr, double pl, double pr, double ul, doubl
 	//    		exit(0);
 		}
 #endif
-
-//    //project u_star to v_star
-//    double vlr_3D[DIMENSION];
-//    for (int i=0; i<DIMENSION; i++)
-//    {
-//    	vlr_3D[i]=(vj[i]*rdl + vi[i]*rdr)*denominator;
-//    	*(v_star+i)=e[i]*u_star+ vlr_3D[i] - ulr*e[i];
-//    }
-
 }
 
 //HLLC Riemann Solver----> Based on paper "A robust HLLC-type Riemann solver for strong shock" --> two other new method is proposed
@@ -2294,10 +2291,6 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 	   dist += dx[i]*dx[i];
 	dist = sqrt(dist);
 
-#if USE_GSPH==2
-    double sample_x = (sp-0.5)*dist;
-#endif
-
 	double e[DIMENSION];
 	Compute_eij(dx, dist, e);
     // Now do projection
@@ -2420,6 +2413,11 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 
 #endif //RP_MASS_WEIGHTED==21
 
+#if USE_GSPH==2
+    double sample_x= (sp-0.5)*dist;
+    sij_star=sample_x;
+#endif
+
     double delta_i = sij_star + CSi * dt_half - Si; //Si = dist/2 is positive
     double delta_j = sij_star - CSj * dt_half - Sj;
 
@@ -2510,7 +2508,7 @@ void Riemann_Solver(double rhoi, double rhoj, double vi[DIMENSION], double vj[DI
 #endif //Riemann Solver
 
 #elif USE_GSPH==2
-        HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star, sample_x, delta_t);
+        HLLC_RP_Solver(dl, dr, pl, pr, ul, ur, gj, gi, p_star, &u_star, sp, delta_t, dist);
 #endif //USE_GSPH
     //----------------------------------------------------------------------------------------
 
