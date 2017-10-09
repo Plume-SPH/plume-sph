@@ -78,7 +78,7 @@ main(int argc, char **argv)
   bool check_part = false;
   int  id;
   bool find = false;
-  bool check_buck = false;
+  bool check_buck = true;
   bool check_mesh_err = false;
   bool check_part_tp = false;
   bool check_bypos = false;
@@ -109,11 +109,6 @@ main(int argc, char **argv)
   }
 
 #ifdef DEBUG
-  if (check_buck)
-	  check_bucket_bykey (BG_mesh);
-#endif
-
-#ifdef DEBUG
   if (check_mesh_err)
 	  BG_mesh_err_check (BG_mesh, myid);
 #endif
@@ -126,6 +121,11 @@ main(int argc, char **argv)
 	  check_particle_bykey (P_table);
 #endif
 
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
+
   // scan mesh and mark buckets active/inactive
   update_bgmesh (BG_mesh, myid, numprocs, my_comm);
 
@@ -136,6 +136,11 @@ main(int argc, char **argv)
   //add pressure ghost
   add_pressure_ghost(P_table, BG_mesh, simprops, matprops, timeprops, numprocs, myid);
 
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
+
   // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
@@ -145,16 +150,16 @@ main(int argc, char **argv)
   // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
 
 #ifdef DEBUG
   if (check_bypos)
 	  check_particle_bypos (P_table);
 #endif
 
-#ifdef DEBUG
-  if (check_part)
-	  check_particle_bykey (P_table);
-#endif
 
 #ifndef SIMULATE_ASH
   //Adding eruption boundary condition ---> Here we did not syn because the guest will lately been deleted for re-decomposition.
@@ -162,6 +167,11 @@ main(int argc, char **argv)
 #else
   //Adding influx particles ---> Here we did not syn because the guest will lately been deleted for re-decomposition.
   setup_influx (myid, P_table, BG_mesh, timeprops, matprops, simprops, numprocs);
+#endif
+
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
 #endif
 
 #ifdef DEBUG
@@ -207,6 +217,11 @@ main(int argc, char **argv)
 
   //It is necessary, properties of wall ghost particle will change after applying wall boundary conditions
   move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
 
   // Write inital configuration
   write_output (myid, numprocs, P_table, BG_mesh,
@@ -258,6 +273,11 @@ main(int argc, char **argv)
     if ( ierr )
       MPI_Abort(MPI_COMM_WORLD, ierr);
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
 #ifdef ADJUST_DOMAIN
     // update mesh
     adapt = (int) round (global_data[2]);
@@ -266,17 +286,42 @@ main(int argc, char **argv)
       //sync data, in outside-layer-scanning, guest bucket is not able to updated! So syn here
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
       // adapt_domain -> What did here is make the domain larger--->because the involved particle enter the most outside bucket layer (has_potential_involved = 1;)
       adapt_domain (P_table, BG_mesh, matprops, numprocs, myid);
 
       //sync data, as some ghost_pressure bucket becomes has_potential_involved (also for the particles inside)-->these information is needed when adding pressure ghost and as well as wall ghost.
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
 
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
       //add pressure ghost --> will not delete the old pressure ghost, just add pressure ghost where computational domain is "exposed"
       add_pressure_ghost (P_table, BG_mesh, simprops, matprops, timeprops, numprocs, myid);
 
       // sync data-->This is necessary, because for 3D domain decomposition, we only add pressure ghost particle for non-guest buckets
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
 
       //after adding pressure ghost, shift the adhered layer of brief bucket to be bucket.
       shift_brief_buck (BG_mesh, matprops, timeprops, myid);
@@ -286,6 +331,11 @@ main(int argc, char **argv)
 
       // sync data again
       move_data (numprocs, myid, my_comm, P_table, BG_mesh);
+
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
 
       // scan buckets and make them active / inactive
       update_bgmesh (BG_mesh, myid, numprocs, my_comm);
@@ -310,6 +360,16 @@ main(int argc, char **argv)
 
 #endif  //MULTI_PROC
 
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
+
     ierr = 0;  // reset error code
     adapt = 0; // and adapt flag
 
@@ -331,6 +391,11 @@ main(int argc, char **argv)
 #ifdef MULTI_PROC
     // ghost need to be updated only before updating momentum
     move_bnd_images (myid, numprocs, P_table, Image_table);
+#endif
+
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
 #endif
 
 #if  (USE_GSPH ==1 || USE_GSPH ==2)
@@ -415,15 +480,29 @@ main(int argc, char **argv)
        add_new_influx(myid, P_table, BG_mesh, timeprops, matprops, simprops, dt);
 #endif
 
+#ifdef DEBUG
+  if (check_part)
+	  check_particle_bykey (P_table);
+#endif
 
 #ifdef MULTI_PROC
     // update guests as density has changed since last update
     move_data(numprocs, myid, my_comm, P_table, BG_mesh);
 #endif
 
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
+
 #ifdef ADJUST_DOMAIN
     //scan most outside layer of has_potential_involved buckets
     adapt = scan_outside_layer (P_table, BG_mesh, numprocs, myid);
+#endif
+
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
 #endif
 
 #ifdef MULTI_PROC
@@ -457,6 +536,11 @@ main(int argc, char **argv)
 
     // apply boundary conditions
     ierr += apply_bcond (myid, P_table, BG_mesh, matprops, Image_table);
+
+#ifdef DEBUG
+  if (check_buck)
+	  check_bucket_bykey (BG_mesh);
+#endif
 
     //It is necessary, properties of wall ghost particle will change after applying wall boundary conditions
     move_data (numprocs, myid, my_comm, P_table, BG_mesh);

@@ -184,9 +184,9 @@ const double Lu_P[DIMENSION]={2400, 2400, 14000};
 //const double Ll_P[DIMENSION]={-39780,-39780, 1500};
 //const double Lu_P[DIMENSION]={39780,39780, 55000};
 
-//for strong sml1=400 , particle dens=6
-const double Ll_P[DIMENSION]={-40800, -40800, 1500};
-const double Lu_P[DIMENSION]={40800, 40800, 55000};
+////for strong sml1=400 , particle dens=6
+//const double Ll_P[DIMENSION]={-40800, -40800, 1500};
+//const double Lu_P[DIMENSION]={40800, 40800, 55000};
 
 ////for strong sml1=400, particle dens=8
 //const double Ll_P[DIMENSION]={-41600, -41600, 1500};
@@ -1021,7 +1021,7 @@ const double Mreduce_R_P=1.0; //coefficient that used to reduce equivalent parti
 #endif
 //----------------------------------------------------------------------------------------
 //CFL coefficient for time step update
-const double CFL_P=0.4;
+const double CFL_P=0.8;
 const double CFL_BC_P=0.08; //CLF number to stable fluctuation near the boundary, 1/6.
 
 //----------------------------------------------------------------------------------------

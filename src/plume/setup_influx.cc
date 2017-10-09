@@ -78,7 +78,7 @@ setup_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
 	range_y[0] = -r_out_P;
 	range_y[1] = r_out_P;
     range_z[1] = h_top_P;
-    range_z[0] = Ll_P[2];  //+ PARTICLE_DENSITY*0.5*sml;
+    range_z[0] = h_bot_P;  //+ PARTICLE_DENSITY*0.5*sml;
 
 
     //Find all buckets as influx buckets
@@ -377,6 +377,12 @@ add_new_influx(int myid, THashTable * P_table, HashTable * BG_mesh,
     Bucket * Curr_buck;
 	BriefBucket *breif_buck = NULL;
 	void * tempptr =NULL;
+
+#ifdef DEBUG
+      bool do_search = false;
+      unsigned keycheck[TKEYLENGTH] = {71606976, 8257279, 0};
+      unsigned keytemp[TKEYLENGTH];
+#endif
 
 	//We do not add influx particles for guest bucket ---> will syn after adding!
     itr->reset();

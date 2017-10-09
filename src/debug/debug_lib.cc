@@ -80,7 +80,7 @@ void check_particle_bykey (THashTable * P_table)
 
     bool do_search = true;
     bool find;
-    unsigned keycheck[TKEYLENGTH] = {0, 1072693248, 0}; //key of its neighbor which is missing
+    unsigned keycheck[TKEYLENGTH] = {71606976, 8257279, 0}; //key of its neighbor which is missing
     //{93400792, 2478187757, 0}; //key of the particle itself is:
     //
     unsigned keytemp[TKEYLENGTH] ;
@@ -170,9 +170,9 @@ void check_particle_bypos (THashTable * P_table)
 {
 
     bool do_search = true;
-    double range_x[2]={20,100000};
-    double range_y[2]={-1000,1000};
-    double range_z[2]={1500, 2100};
+    double range_x[2]={-300,700};
+    double range_y[2]={-300,700};
+    double range_z[2]={0, 700};
     double pcrd[DIMENSION];
     int bctp;
 
@@ -204,8 +204,8 @@ void check_particle_bypos (THashTable * P_table)
 {
 
     bool do_search = true;
-    double range_x[2]={20,100000};
-    double range_y[2]={-1000,1000};
+    double range_x[2]={-300,700};
+    double range_y[2]={-300,700};
     double pcrd[DIMENSION];
     int bctp;
 
