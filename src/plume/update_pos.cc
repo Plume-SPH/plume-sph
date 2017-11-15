@@ -45,8 +45,8 @@ update_pos(THashTable * P_table,
 
 
 #ifdef DEBUG
-   bool do_search = false;
-   unsigned keycheck[TKEYLENGTH] = {69562537, 292385725, 0};
+   bool do_search = true;
+   unsigned keycheck[TKEYLENGTH] = {71901794, 4252428424, 0};
    unsigned keytemp[TKEYLENGTH] ;
 #endif
 
@@ -180,7 +180,7 @@ update_particles_in_bucket(int myid, THashTable * P_table, HashTable * BG_mesh, 
 	bool los;
 
 #ifdef DEBUG
-   bool check_contain = true;
+   bool check_contain = false;
 #endif
 
   // move-in and move out particles from buckets

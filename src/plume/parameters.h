@@ -162,10 +162,10 @@
  *
  * 1) Consider the weak plume
  */
-////----------------------------------------------------------------------------------------
-////% parameter for domain definition: Lx_P the lower and up boundary in x direction
-////                                   Ly_p the lower and up boundary in y direction
-////                                   Lz_p the lower and up boundary in z direction
+//----------------------------------------------------------------------------------------
+//% parameter for domain definition: Lx_P the lower and up boundary in x direction
+//                                   Ly_p the lower and up boundary in y direction
+//                                   Lz_p the lower and up boundary in z direction
 
 //For weak, sml1=20, sml1=15m, or sml1=30 particle dens=8
 const double Ll_P[DIMENSION]={-2400,-2400, 1500};
@@ -407,8 +407,13 @@ const int balancing_check_int_P = 3;
 ////const double Lx_P[2]={-528,528};
 ////const double Ly_P[2]={-528,528};
 ////const double Lz_P[2]={0, 6000};
-//const double Ll_P[DIMENSION]={-528,-528,0};
-//const double Lu_P[DIMENSION]={528,528,6000};
+//////For sml1=8 particle_density=6
+////const double Ll_P[DIMENSION]={-528,-528,0};
+////const double Lu_P[DIMENSION]={528,528,6000};
+//
+////For sml1=8 particle_density=8
+//const double Ll_P[DIMENSION]={-576,-576,0};
+//const double Lu_P[DIMENSION]={ 576,576,6000};
 //
 ////----------------------------------------------------------------------------------------
 ////% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -500,6 +505,8 @@ const int balancing_check_int_P = 3;
 //const int num_erupt = 2; /*this parameter should be used to determine total number */
 //
 //const int num_erupt_perlayer = 10;
+//
+////1800 for sml1=8, sml2=4, particle_density=6, 515 for sml1=8, sml2=6.7, particle density=8
 //const int num_erupt_particles = 1800; //number of particle in the initial erupt duct
 //
 ////----------------------------------------------------------------------------------------
@@ -513,7 +520,7 @@ const int balancing_check_int_P = 3;
 //const double thresh_P=1e-5;
 //const double C_smooth_P = 2.0;
 //const double eta_smooth_P = 1.2;
-
+//
 //#if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 //const double lbd_P=1/3;
 //const double lbd1_P=1-lbd_P;
@@ -521,7 +528,7 @@ const int balancing_check_int_P = 3;
 //const double C_sml1_P=pow(lbd1_P/(ubd_n_P-lbd_P), DIMENSION);  //1/(6*6*6)
 //const double C_sml2_P=1-C_sml1_P;
 //#endif //ADAPTIVE_SML==11 || ADAPTIVE_SML==32
-
+//
 //#if ADAPTIVE_SML==2
 //const double ADKE_k_P =0.7;
 //const double ADKE_epson_P = -0.4; //minus epson in ADKE, please be notice that the "minus" sign has already considered here
@@ -940,10 +947,10 @@ const double ng0_P=0.05; /* initial mass fraction of volcanic gas: (mass of volc
  const double vel0_P=50.0;
 
 //temperature of influx material
-const double Tv0_P=243; //unit K
+const double Tv0_P=193; //unit K
 
 //Initial pressure ---> assume pressure balance
-const double pv0_P=4363.4;
+const double pv0_P=9399.0;
 
 //Initial mass fraction of erupted material, for umbrella simulation, the mass fraction of erupted material should be smaller than 1.
 const double msfc0_P=0.08;

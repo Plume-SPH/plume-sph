@@ -31,7 +31,7 @@ export I_MPI_DYNAMIC_CONNECTION=0
 
 #module use /projects/academic/abani/modules
 #module load dmtcp/2.4.4
-module load dmtcp/2.4.4-beta
+module load dmtcp/2.5.0
 module load intel-mpi/5.0.2
 module load hdf5/1.8.15p1
 

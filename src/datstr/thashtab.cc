@@ -137,7 +137,7 @@ void *
 THashTable::lookup (unsigned * key)
 {
   int entry = hash (key);
-  THashEntryPtr p = searchBucket (bucket[entry], key);// not understand...
+  THashEntryPtr p = searchBucket (bucket[entry], key);
 
   if (!p)
     return NULL;                //if not found, return 0

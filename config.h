@@ -117,7 +117,7 @@
 /* #undef PARALLEL_IO */
 
 /* build ash transportation code */
-#define SIMULATE_ASH /**/
+/* #undef SIMULATE_ASH */
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1

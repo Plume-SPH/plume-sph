@@ -51,7 +51,7 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, MatProps * matprops
 	  Bucket * neigh = NULL;
 
 #ifdef DEBUG
-	  bool check_buck = true;
+	  bool check_buck = false;
       bool check_mesh_err = false;
 
       bool do_search = false;
@@ -78,11 +78,11 @@ void adapt_domain(THashTable * P_table, HashTable * BG_mesh, MatProps * matprops
 			  //make sure that 1)the bucket is not empty, 2)has_involved = 0, 3) is not underground buckets 4) is not PRESS_BC.
 			  //Note: in the old version of the code, the PRESS_BC is not excluded, actually, it should be, because "extension of the domain should stop when it reached to the largest domain" ---> This should not influence adding of pressure ghost because when adding pressure ghost, we do not care about whether one of our neigh has_involved or has_potential_involved, we only care about whether has_inolved==0
 
-#ifndef ASH_SIMULATION
+//#ifndef ASH_SIMULATION
 			  if (!(Bnd_buck->get_has_involved()) && ((Bnd_buck->get_plist ()).size()) && Bnd_buck->get_bucket_type()!=UNDERGROUND && Bnd_buck->get_bucket_type()!=PRESS_BC && !Bnd_buck->is_guest())
-#else
-			  if (!(Bnd_buck->get_has_involved()) && ((Bnd_buck->get_plist ()).size()) && Bnd_buck->get_bucket_type()!=UNDERGROUND && Bnd_buck->get_bucket_type()!=PRESS_BC && !Bnd_buck->is_guest() && !Bnd_buck->has_pressure_ghost_particles())//bucket is on ground mixed
-#endif
+//#else
+//			  if (!(Bnd_buck->get_has_involved()) && ((Bnd_buck->get_plist ()).size()) && Bnd_buck->get_bucket_type()!=UNDERGROUND && Bnd_buck->get_bucket_type()!=PRESS_BC && !Bnd_buck->is_guest() && !Bnd_buck->has_pressure_ghost_particles())//bucket is on ground mixed
+//#endif
 			  {
 			  	   const int * neigh_proc = Bnd_buck->get_neigh_proc ();
 			  	   Key * neighbors = Bnd_buck->get_neighbors ();
