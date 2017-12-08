@@ -168,16 +168,16 @@
 //                                   Lz_p the lower and up boundary in z direction
 
 //For weak, sml1=20, sml1=15m, or sml1=30 particle dens=8
-const double Ll_P[DIMENSION]={-2400,-2400, 1500};
-const double Lu_P[DIMENSION]={2400, 2400, 14000};
+//const double Ll_P[DIMENSION]={-2400,-2400, 1500};
+//const double Lu_P[DIMENSION]={2400, 2400, 14000};
 
 
-////for strong sml1=170 smaller domain
+////for strong sml1=170 smaller domain, particle dens=6
 //const double Lx_P[2]={-29580,29580};
 //const double Ly_P[2]={-29580,29580};
 //const double Lz_P[2]={1500,50000};
 
-////for strong sml1=170 larger domain
+////for strong sml1=170 larger domain, particle dens=6
 //const double Lx_P[2]={-39780,39780};
 //const double Ly_P[2]={-39780,39780};
 //const double Lz_P[2]={1500,55000};
@@ -189,35 +189,35 @@ const double Lu_P[DIMENSION]={2400, 2400, 14000};
 //const double Lu_P[DIMENSION]={40800, 40800, 55000};
 
 ////for strong sml1=400, particle dens=8
-//const double Ll_P[DIMENSION]={-41600, -41600, 1500};
-//const double Lu_P[DIMENSION]={41600, 41600, 55000};
+const double Ll_P[DIMENSION]={-41600, -41600, 1500};
+const double Lu_P[DIMENSION]={41600, 41600, 55000};
 
-//for strong sml1=300 or sml1=200, sml1=150
+//for strong sml1=300 or sml1=200, sml1=150, particle dens=6
 //const double Lx_P[2]={-28800,28800};
 //const double Ly_P[2]={-28800,28800};
 //const double Lz_P[2]={1500,50000};
 
-////larger domain sml1=300 or sml1=200, sml1=150
+////larger domain sml1=300 or sml1=200, sml1=150, particle dens=6
 //const double Lx_P[2]={-39600,39600};
 //const double Ly_P[2]={-39600,39600};
 //const double Lz_P[2]={1500,55000};
 
-////larger domain sml1=300 or sml1=200, sml1=150
+////larger domain sml1=300 or sml1=200, sml1=150, particle dens=6
 //const double Lx_P[2]={-100800,100800};
 //const double Ly_P[2]={-100800,100800};
 //const double Lz_P[2]={1500,42000};
 
-////for strong coarse resolution sml1=400
+////for strong coarse resolution sml1=400, particle dens=6
 //const double Lx_P[2]={-31200,31200};
 //const double Ly_P[2]={-31200,31200};
 //const double Lz_P[2]={1500,50000};
 
-////for strong coarse resolution sml1=500
+////for strong coarse resolution sml1=500, particle dens=6
 //const double Lx_P[2]={-30000,30000};
 //const double Ly_P[2]={-30000,30000};
 //const double Lz_P[2]={1500,50000};
 
-//////for strong coarse resolution sml1=600
+//////for strong coarse resolution sml1=600, particle dens=6
 //const double Lx_P[2]={-28800,28800};
 //const double Ly_P[2]={-28800,28800};
 //const double Lz_P[2]={1500,50000};
@@ -275,7 +275,7 @@ const double Atf_P = -g_P/(Ra_P*Ta0_P);
 // %v: vent
 const double Rg_P=462.; /*%gas constant for volcanic gases*/
 
-//for stron
+//for strong
 const double ng0_P=0.05; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
 //////for weak
 //const double ng0_P=0.03; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
@@ -292,7 +292,7 @@ const double Tv0_P=1053;
 ////for weak
 //const double Tv0_P=1273;
 
-const double pv0_P=84363.4; //assuming pressure-balanced jet
+const double pv0_P=84363.4; //assuming pressure-balanced jet --> It is the same for strong and weak eruption
 
 const double Rv_P=ng0_P*Rg_P;  /*as constant for erupted material*/
 const double Cvv_P=ng0_P*Cvg_P+(1-ng0_P)*Cvs_P; /*specific heat of erupted material*/
@@ -340,7 +340,9 @@ const int num_erupt_perlayer = 10;
 //for strong coarse resolution
 //--> 2544 for 10 each direction sml1=400, 825 for 6 each direction, sml1=600, 1628 for 8 each direction sml1=500, 1908 for sml1=300, 10 each direction (sml2=141.5),  900 for sml1=141.5=sml2, 1764 for sml1 =100, sml2 =101.4
 //----> 7056 for sml1=50, sml2=50.5, 3493 for sml1=200, sml2=101, 954 for sml1=150; sml2=141.5, 1337 for sml1=150, sml2=101; 1515 for sm1=170 sml2=101; 549 for sml1=400, sml2=236
-const int num_erupt_particles = 549; //number of particle in the initial erupt duct
+//Above are all for particle_dens=8 When particle_dens=8:
+//732 for sml1=400, sml2=236
+const int num_erupt_particles = 732; //number of particle in the initial erupt duct
 ////for weak
 //4963 for sml1=30, sml2=5.44 ; 1271 for sml1=15, sml2=6.8; 715 for sml1=15, sml2=9.0665, particle-dens=8; 384 for sml1=25, sml2=13.6, particle dense=8
 //const int num_erupt_particles = 1271; //number of particle in the initial erupt duct
@@ -355,7 +357,7 @@ const double ata_P = 0.01;
 const int num_loop_P=2;
 const double thresh_P=1e-5;
 const double C_smooth_P = 2.0;
-const double eta_smooth_P = 1.2; //We can try different value to get best results
+const double eta_smooth_P = 1.5; //We can try different value to get best results
 
 #if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
 const double lbd_P=1/3;

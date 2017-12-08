@@ -115,7 +115,7 @@ const int NO_OF_EQNS=DIMENSION+2;/*For my current model which assumed immediate 
 const int NOEQxDIM=NO_OF_EQNS*DIMENSION; //total number of gradients
 const int DIMSQRD=9;
 const int NEIGH_SIZE=27;
-const int MAX_PARTICLES_PER_BUCKET=6000; // usually 6000 for JPUE, 4500 for plume modelling
+const int MAX_PARTICLES_PER_BUCKET=8000; // usually 6000 for JPUE, 4500 for plume modelling
 //const int MAX_ADD_STEPS = 1000; //maximum number of steps for eruption material adding
 
 // Directions
@@ -133,10 +133,10 @@ const double EXT_DOM_COF = 1.5;//Coefficient that used to extend the domain to h
 const double EXT_DOM_COF_BOT = 1.5;//Coefficient that used to extend  -z direction of the domain to have some buckets for ghost particles.
                                    //This number can be different from EXT_DOM_COF, usually take 1.6 for PARTICLE_DENSITY=5
 // Number of particles per cell per dimension EXT_DOM_COF, to avoid placing particles on the boundary-->placing of particles on the boundary will cause instability of simulation.
-const int PARTICLE_DENSITY=6;
-const int ADDING_NUM= 256; //For 3D is 256
+const int PARTICLE_DENSITY=8;
+const int ADDING_NUM= 512; //For 3D is 256
 const double CUTOFF = 3.0; // CUTOFF is very critical
-const double CUTOFF2 = 6.0; // CUTOFF is very critical --> Need to be at least CUTOFF*sqrt(2)
+const double CUTOFF2 = 8.0; // CUTOFF is very critical --> Need to be at least CUTOFF*sqrt(2)
                             // Maximum is
 
 // Bucket TYPES
@@ -186,7 +186,7 @@ const double E_SMOOTH_RATIO = 4.0;  //Ratio of energy smoothing length to smooth
 const double E_FILTER_HRATIO = 2.0;  //Ratio of energy filtering smoothing length to smoothing length of particle (which is used in velocity filtering for LANS turbulence model)  --> will be used when HAVE_TURBULENCE_LANS == 2
 
 //Adaptive sml
-const int SML_UPDATE_INT = 3.;
+const int SML_UPDATE_INT = 50.;
 const double RATIO_SML_DX = 1.0; //The ratio between sml and dx, the maximum value allowed by current code design is 2.0 (as number of particles in each direction in each bucket is 6, the kernal cut off is 3).
                                  /*
                                   * This constant is used within particle class (which might not be a good design),

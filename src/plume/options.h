@@ -107,7 +107,7 @@
  * 6: Double shock
  */
 #ifndef SHOCK_TUBE_TESTS
-#define SHOCK_TUBE_TESTS 6
+#define SHOCK_TUBE_TESTS 1
 #endif
 
 //Whether smooth the initial distribution for Shock tube problem or not?
@@ -139,7 +139,7 @@
  * USE_GSPH 2 : RCMSPH
  */
 #ifndef USE_GSPH
-#define USE_GSPH 2
+#define USE_GSPH 1
 #endif
 
 
@@ -188,7 +188,7 @@
 //For RCM SPH, only use HLLC Riemann Solver or HLLC Riemann Solver.
 #if (USE_GSPH==1 || USE_GSPH==2)
 #ifndef RIEMANN_SOLVER
-#define RIEMANN_SOLVER 0
+#define RIEMANN_SOLVER 1
 #endif
 #endif
 
@@ -282,7 +282,7 @@
  * 32: based on 31, set an up and down limit on smoothing length ---> Due to current data structure, the current code does not support smoothing length of h > (ADDING_NUM/CUTOFF)*dx ---> currently, set the up limit as 2 times of dx, and the lower bound as the 2/3 of dx
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 32
+#define ADAPTIVE_SML 1
 #endif
 
 //Whether apply adaptive smooth length to ghost particle or not
@@ -477,7 +477,7 @@
  * Any way, SPH will have some trouble if the smoothing length is different for two different phases.
  */
 #ifndef DENSITY_UPDATE_SML
-#define DENSITY_UPDATE_SML 1
+#define DENSITY_UPDATE_SML 11
 #endif
 
 
@@ -491,7 +491,7 @@
  * 4 : use (w(hi)/rho_i^2+w(hj)/rho_j^2) --->This is actually the default formulation for GSPH  -->Only apply for GSPH
  */
 #ifndef ME_UPDATE_SML
-#define ME_UPDATE_SML 0
+#define ME_UPDATE_SML 2
 #endif
 
 
@@ -684,7 +684,7 @@
  * 32: based on 31, set an up and down limit on smoothing length ---> Due to current data structure, the current code does not support smoothing length of h > (ADDING_NUM/CUTOFF)*dx ---> currently, set the up limit as 2 times of dx, and the lower bound as the 2/3 of dx
  */
 #ifndef ADAPTIVE_SML
-#define ADAPTIVE_SML 0
+#define ADAPTIVE_SML 1
 #endif
 
 

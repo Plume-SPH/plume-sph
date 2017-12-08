@@ -68,7 +68,7 @@ mom_engr_update(int myid, THashTable * P_table,
 #endif
 
 #ifdef DEBUG
-   bool do_search = true;
+   bool do_search = false;
    unsigned keycheck[TKEYLENGTH] = {298, 0, 0};
    unsigned keytemp[TKEYLENGTH] ;
 
