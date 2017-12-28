@@ -189,7 +189,7 @@ update_particles_in_bucket(int myid, THashTable * P_table, HashTable * BG_mesh, 
   vector < TKey > my_realp, my_particles;
 
   HTIterator *it2 = new HTIterator(BG_mesh);
-  Bucket *curr_bucket;
+  Bucket *curr_bucket = NULL;
   BriefBucket *breif_buck = NULL;
   void * tempptr =NULL;
 

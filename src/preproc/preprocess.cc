@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
   //locate on the boundary and cause instability for simulation
 
   mindom[2] = mindom_o[2] - extend_cof_bottom * del;
-  maxdom[2] = maxdom_o[2] + (1-extend_cof_bottom) * del;
+  maxdom[2] = maxdom_o[2] + extend_cof_bottom * del;
 
   // max number of buckets along each directions
   int nx = (int) ceil((maxdom[0]-mindom[0])/(del));
