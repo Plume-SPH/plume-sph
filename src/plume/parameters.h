@@ -191,11 +191,7 @@
 //////for strong sml1=400, particle dens=8
 ////const double Ll_P[DIMENSION]={-41600, -41600, 1500};
 ////const double Lu_P[DIMENSION]={41600, 41600, 55000};
-//
-//// for Eyjafjallajökull sml1=100, sml2=46, des=8
-//const double Ll_P[DIMENSION]={-10100, -10100, 1666};
-//const double Lu_P[DIMENSION]={10100, 10100, 7000};
-//
+
 ////for strong sml1=300 or sml1=200, sml1=150, particle dens=6
 ////const double Lx_P[2]={-28800,28800};
 ////const double Ly_P[2]={-28800,28800};
@@ -890,8 +886,8 @@
 //                                   Lz_p the lower and up boundary in z direction
 
 // for Eyjafjallajökull sml1=100, sml2=46, des=8
-const double Ll_P[DIMENSION]={-10100, -10100, 1666};
-const double Lu_P[DIMENSION]={10100, 10100, 7000};
+const double Ll_P[DIMENSION]={-20200, -20200, 1666};
+const double Lu_P[DIMENSION]={20200, 20200, 24000};
 
 //----------------------------------------------------------------------------------------
 //% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -947,9 +943,9 @@ const double ng0_P=0.017; /* initial mass fraction of volcanic gas: (mass of vol
 
 const double Uv0_P=0.0; /* velocity in horizontal direction*/
 
-const double Vv0_P=100.0; /* velocity in verticle direction*/
+const double Vv0_P=85.0; /* velocity in verticle direction*/ //mean is 85
 
-const double Tv0_P=1473.35;
+const double Tv0_P=1473.35; // 1473.35
 
 const double pv0_P=pa0_P; //assuming pressure-balanced jet --> It is the same for strong and weak eruption
 
