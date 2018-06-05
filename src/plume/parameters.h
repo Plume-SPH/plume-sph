@@ -939,13 +939,14 @@ const double Atf_P = -g_P/(Ra_P*Ta0_P);
 // %v: vent
 const double Rg_P=462.; /*%gas constant for volcanic gases*/
 
-const double ng0_P=0.017; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
+
+const double ng0_P=0.026; /* initial mass fraction of volcanic gas: (mass of volcanic gas)/(total mass of erupted material)*/
 
 const double Uv0_P=0.0; /* velocity in horizontal direction*/
 
-const double Vv0_P=85.0; /* velocity in verticle direction*/ //mean is 85
+const double Vv0_P=75.0; /* velocity in verticle direction*/ //mean is 85
 
-const double Tv0_P=1473.35; // 1473.35
+const double Tv0_P=1273.15; // 1473.35
 
 const double pv0_P=pa0_P; //assuming pressure-balanced jet --> It is the same for strong and weak eruption
 
@@ -977,7 +978,7 @@ const double ev0_P=ng0_P*Cvg_P*Tv0_P+(1-ng0_P)*Cvs_P*Tv0_P; /*energy of erupted 
 //const double rv_P= pow ((Mv_P/(rhov_P*Vv0_P*3.1415926)),0.5); /*radius of vent*/
 
 ////Here is the new way to give parameters --->So it is also OK if sml2 is given as a parameter
-const double rv_P = 140;
+const double rv_P = 120;
 const double Mv_P = rv_P*rv_P*rhov_P*Vv0_P*3.1415926;
 
 const double Pos_v_P[DIMENSION]={0., 0., Ll_P[2] };  /*position of vent at the origin*/
@@ -986,8 +987,8 @@ const int num_erupt = 2; /*this parameter should be used to determine total numb
 
 const int num_erupt_perlayer = 10;
 
-// for sml1=100, sml2=46, des=8
-const int num_erupt_particles = 939; //number of particle in the initial erupt duct
+// for sml1=100, sml2=46, des=8, 939 ; sml1=100, sml2=40, des=8,
+const int num_erupt_particles = 1080; //number of particle in the initial erupt duct
 
 //----------------------------------------------------------------------------------------
 // For artificial viscosity
@@ -1002,8 +1003,9 @@ const double C_smooth_P = 2.0;
 const double eta_smooth_P = 1.5; //We can try different value to get best results
 
 #if ADAPTIVE_SML==11 || ADAPTIVE_SML==32
-const double lbd_P=1/3;
+const double lbd_P=1/3; //sml lower bound
 const double lbd1_P=1-lbd_P;
+
 const double ubd_n_P=8.0/3.0;
 const double C_sml1_P=pow(lbd1_P/(ubd_n_P-lbd_P), DIMENSION);  //1/(6*6*6)
 const double C_sml2_P=1-C_sml1_P;
