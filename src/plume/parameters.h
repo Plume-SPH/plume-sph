@@ -436,7 +436,7 @@
 //const double Cvg_P=4197;
 //const double Cva_P=4197;
 ////const double gamma_P=1.4; /*specific heat ratio for ideal gas */
-//const double gamma_P=7.; /*specific heat ratio for ideal gas */
+//const double gamma_P=7.; /*specific heat ratio for weakly compressible fluids */
 //const double H1_P=11000; /*height of tropopause ---> will not used */
 //const double H2_P=20000;/*height of straightpause  ---> will not used */
 //const double H3_P=100000;/*height of atmosphere  ---> will not used */
@@ -885,9 +885,9 @@
 //                                   Ly_p the lower and up boundary in y direction
 //                                   Lz_p the lower and up boundary in z direction
 
-// for Eyjafjallajökull sml1=100, sml2=46, des=8
-const double Ll_P[DIMENSION]={-20200, -20200, 1666};
-const double Lu_P[DIMENSION]={20200, 20200, 24000};
+// for Eyjafjallajökull sml1=100, sml2=40, des=8
+const double Ll_P[DIMENSION]={-20800, -20800, 1666};
+const double Lu_P[DIMENSION]={20800, 20800, 24000};
 
 //----------------------------------------------------------------------------------------
 //% parameter for phase1 (air), use  to generated initial atmosphere condition
@@ -898,6 +898,7 @@ const double g_P=9.80665;
 #endif
 
 //the following 4 parameters are not independent!, they should satisfy the EOS
+
 const double Ta0_P=265.24;
 const double pa0_P= 0.831e5;
 const double rhoa0_P=1.10894;
