@@ -1,0 +1,5 @@
+1) Please refer to the user manual in ./doc for installation and usage.
+2) Please contact Zhixuan Cao (hitcaozx@gmail.com) for any questions
+3) Papers that related to this work: 
+ [1] Cao, Zhixuan, Abani K. Patra, and Matthew D. Jones. "Data Management and Volcano Plume Simulation with Parallel SPH Method and Dynamic Halo Domains." ICCS. 2017.
+ [2] Cao, Zhixuan, et al. "Plume-SPH 1.0: a three-dimensional, dusty-gas volcanic plume model based on smoothed particle hydrodynamics." Geoscientific Model Development 11.7 (2018).
